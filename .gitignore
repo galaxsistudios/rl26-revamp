@@ -1,0 +1,13 @@
+# Whitelist: ignore everything, then allow only mods/ and tools/.
+# Anything extracted, decompiled, built or backed up from the game stays local.
+/*
+!/.gitignore
+!/mods/
+!/tools/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Game-derived binary assets (extracted/edited retail textures)
+*.dds

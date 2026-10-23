@@ -1,0 +1,249 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!--Note: Font families can easily be broken by the metadata on the font file.
+    If the typeface name does not match what is specified here EXACTLY, then the font
+    will fail to load without any error messages.
+    
+    Use FontForge (https://fontforge.org/en-US/) to inspect and edit this meta data.
+    
+    The typeface in FontForge is listed as FamilyName in FontForge.
+       FontForge >> Element >> PS Names >> FamilyName.
+    
+    Preferred Family will also break the Typeface lookup. So delete that if it exists.
+       FontForge >> Element >> TTF Names >> Preferred Family
+    
+    - Jarryd, 15-NOV-23-->
+    
+    
+    
+    <!--Note: Many of the fonts done before RLL1 (2025) are done individually, with 
+    a new font family for every single font variation - eg. new <FontFamily> for Barlow Reg,
+    Barlow Bold, Barlow Italic, etc. THIS IS UNNEEDED.
+    
+    If Exo 2 Bold, Exo 2 Italic, Exo 2 SemiBold etc are all under the Family Name "Exo 2" in the
+    metadata, this will work correctly if we put the font file path as  "../Fonts/#Exo 2"
+    because they are all under the umbrella of Exo 2. To get Bold Italic, we would then use 
+    the SubFamily and the various weight class and style metadata properties:
+    
+           FontForge >> Element >> Font Info >> PS Names >> Weight              == matches up to FontWeight
+           FontForge >> Element >> Font Info >> OS/2 >> Weight Class            == matches up to FontWeight
+           FontForge >> Element >> Font Info >> OS/2 >> Style Map               == matches up to FontWeight & FontStyle
+           FontForge >> Element >> Font Info >> TTF Names >> Styles (SubFamily) == matches up to FontWeight & FontStyle
+    
+        Note Again:  all I know is that it works if I set all these. dunno if they're ALL needed though,
+        and testing that is a problem for another day
+    
+    All the files still need to be added into paNoesisFontProvider.cpp, but the <FontFamily> 
+    itself can group all of these files into one if done correctly, making this file significantly
+    shorter and using the styles a lot easier. 
+    
+    - El, 3/3/2025 -->
+
+
+
+    <FontFamily x:Key="Exo2">
+        <!-- Latin based            -->
+        ../Fonts/#Exo 2,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>  
+
+    <FontFamily x:Key="Ranade">
+        <!-- Latin based            -->
+        ../Fonts/#Ranade,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>  
+    
+    <FontFamily x:Key="Chivo">
+        <!-- Latin based            -->
+        ../Fonts/#Chivo,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="BarlowSemiCondensed">
+        <!-- Latin based            -->
+        ../Fonts/#Barlow Semi Condensed,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <!-- Debug Font  -->
+    <FontFamily x:Key="FontFamily_Consolas">
+        <!-- Latin based            -->
+        ../Fonts/#Consolas,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+
+    <!-- Uniform Fonts  -->
+
+    <!--#region Uniform Fonts-->
+    
+    <FontFamily x:Key="FontFamily_KhmerUIBold">
+        <!-- Latin based            -->
+        ../Fonts/KhmerUINumbers-Bold.ttf#KhmerUIBold,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_ExoMedium">
+        <!-- Latin based            -->
+        ../Fonts/Exo-Medium.ttf#ExoMedium,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+	
+	    <FontFamily x:Key="FontFamily_AgencyFB_Bold">
+        <!-- Latin based            -->
+        ../Fonts/AgencyFB-Bold.ttf#Agency FB,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_AlineaInciseW05-Medium">
+        <!-- Latin based            -->
+        ../Fonts/AlineaInciseW05-Medium.ttf#AlineaInciseW05-Medium,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_ArtegraSans-Bold">
+        <!-- Latin based            -->
+        ..Fonts/ArtegraSans-Bold.ttf#Artegra Sans Bold,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_ArtegraSans-Medium">
+        <!-- Latin based            -->
+        ../Fonts/ArtegraSans-Medium.ttf#Artegra Sans,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_ArvoBold">
+        <!-- Latin based            -->
+        ../Fonts/arvo-bold.ttf#Font,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_BTBrikRegular">
+        <!-- Latin based            -->
+        ../Fonts/BTBrikRegular.ttf#BT Brik,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_FreeSerifBoldItalic">
+        <!-- Latin based            -->
+        ../Fonts/FreeSerifBoldItalic.ttf#FreeSerif,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_GothamHTF-MediumCondensed">
+        <!-- Latin based            -->
+        ../Fonts/GothamHTF-MediumCondensed.ttf#Gotham HTF,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_Helvetica-Narrow-Bold">
+        <!-- Latin based            -->
+        ../Fonts/Helvetica-Narrow-Bold.ttf#Helvetica Narrow,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_HelveticaNeueLTStd-BdCn">
+        <!-- Latin based            -->
+        ../Fonts/HelveticaNeueLTStd-BdCn.ttf#Helvetica Neue LT Std,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_HundredDisplay-Regular">
+        <!-- Latin based            -->
+        ../Fonts/HundredDisplay-Regular.ttf#Hundred Display,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_Impact">
+        <!-- Latin based            -->
+        ../Fonts/Impact.ttf#Impact,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_LibreFranklin-Black">
+        <!-- Latin based            -->
+        ../Fonts/LibreFranklin-Black.ttf#Libre Franklin,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_Square721BT-BoldExtended">
+        <!-- Latin based            -->
+        ../Fonts/Square721BT-BoldExtended.ttf#Square721 BdEx BT,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_TeXGyreHerosCondensed-Bold">
+        <!-- Latin based            -->
+        ../Fonts/TeXGyreHerosCondensed-Bold.ttf#TeX Gyre Heros Cn,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+
+    <FontFamily x:Key="FontFamily_ArialNarrow">
+        <!-- Latin based            -->
+        ../Fonts/ArialNarrow.ttf#ArialNarrow,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+	
+	<FontFamily x:Key="FontFamily_PhenomenaBlack">
+        <!-- Latin based            -->
+        ../Fonts/Phenomena-Black.ttf#PhenomenaBlack,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+	
+	<FontFamily x:Key="FontFamily_ReemKufi">
+        <!-- Latin based            -->
+        ../Fonts/ReemKufi-Regular.ttf#ReemKufi,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+    </FontFamily>
+	
+	   <FontFamily x:Key="FontFamily_TrasandinaUltra">
+       ../Fonts/#Trasandina,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+	</FontFamily>
+
+	<!-- nrl-broadcast-scoreboard: these two stock jersey-font files (registered by filename in
+	     paNoesisFontProvider) are replaced with Joyride EXT and Maison Neue Extended Bold. -->
+	<FontFamily x:Key="FontFamily_ScoreJoyride">
+        ../Fonts/HundredDisplay-Regular.ttf#Joyride EXT,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+	</FontFamily>
+
+	<FontFamily x:Key="FontFamily_ScoreMaison">
+        ../Fonts/FreeSerifBoldItalic.ttf#Maison Neue Extended Bold,
+        <!-- Fallback               -->
+        ../Fonts/NotoSansCJKjp-Regular.otf#Noto Sans CJK JP,
+	</FontFamily>
+
+<!--#endregion-->
+
+
+</ResourceDictionary>

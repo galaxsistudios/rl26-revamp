@@ -1,0 +1,99 @@
+import 'ai.flowcharts_ai.action_overrides_flowchart_ai'
+
+-- ShaunC: hack to stop kicker collecting on place kick, can not be in overrides as prevents entry into windup monitor
+action = PlaceKickAction => LockControls
+
+isSentToSinBin => SubstituteAi
+isSentOff => SubstituteAi
+
+isSubstitute => SubstituteAi
+isWaitingToEnterPlay => WaitingToEnterPlayAi
+
+ballIsDead => IdleAi
+
+isAttackingSide and not isPartOfPlay and isLeavingPlay and not hasBall and subCanRunOffField and not isDummyHalf => LeavingPlayAi
+isDefendingSide and isNearSidelinePosition and isLeavingPlay and not hasBall and not isBallTarget and subCanRunOffField and not isDummyHalf => LeavingPlayAi
+
+-- Defending scrum should take priority, if attacking we want to still collect.
+isDefendingSide and isPostPartOfScrum => PostScrumDefendingAi
+isPartOfScrum and not pastScrumEndTime => ScrumAi
+
+isPlayTheBall and ballHasBeenPlayed => PostPlayTheBallAi
+isPlayTheBall and hasBall => PlayTheBallAi
+isPostPlayTheBall => PostPlayTheBallAi
+
+--isTackleTracker => TackleTrackerAi
+
+isPlayTheBallInProgress and isTackleMarker and isFlaggedOffside => TackleMarkerAi
+isPlayTheBallActive and isTackleMarker and isFlaggedOffside => TackleMarkerAi
+
+isPlayTheBallActive and isTackleMarker and playTheBallCollected => TackleMarkerReadyAi
+isPlayTheBallActive and isTackleMarker and playTheBallNotProgressing => TackleMarkerAdvanceAi
+isPlayTheBallActive and isTackleMarker and playTheBallDirectionKnown => TackleMarkerCoverAi
+isPlayTheBallInProgress and isTackleMarker => TackleMarkerAi
+
+isInWayOfKick and not isLeavingPlay => GetOutOfWayOfKickAi
+
+isQuickDefensivePlayTheBall and isDefendingSide and not isFlaggedOffside and not isLeavingPlay and not isImportantDefensivePlayer and not isPrimaryDefensivePlayer and not canTackle => QuickDefensiveOnsideAi
+isDefenseHeldTackle and isDefendingSide and not isFlaggedOffside and not isLeavingPlay and not isImportantDefensivePlayer and not isPrimaryDefensivePlayer and not canTackle => QuickDefensiveOnsideAi
+
+isOffside and isEnteringPlay => GetOnsideAi
+isFlaggedOffside and not isLeavingPlay => GetOnsideAi
+isFlaggedOffside and isFullBack => GetOnsideAi
+
+ballAvailable and amExpectedCollector and shouldLeaveBall and not ballHasTarget => LeaveBallAi
+
+-- Collect the ball if it's being passed to me
+not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and isBallTarget and not isPassReceiver => CollectBallAi
+isPlayTheBallInProgress and isAttackingSide and ballAvailable and amExpectedCollector and isBallTarget and not isPassReceiver => CollectBallAi
+-- otherwise get ready to collect it
+isPassReceiver => ReceivePassAi
+
+-- Collect the ball if it has a target that I will beat
+not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and ballHasTarget and shouldIntercept => InterceptPassAi
+
+-- Collect the ball if it's loose
+isDefendingSide and not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and not ballHasTarget  => CollectBallAi
+isAttackingSide and not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and not ballHasTarget => CollectBallAi
+isPlayTheBallInProgress and isDummyHalf and amExpectedCollector => DummyHalfCollectBallAi
+
+isTackleCollapsing and isDummyHalf => DummyHalfAi
+isPlayTheBallInProgress and isDummyHalf => DummyHalfAi
+isPlayTheBallInProgress and isPostDummyHalf and shouldScoot => HitGapAi
+-- reduce-ai-dummy-half-scoots: outside backs scooting from their own end (markers square) run the gap too
+isPlayTheBallInProgress and isPostDummyHalf and hasBall and (isWinger or isCentre) => HitGapAi
+isPlayTheBallInProgress and isPostDummyHalf => DummyHalfAi
+
+isAttackingSide and hasBall and iveBrokenLine => LineBreakerAi
+
+--chase a grubber or chip kick
+isKickChaser => KickChaseAi
+
+isLastTackle and isPrimaryDefensivePlayer and (kickerIsAimingTarget or activeKickForChargeDown) and (teamUrgencyModerate or teamUrgencyHigh) and not isPlayTheBallActive => ChargeDownAi
+isPrimaryDefensivePlayer and (kickerIsAimingTarget or activeKickForChargeDown) and (teamUrgencyModerate or teamUrgencyHigh) and not isPlayTheBallActive => ChargeDownAi --isLastTackle
+
+isAttackingSide and hasBall and hasGapVeryHighQuality and not isLastTackle => HitGapAi
+isAttackingSide and ballHasTarget and not isBallTarget and willGetHit => AvoidBallAi
+
+isAttackingSide and hasBall and isPastForty and (hasGapMediumQuality or hasGapHighQuality) => HitGapAi
+isAttackingSide and hasBall and isRunningPlay => OffensiveMovementWithBallAi
+isAttackingSide and isRunningPlay => OffensiveMovementAi
+
+isAttackingSide and hasBall and (hasGapLowQuality or hasGapMediumQuality or hasGapHighQuality) => HitGapAi
+isAttackingSide and hasBall => OffensiveMovementWithBallAi
+isAttackingSide and isPostPartOfScrum => PostScrumAttackingAi
+isAttackingSide and couldGetHit => PassiveCollectBallAi
+isAttackingSide => OffensiveMovementAi
+
+isDefendingSide and reactionTimeValid and (lineBroken or ballCarrierInGoal) and lastLineOfDefence and not imBroken => CutOffLineBreakerAi
+isDefendingSide and reactionTimeValid and (lineBroken or ballCarrierInGoal) and lastLineOfDefence => PursueLineBreakerAi
+isDefendingSide and reactionTimeValid and lineBroken and imBroken => DefensiveLineBrokenAi
+isDefendingSide and reactionTimeValid and lineBroken and isInPlayKick => DefensiveRespondToKickAi
+
+isDefendingSide and reactionTimeValid and not isPlayTheBallInProgress and isPrimaryDefensivePlayer and playerWithinPrimaryDefensiveCone and (teamUrgencyModerate or teamUrgencyHigh) and not isTackleCollapsing => PrimaryDefensiveMovementAi
+isDefendingSide and reactionTimeValid and not isPlayTheBallInProgress and isPrimaryDefensivePlayer and teamUrgencyHigh and not isTackleCollapsing => PrimaryDefensiveMovementAi
+isDefendingSide and reactionTimeValid and not isPlayTheBallInProgress and isImportantDefensivePlayer and not isTackleCollapsing => ImportantDefensiveMovementAi
+isDefendingSide and reactionTimeValid and canTackle => DefensiveMovementCanTackleAi
+isDefendingSide => DefensiveMovementAi
+
+=> IdleAi
