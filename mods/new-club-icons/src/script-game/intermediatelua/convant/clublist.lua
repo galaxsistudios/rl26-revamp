@@ -286,7 +286,32 @@ end
 -- Each also needs a ClubIconColourSetMap entry in icons.lua.
 local ModClubIcons = {
 	"nrl_bears",
-	"nrl_chiefs"
+	"nrl_chiefs",
+	-- classic (pre-rebrand) emblems, see classic_logos.py
+	"nrl_broncos_classic_1",
+	"nrl_broncos_classic_2",
+	"nrl_raiders_classic_1",
+	"nrl_raiders_classic_2",
+	"nrl_bulldogs_classic_1",
+	"nrl_bulldogs_classic_2",
+	"nrl_sharks_classic_1",
+	"nrl_titans_classic_1",
+	"nrl_seaeagles_classic_1",
+	"nrl_seaeagles_classic_2",
+	"nrl_storm_classic_1",
+	"nrl_warriors_classic_1",
+	"nrl_warriors_classic_2",
+	"nrl_knights_classic_1",
+	"nrl_knights_classic_2",
+	"nrl_cowboys_classic_1",
+	"nrl_cowboys_classic_2",
+	"nrl_eels_classic_1",
+	"nrl_eels_classic_2",
+	"nrl_panthers_classic_1",
+	"nrl_panthers_classic_2",
+	"nrl_rabbitohs_classic_1",
+	"nrl_roosters_classic_1",
+	"nrl_tigers_classic_1"
 }
 
 CrowdSets = var_0_0(var_0_1, var_0_2, var_0_15, var_0_16)

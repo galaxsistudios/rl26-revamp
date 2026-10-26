@@ -1,0 +1,44 @@
+{
+ "_comment": "Kits read from an installed Rugby League Live 4 (build_kits.py add-rll4). 'clubs' maps an RLL4 kit texture's team prefix (characters/uniforms/textures/<prefix>_<kit>_col) to an RL26 club id; RLL4 teams RL26 doesn't have, referee and cheerleader kits, and the women's sides (the kits are baked for male models only) are left out. 'kits' maps the rest of the texture name to the RL26 kit name (the season is appended); 'labels' prefixes a whole competition's kit names. Kits whose name isn't in 'kits' are skipped.",
+ "season": "2017",
+ "clubs": {
+  "nrl_broncos": 118, "nrl_bulldogs": 119, "nrl_cowboys": 120, "nrl_dragons": 121, "nrl_eels": 122,
+  "nrl_knights": 123, "nrl_panthers": 124, "nrl_rabbitohs": 125, "nrl_raiders": 126, "nrl_roosters": 127,
+  "nrl_seaeagles": 128, "nrl_sharks": 129, "nrl_storm": 130, "nrl_tigers": 131, "nrl_titans": 132,
+  "nrl_warriors": 133,
+
+  "holden_broncos": 118, "holden_bulldogs": 119, "holden_cowboys": 120, "holden_dragons": 121, "holden_eels": 122,
+  "holden_knights": 123, "holden_panthers": 124, "holden_rabbitohs": 125, "holden_raiders": 126, "holden_roosters": 127,
+  "holden_seaeagles": 128, "holden_sharks": 129, "holden_storm": 130, "holden_tigers": 131, "holden_titans": 132,
+  "holden_warriors": 133,
+
+  "nswcup_seaeagles": 67, "nswcup_bulldogs": 69, "nswcup_knights": 70, "nswcup_jets": 71, "nswcup_bears": 72,
+  "nswcup_panthers": 73, "nswcup_warriors": 78,
+
+  "qldcup_tigers": 149, "qldcup_bears": 150, "qldcup_capras": 151, "qldcup_jets": 152, "qldcup_cutters": 153,
+  "qldcup_pride": 154, "qldcup_devils": 155, "qldcup_hunters": 156, "qldcup_dolphins": 157, "qldcup_magpies": 158,
+  "qldcup_falcons": 159, "qldcup_blackhawks": 160, "qldcup_seagulls": 161, "qldcup_manlyseagulls": 163,
+
+  "sl_tigers": 135, "sl_giants": 136, "sl_hullfc": 137, "sl_rhinos": 139, "sl_sthelens": 140, "sl_wildcats": 141,
+  "sl_wolves": 142, "sl_warriors": 143, "sl_centurions": 144, "sl_dragons": 145, "sl_devils": 164, "sl_vikings": 168,
+
+  "kingstone_bulls": 146, "kingstone_olympique": 147, "kingstone_hull": 138, "kingstone_halifax": 165,
+  "kingstone_oldham": 166, "kingstone_broncos": 170, "kingstone_bulldogs": 171, "kingstone_eagles": 172,
+  "kingstone_lions": 177, "kingstone_rams": 178, "kingstone_hornets": 179, "kingstone_rovers": 91,
+  "kingstone_1_knights": 148, "kingstone_1_raiders": 167, "kingstone_1_doncaster": 169, "kingstone_1_hawks": 173,
+  "kingstone_1_whitehaven": 175, "kingstone_1_crusaders": 176, "kingstone_1_workington": 180,
+  "kingstone_1_cougars": 182, "kingstone_1_thunder": 183,
+
+  "rep_qld": 18, "rep_nsw": 19, "rep_indallstars": 105,
+
+  "int_australia": 103, "int_england": 104, "int_kiwi": 204, "int_samoa": 205, "int_france": 206, "int_png": 207,
+  "int_lebanon": 208, "int_tonga": 209, "int_fiji": 210
+ },
+ "labels": {"holden": "U20"},
+ "kits": {
+  "home": "HOME", "away": "AWAY", "anzac": "ANZAC", "indigenous": "INDIGENOUS", "heritage": "HERITAGE",
+  "nines": "NINES", "nines_away": "NINES AWAY", "clash": "CLASH", "alternate": "ALTERNATE",
+  "wil": "WOMEN IN LEAGUE", "wc_home": "WORLD CUP", "": "ORIGIN"
+ },
+ "rep_names": {"rep_indallstars": "ALL STARS"}
+}

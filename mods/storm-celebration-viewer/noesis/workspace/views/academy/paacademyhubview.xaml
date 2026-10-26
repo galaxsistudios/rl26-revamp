@@ -1,0 +1,354 @@
+﻿<controls:paUserControlView x:Class="Workspace.Views.Academy.paAcademyHubView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:controls="clr-namespace:Workspace.Controls"
+             xmlns:local="clr-namespace:Workspace.Views.Academy"
+             mc:Ignorable="d"
+             xmlns:paBhvrs="clr-namespace:paNoesisBehaviours"
+             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/Styles/Button Styles/paButtonStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <Style TargetType="{x:Type controls:paButton}"
+                   BasedOn="{StaticResource StretchStyle}"
+                   x:Key="style">
+                <Setter Property="Command"
+                        Value="{Binding Command}" />
+                <Setter Property="Title"
+                        Value="{Binding Title}" />
+                <Setter Property="Content"
+                        Value="{Binding ToolTip}" />
+                <Setter Property="HighlightCommand"
+                        Value="{Binding HighlightCommand}" />
+                <Setter Property="IsActive"
+                        Value="{Binding Command.IsActive}" />
+                <Setter Property="Margin"
+                        Value="7.5" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}"
+                                 Value="{x:Null}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed"
+                                d:Value="{x:Static Visibility.Visible}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+            <ControlTemplate x:Key="PlayerViewHub"
+                             TargetType="{x:Type local:paAcademyHubView}">
+                
+                <controls:baScreenControl>
+                    
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="6.5*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="1.2*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <UniformGrid Grid.Column="1"
+                                     Grid.Row="1"
+                                     Columns="2">
+
+                            <controls:paButton x:Name="Identity"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[0]}"
+                                               Grid.Column="0"
+                                               Grid.Row="0" />
+
+                            <controls:paButton x:Name="Appearance"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[1]}"
+                                               Grid.Column="1"
+                                               Grid.Row="0" />
+
+                            <controls:paButton x:Name="Skills"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[2]}"
+                                               Grid.Column="0"
+                                               Grid.Row="1" />
+
+                            <controls:paButton x:Name="Club"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[3]}"
+                                               Grid.Column="1"
+                                               Grid.Row="1" />
+
+                            <controls:paButton x:Name="Sharing"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[4]}"
+                                               Grid.Column="0"
+                                               Grid.Row="2" />
+
+                            <controls:paButton x:Name="Celebrations"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[5]}"
+                                               Grid.Column="1"
+                                               Grid.Row="2" />
+                            <b:Interaction.Behaviors>
+                                <paBhvrs:paFocusOnLoadBehavior />
+                            </b:Interaction.Behaviors>
+
+                        </UniformGrid>
+
+                    </Grid>
+                </controls:baScreenControl>
+                
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="AcademyPlayerReadOnly"
+                             TargetType="{x:Type local:paAcademyHubView}">
+
+                <controls:baScreenControl>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="6.5*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="1.2*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <UniformGrid Grid.Column="1"
+                                     Grid.Row="1"
+                                     Columns="2">
+
+                            <controls:paButton x:Name="Identity"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[0]}"
+                                               Grid.Column="0"
+                                               Grid.Row="0" />
+
+                            <controls:paButton x:Name="Appearance"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[1]}"
+                                               Grid.Column="1"
+                                               Grid.Row="0" />
+
+                            <controls:paButton x:Name="Skills"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[2]}"
+                                               Grid.Column="0"
+                                               Grid.Row="1" />
+
+                            <controls:paButton x:Name="Club"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[3]}"
+                                               Grid.Column="1"
+                                               Grid.Row="1" />
+
+                            <controls:paButton x:Name="Celebrations"
+                                               Style="{StaticResource style}"
+                                               DataContext="{Binding ButtonCollection[4]}"
+                                               Grid.Column="0"
+                                               Grid.Row="2" />
+                            <b:Interaction.Behaviors>
+                                <paBhvrs:paFocusOnLoadBehavior />
+                            </b:Interaction.Behaviors>
+
+                        </UniformGrid>
+
+                    </Grid>
+                </controls:baScreenControl>
+
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="ClubViewHub"
+                             TargetType="{x:Type local:paAcademyHubView}">
+                <controls:baScreenControl>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="1.5*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="1"
+                              Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <UniformGrid Rows="1">
+                                <controls:paButton x:Name="Identity"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[0]}"
+                                                   Grid.Column="0" />
+
+                                <controls:paButton x:Name="Kits"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[1]}"
+                                                   Grid.Column="1" />
+
+                                <controls:paButton x:Name="ManageRoster"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[2]}"
+                                                   Grid.Column="2" />
+                                <UniformGrid Grid.Column="3" Columns="1">
+                                    <controls:paButton x:Name="Lineup"
+                                        Style="{StaticResource style}"
+                                        DataContext="{Binding ButtonCollection[3]}"/>
+                                    <controls:paButton x:Name="Lineup2"
+                                        Style="{StaticResource style}"
+                                        DataContext="{Binding ButtonCollection[4]}"/>
+                                </UniformGrid>
+                                <b:Interaction.Behaviors>
+                                    <paBhvrs:paFocusOnLoadBehavior />
+                                </b:Interaction.Behaviors>
+                            </UniformGrid>
+
+                            <UniformGrid Rows="1"
+                                         Grid.Row="1">
+                                <controls:paButton x:Name="HomeGrounds"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[5]}"
+                                                   Grid.Column="0" />
+
+                                <controls:paButton x:Name="Sharing"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[6]}"
+                                                   Grid.Column="1" />
+                            </UniformGrid>
+                        </Grid>
+                    </Grid>
+
+                </controls:baScreenControl>
+            </ControlTemplate>
+
+
+            <ControlTemplate x:Key="ClubViewHubCommunity"
+                             TargetType="{x:Type local:paAcademyHubView}">
+                <controls:baScreenControl>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="1.5*" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="1"
+                              Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <UniformGrid Rows="1">
+                                <controls:paButton x:Name="Identity"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[0]}"
+                                                   Grid.Column="0" />
+
+                                <controls:paButton x:Name="Download"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[1]}"
+                                                   Grid.Column="1" />
+
+                                <controls:paButton x:Name="Rate"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[2]}"
+                                                   Grid.Column="2" />
+
+                                <controls:paButton x:Name="Report"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[3]}"
+                                                   Grid.Column="3" />
+                                <b:Interaction.Behaviors>
+                                    <paBhvrs:paFocusOnLoadBehavior />
+                                </b:Interaction.Behaviors>
+                            </UniformGrid>
+
+                            <UniformGrid Rows="1"
+                                         Grid.Row="1">
+                                <controls:paButton x:Name="Sharing"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[4]}"
+                                                   Grid.Column="0" />
+
+                                <controls:paButton x:Name="HomeGrounds"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[5]}"
+                                                   Grid.Column="1" />
+                                <!--<controls:paButton x:Name="ManageRoster"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[6]}"
+                                                   Grid.Column="1" />-->
+                                <!--controls:paButton x:Name="Uniform"
+                                                   Style="{StaticResource style}"
+                                                   DataContext="{Binding ButtonCollection[5]}"
+                                                   Grid.Column="1" />-->
+                            </UniformGrid>
+                        </Grid>
+                    </Grid>
+
+                </controls:baScreenControl>
+            </ControlTemplate>
+
+            <Style TargetType="{x:Type local:paAcademyHubView}">
+                <Setter Property="Template"
+                        Value="{StaticResource ClubViewHub}" />
+                <Setter Property="ForceElementFocus"
+                        Value="{Binding ForceElementFocus}" />
+                <Setter Property="FoundElement"
+                        Value="{Binding FoundElement}" />
+                <Setter Property="FocusElementIdentifier"
+                        Value="{Binding FocusElementIdentifier}" /> 
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding TemplateKey}"
+                                 Value="PlayerHubFull">
+                        <Setter Property="Template"
+                                Value="{StaticResource PlayerViewHub}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding TemplateKey}"
+                                 Value="ClubHubFullCommunity">
+                        <Setter Property="Template"
+                                Value="{StaticResource ClubViewHubCommunity}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding TemplateKey}"
+                                 Value="AcademyPlayerReadOnly">
+                        <Setter Property="Template"
+                                Value="{StaticResource AcademyPlayerReadOnly}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+
+
+    <d:ContentPresenter>
+        <local:paAcademyHubView Template="{StaticResource PlayerViewHub}"
+                                />
+    </d:ContentPresenter>
+
+
+</controls:paUserControlView>

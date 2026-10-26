@@ -306,6 +306,18 @@ function ScreenWipeIn.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, a
 
 	var_12_0:updateBelow(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9)
 
+	-- replay-team-stinger debug: the time window the replay under us actually plays.
+	pcall(function()
+		local var_12_10 = var_12_0:getStateBelow(arg_12_0)
+		local var_12_11 = var_12_10 and var_12_10.replayPresenter and var_12_10.replayPresenter.playbackContext
+
+		if var_12_11 and not var_12_10.teamStingerLoggedWindow then
+			var_12_10.teamStingerLoggedWindow = true
+
+			logotransition_hud.teamStingerLog(string.format("replay playback window %.2f..%.2f", var_12_11.startTime:ToSeconds(), var_12_11.endTime:ToSeconds()))
+		end
+	end)
+
 	-- bunker-overturned-try: logo outro hold.
 	if arg_12_0.logoOutro then
 		arg_12_0.logoOutroTime = arg_12_0.logoOutroTime + arg_12_5

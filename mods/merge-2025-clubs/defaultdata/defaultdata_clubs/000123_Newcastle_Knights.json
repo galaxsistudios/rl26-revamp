@@ -1,0 +1,31 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2025",
+        "copyOf": "HOME",
+        "fromClub": 6
+      },
+      {
+        "name": "AWAY 2025",
+        "copyOf": "AWAY",
+        "fromClub": 6
+      },
+      {
+        "name": "INDIGENOUS 2025",
+        "copyOf": "INDIGENOUS",
+        "fromClub": 6
+      },
+      {
+        "name": "ANZAC ROUND 2025",
+        "copyOf": "ANZAC ROUND",
+        "fromClub": 6
+      },
+      {
+        "name": "NSW MINING 2025",
+        "copyOf": "NSW MINING",
+        "fromClub": 6
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "comment": "Coach polo colours. guid = male uniformTop item, guid + 100 = female. Each colour is baked from the stock grey polo (m_top_polo01_grey_col). Coaches get the colour nearest their club's primary colour.",
+  "colours": [
+    { "name": "black",    "guid": 61001, "rgb": [28, 28, 30] },
+    { "name": "charcoal", "guid": 61002, "rgb": [72, 74, 78] },
+    { "name": "silver",   "guid": 61003, "rgb": [165, 168, 172] },
+    { "name": "white",    "guid": 61004, "rgb": [236, 236, 232] },
+    { "name": "navy",     "guid": 61005, "rgb": [16, 32, 78] },
+    { "name": "royal",    "guid": 61006, "rgb": [20, 70, 170] },
+    { "name": "sky",      "guid": 61007, "rgb": [95, 160, 220] },
+    { "name": "teal",     "guid": 61008, "rgb": [0, 120, 130] },
+    { "name": "green",    "guid": 61009, "rgb": [0, 115, 55] },
+    { "name": "lime",     "guid": 61010, "rgb": [120, 190, 40] },
+    { "name": "yellow",   "guid": 61011, "rgb": [245, 205, 20] },
+    { "name": "gold",     "guid": 61012, "rgb": [214, 160, 30] },
+    { "name": "orange",   "guid": 61013, "rgb": [232, 110, 20] },
+    { "name": "red",      "guid": 61014, "rgb": [196, 22, 40] },
+    { "name": "maroon",   "guid": 61015, "rgb": [105, 22, 48] },
+    { "name": "purple",   "guid": 61016, "rgb": [80, 40, 130] }
+  ]
+}

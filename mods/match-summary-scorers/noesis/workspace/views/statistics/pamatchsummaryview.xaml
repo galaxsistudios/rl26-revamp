@@ -1,0 +1,1151 @@
+﻿<UserControl x:Class="Workspace.Views.Statistics.paMatchSummaryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Workspace.Views.Statistics"
+             xmlns:vm="clr-namespace:Workspace.ViewModels.Statistics"
+             xmlns:controls="clr-namespace:Workspace.Controls"
+             xmlns:genericcontrols="clr-namespace:Workspace.GenericControls"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:paEx="clr-namespace:paNoesisExtensions"
+             xmlns:paBhvrs="clr-namespace:paNoesisBehaviours"
+             mc:Ignorable="d"
+             x:Name="MatchSummaryView"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
+             d:DataContext="{d:DesignInstance {x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}">
+
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/Styles/paTabControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--Player lists-->
+            <DataTemplate x:Key="PlayerStats">
+                <Viewbox StretchDirection="DownOnly"
+                         HorizontalAlignment="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=HorizontalContentAlignment}">
+
+                    <Grid Margin="0,1" HorizontalAlignment="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=HorizontalContentAlignment}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock"
+                                   BasedOn="{StaticResource Body}">
+                                    <Setter Property="Grid.Column"
+                                        Value="0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=HorizontalContentAlignment}"
+                                                 Value="Right">
+                                            <Setter Property="Grid.Column"
+                                                Value="1" />
+                                            <Setter Property="HorizontalAlignment"
+                                                Value="Right" />
+                                            <Setter Property="TextAlignment"
+                                                Value="Right" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=Tag}"
+                                                 Value="Conversions">
+                                            <Setter Property="Text"
+                                                Value="{Binding Conversions}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=Tag}"
+                                                 Value="Tries">
+                                            <Setter Property="Text"
+                                                Value="{Binding Tries}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=Tag}"
+                                                 Value="FieldGoals">
+                                            <Setter Property="Text"
+                                                Value="{Binding FieldGoals}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=Tag}"
+                                                 Value="FieldGoals40m">
+                                            <Setter Property="Text"
+                                                Value="{Binding FieldGoals40m}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=Tag}"
+                                                 Value="PenaltyGoals">
+                                            <Setter Property="Text"
+                                                Value="{Binding PenaltyGoals}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding FullName}"
+                               Margin="8,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock"
+                                   BasedOn="{StaticResource Body}">
+                                    <Setter Property="Grid.Column"
+                                        Value="1" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=HeaderedItemsControl}, Path=HorizontalContentAlignment}"
+                                                 Value="Right">
+                                            <Setter Property="Grid.Column"
+                                                Value="0" />
+                                            <Setter Property="HorizontalAlignment"
+                                                Value="Right" />
+                                            <Setter Property="TextAlignment"
+                                                Value="Right" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Viewbox>
+            </DataTemplate>
+
+            <!--Team Stats-->
+            <DataTemplate x:Key="TeamStatTemplate">
+                <DataTemplate.Resources>
+                    <Style x:Key="StatValues"
+                           TargetType="TextBlock">
+                        <Setter Property="FontFamily"
+                                Value="{StaticResource Chivo}" />
+                        <Setter Property="FontWeight"
+                                Value="Bold" />
+                        <Setter Property="Foreground"
+                                Value="{StaticResource RLWhite}" />
+                        <Setter Property="FontSize"
+                                Value="22" />
+                        <Setter Property="Margin"
+                                Value="20,0" />
+
+                    </Style>
+
+                    <Style x:Key="HomeStatValues"
+                           BasedOn="{StaticResource StatValues}"
+                           TargetType="TextBlock">
+                        <Setter Property="HorizontalAlignment"
+                                Value="Right" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HomeGreater}"
+                                         Value="True">
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource RLGreen}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                    <Style x:Key="AwayStatValues"
+                           BasedOn="{StaticResource StatValues}"
+                           TargetType="TextBlock">
+                        <Setter Property="HorizontalAlignment"
+                                Value="Left" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HomeGreater}"
+                                         Value="False">
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource RLGreen}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataTemplate.Resources>
+
+                <Border Height="24"
+                        Margin="0,20,0,0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0.5"
+                                             EndPoint="1,0.5">
+                            <GradientStop Color="Transparent" />
+                            <GradientStop Color="#19FFFFFF"
+                                          Offset="0.5" />
+                            <GradientStop Color="Transparent"
+                                          Offset="1" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <Grid Grid.IsSharedSizeScope="True">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource HomeStatValues}"
+                                   Text="{Binding HomeValue}"
+                                   Grid.Column="0" />
+                        <TextBlock Text="{Binding StatName, Converter={StaticResource UppercaseConverter}}"
+                                   Style="{StaticResource Row_M}"
+                                   HorizontalAlignment="Center"
+                                   Grid.Column="1" />
+                        <TextBlock Style="{StaticResource AwayStatValues}"
+                                   Text="{Binding AwayValue}"
+                                   Grid.Column="2" />
+                    </Grid>
+                </Border>
+
+            </DataTemplate>
+
+            <!--Headered items control-->
+            <Style TargetType="HeaderedItemsControl">
+                <Setter Property="ItemTemplate"
+                        Value="{StaticResource PlayerStats}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="HeaderedItemsControl">
+                            <Grid HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter ContentSource="Header"
+                                                  Margin="0,0,0,5"
+                                                  Focusable="False"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                    <ContentPresenter.ContentTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource UppercaseConverter}}"
+                                                       Style="{StaticResource Display_S}"
+                                                       TextAlignment="Center"
+                                                       FontSize="18" />
+                                        </DataTemplate>
+                                    </ContentPresenter.ContentTemplate>
+                                </ContentPresenter>
+
+                                <ItemsPresenter Grid.Row="1" />
+                            </Grid>
+                        </ControlTemplate>
+
+                    </Setter.Value>
+                </Setter>
+
+
+            </Style>
+
+            <!--TABS-->
+
+            <Grid x:Key="ScoringTab" Height="680">
+                <Grid Grid.IsSharedSizeScope="True">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <HeaderedContentControl Header="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=MatchStats}" DataContext="{Binding MatchSummary}"
+                                                Focusable="False"
+                                                HorizontalContentAlignment="Center"
+                                                x:Name="TeamStats">
+                            <controls:paListBox ItemsSource="{Binding TeamStats.TeamStatistics}"
+                                                d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}"
+                                                ItemTemplate="{StaticResource TeamStatTemplate}"
+                                                Margin="50,0"
+                                                d:Visibility="Visible"
+                                                ItemContainerStyle="{StaticResource OverwriteListBoxItemStyle}" />
+                        </HeaderedContentControl>
+
+                        <HeaderedContentControl Grid.Row="1" Height="185" 
+                                                Margin="70,15,70,0"
+                                                HorizontalContentAlignment="Center"
+                                                d:Visibility="Visible"
+                                                Header="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=ManOfTheMatch}" 
+                                                Visibility="{Binding ShowManOfTheMatch, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue='Collapsed'}">
+                            <HeaderedContentControl.Resources>
+                                <Style TargetType="FrameworkElement"
+                                       x:Key="AlignmentSwitchHomeLeft">
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Right" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ManOfTheMatchIsHome}"
+                                                     Value="True">
+                                            <Setter Property="HorizontalAlignment"
+                                                    Value="Left" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                                <Style TargetType="FrameworkElement"
+                                       x:Key="AlignmentSwitchHomeRight">
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Left" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ManOfTheMatchIsHome}"
+                                                     Value="True">
+                                            <Setter Property="HorizontalAlignment"
+                                                    Value="Right" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </HeaderedContentControl.Resources>
+                            <Grid x:Name="MoTMGrid">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition  Height="Auto"/>
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Margin="0,3,0,10"
+                                                Style="{StaticResource AlignmentSwitchHomeLeft}">
+                                        <TextBlock Text="{Binding ManOfTheMatch.FirstName, Converter={StaticResource UppercaseConverter}}"
+                                                   Style="{StaticResource Row_M}" 
+                                                   HorizontalAlignment="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=HorizontalAlignment}"/>
+                                        <TextBlock Text="{Binding ManOfTheMatch.Surname, Converter={StaticResource UppercaseConverter}}"
+                                                   Style="{StaticResource Display_L}"
+                                                   HorizontalAlignment="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=HorizontalAlignment}" />
+                                    </StackPanel>
+
+                                    <ItemsControl ItemsSource="{Binding ManOfTheMatch.PlayerStatistics}"
+                                                  Grid.Row="1"
+                                                  Style="{StaticResource AlignmentSwitchHomeLeft}" >
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=HorizontalAlignment}">
+                                                    <TextBlock Text="{Binding StatName}"
+                                                               Style="{StaticResource Row_S}" 
+                                                               Margin="0,0,10,0"/>
+                                                    <TextBlock Text="{Binding StatValue}"
+                                                               Style="{StaticResource Row_S_Hover}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                </Grid>
+                                <Image Source="{Binding ManOfTheMatchTeamLogo}"
+                                           Style="{StaticResource AlignmentSwitchHomeRight}"
+                                           d:Source="/Images/Club_Logos/256/custom.png" Width="150" Height="150"
+                                           Margin="120,-50,120,0" Opacity="0.05"/>
+                                <Image Source="{Binding ManOfTheMatchPortrait}"
+                                           Style="{StaticResource AlignmentSwitchHomeRight}"
+                                           d:Source="/Images/Club_Logos/256/cus_91.png" Width="140" Height="140"/>
+                            </Grid>
+                        </HeaderedContentControl>
+
+
+
+                    </Grid>
+                    <Grid Margin="150,0,30,0" DataContext="{Binding MatchSummary}"
+                          d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="Tries" />
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="Conversions" />
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="FieldGoals" />
+                            <RowDefinition Height="Auto" 
+                                           SharedSizeGroup="FieldGoals40m" />
+                            <RowDefinition Height="Auto" 
+                                           SharedSizeGroup="PenaltyGoals" />
+                        </Grid.RowDefinitions>
+
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersTries}"
+                                              Header="Tries"
+                                              Tag="Tries"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="0"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Right" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersConversions}"
+                                              Header="Conversions"
+                                              Tag="Conversions"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="1"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Right" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersFieldGoals}"
+                                              Header="Field Goals"
+                                              Tag="FieldGoals"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="2"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Right" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersFieldGoals40m}"
+                                              Header="Field Goals 40m"
+                                              Tag="FieldGoals40m"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="3"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Right" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersPenalties}"
+                                              Header="Penalty Goals"
+                                              Tag="PenaltyGoals"
+                                              Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="4"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Right" />
+                    </Grid>
+
+                    <Grid Grid.Column="2" Margin="30,0,150,0" DataContext="{Binding MatchSummary}"
+                          d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="Tries" />
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="Conversions" />
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="FieldGoals" />
+                            <RowDefinition Height="Auto" 
+                                           SharedSizeGroup="FieldGoals40m" />
+                            <RowDefinition Height="Auto"
+                                           SharedSizeGroup="PenaltyGoals" />
+                        </Grid.RowDefinitions>
+
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersTries}"
+                                              Header="Tries"
+                                              Tag="Tries"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="0"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Left" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersConversions}"
+                                              Header="Conversions"
+                                              Tag="Conversions"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="1"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Left" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersFieldGoals}"
+                                              Header="Field Goals"
+                                              Tag="FieldGoals"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="2"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Left" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersFieldGoals40m}"
+                                              Header="Field Goals 40m"
+                                              Tag="FieldGoals40m"
+                                              Margin="0,0,0,50"
+                                              Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="3"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Left" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersPenalties}"
+                                              Header="Penalty Goals"
+                                              Tag="PenaltyGoals"
+                                              Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Row="4"
+                                              Focusable="False"
+                                              HorizontalContentAlignment="Left" />
+                    </Grid>
+                </Grid>
+            </Grid>
+
+
+            <DataTemplate x:Key="PlayerRow">
+
+                <DataTemplate.Resources>
+                    <Style TargetType="TextBlock"
+                           BasedOn="{StaticResource Row_S}"
+                           x:Key="Focusable">
+                        <Setter Property="Foreground"
+                                Value="{StaticResource RLWhite70}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:paListBoxItem}, Path=IsFocused}"
+                                         Value="True">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource RLBlack}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataTemplate.Resources>
+                <Grid Height="40"
+                      Margin="20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="A" />
+                        <ColumnDefinition Width="0.9*"/>
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Source="{Binding TeamLogo}"
+                           d:Source="/Images/Club_Logos/256/nrl_storm.png"
+                           Margin="5">
+                        <Image.Effect>
+                            <DropShadowEffect Direction="0"
+                                              BlurRadius="5"
+                                              ShadowDepth="0" />
+                        </Image.Effect>
+                    </Image>
+
+                    <TextBlock Text="{Binding FullName}"
+                               Style="{StaticResource Focusable}"
+                               Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Margin="20,0" />
+
+                    <ItemsControl Grid.Column="2" Focusable="False"
+                                  ItemsSource="{Binding PlayerStatistics}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding StatValue}"
+                                           Style="{StaticResource Focusable}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </DataTemplate>
+
+            <!--Team logos and lines-->
+            <ControlTemplate TargetType="ContentControl"
+                             x:Key="TeamColoursAndLogos">
+
+                <Grid ClipToBounds="True"
+                      d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="1.25*" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Middle Black Gradient -->
+                    <Grid Grid.Column="1"
+                          Height="920"
+                          VerticalAlignment="Top"
+                          Margin="-400,0,-400,0"
+                          ClipToBounds="True">
+                        <Grid.Background>
+                            <LinearGradientBrush EndPoint="0.5,1"
+                                                 StartPoint="0.5,0">
+                                <GradientStop Color="#00000000" />
+                                <GradientStop Color="#B2000000"
+                                              Offset="0.2" />
+                                <GradientStop Color="#B2000000"
+                                              Offset="0.7" />
+                                <GradientStop Color="#7C000000"
+                                              Offset="0.9" />
+                                <GradientStop Color="#00000000"
+                                              Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+
+                        <!-- Team colours don't work -->
+                        <!--{Binding TeamStats.HomeTeamColour, Converter={StaticResource ColorToSolidColorBrushConverter}}-->
+                        <Grid>
+                            <Grid.OpacityMask>
+                                <LinearGradientBrush EndPoint="0.5,1"
+                                                     StartPoint="0.5,0">
+                                    <GradientStop Color="#00000000" />
+                                    <GradientStop Color="#7C000000"
+                                                  Offset="0.5" />
+                                    <GradientStop Color="#00000000"
+                                                  Offset="0.95" />
+                                </LinearGradientBrush>
+                            </Grid.OpacityMask>
+                            <Rectangle Width="1"
+                                       HorizontalAlignment="Left"
+                                       Fill="White" />
+                            <Rectangle Width="1"
+                                       HorizontalAlignment="Right"
+                                       Fill="White" />
+                        </Grid>
+
+                        <Viewbox Width="600"
+                                 Height="600"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Left"
+                                 Margin="-200,0,0,0">
+
+                            <Viewbox.Effect>
+                                <BlurEffect Radius="20" />
+                            </Viewbox.Effect>
+
+                            <Image Source="{Binding TeamStats.HomeTeamLogo}"
+                                   Opacity="0.08"
+                                   d:Source="../../Images/Club_Logos/256/custom.png" />
+                        </Viewbox>
+
+                        <Viewbox Width="600"
+                                 Height="600"
+                                 Grid.Column="2"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Right"
+                                 Margin="0,0,-200,0">
+
+                            <Viewbox.Effect>
+                                <BlurEffect Radius="20" />
+                            </Viewbox.Effect>
+
+                            <Image Source="{Binding TeamStats.AwayTeamLogo}"
+                                   Opacity="0.08"
+                                   d:Source="../../Images/Club_Logos/256/custom.png" />
+                        </Viewbox>
+                    </Grid>
+
+                    <!-- Blurred Glow Logos -->
+                    <!--<Viewbox Width="340"
+                             Height="340"
+                             VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <Viewbox.Effect>
+                            <BlurEffect Radius="30"/>
+                        </Viewbox.Effect>
+                        
+                        <Image Source="{Binding TeamStats.HomeTeamLogo}"
+                               Opacity="0.5"
+                               d:Source="../../Images/Club_Logos/256/custom.png"/>
+                    </Viewbox>
+
+                    <Viewbox Width="340"
+                             Height="340"
+                             Grid.Column="2" 
+                             VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                        <Viewbox.Effect>
+                            <BlurEffect Radius="30"/>
+                        </Viewbox.Effect>
+
+                        <Image Source="{Binding TeamStats.AwayTeamLogo}"
+                               Opacity="0.5"
+                               d:Source="../../Images/Club_Logos/256/custom.png"/>
+                    </Viewbox>-->
+
+
+                    <!-- Team Logos -->
+                    <Viewbox Width="420"
+                             Height="340"
+                             Margin="0,0,0,0">
+                        <Image Source="{Binding TeamStats.HomeTeamLogo}"
+                               d:Source="../../Images/Club_Logos/256/custom.png">
+                            <Image.Effect>
+                                <DropShadowEffect ShadowDepth="0"
+                                                  BlurRadius="50" />
+                            </Image.Effect>
+                        </Image>
+
+                        <Viewbox.Style>
+                            <Style TargetType="Viewbox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:baScreenControl}, Path=DataContext.SelectedIndex}"
+                                                 Value="0">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Viewbox.Style>
+                    </Viewbox>
+
+                    <Viewbox Width="420"
+                             Height="340"
+                             Grid.Column="2"
+                             Margin="0,0,0,0">
+                        <Image Source="{Binding TeamStats.AwayTeamLogo}"
+                               d:Source="../../Images/Club_Logos/256/custom.png">
+                            <Image.Effect>
+                                <DropShadowEffect ShadowDepth="0"
+                                                  BlurRadius="50" />
+                            </Image.Effect>
+                        </Image>
+
+                        <Viewbox.Style>
+                            <Style TargetType="Viewbox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=controls:baScreenControl}, Path=DataContext.SelectedIndex}"
+                                                 Value="0">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Viewbox.Style>
+                    </Viewbox>
+                </Grid>
+            </ControlTemplate>
+
+            <!--match info - location, score etc-->
+            <ControlTemplate TargetType="ContentControl"
+                             x:Key="MatchInfoPanel">
+                <Grid Margin="0,80,0,0"
+                      d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMMatchSummary}, IsDesignTimeCreatable=True}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="340" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="1"
+                              VerticalAlignment="Center">
+                            <TextBlock Text="{Binding TeamStats.HomeTeamScore, FallbackValue=''}"
+                                       Style="{StaticResource Display_XL}"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,200,0" />
+                            <TextBlock Text="-"
+                                       Style="{StaticResource Display_XL}"
+                                       Margin="20,0"
+                                       Foreground="{StaticResource RLWhite50}"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock  Text="{Binding TeamStats.AwayTeamScore, FallbackValue=''}"
+                                        Style="{StaticResource Display_XL}"
+                                        HorizontalAlignment="Left"
+                                        Margin="200,0,0,0" />
+                        </Grid>
+
+                        <TextBlock Text="{Binding TeamStats.HomeTeamName, Converter={StaticResource UppercaseConverter}, FallbackValue=''}"
+                                   Style="{StaticResource Display_M}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right" />
+                        <TextBlock Text="{Binding TeamStats.AwayTeamName, Converter={StaticResource UppercaseConverter}, FallbackValue=''}"
+                                   Style="{StaticResource Display_M}"
+                                   Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left" />
+
+                    </Grid>
+
+
+
+                    <StackPanel Grid.Row="1"
+                                VerticalAlignment="Center"
+                                Margin="0,-10">
+                        <TextBlock Text="{Binding Round, Converter={StaticResource UppercaseConverter}, FallbackValue=''}"
+                                  Visibility="{Binding Round, Converter={StaticResource StringToVisibilityConverter}}"
+                                   HorizontalAlignment="Center"
+                                   Style="{StaticResource Row_M}"
+                                   Foreground="{StaticResource RLWhite70}"
+                                   Margin="0,0,0,5" />
+                        <TextBlock Text="{Binding MatchLocation, FallbackValue=''}"
+                                   HorizontalAlignment="Center"
+                                   Style="{StaticResource Row_M_Hover}"                    
+                                   Visibility="{Binding MatchLocation, Converter={StaticResource StringToVisibilityConverter}}"
+
+                                   Foreground="{StaticResource RLWhite70}" />
+                        <TextBlock Text="{Binding MatchAttendance, FallbackValue=''}"
+                                   d:Text="Attendance: 127623723"
+                                   HorizontalAlignment="Center" 
+                                   Visibility="{Binding MatchAttendance, Converter={StaticResource StringToVisibilityConverter}}" 
+                                   Style="{StaticResource Row_M}"
+                                   Foreground="{StaticResource RLWhite70}" />
+                    </StackPanel>
+                </Grid>
+            </ControlTemplate>
+
+
+            <!--Main Template - NOT pause-->
+            <ControlTemplate TargetType="local:paMatchSummaryView"
+                             x:Key="MatchSummaryTemplate">
+                <controls:baScreenControl>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="0.5*" />
+                        </Grid.RowDefinitions>
+
+                        <ContentControl Template="{StaticResource TeamColoursAndLogos}"
+                                        x:Name="LogoControl"
+                                        Focusable="False"
+                                        DataContext="{Binding MatchSummary}"
+                                        Grid.RowSpan="3" />
+
+                        <ContentControl Template="{StaticResource MatchInfoPanel}"
+                                        DataContext="{Binding MatchSummary}"
+                                        Focusable="False" />
+
+                        <!--I know we are not going to do the tab control like this leave me alone god dammit!-->
+                        <genericcontrols:paTabControl HorizontalContentAlignment="Stretch" IsEnabled="False"
+                                                  Margin="100,0,100,15"
+                                                  Grid.Row="1"
+                                                  Style="{StaticResource GenericTextHeaderNonContentedTemplate}"
+                                                  SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                                                  x:Name="TC">
+                            <TabItem Header="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=Tutorial_Scoring_Title}" />
+
+                            <TabItem Header="{Binding MatchSummary.TeamStats.HomeTeamShortName, Converter={StaticResource UppercaseConverter}}"
+                                 d:Header="Home Stats" />
+
+                            <TabItem Header="{Binding MatchSummary.TeamStats.AwayTeamShortName, Converter={StaticResource UppercaseConverter}}"
+                                 d:Header="Away Stats" />
+
+                        </genericcontrols:paTabControl>
+
+
+                        <ContentPresenter Content="{StaticResource ScoringTab}"
+                                      Focusable="False"
+                                      VerticalAlignment="Center"
+                                      Grid.Row="2">
+                            <ContentPresenter.Style>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Visibility"
+                                        Value="Collapsed" />
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=TC, Path=SelectedIndex}"
+                                                 Value="0">
+                                            <Setter Property="Visibility"
+                                                Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentPresenter.Style>
+                        </ContentPresenter>
+
+
+
+                        <Grid  Grid.Row="2"
+                           Margin="100,0"
+                           Grid.IsSharedSizeScope="True">
+
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility"
+                                        Value="Collapsed" />
+
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=TC, Path=SelectedIndex}"
+                                                 Value="1">
+                                            <Setter Property="Visibility"
+                                                Value="Visible" />
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding ElementName=TC, Path=SelectedIndex}"
+                                                 Value="2">
+                                            <Setter Property="Visibility"
+                                                Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition  Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Border Background="{StaticResource RLWhite70}"
+                                Margin="0,5">
+
+                                <Grid DataContext="{Binding Players[0]}"
+                                  Margin="20,0"
+                                  Height="20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"
+                                                      SharedSizeGroup="A" />
+                                        <ColumnDefinition Width="0.9*"/>
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Tag="Name"
+                                           Text="{Binding RelativeSource={RelativeSource Self}, Path=Tag, Converter={StaticResource UppercaseLocalise}}"
+                                           Style="{StaticResource Row_S_Hover}"
+                                           Grid.Column="1"
+                                           Margin="20,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource RLBlack}" />
+
+                                    <ItemsControl Grid.Column="2" Focusable="False"
+                                              ItemsSource="{Binding PlayerStatistics}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <UniformGrid Rows="1" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding StatName, Converter={StaticResource UppercaseConverter}}"
+                                                       d:Text="{Binding StatName[0], Converter={StaticResource UppercaseConverter}}"
+                                                       Style="{StaticResource Row_S_Hover}"
+                                                       Foreground="{StaticResource RLBlack}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </Border>
+
+                            <controls:paListBox Grid.Row="1"
+                                                x:Name="ContentListBox"
+                                                Padding="0,2.5"
+                                                ItemTemplate="{StaticResource PlayerRow}"
+                                                ItemsSource="{Binding Players}">
+                                <b:Interaction.Triggers>
+                                    <b:DataTrigger Binding="{Binding Repopulated}"
+                                           Value="True">
+                                        <b:InvokeCommandAction Command="{Binding ElementName=ContentListBox, Path=ForceFocusToFirstElement}" />
+                                    </b:DataTrigger>
+                                </b:Interaction.Triggers>
+                            </controls:paListBox>
+                        </Grid>
+                        <b:Interaction.Triggers>
+                            <b:DataTrigger Binding="{Binding SelectedIndex}" Value="0" Comparison="NotEqual">
+                                <b:ChangePropertyAction PropertyName="Visibility" TargetName="LogoControl" Value="Collapsed"/>
+                            </b:DataTrigger>
+                            <b:DataTrigger Binding="{Binding SelectedIndex}" Value="0">
+                                <b:ChangePropertyAction PropertyName="Visibility" TargetName="LogoControl" Value="Visible"/>
+                            </b:DataTrigger>
+                        </b:Interaction.Triggers>
+                    </Grid>
+                </controls:baScreenControl>
+
+            </ControlTemplate>
+
+            <!--Pause template-->
+            <ControlTemplate TargetType="local:paMatchSummaryView"
+                             x:Key="PauseMatchSummaryTemplate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.7*" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="100" />
+                    </Grid.RowDefinitions>
+
+                    <ContentControl Template="{StaticResource TeamColoursAndLogos}"
+                                    Focusable="False"
+                                    Grid.RowSpan="3" />
+                    <ContentControl Template="{StaticResource MatchInfoPanel}"
+                                    Focusable="False" />
+
+                    <Grid Grid.Row="1"
+                          HorizontalAlignment="Center"
+                          Grid.IsSharedSizeScope="True">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300" />
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="300" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding Converter={StaticResource localise}, ConverterParameter=Tries}"
+                                   Style="{StaticResource Row_M_Hover}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,20,0,0"
+                                   Grid.Row="0"
+                                   Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3" />
+                        <Rectangle Grid.Row="1"
+                                   Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="1"
+                                   Width="1"
+                                   HorizontalAlignment="Center"
+                                   Fill="White"
+                                   Margin="0,20,0,0"
+                                   Opacity="0.2" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersTries}"
+                                              Grid.Row="1"
+                                              Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="0"
+                                              Tag="Tries"
+                                              HorizontalAlignment="Right"
+                                              HorizontalContentAlignment="Right"
+                                              Focusable="False" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersTries}"
+                                              Grid.Row="1"
+                                              Visibility="{Binding ShowTries, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="2"
+                                              Tag="Tries"
+                                              Focusable="False"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left" />
+
+                        <TextBlock Text="{Binding Converter={StaticResource localise}, ConverterParameter=CONVERSIONS}"
+                                   Grid.Row="2"
+                                   Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Margin="0,20,0,0"
+                                   Style="{StaticResource Row_M_Hover}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                        <Rectangle Grid.Row="3"
+                                   Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="1"
+                                   Width="1"
+                                   HorizontalAlignment="Center"
+                                   Fill="White"
+                                   Margin="0,20,0,0"
+                                   Opacity="0.2" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersConversions}"
+                                              Grid.Row="3"
+                                              Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="0"
+                                              Tag="Conversions"
+                                              HorizontalAlignment="Right"
+                                              HorizontalContentAlignment="Right"
+                                              Focusable="False" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersConversions}"
+                                              Grid.Row="3"
+                                              Visibility="{Binding ShowConversions, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="2"
+                                              Tag="Conversions"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left"
+                                              Focusable="False" />
+
+
+                        <TextBlock Text="{Binding Converter={StaticResource localise}, ConverterParameter=FieldGoals}"
+                                   Grid.Row="4"
+                                   Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Style="{StaticResource Row_M_Hover}"
+                                   Margin="0,20,0,0"
+                                   HorizontalAlignment="Center" />
+                        <Rectangle Grid.Row="5"
+                                   Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="1"
+                                   Width="1"
+                                   HorizontalAlignment="Center"
+                                   Fill="White"
+                                   Margin="0,20,0,0"
+                                   Opacity="0.2" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersFieldGoals}"
+                                              Grid.Row="5"
+                                              Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="0"
+                                              Tag="FieldGoals"
+                                              HorizontalAlignment="Right"
+                                              HorizontalContentAlignment="Right"
+                                              Focusable="False" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersFieldGoals}"
+                                              Grid.Row="5"
+                                              Visibility="{Binding ShowFieldGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="2"
+                                              Tag="FieldGoals"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left"
+                                              Focusable="False" />
+
+
+                        <TextBlock Text="{Binding Converter={StaticResource localise}, ConverterParameter=FieldGoals40m}"
+                                   Grid.Row="6"
+                                   Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Style="{StaticResource Row_M_Hover}"
+                                   Margin="0,20,0,0"
+                                   HorizontalAlignment="Center" />
+                        <Rectangle Grid.Row="7"
+                                   Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="1"
+                                   Width="1"
+                                   HorizontalAlignment="Center"
+                                   Fill="White"
+                                   Margin="0,20,0,0"
+                                   Opacity="0.2" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersFieldGoals40m}"
+                                              Grid.Row="7"
+                                              Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="0"
+                                              Tag="FieldGoals40m"
+                                              HorizontalAlignment="Right"
+                                              HorizontalContentAlignment="Right"
+                                              Focusable="False" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersFieldGoals40m}"
+                                              Grid.Row="7"
+                                              Visibility="{Binding ShowFieldGoals40m, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="2"
+                                              Tag="FieldGoals40m"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left"
+                                              Focusable="False" />
+
+
+                        <TextBlock Text="Penalty Goals"
+                                   Grid.Row="8"
+                                   Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="3"
+                                   Style="{StaticResource Row_M_Hover}"
+                                   Margin="0,20,0,0"
+                                   HorizontalAlignment="Center" />
+                        <Rectangle Grid.Row="9"
+                                   Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                   Grid.Column="1"
+                                   Width="1"
+                                   HorizontalAlignment="Center"
+                                   Fill="White"
+                                   Margin="0,20,0,0"
+                                   Opacity="0.2" />
+                        <HeaderedItemsControl ItemsSource="{Binding HomePlayersPenalties}"
+                                              Grid.Row="9"
+                                              Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="0"
+                                              Tag="PenaltyGoals"
+                                              HorizontalAlignment="Right"
+                                              HorizontalContentAlignment="Right"
+                                              Focusable="False" />
+                        <HeaderedItemsControl ItemsSource="{Binding AwayPlayersPenalties}"
+                                              Grid.Row="9"
+                                              Visibility="{Binding ShowPenaltyGoals, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Grid.Column="2"
+                                              Tag="PenaltyGoals"
+                                              HorizontalAlignment="Left"
+                                              HorizontalContentAlignment="Left"
+                                              Focusable="False" />
+                    </Grid>
+                </Grid>
+            </ControlTemplate>
+
+
+            <Style TargetType="local:paMatchSummaryView">
+                <Setter Property="Template"
+                        Value="{StaticResource MatchSummaryTemplate}" />
+
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsPaused, RelativeSource={RelativeSource Self}}"
+                                 Value="True">
+                        <Setter Property="Template"
+                                Value="{StaticResource PauseMatchSummaryTemplate}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <d:Grid>
+        <ContentPresenter>
+            <local:paMatchSummaryView Template="{StaticResource PauseMatchSummaryTemplate}" />
+        </ContentPresenter>
+    </d:Grid>
+
+
+</UserControl>

@@ -108,6 +108,9 @@ DATA_BUNDLES = {
     },
 }
 
+# league override keys applied by _apply_whole_record_patches
+LEAGUE_WHOLE_RECORD_KEYS = ("clubs", "name", "shortName", "sortIndex")
+
 IDENTITY_KEYS = {"id", "firstname", "surname", "fullName", "shortName", "nickname", "hudName", "name", "shortName"}
 
 
@@ -158,6 +161,154 @@ def data_mod_dirs(mods_dir):
     return dirs
 
 
+UNIFORM_BLOB_MAGIC = b"\xBC\xED\x34\x12"
+# value width per schema tag in the uniform blob (see _uniform_layout)
+UNIFORM_TAG_FMT = {0xFDEB: "<B", 0xFDE8: "<B", 0xFDED: "<H", 0xFDEF: "<I"}
+
+
+def _uniform_layout(data, end, bound):
+    """Decode a club's kit (uniform) blob: the BC ED 34 12 serializer that
+    follows the lineup. Layout (worked out 2026-10-22/24):
+        magic u32, u16 version, u16 ntypes, ntypes x (u32 name hash, u16 index)
+        ntypes x type: u16 nfields, u32 byte size, nfields x
+            (u32 FNV-1a32 field name, u32 byte offset, u16 tag, u16 count)
+            tag 0xFDEB u8, 0xFDE8 bool, 0xFDED u16, 0xFDEF u32; a small tag is
+            the index of a nested type.
+        then the type-2 instance: u16 kit count, then `capacity` fixed-size kit
+        records (type 0: 25-byte name, the kit config struct (type 1), optional
+        isHidden bool), then the per-category default kit indices.
+    Capacity is fixed per club (20 for most NRL clubs) and unused slots are
+    zero, so adding a kit doesn't resize anything."""
+    m = data.find(UNIFORM_BLOB_MAGIC, end, bound)
+    if m < 0:
+        return None
+    ntypes = struct.unpack_from("<H", data, m + 6)[0]
+    p = m + 8 + 6 * ntypes
+    types = []
+    for _ in range(ntypes):
+        nfields, size = struct.unpack_from("<HI", data, p)
+        p += 6
+        fields = {}
+        for _ in range(nfields):
+            h, off, tag, count = struct.unpack_from("<IIHH", data, p)
+            fields[h] = (off, tag, count)
+            p += 12
+        types.append((size, fields))
+    record_size, record_fields = types[0]
+    arrays = [f for f in types[2][1].values() if f[1] == 0]  # array of type 0 = the kits
+    if len(arrays) != 1:
+        raise ValueError("unexpected uniform blob layout (no single kit array)")
+    array_off, _tag, capacity = arrays[0]
+    config_off = next(f[0] for f in record_fields.values() if f[1] == 1)
+    return {
+        "count_pos": p,
+        "records_pos": p + array_off,
+        "record_size": record_size,
+        "capacity": capacity,
+        "record_fields": record_fields,
+        "config_off": config_off,
+        "config_fields": types[1][1],
+    }
+
+
+def _patch_npc(data, anchors, by_id, record_id, override, fname, verbose):
+    """defaultdata_npcs extras: same-length firstname/surname renames (in
+    place, so no record moves) and "visual": {option: value} patches to the
+    record's CCharacterVisualConfig blob (parse_npcs.visual_layout)."""
+    applied = 0
+    start, end, _id = by_id[record_id]
+    first, sur = next(a[3:5] for a in pn.find_anchors(bytes(data)) if a[2] == record_id)
+    pos = start + 5  # past the id's flag + u32: firstname flag, length, chars
+    for key, cur in (("firstname", first), ("surname", sur)):
+        new = override.get(key, cur)
+        if new != cur:
+            if len(new) != len(cur) or not new.isascii():
+                raise ValueError(
+                    f"defaultdata_npcs: id {record_id} {key} {cur!r} -> {new!r} in {fname!r}: only "
+                    f"same-length ASCII renames are supported (a new length would resize the record)"
+                )
+            data[pos + 2:pos + 2 + len(cur)] = new.encode("ascii")
+            applied += 1
+            if verbose:
+                print(f"    [defaultdata/defaultdata_npcs] id={record_id} {key}: {cur!r} -> {new!r}")
+        pos += 2 + len(cur)
+    if override.get("visual"):
+        applied += _patch_visual(data, anchors, record_id, override["visual"], "defaultdata/defaultdata_npcs", verbose)
+    return applied
+
+
+def _patch_visual(data, anchors, record_id, visual, bundle_path, verbose):
+    """{option: value} patches to the CCharacterVisualConfig blob that
+    precedes a player or NPC record (same layout in both databases). Every
+    option has a fixed slot, so the blob never changes size."""
+    applied = 0
+    index = [a[2] for a in anchors].index(record_id)
+    vstart, vend = pn.record_visual_span(bytes(data), anchors, index)
+    blob = bytearray(data[vstart:vend])
+    for name, value in visual.items():
+        old = pn.visual_set(blob, name, value)
+        if old != value:
+            applied += 1
+            if verbose:
+                print(f"    [{bundle_path}] id={record_id} visual.{name}: {old} -> {value}")
+    data[vstart:vend] = blob
+    return applied
+
+
+def _apply_whole_record_patches(bundle_path, data, pristine, patches, verbose):
+    """Overrides that can resize a record, applied through bigant_db's exact
+    reader/writer after every in-place patch:
+      clubs   "uniforms": kit list edits (kit_blob.apply_spec - copy kits
+              from other clubs, rename, reorder, add past the stored capacity)
+      leagues "clubs": [club ids] - the league's member clubs, replacing all;
+              "name" / "shortName" (any length) and "sortIndex" (menu order,
+              ascending)
+    `patches` is [(record_id, override, fname)] in override-file order."""
+    import bigant_db
+    import kit_blob
+    db = bigant_db.load(data)
+    by_id = db.by_id()
+    applied = 0
+    if bundle_path == "defaultdata/defaultdata_clubs":
+        stock = {r["tables"][0]["id"]: r["blob"] for r in bigant_db.load(pristine).records}
+        fill = kit_blob.field_defaults(stock.values())
+        for record_id, override, fname in patches:
+            rec = by_id[record_id]
+            label = f"[{bundle_path}] id={record_id}"
+            try:
+                rec["blob"] = kit_blob.apply_spec(rec["blob"], override["uniforms"], stock.__getitem__, fill,
+                                                  label, verbose)
+            except (KeyError, ValueError) as e:
+                raise ValueError(f"{bundle_path}: id {record_id} uniforms (override {fname!r}): {e}") from None
+            applied += 1
+    elif bundle_path == "defaultdata/defaultdata_leagues":
+        table = db.tables[0]
+        slots = [key for (_typ, name, _cat), key in zip(table.fields, table.keys) if name == "clubs"]
+        for record_id, override, fname in patches:
+            vals = by_id[record_id]["tables"][0]
+            for key, field in (("name", "name"), ("shortName", "shortName"), ("sortIndex", "sort index")):
+                if key in override and vals.get(field) != override[key]:
+                    if verbose:
+                        print(f"    [{bundle_path}] id={record_id} {key}: {vals.get(field)!r} -> {override[key]!r}")
+                    vals[field] = override[key]
+                    applied += 1
+            if "clubs" not in override:
+                continue
+            clubs = override["clubs"]
+            if len(clubs) > len(slots):
+                raise ValueError(f"{bundle_path}: id {record_id} lists {len(clubs)} clubs, a league holds "
+                                 f"at most {len(slots)} (override {fname!r})")
+            old = [vals[k] for k in slots if vals.get(k) is not None]
+            for i, key in enumerate(slots):
+                vals[key] = clubs[i] if i < len(clubs) else None
+            applied += 1
+            if verbose:
+                print(f"    [{bundle_path}] id={record_id} clubs: {old} -> {clubs}")
+    if verbose and applied:
+        print(f"  applied {applied} whole-record override(s) to {bundle_path}")
+    return bigant_db.dump(db)
+
+
 def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     """Return a patched copy of pristine_bytes with every override file in
     override_files (a list of absolute *.json paths, e.g. one directory's
@@ -168,10 +319,15 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     bundle = DATA_BUNDLES[bundle_path]
     data = bytearray(pristine_bytes)
 
+    # whole new records ({"new": true, ...}) are appended after the patches
+    new_files = [f for f in override_files if json.load(open(f)).get("new")]
+    override_files = [f for f in override_files if f not in new_files]
+
     anchors = bundle["find_anchors"](bytes(data))
     by_id = {a[2]: a for a in anchors}  # id -> (start, end, id)
 
     applied = 0
+    whole_record = []  # (id, override, fname) for _apply_whole_record_patches
     for fpath in sorted(override_files):
         fname = os.path.basename(fpath)
         record_id = int(fname.split("_", 1)[0].split(".")[0])
@@ -289,6 +445,11 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
                 if verbose:
                     print(f"    [{bundle_path}] id={record_id} jersey.{field_name}: {cur_val} -> {new_val}")
 
+        if (bundle_path == "defaultdata/defaultdata_clubs" and "uniforms" in override) or \
+                (bundle_path == "defaultdata/defaultdata_leagues" and
+                 any(k in override for k in LEAGUE_WHOLE_RECORD_KEYS)):
+            whole_record.append((record_id, override, fname))
+
         if bundle_path == "defaultdata/defaultdata_clubs" and "stadium" in override:
             new_stadium = override["stadium"]
             _parse_fields3, pos_after_fields3 = pc.parse_record(bytes(data), end, bound)
@@ -309,8 +470,16 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
                 if verbose:
                     print(f"    [{bundle_path}] id={record_id} stadium: {cur_stadium} -> {new_stadium}")
 
+        if bundle_path == "defaultdata/defaultdata_npcs":
+            applied += _patch_npc(data, anchors, by_id, record_id, override, fname, verbose)
+
+        if bundle_path == "defaultdata/defaultdata_players" and override.get("visual"):
+            applied += _patch_visual(data, anchors, record_id, override["visual"], bundle_path, verbose)
+
         for key, new_val in override.items():
-            if key in IDENTITY_KEYS or key in ("roster", "lineup", "stadium", "alternativeNumberingSystem", "jersey"):
+            if key in IDENTITY_KEYS or key in ("roster", "lineup", "stadium", "alternativeNumberingSystem", "jersey", "uniforms", "visual"):
+                continue
+            if bundle_path == "defaultdata/defaultdata_leagues" and key in LEAGUE_WHOLE_RECORD_KEYS:
                 continue
             located = bundle["locate"](bytes(data), end, bound, key)
             if located is None:
@@ -351,4 +520,37 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
 
     if verbose and applied:
         print(f"  applied {applied} field override(s) to {bundle_path}")
+    if whole_record:
+        data = bytearray(_apply_whole_record_patches(bundle_path, bytes(data), pristine_bytes, whole_record, verbose))
+    if new_files:
+        data = bytearray(_append_records(bundle_path, bytes(data), new_files, verbose))
     return bytes(data)
+
+
+def _append_records(bundle_path, data, files, verbose):
+    """Append whole records to a database via bigant_db (exact schema
+    reader/writer). Each file is {"new": true, "<table name>": {field:
+    value}, ...} with one key per schema table (a missing table is written
+    as absent) and "visual": the record's visual blob, a file path relative
+    to the JSON. The id must not exist yet."""
+    import bigant_db
+    if bundle_path != "defaultdata/defaultdata_players":
+        raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players")
+    db = bigant_db.load(data)
+    ids = set(db.by_id())
+    for fpath in sorted(files):
+        spec = json.load(open(fpath))
+        main = spec[db.tables[0].name]
+        if main["id"] in ids:
+            raise ValueError(f"{bundle_path}: new record {os.path.basename(fpath)} uses id {main['id']}, which exists")
+        known = set(bigant_db.field_names(db))
+        unknown = set(main) - known
+        if unknown:
+            raise ValueError(f"{bundle_path}: {os.path.basename(fpath)} has fields the schema doesn't: {sorted(unknown)}")
+        with open(os.path.join(os.path.dirname(fpath), spec["visual"]), "rb") as f:
+            visual = f.read()
+        db.records.append({"visual": visual, "tables": [spec.get(t.name) for t in db.tables]})
+        ids.add(main["id"])
+    if verbose:
+        print(f"  added {len(files)} new record(s) to {bundle_path}")
+    return bigant_db.dump(db)

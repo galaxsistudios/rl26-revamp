@@ -1,0 +1,24 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME RLWC",
+        "set": {
+          "uniformTop": 60121,
+          "uniformBottom": 60121,
+          "uniformSocks": 60121
+        }
+      },
+      {
+        "name": "WORLD CUP 2017",
+        "copyOf": "HOME RLWC",
+        "set": {
+          "uniformTop": 60122,
+          "uniformBottom": 60122,
+          "uniformSocks": 60122
+        }
+      }
+    ]
+  }
+}

@@ -96,7 +96,11 @@ SPONSOR_ENTRIES = range(39882, 39926)
 
 
 def build_model(blobset, entry):
-    stored, *_ = ce.read_blob_full(blobset, entry)
+    # The raw blob as stored (one outer zstd frame). read_blob_full now
+    # decodes that frame itself, so read the file directly.
+    *_, bpath = ce.read_blob_full(blobset, entry)
+    with open(bpath, "rb") as f:
+        stored = f.read()
     sizes = pack.entry_sizes(ce._INDEX_DATA, ce._SIZE_TABLE_OFF, entry)
     if sizes[0] != len(stored) or sizes[2] != 0:
         raise RuntimeError(f"model {entry} is not pristine (sizes {sizes}) - restore it first")

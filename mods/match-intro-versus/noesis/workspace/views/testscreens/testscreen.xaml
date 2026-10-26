@@ -1,0 +1,351 @@
+<!--
+    match-intro-versus: the match intro versus overlay. Repurposes the unused
+    Views/TestScreens/TestScreen view (build.py can't add files). Bound to NVMMatchIntroVersus
+    (rules/cutscenes/initial_cutscene.lua):
+      IntroState           "hidden" | "in" | "out"
+      HomeTeam / AwayTeam  the HUD's NVMTeams (PrimaryColour, SecondaryColour, TeamLogo)
+      HomeName / AwayName  upper-case FullName
+      VenueName, VenueCity, KickOffTime, ShowDivider (both city and kick-off known)
+
+    VersusIn (about 2.1 s): backdrop fades up, both colour bands and crests fly in from the
+    sides, VS punches in, team names rise, then the venue bar opens from the centre.
+    VersusOut (0.5 s): everything leaves the way it came. IntroVersusOutLead in the Lua (1.1 s)
+    starts it before the establishing shot ends, so it's gone before the team stinger.
+
+    Layout (1920x1080 design space, Viewbox Uniform): crests centred at x=560 and x=1360, y=430;
+    VS at the centre; venue bar 1120 wide at y=700. Fonts are the nrl-broadcast-scoreboard ones,
+    looked up with DynamicResource so a missing font falls back instead of failing the view.
+-->
+<Grid
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+      mc:Ignorable="d"
+      x:Name="IntroVersusRoot"
+      Focusable="False"
+      IsHitTestVisible="False"
+      d:DesignHeight="1080" d:DesignWidth="1920">
+
+    <Grid.Resources>
+        <ResourceDictionary>
+            <BackEase x:Key="FlyEase" EasingMode="EaseOut" Amplitude="0.35"/>
+            <CubicEase x:Key="InEase" EasingMode="EaseOut"/>
+            <CubicEase x:Key="OutEase" EasingMode="EaseIn"/>
+
+            <Storyboard x:Key="VersusIn" FillBehavior="HoldEnd">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Versus" Storyboard.TargetProperty="(UIElement.Visibility)">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}"/>
+                </ObjectAnimationUsingKeyFrames>
+
+                <!--Backdrop-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Backdrop" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+
+                <!--Colour bands sweep in from the sides-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeBand" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-1400"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.15" Value="-1400"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwayBand" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1400"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.15" Value="1400"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+
+                <!--Crests fly in, slight overshoot-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeCrest" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-1100"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.3" Value="-1100"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0" EasingFunction="{StaticResource FlyEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwayCrest" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1100"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.3" Value="1100"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.9" Value="0" EasingFunction="{StaticResource FlyEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+
+                <!--VS punches in-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VsText" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.95" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VsText" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="2.4"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="2.4"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.05" Value="1" EasingFunction="{StaticResource FlyEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VsText" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="2.4"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="2.4"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.05" Value="1" EasingFunction="{StaticResource FlyEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+
+                <!--Team names rise-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Names" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.95" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.25" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Names" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="30"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0.95" Value="30"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.25" Value="0" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+
+                <!--Venue bar opens from the centre, then its text fades up-->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VenueBar" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:1.3" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.4" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VenuePanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:1.3" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.7" Value="1" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VenueText" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:1.6" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:1.9" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VenueText" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-40"/>
+                    <DiscreteDoubleKeyFrame KeyTime="0:0:1.6" Value="-40"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:2.1" Value="0" EasingFunction="{StaticResource InEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <!--No start keyframes: each part leaves from wherever it is, so an early "out" (still
+                flying in) doesn't jump.-->
+            <Storyboard x:Key="VersusOut" FillBehavior="HoldEnd">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VenueBar" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Names" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VsText" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeCrest" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-1100" EasingFunction="{StaticResource OutEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwayCrest" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1100" EasingFunction="{StaticResource OutEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.05" Storyboard.TargetName="HomeBand" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="-1400" EasingFunction="{StaticResource OutEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0.05" Storyboard.TargetName="AwayBand" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1400" EasingFunction="{StaticResource OutEase}"/>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Backdrop" Storyboard.TargetProperty="(UIElement.Opacity)">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Versus" Storyboard.TargetProperty="(UIElement.Visibility)">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="{x:Static Visibility.Collapsed}"/>
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+
+            <Storyboard x:Key="VersusHidden" FillBehavior="HoldEnd">
+                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Versus" Storyboard.TargetProperty="(UIElement.Visibility)">
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}"/>
+                </ObjectAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+    </Grid.Resources>
+
+    <i:Interaction.Triggers>
+        <ei:DataTrigger Binding="{Binding IntroState}" Value="in">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource VersusIn}" ControlStoryboardOption="Play"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding IntroState}" Value="out">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource VersusOut}" ControlStoryboardOption="Play"/>
+        </ei:DataTrigger>
+        <ei:DataTrigger Binding="{Binding IntroState}" Value="hidden">
+            <ei:ControlStoryboardAction Storyboard="{StaticResource VersusHidden}" ControlStoryboardOption="Play"/>
+        </ei:DataTrigger>
+    </i:Interaction.Triggers>
+
+    <Viewbox Stretch="Uniform" VerticalAlignment="Center">
+        <Grid x:Name="Versus" Width="1920" Height="1080" Visibility="Collapsed">
+
+            <!--Darkens the shot behind the graphics so they read on bright stands-->
+            <Rectangle x:Name="Backdrop" Opacity="0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00000000" Offset="0"/>
+                        <GradientStop Color="#59000000" Offset="0.3"/>
+                        <GradientStop Color="#73000000" Offset="0.55"/>
+                        <GradientStop Color="#A6000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Canvas>
+                <!--Skewed team-colour bands behind each crest. 1000x240 at y=310; the home band
+                    ends just left of centre, the away band starts just right of it.-->
+                <Grid x:Name="HomeBand" Canvas.Left="-60" Canvas.Top="310" Width="1000" Height="240"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <SkewTransform AngleX="-15"/>
+                            <TranslateTransform X="-1400"/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <Grid.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#FF000000" Offset="0.35"/>
+                            <GradientStop Color="#FF000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.OpacityMask>
+                    <Rectangle Opacity="0.9">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding HomeTeam.PrimaryColour}" d:Color="#470F6D"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Height="10" VerticalAlignment="Bottom">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding HomeTeam.SecondaryColour}" d:Color="#FFD200"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+
+                <Grid x:Name="AwayBand" Canvas.Left="980" Canvas.Top="310" Width="1000" Height="240"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <SkewTransform AngleX="-15"/>
+                            <TranslateTransform X="1400"/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <Grid.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="#FF000000" Offset="0"/>
+                            <GradientStop Color="#FF000000" Offset="0.65"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.OpacityMask>
+                    <Rectangle Opacity="0.9">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding AwayTeam.PrimaryColour}" d:Color="#00539F"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Rectangle Height="10" VerticalAlignment="Bottom">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{Binding AwayTeam.SecondaryColour}" d:Color="#FFFFFF"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Grid>
+
+                <!--Crests: 320x320 centred at (560,430) and (1360,430)-->
+                <Image x:Name="HomeCrest" Canvas.Left="400" Canvas.Top="270" Width="320" Height="320"
+                       Stretch="Uniform" Source="{Binding HomeTeam.TeamLogo}">
+                    <Image.RenderTransform>
+                        <TranslateTransform X="-1100"/>
+                    </Image.RenderTransform>
+                </Image>
+                <Image x:Name="AwayCrest" Canvas.Left="1200" Canvas.Top="270" Width="320" Height="320"
+                       Stretch="Uniform" Source="{Binding AwayTeam.TeamLogo}">
+                    <Image.RenderTransform>
+                        <TranslateTransform X="1100"/>
+                    </Image.RenderTransform>
+                </Image>
+
+                <!--Team names under the crests-->
+                <Grid x:Name="Names" Canvas.Left="0" Canvas.Top="596" Width="1920" Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform Y="30"/>
+                    </Grid.RenderTransform>
+                    <TextBlock Text="{Binding HomeName}" d:Text="MELBOURNE STORM"
+                               Width="700" Margin="210,0,0,0" HorizontalAlignment="Left" TextAlignment="Center"
+                               FontFamily="{DynamicResource FontFamily_ScoreMaison}" FontSize="30" Foreground="White"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding AwayName}" d:Text="BRISBANE BRONCOS"
+                               Width="700" Margin="1010,0,0,0" HorizontalAlignment="Left" TextAlignment="Center"
+                               FontFamily="{DynamicResource FontFamily_ScoreMaison}" FontSize="30" Foreground="White"
+                               TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Canvas>
+
+            <!--VS-->
+            <TextBlock x:Name="VsText" Text="VS"
+                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,360,0,0"
+                       FontFamily="{DynamicResource FontFamily_ScoreJoyride}" FontSize="120" Foreground="White"
+                       Opacity="0" RenderTransformOrigin="0.5,0.5">
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="24" ShadowDepth="0" Color="Black" Opacity="0.8"/>
+                </TextBlock.Effect>
+                <TextBlock.RenderTransform>
+                    <ScaleTransform ScaleX="2.4" ScaleY="2.4"/>
+                </TextBlock.RenderTransform>
+            </TextBlock>
+
+            <!--Venue / kick-off bar-->
+            <Grid x:Name="VenueBar" Width="1120" Height="130"
+                  HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,700,0,0" Opacity="0">
+                <Grid x:Name="VenuePanel" RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="0"/>
+                            <SkewTransform AngleX="-12"/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <Rectangle Fill="#E6101317"/>
+                    <!--Accent strip: home colour left half, away colour right half-->
+                    <Grid Height="8" VerticalAlignment="Top">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Grid.Column="0">
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding HomeTeam.PrimaryColour}" d:Color="#470F6D"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle Grid.Column="1">
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding AwayTeam.PrimaryColour}" d:Color="#00539F"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                </Grid>
+
+                <StackPanel x:Name="VenueText" Orientation="Vertical"
+                            HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,8,0,0" Opacity="0">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform X="-40"/>
+                    </StackPanel.RenderTransform>
+                    <TextBlock Text="{Binding VenueName}" d:Text="ACCOR STADIUM"
+                               HorizontalAlignment="Center" MaxWidth="1040" TextTrimming="CharacterEllipsis"
+                               FontFamily="{DynamicResource FontFamily_ScoreJoyride}" FontSize="44" Foreground="White"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,0">
+                        <TextBlock x:Name="CityText" Text="{Binding VenueCity}" d:Text="SYDNEY"
+                                   FontFamily="{DynamicResource FontFamily_ScoreMaison}" FontSize="24" Foreground="#D9FFFFFF"/>
+                        <Rectangle x:Name="Divider" Width="3" Height="22" Margin="18,0" Fill="#99FFFFFF" VerticalAlignment="Center">
+                            <Rectangle.Style>
+                                <Style TargetType="Rectangle">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ShowDivider}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
+                        <TextBlock x:Name="KickOffText" Text="{Binding KickOffTime}" d:Text="KICK-OFF 7:00PM"
+                                   FontFamily="{DynamicResource FontFamily_ScoreMaison}" FontSize="24" Foreground="#D9FFFFFF"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Viewbox>
+</Grid>

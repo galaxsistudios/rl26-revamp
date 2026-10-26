@@ -16,6 +16,10 @@ players go primary / secondary / primary / secondary.
 - Lighting scenes are Lua modules that `LightingModule` `load`s, `import`s, then `unloadPackage`s every
   time a cutscene starts. That means the `lighting2` table can be edited between `load` and `import` with no
   stale state carried over.
+- `rules/cutscenes/teamshield_rulestate.lua` also carries the hooks for **match-intro-versus** (two mods
+  can't override one file). The hooks create, update and dispose `initial_cutscene.MatchIntroVersus`,
+  all `pcall`ed. Without that mod the stock `initial_cutscene` has no `MatchIntroVersus`, so they do
+  nothing.
 - `rules/cutscenes/teamshield_rulestate.lua`: `onEnterSolid` copies `matchInData.home/.away`
   `primaryColour`/`secondaryColour` into `_G.GFTunnelTeamColours`, before it queues the intro.
 - `rendering/modules/lighting_module.lua`: for the three tunnel scenes, when the cutscene name contains

@@ -1,0 +1,51 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2024",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60011,
+          "uniformBottom": 60011,
+          "uniformSocks": 60011
+        }
+      },
+      {
+        "name": "AWAY 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60012,
+          "uniformBottom": 60012,
+          "uniformSocks": 60012
+        }
+      },
+      {
+        "name": "ALTERNATE 2024",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60013,
+          "uniformBottom": 60013,
+          "uniformSocks": 60013
+        }
+      },
+      {
+        "name": "ANZAC 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60014,
+          "uniformBottom": 60014,
+          "uniformSocks": 60014
+        }
+      },
+      {
+        "name": "ANZAC 2023",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60058,
+          "uniformBottom": 60058,
+          "uniformSocks": 60058
+        }
+      }
+    ]
+  }
+}

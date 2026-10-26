@@ -1,0 +1,15 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "ALL STARS 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60297,
+          "uniformBottom": 60297,
+          "uniformSocks": 60297
+        }
+      }
+    ]
+  }
+}

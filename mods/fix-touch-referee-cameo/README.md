@@ -25,6 +25,12 @@ tee prop. The cutscene system picks one of its four cutscenes (`rl1_conversion_l
 `rl1_conversion_l_01/03`) from the play's random seed. To try another group, change
 `InTouchReactionRuleState.CutsceneGroup`.
 
+Both this reaction and the stock conversion cutscene request pass the player's side as `primarySide`.
+Stock RL26 leaves it unset, which breaks any cutscene whose actors filter on `side = "primary"`, such as
+Rugby 25's post-conversion reactions (`r25-imports`). No actor matches, the duration comes out at −0.5 s,
+and the camera pans away without playing anything. RL26's own conversion cutscenes don't filter on side,
+so this changes nothing for them.
+
 The class lives in `rules/cutscenes/conversion_cutscene_rulestate.lua`. That module is already in
 `rulestate_registration.lua`, and build.py can't add new script files.
 

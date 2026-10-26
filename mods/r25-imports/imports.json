@@ -1,0 +1,961 @@
+{
+  "releaseChannel": "r25-expansion",
+  "releaseNote": "Rugby 25 Expansion only - exclude from the main RL26 Revamp release; built on the player's machine from their own Rugby 25 install (tools/r25_import.py).",
+  "testMode": false,
+  "debugLog": false,
+  "emotionMap": {
+    "zero": [
+      "celebrate_yell",
+      "celebrate",
+      "celebrate_talk",
+      "cs_celebrate_yell_smile_loop"
+    ]
+  },
+  "emotionLoop": true,
+  "cutscenes": [
+    {
+      "name": "TryCelebrate_roll_hug",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low",
+        "TryCelebrateStanding_high",
+        "TryCelebrateGround",
+        "TryCelebrateGround_low",
+        "TryCelebrateGround_high"
+      ],
+      "weight": 2
+    },
+    {
+      "name": "TryCelebrate_intense_slide_yell",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low",
+        "TryCelebrateStanding_high",
+        "TryCelebrateGround",
+        "TryCelebrateGround_low",
+        "TryCelebrateGround_high"
+      ],
+      "weight": 2
+    },
+    {
+      "name": "TryCelebrate_ball_throw_group",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low",
+        "TryCelebrateStanding_high",
+        "TryCelebrateGround",
+        "TryCelebrateGround_low",
+        "TryCelebrateGround_high"
+      ],
+      "weight": 2
+    },
+    {
+      "name": "TryCelebrate_ball_throw_hug_group",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low",
+        "TryCelebrateStanding_high",
+        "TryCelebrateGround",
+        "TryCelebrateGround_low",
+        "TryCelebrateGround_high"
+      ],
+      "weight": 2
+    },
+    {
+      "name": "Post_Conversion_01",
+      "groups": [
+        "Conversion_Success",
+        "Conversion_Success_NoTee"
+      ],
+      "weight": 1,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "cameraAnimFromActor": true
+    },
+    {
+      "name": "Post_Conversion_02",
+      "groups": [
+        "Conversion_Success",
+        "Conversion_Success_NoTee"
+      ],
+      "weight": 1,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "cameraAnimFromActor": true
+    },
+    {
+      "name": "Post_Conversion_03",
+      "groups": [
+        "Conversion_Fail",
+        "Conversion_Fail_NoTee"
+      ],
+      "weight": 1,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "cameraAnimFromActor": true
+    },
+    {
+      "name": "Conversion_T_success_r24_01",
+      "groups": [
+        "Conversion_Success",
+        "Conversion_Success_NoTee"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "IntroCorridorWalkTeam_02",
+      "note": "R25 home-team corridor walk (10 players) in RL26's corridor set; placed by clipOffsets. cuts: camera 02 left out (2.4 m off the centre line, inside RL26's narrower corridor's wall)",
+      "groups": [
+        "rl1_corridor_home_02"
+      ],
+      "weight": 1,
+      "stockWeight": 2,
+      "fromRL": {
+        "cutscene": "rl1_corridor_home_02",
+        "fields": [
+          "props",
+          "lightingScenes",
+          "soundEvents",
+          "playbackEvents",
+          "playerPosY",
+          "cutsceneOrigin"
+        ]
+      },
+      "overrides": {
+        "cuts": [
+          [
+            {
+              "camera": "cs_camera01",
+              "frame": 0,
+              "transition": "cut"
+            }
+          ],
+          [
+            {
+              "camera": "cs_camera03",
+              "frame": 0,
+              "transition": "cut"
+            }
+          ]
+        ],
+        "cameraAndLightingYOffset": 0.3
+      }
+    },
+    {
+      "name": "IntroCorridorWalkTeam_01",
+      "note": "R25 corridor walk with side entrance (8 players), away team in R25; placed by clipOffsets",
+      "groups": [
+        "rl1_corridor_home_02"
+      ],
+      "weight": 1,
+      "stockWeight": 2,
+      "swapSides": true,
+      "fromRL": {
+        "cutscene": "rl1_corridor_home_02",
+        "fields": [
+          "props",
+          "lightingScenes",
+          "soundEvents",
+          "playbackEvents",
+          "playerPosY",
+          "cutsceneOrigin"
+        ]
+      },
+      "overrides": {
+        "cameraAndLightingYOffset": 0.3
+      }
+    },
+    {
+      "name": "IntroStandardTwoTeams_01",
+      "note": "R25 two-team RUN-OUT (both teams at once, no tunnel entrance; 15 a side filled from RL26's 17-man squads). Staged with RL26's regular run-out flames/lighting/sounds. Played through introSequences (r25_runout), not a group",
+      "groups": [],
+      "weight": 1,
+      "fromRL": {
+        "cutscene": "IntroAwayTeam_01",
+        "fields": [
+          "props",
+          "lightingScenes",
+          "soundEvents",
+          "playbackEvents",
+          "sequences",
+          "cutsceneOrigin"
+        ]
+      },
+      "retime": {
+        "PlayAwayThemeEvent": 60
+      }
+    },
+    {
+      "name": "IntroFinalsTournament_02",
+      "note": "PARKED (see to-do.md, anzac-cutscene): last two camera shots go black. Anzac walk-out: both teams walk out of the tunnel side by side and form two lines near halfway (R25 finals-tournament walk, 21 s). Stripped to a solemn version: no trophy/ball props, fireworks, flames or loudspeaker music - just the crowd. Shifted 25 m (15 m froze the intro layout: players started 57 m back, past RL26's furthest run-out start of 48.8 m) towards the field by clipOffsets. TESTING: replaces the regular intro every casual match (introSequences r25_anzac). Cameras 18/20 follow players 21/5 (moveRelativeToActorLabel); those optional slots were left empty (black shots), so actorFields gives them the captains, who are always present",
+      "groups": [],
+      "overrides": {
+        "props": null,
+        "playbackEvents": null,
+        "lightingScenes": null,
+        "soundEvents": [
+          {
+            "frame": 0,
+            "eventTable": {
+              "type": "PlaySoundEvent",
+              "soundKey": "sfx_cutscene_crowd_match_intro_01"
+            }
+          }
+        ]
+      },
+      "actorFields": {
+        "p5_intro_finals_non_world_cup_02": {
+          "filter": {
+            "actorType": "player",
+            "side": {
+              "$expr": "sidehelper.away"
+            },
+            "specialRole": "captain"
+          }
+        },
+        "p1_intro_finals_non_world_cup_02": {
+          "filter": {
+            "actorType": "player",
+            "side": {
+              "$expr": "sidehelper.away"
+            }
+          }
+        },
+        "p21_intro_finals_non_world_cup_02": {
+          "filter": {
+            "actorType": "player",
+            "side": {
+              "$expr": "sidehelper.home"
+            },
+            "specialRole": "captain"
+          }
+        },
+        "p16_intro_finals_non_world_cup_02": {
+          "filter": {
+            "actorType": "player",
+            "side": {
+              "$expr": "sidehelper.home"
+            }
+          }
+        }
+      },
+      "disabled": true
+    },
+    {
+      "name": "RefereePenalty_01",
+      "note": "R25 referee has a word with the offender (cut content, legacy cutscenes_config.lua). Played before the penalty choice by r25-imports' own rules/penalty/penaltyselect_setup_rulestate.lua (PenaltyTalkRuleState); targets: offender, referee and the offending side's captain (its optional p3, captain-only; never used when the offender is the captain)",
+      "groups": [
+        "PenaltyTalkCaptain"
+      ],
+      "weight": 1,
+      "actorFields": {
+        "p3_referee_penalty_01": {
+          "filter": {
+            "actorType": "player",
+            "specialRole": "captain"
+          }
+        }
+      }
+    },
+    {
+      "name": "RefereePenalty_02",
+      "note": "R25 referee has a word with the offender (cut content, legacy cutscenes_config.lua). Played before the penalty choice by r25-imports' own rules/penalty/penaltyselect_setup_rulestate.lua (PenaltyTalkRuleState); targets: offender, referee",
+      "groups": [
+        "PenaltyTalkSolo"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "RefereePenalty_03",
+      "note": "R25 referee has a word with the offender (cut content, legacy cutscenes_config.lua). Played before the penalty choice by r25-imports' own rules/penalty/penaltyselect_setup_rulestate.lua (PenaltyTalkRuleState); targets: offender, referee and the offending side's captain (its optional p3, captain-only; never used when the offender is the captain)",
+      "groups": [
+        "PenaltyTalkCaptain"
+      ],
+      "weight": 1,
+      "actorFields": {
+        "p3_referee_penalty_03": {
+          "filter": {
+            "actorType": "player",
+            "specialRole": "captain"
+          }
+        }
+      }
+    },
+    {
+      "name": "RefereePenalty_04",
+      "note": "R25 referee has a word with the offender (cut content, legacy cutscenes_config.lua). Played before the penalty choice by r25-imports' own rules/penalty/penaltyselect_setup_rulestate.lua (PenaltyTalkRuleState); targets: offender, referee",
+      "groups": [
+        "PenaltyTalkSolo"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_01",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_02",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_03",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_03b",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_04",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_05",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (lying), intense -> _high",
+      "groups": [
+        "TryCelebrateGround",
+        "TryCelebrateGround_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_06",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_07",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_08",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_09",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_10",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_11",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_12",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_12b",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_13",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_14",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_15",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), intense -> _high",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_high"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_16",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_16b",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_17",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_17b",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_18",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball)",
+      "groups": [
+        "TryCelebrateStanding"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_19",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (lying), subdued -> _low",
+      "groups": [
+        "TryCelebrateGround",
+        "TryCelebrateGround_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_20",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_21",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (lying), subdued -> _low",
+      "groups": [
+        "TryCelebrateGround",
+        "TryCelebrateGround_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_22",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (lying), subdued -> _low",
+      "groups": [
+        "TryCelebrateGround",
+        "TryCelebrateGround_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_23",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_24",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_25",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (lying), subdued -> _low",
+      "groups": [
+        "TryCelebrateGround",
+        "TryCelebrateGround_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "TryCelebrate24_26",
+      "note": "R25 try celebration (legacy cutscenes_config.lua). Group by the scorer's start pose (standing / crouched over the ball), subdued -> _low",
+      "groups": [
+        "TryCelebrateStanding",
+        "TryCelebrateStanding_low"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FiftyTwentyTwo_02",
+      "note": "R25 50:22 kicker celebration (legacy cutscenes_config.lua) as RL26's 40/20 celebration. Queued by r25-imports' rules/fortytwenty/fortytwentyvariation_request.lua, played by its IdleAllPlayersRuleState before the restart. Studio shot at the origin, re-anchored on the kicker like Post_Conversion",
+      "groups": [
+        "FortyTwentyCelebrate"
+      ],
+      "weight": 1,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "cameraAnimFromActor": true
+    },
+    {
+      "name": "FiftyTwentyTwo_03",
+      "note": "R25 50:22 kicker celebration (legacy cutscenes_config.lua) as RL26's 40/20 celebration. Queued by r25-imports' rules/fortytwenty/fortytwentyvariation_request.lua, played by its IdleAllPlayersRuleState before the restart. Studio shot at the origin, re-anchored on the kicker like Post_Conversion",
+      "groups": [
+        "FortyTwentyCelebrate"
+      ],
+      "weight": 1,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "cameraAnimFromActor": true
+    },
+    {
+      "name": "PostReplayScorerWalksBack_01",
+      "note": "R25 post-replay: the try scorer walks back with teammates. Played before the conversion (r25-imports rules/conversion/conversionkick_setup_rulestate.lua, 35% of tries); targets the scorer. Studio shot re-anchored on him; home-only filters -> scoring side",
+      "groups": [
+        "PostReplay"
+      ],
+      "weight": 1,
+      "sideToPrimary": true,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      }
+    },
+    {
+      "name": "PostReplayTeamHuddle_01",
+      "note": "R25 post-replay team huddle (15 players). Captain slot (R25 actorType 'captain', not in RL26) -> player + captain role; cameras follow the scorer (p1) instead of the captain so a missing captain slot can't black the shot",
+      "groups": [
+        "PostReplay"
+      ],
+      "weight": 1,
+      "sideToPrimary": true,
+      "overrides": {
+        "cutsceneOrigin": {
+          "$expr": "native.ECutsceneOrigin.PrimaryActor"
+        },
+        "worldPos": null,
+        "worldRot": null,
+        "syncToWorldPositions": null,
+        "checkCameraBoundary": true
+      },
+      "actorFields": {
+        "p15_post_replay_team_huddle": {
+          "filter": {
+            "actorType": "player",
+            "specialRole": "captain",
+            "side": "primary"
+          }
+        }
+      },
+      "cameraFields": {
+        "cs_camera01": {
+          "moveRelativeToActorLabel": "p1_cameraplayer"
+        },
+        "cs_camera02": {
+          "moveRelativeToActorLabel": "p1_cameraplayer"
+        },
+        "cs_camera03": {
+          "moveRelativeToActorLabel": "p1_cameraplayer"
+        },
+        "cs_camera04": {
+          "moveRelativeToActorLabel": "p1_cameraplayer"
+        }
+      }
+    },
+    {
+      "name": "FulltimeWinLose_01",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FulltimeWinLose_02",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FulltimeWinLose_03",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FulltimeWinLose_04",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01. cs_camera04 no longer follows p30 (a 15th-per-side slot RL26 may leave empty)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1,
+      "cameraFields": {
+        "cs_camera04": {
+          "moveRelativeToActorLabel": null
+        }
+      }
+    },
+    {
+      "name": "FulltimeWinLose_05",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FulltimeWinLose_06",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "FulltimeWinLose_07",
+      "note": "R25 full-time win/lose reactions (legacy cutscenes_config.lua) in RL26's FullTime group; primary = winners (FullTime passes the winning side), staged at the field centre like FullTime_01",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_01",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_02",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_03",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_04",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_05",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_06",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_07",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    },
+    {
+      "name": "Handshakes_08",
+      "note": "R25 post-match handshakes in RL26's FullTime group (primary = winners)",
+      "groups": [
+        "FullTime"
+      ],
+      "weight": 1
+    }
+  ],
+  "faces": {
+    "animset": "r25_faces",
+    "cutscenes": true,
+    "groups": {
+      "strain": [
+        "face_ss_exert_01",
+        "face_ss_exert_02"
+      ],
+      "default": [
+        "face_idle_active_01",
+        "face_idle_active_02",
+        "face_idle_active_03"
+      ],
+      "disappointed": [
+        "face_angry_01",
+        "face_ooh_01"
+      ]
+    }
+  },
+  "tackles": {
+    "sourceAnimset": "tackle",
+    "animset": "r25_tackles",
+    "auto": true,
+    "mirrored": true,
+    "extraPerGroup": 12,
+    "newTackles": [
+      {
+        "note": "R25 high shots as big hits; 'ground' renamed to RL26's 'hitground' (bighitted_action)",
+        "template": "tackle_bighit_01",
+        "clips": [
+          "ru24_tackle_front_illegal_01",
+          "ru24_tackle_front_illegal_02"
+        ],
+        "renameEvents": {
+          "ground": "hitground"
+        }
+      },
+      {
+        "template": "tackle_fend_big_01",
+        "clips": [
+          "ru24_tackle_fend_big_front_left_01",
+          "ru24_tackle_fend_big_front_left_02",
+          "ru24_tackle_fend_big_front_left_03",
+          "ru24_tackle_fend_big_front_left_04",
+          "ru24_tackle_fend_big_front_right_01",
+          "ru24_tackle_fend_big_front_right_02",
+          "ru24_tackle_fend_big_front_right_03",
+          "ru24_tackle_fend_big_front_right_04",
+          "ru24_tackle_fend_big_front_right_05"
+        ]
+      },
+      {
+        "template": "tackle_sidestep_run_big_01",
+        "clips": [
+          "ru24_tackle_sidestep_big_01_right"
+        ]
+      },
+      {
+        "template": "tackle_sidestep_run_big_01",
+        "clips": [
+          "ru24_tackle_sidestep_big_01_left"
+        ],
+        "swapTags": [
+          "DirectionRight",
+          "DirectionLeft"
+        ]
+      },
+      {
+        "template": "hf_bump_2t_01_bc_1tk",
+        "clips": [
+          "ru24_tackle_evade_bump_01",
+          "ru24_tackle_evade_bump_02",
+          "ru24_tackle_evade_bump_03",
+          "ru24_tackle_evade_knee_01",
+          "ru24_tackle_evade_knee_02",
+          "ru24_tackle_evade_back_01"
+        ]
+      },
+      {
+        "note": "tackled while scoring (RL26 quicktry: ball grounded through the tackle)",
+        "template": "tackle_quicktry_front_ball_righthand_01",
+        "clips": [
+          "ru24_tackle_try_back_low_01",
+          "ru24_tackle_try_back_low_02",
+          "ru24_tackle_try_front_high_01",
+          "ru24_tackle_try_front_low_01",
+          "ru24_tackle_try_front_low_02",
+          "ru24_tackle_try_front_side_high_02",
+          "ru24_tackle_try_front_side_high_03",
+          "ru24_tackle_try_front_side_low_01",
+          "ru24_tackle_try_front_side_low_02",
+          "ru24_tackle_try_front_side_low_03"
+        ]
+      }
+    ],
+    "entries": []
+  },
+  "clipOffsets": {
+    "cutsceneIntroCorridorWalk": {
+      "_team_01": [
+        -7.3,
+        6.8
+      ],
+      "_team_02": [
+        -7.3,
+        -8.0
+      ]
+    },
+    "cutsceneIntroWalkon": {
+      "_intro_finals_non_world_cup_02": [
+        0,
+        25.0
+      ]
+    }
+  },
+  "introSequences": [
+    {
+      "name": "r25_runout",
+      "note": "the regular intro with both separate team run-outs replaced by R25's two-team run-out, 1 match in 4 (stockWeight 3 : weight 1). Needs match-intro-versus (it picks the sequence)",
+      "cutscene": "IntroStandardTwoTeams_01",
+      "sequences": [
+        "home_is_kickoff_intro",
+        "away_is_kickoff_intro",
+        "home_is_kickoff_intro_anthem",
+        "away_is_kickoff_intro_anthem"
+      ],
+      "drop": [
+        "IntroAwayTeam",
+        "IntroHomeTeamReceiving",
+        "IntroHomeTeamKickOff"
+      ],
+      "before": "rl1_gf_national_anthem{StadiumName}",
+      "weight": 1,
+      "stockWeight": 3
+    },
+    {
+      "name": "r25_anzac",
+      "note": "PARKED (see to-do.md, anzac-cutscene). Re-enabled after capping the motion set (8873 clips froze the intro). TESTING: the regular intro with the team run-outs replaced by the R25 two-team walk-out (stockWeight 0 = every casual match, and it outranks r25_runout). Later: only for Anzac matches",
+      "cutscene": "IntroFinalsTournament_02",
+      "sequences": [
+        "home_is_kickoff_intro",
+        "away_is_kickoff_intro",
+        "home_is_kickoff_intro_anthem",
+        "away_is_kickoff_intro_anthem"
+      ],
+      "drop": [
+        "IntroAwayTeam",
+        "IntroHomeTeamReceiving",
+        "IntroHomeTeamKickOff"
+      ],
+      "before": "rl1_gf_national_anthem{StadiumName}",
+      "weight": 100,
+      "stockWeight": 0,
+      "disabled": true
+    }
+  ],
+  "trimAnimsets": [
+    "cutsceneIntroWalkon",
+    "cutsceneIntroWalkonNoEntrance",
+    "cutsceneTryCelebrates24",
+    "cutsceneFulltimeWinLose",
+    "cutsceneHandshakes",
+    "cutscenePostReplay",
+    "FiftyTwentyTwo",
+    "cutsceneRefereePenalty",
+    "cutsceneIntroCorridorWalk"
+  ]
+}

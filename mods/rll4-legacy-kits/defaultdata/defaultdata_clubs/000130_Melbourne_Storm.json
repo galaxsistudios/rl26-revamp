@@ -1,0 +1,87 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "INDIGENOUS 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60045,
+          "uniformBottom": 60045,
+          "uniformSocks": 60045
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60105,
+          "uniformBottom": 60105,
+          "uniformSocks": 60105
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60106,
+          "uniformBottom": 60106,
+          "uniformSocks": 60106
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60236,
+          "uniformBottom": 60236,
+          "uniformSocks": 60236
+        }
+      },
+      {
+        "name": "HERITAGE 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60237,
+          "uniformBottom": 60237,
+          "uniformSocks": 60237
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60238,
+          "uniformBottom": 60238,
+          "uniformSocks": 60238
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60239,
+          "uniformBottom": 60239,
+          "uniformSocks": 60239
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60240,
+          "uniformBottom": 60240,
+          "uniformSocks": 60240
+        }
+      },
+      {
+        "name": "WOMEN IN LEAGUE 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60241,
+          "uniformBottom": 60241,
+          "uniformSocks": 60241
+        }
+      }
+    ]
+  }
+}

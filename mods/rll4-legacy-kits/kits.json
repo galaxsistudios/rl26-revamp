@@ -1,0 +1,2287 @@
+{
+ "_comment": "RLL4-layout kit textures (resources/old-jerseys) -> RL26 kits. guid is the design guid used for the new uniformTop/Bottom/Socks items (one per kit, same number in all three maps); texture names the new characters/uniforms/textures/m_{top,shorts,socks}_<texture>_col_{1,2} entries.",
+ "clubs": {
+  "broncos": 118,
+  "bulldogs": 119,
+  "cowboys": 120,
+  "dragons": 121,
+  "eels": 122,
+  "knights": 123,
+  "panthers": 124,
+  "rabbitohs": 125,
+  "raiders": 126,
+  "roosters": 127,
+  "seaeagles": 128,
+  "sharks": 129,
+  "storm": 130,
+  "tigers": 131,
+  "titans": 132,
+  "warriors": 133,
+  "dolphins": 134,
+  "qld": 18,
+  "nsw": 19
+ },
+ "kits": [
+  {
+   "guid": 60001,
+   "src": "2024/broncos-home.dds",
+   "club": 118,
+   "name": "HOME 2024",
+   "texture": "broncos_rll4_home_2024"
+  },
+  {
+   "guid": 60002,
+   "src": "broncos-city-23.dds",
+   "club": 118,
+   "name": "CITY 2023",
+   "texture": "broncos_rll4_city_2023"
+  },
+  {
+   "guid": 60003,
+   "src": "broncos-indiginous-22.dds",
+   "club": 118,
+   "name": "INDIGENOUS 2022",
+   "texture": "broncos_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60004,
+   "src": "2024/bulldogs-home-24.dds",
+   "club": 119,
+   "name": "HOME 2024",
+   "texture": "bulldogs_rll4_home_2024"
+  },
+  {
+   "guid": 60005,
+   "src": "2024/bulldogs-away-24.dds",
+   "club": 119,
+   "name": "AWAY 2024",
+   "texture": "bulldogs_rll4_away_2024"
+  },
+  {
+   "guid": 60006,
+   "src": "bulldogs-anzac-22.dds",
+   "club": 119,
+   "name": "ANZAC 2022",
+   "texture": "bulldogs_rll4_anzac_2022"
+  },
+  {
+   "guid": 60007,
+   "src": "2024/cowboys-home.dds",
+   "club": 120,
+   "name": "HOME 2024",
+   "texture": "cowboys_rll4_home_2024"
+  },
+  {
+   "guid": 60008,
+   "src": "2024/cowboys-away.dds",
+   "club": 120,
+   "name": "AWAY 2024",
+   "texture": "cowboys_rll4_away_2024"
+  },
+  {
+   "guid": 60009,
+   "src": "cowboys-anzac-22.dds",
+   "club": 120,
+   "name": "ANZAC 2022",
+   "texture": "cowboys_rll4_anzac_2022"
+  },
+  {
+   "guid": 60010,
+   "src": "cowboys-ind-2022.dds",
+   "club": 120,
+   "name": "INDIGENOUS 2022",
+   "texture": "cowboys_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60011,
+   "src": "2024/dolphin-home.dds",
+   "club": 134,
+   "name": "HOME 2024",
+   "texture": "dolphins_rll4_home_2024"
+  },
+  {
+   "guid": 60012,
+   "src": "2024/dolphin-away-2.dds",
+   "club": 134,
+   "name": "AWAY 2024",
+   "texture": "dolphins_rll4_away_2024"
+  },
+  {
+   "guid": 60013,
+   "src": "2024/dolphin-alternate.dds",
+   "club": 134,
+   "name": "ALTERNATE 2024",
+   "texture": "dolphins_rll4_alternate_2024"
+  },
+  {
+   "guid": 60014,
+   "src": "dolphin-anzac-24.dds",
+   "club": 134,
+   "name": "ANZAC 2024",
+   "texture": "dolphins_rll4_anzac_2024"
+  },
+  {
+   "guid": 60015,
+   "src": "2024/dragons-home.dds",
+   "club": 121,
+   "name": "HOME 2024",
+   "texture": "dragons_rll4_home_2024"
+  },
+  {
+   "guid": 60016,
+   "src": "2024/dragons-away.dds",
+   "club": 121,
+   "name": "AWAY 2024",
+   "texture": "dragons_rll4_away_2024"
+  },
+  {
+   "guid": 60017,
+   "src": "2024/dragons-anzac-2022.dds",
+   "club": 121,
+   "name": "ANZAC 2022",
+   "texture": "dragons_rll4_anzac_2022"
+  },
+  {
+   "guid": 60018,
+   "src": "eels-anzac-22.dds",
+   "club": 122,
+   "name": "ANZAC 2022",
+   "texture": "eels_rll4_anzac_2022"
+  },
+  {
+   "guid": 60019,
+   "src": "2024/knights-home.dds",
+   "club": 123,
+   "name": "HOME 2024",
+   "texture": "knights_rll4_home_2024"
+  },
+  {
+   "guid": 60020,
+   "src": "2024/knights-away.dds",
+   "club": 123,
+   "name": "AWAY 2024",
+   "texture": "knights_rll4_away_2024"
+  },
+  {
+   "guid": 60021,
+   "src": "knights-anzac-22.dds",
+   "club": 123,
+   "name": "ANZAC 2022",
+   "texture": "knights_rll4_anzac_2022"
+  },
+  {
+   "guid": 60022,
+   "src": "2024/panthers-home.dds",
+   "club": 124,
+   "name": "HOME 2024",
+   "texture": "panthers_rll4_home_2024"
+  },
+  {
+   "guid": 60023,
+   "src": "2024/panthers-away.dds",
+   "club": 124,
+   "name": "AWAY 2024",
+   "texture": "panthers_rll4_away_2024"
+  },
+  {
+   "guid": 60024,
+   "src": "panthers-indiginous-21.dds",
+   "club": 124,
+   "name": "INDIGENOUS 2021",
+   "texture": "panthers_rll4_indigenous_2021"
+  },
+  {
+   "guid": 60025,
+   "src": "2024/rabbitohs-home.dds",
+   "club": 125,
+   "name": "HOME 2024",
+   "texture": "rabbitohs_rll4_home_2024"
+  },
+  {
+   "guid": 60026,
+   "src": "2024/rabbitohs-away.dds",
+   "club": 125,
+   "name": "AWAY 2024",
+   "texture": "rabbitohs_rll4_away_2024"
+  },
+  {
+   "guid": 60027,
+   "src": "rabbitohs-anzac-22.dds",
+   "club": 125,
+   "name": "ANZAC 2022",
+   "texture": "rabbitohs_rll4_anzac_2022"
+  },
+  {
+   "guid": 60028,
+   "src": "rabbitohs-ind-2022.dds",
+   "club": 125,
+   "name": "INDIGENOUS 2022",
+   "texture": "rabbitohs_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60029,
+   "src": "2024/raiders-home.dds",
+   "club": 126,
+   "name": "HOME 2024",
+   "texture": "raiders_rll4_home_2024"
+  },
+  {
+   "guid": 60030,
+   "src": "2024/raiders-away.dds",
+   "club": 126,
+   "name": "AWAY 2024",
+   "texture": "raiders_rll4_away_2024"
+  },
+  {
+   "guid": 60031,
+   "src": "2024/raiders-alt-24.dds",
+   "club": 126,
+   "name": "ALTERNATE 2024",
+   "texture": "raiders_rll4_alternate_2024"
+  },
+  {
+   "guid": 60032,
+   "src": "2024/raider-anzac.dds",
+   "club": 126,
+   "name": "ANZAC 2024",
+   "texture": "raiders_rll4_anzac_2024"
+  },
+  {
+   "guid": 60033,
+   "src": "2024/roosters-home.dds",
+   "club": 127,
+   "name": "HOME 2024",
+   "texture": "roosters_rll4_home_2024"
+  },
+  {
+   "guid": 60034,
+   "src": "2024/roosters-away.dds",
+   "club": 127,
+   "name": "AWAY 2024",
+   "texture": "roosters_rll4_away_2024"
+  },
+  {
+   "guid": 60035,
+   "src": "roosters-anzac-22.dds",
+   "club": 127,
+   "name": "ANZAC 2022",
+   "texture": "roosters_rll4_anzac_2022"
+  },
+  {
+   "guid": 60036,
+   "src": "2024/sea-eagles-home.dds",
+   "club": 128,
+   "name": "HOME 2024",
+   "texture": "seaeagles_rll4_home_2024"
+  },
+  {
+   "guid": 60037,
+   "src": "2024/sea-eagles-away.dds",
+   "club": 128,
+   "name": "AWAY 2024",
+   "texture": "seaeagles_rll4_away_2024"
+  },
+  {
+   "guid": 60038,
+   "src": "2024/sea-eagles-anzac.dds",
+   "club": 128,
+   "name": "ANZAC 2024",
+   "texture": "seaeagles_rll4_anzac_2024"
+  },
+  {
+   "guid": 60039,
+   "src": "sea-eagles-ind-22.dds",
+   "club": 128,
+   "name": "INDIGENOUS 2022",
+   "texture": "seaeagles_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60040,
+   "src": "holden_sharks_away_col.pc.dds",
+   "club": 128,
+   "name": "PRIDE 2022",
+   "texture": "seaeagles_rll4_pride_2022"
+  },
+  {
+   "guid": 60041,
+   "src": "2024/sharkls-home.dds",
+   "club": 129,
+   "name": "HOME 2024",
+   "texture": "sharks_rll4_home_2024"
+  },
+  {
+   "guid": 60042,
+   "src": "2024/sharks-away.dds",
+   "club": 129,
+   "name": "AWAY 2024",
+   "texture": "sharks_rll4_away_2024"
+  },
+  {
+   "guid": 60043,
+   "src": "sharks-heritage-22.dds",
+   "club": 129,
+   "name": "HERITAGE 2022",
+   "texture": "sharks_rll4_heritage_2022"
+  },
+  {
+   "guid": 60044,
+   "src": "sharks-ind-22.dds",
+   "club": 129,
+   "name": "INDIGENOUS 2022",
+   "texture": "sharks_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60045,
+   "src": "storm-ind-22.dds",
+   "club": 130,
+   "name": "INDIGENOUS 2022",
+   "texture": "storm_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60046,
+   "src": "2024/tigers-home.dds",
+   "club": 131,
+   "name": "HOME 2024",
+   "texture": "tigers_rll4_home_2024"
+  },
+  {
+   "guid": 60047,
+   "src": "2024/tigers-away.dds",
+   "club": 131,
+   "name": "AWAY 2024",
+   "texture": "tigers_rll4_away_2024"
+  },
+  {
+   "guid": 60048,
+   "src": "tigers-indiginous-22.dds",
+   "club": 131,
+   "name": "INDIGENOUS 2022",
+   "texture": "tigers_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60049,
+   "src": "2024/titan-home.dds",
+   "club": 132,
+   "name": "HOME 2024",
+   "texture": "titans_rll4_home_2024"
+  },
+  {
+   "guid": 60050,
+   "src": "2024/titan-away.dds",
+   "club": 132,
+   "name": "AWAY 2024",
+   "texture": "titans_rll4_away_2024"
+  },
+  {
+   "guid": 60051,
+   "src": "2024/titan-ind-22.dds",
+   "club": 132,
+   "name": "INDIGENOUS 2022",
+   "texture": "titans_rll4_indigenous_2022"
+  },
+  {
+   "guid": 60052,
+   "src": "2024/warrior-home.dds",
+   "club": 133,
+   "name": "HOME 2024",
+   "texture": "warriors_rll4_home_2024"
+  },
+  {
+   "guid": 60053,
+   "src": "2024/warrior-away.dds",
+   "club": 133,
+   "name": "AWAY 2024",
+   "texture": "warriors_rll4_away_2024"
+  },
+  {
+   "guid": 60054,
+   "src": "2024/warrior-heritage-22.dds",
+   "club": 133,
+   "name": "HERITAGE 2022",
+   "texture": "warriors_rll4_heritage_2022"
+  },
+  {
+   "guid": 60055,
+   "src": "broncos-ind-21.dds",
+   "club": 118,
+   "name": "INDIGENOUS 2021",
+   "texture": "broncos_rll4_indigenous_2021"
+  },
+  {
+   "guid": 60056,
+   "src": "cowboys-home-21.dds",
+   "club": 120,
+   "name": "HOME 2021",
+   "texture": "cowboys_rll4_home_2021"
+  },
+  {
+   "guid": 60057,
+   "src": "cowboys-away-21.dds",
+   "club": 120,
+   "name": "AWAY 2021",
+   "texture": "cowboys_rll4_away_2021"
+  },
+  {
+   "guid": 60058,
+   "src": "dolphins-anzac-23.dds",
+   "club": 134,
+   "name": "ANZAC 2023",
+   "texture": "dolphins_rll4_anzac_2023"
+  },
+  {
+   "guid": 60059,
+   "src": "eels-home-22.dds",
+   "club": 122,
+   "name": "HOME 2022",
+   "texture": "eels_rll4_home_2022"
+  },
+  {
+   "guid": 60060,
+   "src": "eels-alt-22.dds",
+   "club": 122,
+   "name": "ALTERNATE 2022",
+   "texture": "eels_rll4_alternate_2022"
+  },
+  {
+   "guid": 60061,
+   "src": "knights-anzac-23.dds",
+   "club": 123,
+   "name": "ANZAC 2023",
+   "texture": "knights_rll4_anzac_2023"
+  },
+  {
+   "guid": 60062,
+   "src": "panthers-2022-heritage.dds",
+   "club": 124,
+   "name": "HERITAGE 2022",
+   "texture": "panthers_rll4_heritage_2022"
+  },
+  {
+   "guid": 60063,
+   "src": "rabbitohs-home-22.dds",
+   "club": 125,
+   "name": "HOME 2022",
+   "texture": "rabbitohs_rll4_home_2022"
+  },
+  {
+   "guid": 60064,
+   "src": "rabbitohs-away-22.dds",
+   "club": 125,
+   "name": "AWAY 2022",
+   "texture": "rabbitohs_rll4_away_2022"
+  },
+  {
+   "guid": 60065,
+   "src": "roosters-heritage-22.dds",
+   "club": 127,
+   "name": "HERITAGE 2022",
+   "texture": "roosters_rll4_heritage_2022"
+  },
+  {
+   "guid": 60066,
+   "src": "sea-eagles-alt-22.dds",
+   "club": 128,
+   "name": "ALTERNATE 2022",
+   "texture": "seaeagles_rll4_alternate_2022"
+  },
+  {
+   "guid": 60067,
+   "src": "sea-eagles-heritage-22.dds",
+   "club": 128,
+   "name": "HERITAGE 2022",
+   "texture": "seaeagles_rll4_heritage_2022"
+  },
+  {
+   "guid": 60068,
+   "src": "sea-eagles-ind-23.dds",
+   "club": 128,
+   "name": "INDIGENOUS 2023",
+   "texture": "seaeagles_rll4_indigenous_2023"
+  },
+  {
+   "guid": 60069,
+   "src": "2024/sea-eagles-community.dds",
+   "club": 128,
+   "name": "COMMUNITY 2024",
+   "texture": "seaeagles_rll4_community_2024"
+  },
+  {
+   "guid": 60070,
+   "src": "sharks-anzac-22.dds",
+   "club": 129,
+   "name": "ANZAC 2022",
+   "texture": "sharks_rll4_anzac_2022"
+  },
+  {
+   "guid": 60071,
+   "src": "titans-home-22.dds",
+   "club": 132,
+   "name": "HOME 2022",
+   "texture": "titans_rll4_home_2022"
+  },
+  {
+   "guid": 60072,
+   "src": "titans-away-22.dds",
+   "club": 132,
+   "name": "AWAY 2022",
+   "texture": "titans_rll4_away_2022"
+  },
+  {
+   "guid": 60073,
+   "src": "titans-anzac-23.dds",
+   "club": 132,
+   "name": "ANZAC 2023",
+   "texture": "titans_rll4_anzac_2023"
+  },
+  {
+   "guid": 60074,
+   "src": "warriors-heritage-2023.dds",
+   "club": 133,
+   "name": "HERITAGE 2023",
+   "texture": "warriors_rll4_heritage_2023"
+  },
+  {
+   "guid": 60075,
+   "src": "rep-nsw-2021.dds",
+   "club": 19,
+   "name": "HOME 2021",
+   "texture": "nsw_rll4_home_2021"
+  },
+  {
+   "guid": 60076,
+   "src": "rep-nsw-2022.dds",
+   "club": 19,
+   "name": "HOME 2022",
+   "texture": "nsw_rll4_home_2022"
+  },
+  {
+   "guid": 60077,
+   "src": "rep-nsw-2023.dds",
+   "club": 19,
+   "name": "HOME 2023",
+   "texture": "nsw_rll4_home_2023"
+  },
+  {
+   "guid": 60078,
+   "src": "rep-nsw-2023-alt.dds",
+   "club": 19,
+   "name": "ALTERNATE 2023",
+   "texture": "nsw_rll4_alternate_2023"
+  },
+  {
+   "guid": 60079,
+   "src": "rep-qld-2021.dds",
+   "club": 18,
+   "name": "HOME 2021",
+   "texture": "qld_rll4_home_2021"
+  },
+  {
+   "guid": 60080,
+   "src": "rep-qld-2022.dds",
+   "club": 18,
+   "name": "HOME 2022",
+   "texture": "qld_rll4_home_2022"
+  },
+  {
+   "guid": 60081,
+   "rll4": "holden_broncos_away_col",
+   "club": 118,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_broncos_away_rll4_2017"
+  },
+  {
+   "guid": 60082,
+   "rll4": "holden_broncos_home_col",
+   "club": 118,
+   "name": "U20 HOME 2017",
+   "texture": "holden_broncos_home_rll4_2017"
+  },
+  {
+   "guid": 60083,
+   "rll4": "holden_bulldogs_away_col",
+   "club": 119,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_bulldogs_away_rll4_2017"
+  },
+  {
+   "guid": 60084,
+   "rll4": "holden_bulldogs_home_col",
+   "club": 119,
+   "name": "U20 HOME 2017",
+   "texture": "holden_bulldogs_home_rll4_2017"
+  },
+  {
+   "guid": 60085,
+   "rll4": "holden_cowboys_away_col",
+   "club": 120,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_cowboys_away_rll4_2017"
+  },
+  {
+   "guid": 60086,
+   "rll4": "holden_cowboys_home_col",
+   "club": 120,
+   "name": "U20 HOME 2017",
+   "texture": "holden_cowboys_home_rll4_2017"
+  },
+  {
+   "guid": 60087,
+   "rll4": "holden_dragons_away_col",
+   "club": 121,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_dragons_away_rll4_2017"
+  },
+  {
+   "guid": 60088,
+   "rll4": "holden_dragons_home_col",
+   "club": 121,
+   "name": "U20 HOME 2017",
+   "texture": "holden_dragons_home_rll4_2017"
+  },
+  {
+   "guid": 60089,
+   "rll4": "holden_eels_away_col",
+   "club": 122,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_eels_away_rll4_2017"
+  },
+  {
+   "guid": 60090,
+   "rll4": "holden_eels_home_col",
+   "club": 122,
+   "name": "U20 HOME 2017",
+   "texture": "holden_eels_home_rll4_2017"
+  },
+  {
+   "guid": 60091,
+   "rll4": "holden_knights_away_col",
+   "club": 123,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_knights_away_rll4_2017"
+  },
+  {
+   "guid": 60092,
+   "rll4": "holden_knights_home_col",
+   "club": 123,
+   "name": "U20 HOME 2017",
+   "texture": "holden_knights_home_rll4_2017"
+  },
+  {
+   "guid": 60093,
+   "rll4": "holden_panthers_away_col",
+   "club": 124,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_panthers_away_rll4_2017"
+  },
+  {
+   "guid": 60094,
+   "rll4": "holden_panthers_home_col",
+   "club": 124,
+   "name": "U20 HOME 2017",
+   "texture": "holden_panthers_home_rll4_2017"
+  },
+  {
+   "guid": 60095,
+   "rll4": "holden_rabbitohs_away_col",
+   "club": 125,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_rabbitohs_away_rll4_2017"
+  },
+  {
+   "guid": 60096,
+   "rll4": "holden_rabbitohs_home_col",
+   "club": 125,
+   "name": "U20 HOME 2017",
+   "texture": "holden_rabbitohs_home_rll4_2017"
+  },
+  {
+   "guid": 60097,
+   "rll4": "holden_raiders_away_col",
+   "club": 126,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_raiders_away_rll4_2017"
+  },
+  {
+   "guid": 60098,
+   "rll4": "holden_raiders_home_col",
+   "club": 126,
+   "name": "U20 HOME 2017",
+   "texture": "holden_raiders_home_rll4_2017"
+  },
+  {
+   "guid": 60099,
+   "rll4": "holden_roosters_away_col",
+   "club": 127,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_roosters_away_rll4_2017"
+  },
+  {
+   "guid": 60100,
+   "rll4": "holden_roosters_home_col",
+   "club": 127,
+   "name": "U20 HOME 2017",
+   "texture": "holden_roosters_home_rll4_2017"
+  },
+  {
+   "guid": 60101,
+   "rll4": "holden_seaeagles_away_col",
+   "club": 128,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_seaeagles_away_rll4_2017"
+  },
+  {
+   "guid": 60102,
+   "rll4": "holden_seaeagles_home_col",
+   "club": 128,
+   "name": "U20 HOME 2017",
+   "texture": "holden_seaeagles_home_rll4_2017"
+  },
+  {
+   "guid": 60103,
+   "rll4": "holden_sharks_away_col",
+   "club": 129,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_sharks_away_rll4_2017"
+  },
+  {
+   "guid": 60104,
+   "rll4": "holden_sharks_home_col",
+   "club": 129,
+   "name": "U20 HOME 2017",
+   "texture": "holden_sharks_home_rll4_2017"
+  },
+  {
+   "guid": 60105,
+   "rll4": "holden_storm_away_col",
+   "club": 130,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_storm_away_rll4_2017"
+  },
+  {
+   "guid": 60106,
+   "rll4": "holden_storm_home_col",
+   "club": 130,
+   "name": "U20 HOME 2017",
+   "texture": "holden_storm_home_rll4_2017"
+  },
+  {
+   "guid": 60107,
+   "rll4": "holden_tigers_away_col",
+   "club": 131,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_tigers_away_rll4_2017"
+  },
+  {
+   "guid": 60108,
+   "rll4": "holden_tigers_home_col",
+   "club": 131,
+   "name": "U20 HOME 2017",
+   "texture": "holden_tigers_home_rll4_2017"
+  },
+  {
+   "guid": 60109,
+   "rll4": "holden_titans_away_col",
+   "club": 132,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_titans_away_rll4_2017"
+  },
+  {
+   "guid": 60110,
+   "rll4": "holden_titans_home_col",
+   "club": 132,
+   "name": "U20 HOME 2017",
+   "texture": "holden_titans_home_rll4_2017"
+  },
+  {
+   "guid": 60111,
+   "rll4": "holden_warriors_away_col",
+   "club": 133,
+   "name": "U20 AWAY 2017",
+   "texture": "holden_warriors_away_rll4_2017"
+  },
+  {
+   "guid": 60112,
+   "rll4": "holden_warriors_home_col",
+   "club": 133,
+   "name": "U20 HOME 2017",
+   "texture": "holden_warriors_home_rll4_2017"
+  },
+  {
+   "guid": 60113,
+   "rll4": "int_australia_away_col",
+   "club": 103,
+   "name": "AWAY 2017",
+   "texture": "int_australia_away_rll4_2017"
+  },
+  {
+   "guid": 60114,
+   "rll4": "int_australia_home_col",
+   "club": 103,
+   "name": "HOME 2017",
+   "texture": "int_australia_home_rll4_2017"
+  },
+  {
+   "guid": 60115,
+   "rll4": "int_australia_wc_home_col",
+   "club": 103,
+   "name": "WORLD CUP 2017",
+   "texture": "int_australia_wc_home_rll4_2017"
+  },
+  {
+   "guid": 60116,
+   "rll4": "int_england_home_col",
+   "club": 104,
+   "name": "HOME 2017",
+   "texture": "int_england_home_rll4_2017"
+  },
+  {
+   "guid": 60117,
+   "rll4": "int_england_wc_home_col",
+   "club": 104,
+   "name": "WORLD CUP 2017",
+   "texture": "int_england_wc_home_rll4_2017"
+  },
+  {
+   "guid": 60118,
+   "rll4": "int_fiji_home_col",
+   "club": 210,
+   "name": "HOME 2017",
+   "texture": "int_fiji_home_rll4_2017"
+  },
+  {
+   "guid": 60119,
+   "rll4": "int_france_away_col",
+   "club": 206,
+   "name": "AWAY 2017",
+   "texture": "int_france_away_rll4_2017"
+  },
+  {
+   "guid": 60120,
+   "rll4": "int_france_home_col",
+   "club": 206,
+   "name": "HOME 2017",
+   "texture": "int_france_home_rll4_2017"
+  },
+  {
+   "guid": 60121,
+   "rll4": "int_kiwi_home_col",
+   "club": 204,
+   "name": "HOME 2017",
+   "texture": "int_kiwi_home_rll4_2017"
+  },
+  {
+   "guid": 60122,
+   "rll4": "int_kiwi_wc_home_col",
+   "club": 204,
+   "name": "WORLD CUP 2017",
+   "texture": "int_kiwi_wc_home_rll4_2017"
+  },
+  {
+   "guid": 60123,
+   "rll4": "int_lebanon_away_col",
+   "club": 208,
+   "name": "AWAY 2017",
+   "texture": "int_lebanon_away_rll4_2017"
+  },
+  {
+   "guid": 60124,
+   "rll4": "int_lebanon_home_col",
+   "club": 208,
+   "name": "HOME 2017",
+   "texture": "int_lebanon_home_rll4_2017"
+  },
+  {
+   "guid": 60125,
+   "rll4": "int_png_home_col",
+   "club": 207,
+   "name": "HOME 2017",
+   "texture": "int_png_home_rll4_2017"
+  },
+  {
+   "guid": 60126,
+   "rll4": "int_samoa_away_col",
+   "club": 205,
+   "name": "AWAY 2017",
+   "texture": "int_samoa_away_rll4_2017"
+  },
+  {
+   "guid": 60127,
+   "rll4": "int_samoa_home_col",
+   "club": 205,
+   "name": "HOME 2017",
+   "texture": "int_samoa_home_rll4_2017"
+  },
+  {
+   "guid": 60128,
+   "rll4": "int_tonga_away_col",
+   "club": 209,
+   "name": "AWAY 2017",
+   "texture": "int_tonga_away_rll4_2017"
+  },
+  {
+   "guid": 60129,
+   "rll4": "int_tonga_home_col",
+   "club": 209,
+   "name": "HOME 2017",
+   "texture": "int_tonga_home_rll4_2017"
+  },
+  {
+   "guid": 60130,
+   "rll4": "kingstone_1_cougars_away_col",
+   "club": 182,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_cougars_away_rll4_2017"
+  },
+  {
+   "guid": 60131,
+   "rll4": "kingstone_1_cougars_home_col",
+   "club": 182,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_cougars_home_rll4_2017"
+  },
+  {
+   "guid": 60132,
+   "rll4": "kingstone_1_crusaders_away_col",
+   "club": 176,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_crusaders_away_rll4_2017"
+  },
+  {
+   "guid": 60133,
+   "rll4": "kingstone_1_crusaders_home_col",
+   "club": 176,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_crusaders_home_rll4_2017"
+  },
+  {
+   "guid": 60134,
+   "rll4": "kingstone_1_doncaster_away_col",
+   "club": 169,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_doncaster_away_rll4_2017"
+  },
+  {
+   "guid": 60135,
+   "rll4": "kingstone_1_doncaster_home_col",
+   "club": 169,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_doncaster_home_rll4_2017"
+  },
+  {
+   "guid": 60136,
+   "rll4": "kingstone_1_hawks_away_col",
+   "club": 173,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_hawks_away_rll4_2017"
+  },
+  {
+   "guid": 60137,
+   "rll4": "kingstone_1_hawks_home_col",
+   "club": 173,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_hawks_home_rll4_2017"
+  },
+  {
+   "guid": 60138,
+   "rll4": "kingstone_1_knights_away_col",
+   "club": 148,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_knights_away_rll4_2017"
+  },
+  {
+   "guid": 60139,
+   "rll4": "kingstone_1_knights_home_col",
+   "club": 148,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_knights_home_rll4_2017"
+  },
+  {
+   "guid": 60140,
+   "rll4": "kingstone_1_raiders_away_col",
+   "club": 167,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_raiders_away_rll4_2017"
+  },
+  {
+   "guid": 60141,
+   "rll4": "kingstone_1_raiders_home_col",
+   "club": 167,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_raiders_home_rll4_2017"
+  },
+  {
+   "guid": 60142,
+   "rll4": "kingstone_1_thunder_away_col",
+   "club": 183,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_thunder_away_rll4_2017"
+  },
+  {
+   "guid": 60143,
+   "rll4": "kingstone_1_thunder_home_col",
+   "club": 183,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_thunder_home_rll4_2017"
+  },
+  {
+   "guid": 60144,
+   "rll4": "kingstone_1_whitehaven_away_col",
+   "club": 175,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_whitehaven_away_rll4_2017"
+  },
+  {
+   "guid": 60145,
+   "rll4": "kingstone_1_whitehaven_home_col",
+   "club": 175,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_whitehaven_home_rll4_2017"
+  },
+  {
+   "guid": 60146,
+   "rll4": "kingstone_1_workington_away_col",
+   "club": 180,
+   "name": "AWAY 2017",
+   "texture": "kingstone_1_workington_away_rll4_2017"
+  },
+  {
+   "guid": 60147,
+   "rll4": "kingstone_1_workington_home_col",
+   "club": 180,
+   "name": "HOME 2017",
+   "texture": "kingstone_1_workington_home_rll4_2017"
+  },
+  {
+   "guid": 60148,
+   "rll4": "kingstone_broncos_away_col",
+   "club": 170,
+   "name": "AWAY 2017",
+   "texture": "kingstone_broncos_away_rll4_2017"
+  },
+  {
+   "guid": 60149,
+   "rll4": "kingstone_broncos_home_col",
+   "club": 170,
+   "name": "HOME 2017",
+   "texture": "kingstone_broncos_home_rll4_2017"
+  },
+  {
+   "guid": 60150,
+   "rll4": "kingstone_bulldogs_away_col",
+   "club": 171,
+   "name": "AWAY 2017",
+   "texture": "kingstone_bulldogs_away_rll4_2017"
+  },
+  {
+   "guid": 60151,
+   "rll4": "kingstone_bulldogs_home_col",
+   "club": 171,
+   "name": "HOME 2017",
+   "texture": "kingstone_bulldogs_home_rll4_2017"
+  },
+  {
+   "guid": 60152,
+   "rll4": "kingstone_bulls_away_col",
+   "club": 146,
+   "name": "AWAY 2017",
+   "texture": "kingstone_bulls_away_rll4_2017"
+  },
+  {
+   "guid": 60153,
+   "rll4": "kingstone_bulls_home_col",
+   "club": 146,
+   "name": "HOME 2017",
+   "texture": "kingstone_bulls_home_rll4_2017"
+  },
+  {
+   "guid": 60154,
+   "rll4": "kingstone_eagles_away_col",
+   "club": 172,
+   "name": "AWAY 2017",
+   "texture": "kingstone_eagles_away_rll4_2017"
+  },
+  {
+   "guid": 60155,
+   "rll4": "kingstone_eagles_home_col",
+   "club": 172,
+   "name": "HOME 2017",
+   "texture": "kingstone_eagles_home_rll4_2017"
+  },
+  {
+   "guid": 60156,
+   "rll4": "kingstone_halifax_away_col",
+   "club": 165,
+   "name": "AWAY 2017",
+   "texture": "kingstone_halifax_away_rll4_2017"
+  },
+  {
+   "guid": 60157,
+   "rll4": "kingstone_halifax_home_col",
+   "club": 165,
+   "name": "HOME 2017",
+   "texture": "kingstone_halifax_home_rll4_2017"
+  },
+  {
+   "guid": 60158,
+   "rll4": "kingstone_hornets_away_col",
+   "club": 179,
+   "name": "AWAY 2017",
+   "texture": "kingstone_hornets_away_rll4_2017"
+  },
+  {
+   "guid": 60159,
+   "rll4": "kingstone_hornets_home_col",
+   "club": 179,
+   "name": "HOME 2017",
+   "texture": "kingstone_hornets_home_rll4_2017"
+  },
+  {
+   "guid": 60160,
+   "rll4": "kingstone_hull_away_col",
+   "club": 138,
+   "name": "AWAY 2017",
+   "texture": "kingstone_hull_away_rll4_2017"
+  },
+  {
+   "guid": 60161,
+   "rll4": "kingstone_hull_home_col",
+   "club": 138,
+   "name": "HOME 2017",
+   "texture": "kingstone_hull_home_rll4_2017"
+  },
+  {
+   "guid": 60162,
+   "rll4": "kingstone_lions_away_col",
+   "club": 177,
+   "name": "AWAY 2017",
+   "texture": "kingstone_lions_away_rll4_2017"
+  },
+  {
+   "guid": 60163,
+   "rll4": "kingstone_lions_home_col",
+   "club": 177,
+   "name": "HOME 2017",
+   "texture": "kingstone_lions_home_rll4_2017"
+  },
+  {
+   "guid": 60164,
+   "rll4": "kingstone_oldham_away_col",
+   "club": 166,
+   "name": "AWAY 2017",
+   "texture": "kingstone_oldham_away_rll4_2017"
+  },
+  {
+   "guid": 60165,
+   "rll4": "kingstone_oldham_home_col",
+   "club": 166,
+   "name": "HOME 2017",
+   "texture": "kingstone_oldham_home_rll4_2017"
+  },
+  {
+   "guid": 60166,
+   "rll4": "kingstone_olympique_away_col",
+   "club": 147,
+   "name": "AWAY 2017",
+   "texture": "kingstone_olympique_away_rll4_2017"
+  },
+  {
+   "guid": 60167,
+   "rll4": "kingstone_olympique_home_col",
+   "club": 147,
+   "name": "HOME 2017",
+   "texture": "kingstone_olympique_home_rll4_2017"
+  },
+  {
+   "guid": 60168,
+   "rll4": "kingstone_rams_away_col",
+   "club": 178,
+   "name": "AWAY 2017",
+   "texture": "kingstone_rams_away_rll4_2017"
+  },
+  {
+   "guid": 60169,
+   "rll4": "kingstone_rams_home_col",
+   "club": 178,
+   "name": "HOME 2017",
+   "texture": "kingstone_rams_home_rll4_2017"
+  },
+  {
+   "guid": 60170,
+   "rll4": "kingstone_rovers_away_col",
+   "club": 91,
+   "name": "AWAY 2017",
+   "texture": "kingstone_rovers_away_rll4_2017"
+  },
+  {
+   "guid": 60171,
+   "rll4": "kingstone_rovers_home_col",
+   "club": 91,
+   "name": "HOME 2017",
+   "texture": "kingstone_rovers_home_rll4_2017"
+  },
+  {
+   "guid": 60172,
+   "rll4": "nrl_broncos_anzac_col",
+   "club": 118,
+   "name": "ANZAC 2017",
+   "texture": "nrl_broncos_anzac_rll4_2017"
+  },
+  {
+   "guid": 60173,
+   "rll4": "nrl_broncos_away_col",
+   "club": 118,
+   "name": "AWAY 2017",
+   "texture": "nrl_broncos_away_rll4_2017"
+  },
+  {
+   "guid": 60174,
+   "rll4": "nrl_broncos_heritage_col",
+   "club": 118,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_broncos_heritage_rll4_2017"
+  },
+  {
+   "guid": 60175,
+   "rll4": "nrl_broncos_home_col",
+   "club": 118,
+   "name": "HOME 2017",
+   "texture": "nrl_broncos_home_rll4_2017"
+  },
+  {
+   "guid": 60176,
+   "rll4": "nrl_broncos_indigenous_col",
+   "club": 118,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_broncos_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60177,
+   "rll4": "nrl_broncos_nines_col",
+   "club": 118,
+   "name": "NINES 2017",
+   "texture": "nrl_broncos_nines_rll4_2017"
+  },
+  {
+   "guid": 60178,
+   "rll4": "nrl_bulldogs_alternate_col",
+   "club": 119,
+   "name": "ALTERNATE 2017",
+   "texture": "nrl_bulldogs_alternate_rll4_2017"
+  },
+  {
+   "guid": 60179,
+   "rll4": "nrl_bulldogs_anzac_col",
+   "club": 119,
+   "name": "ANZAC 2017",
+   "texture": "nrl_bulldogs_anzac_rll4_2017"
+  },
+  {
+   "guid": 60180,
+   "rll4": "nrl_bulldogs_away_col",
+   "club": 119,
+   "name": "AWAY 2017",
+   "texture": "nrl_bulldogs_away_rll4_2017"
+  },
+  {
+   "guid": 60181,
+   "rll4": "nrl_bulldogs_heritage_col",
+   "club": 119,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_bulldogs_heritage_rll4_2017"
+  },
+  {
+   "guid": 60182,
+   "rll4": "nrl_bulldogs_home_col",
+   "club": 119,
+   "name": "HOME 2017",
+   "texture": "nrl_bulldogs_home_rll4_2017"
+  },
+  {
+   "guid": 60183,
+   "rll4": "nrl_bulldogs_indigenous_col",
+   "club": 119,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_bulldogs_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60184,
+   "rll4": "nrl_bulldogs_nines_col",
+   "club": 119,
+   "name": "NINES 2017",
+   "texture": "nrl_bulldogs_nines_rll4_2017"
+  },
+  {
+   "guid": 60185,
+   "rll4": "nrl_cowboys_anzac_col",
+   "club": 120,
+   "name": "ANZAC 2017",
+   "texture": "nrl_cowboys_anzac_rll4_2017"
+  },
+  {
+   "guid": 60186,
+   "rll4": "nrl_cowboys_away_col",
+   "club": 120,
+   "name": "AWAY 2017",
+   "texture": "nrl_cowboys_away_rll4_2017"
+  },
+  {
+   "guid": 60187,
+   "rll4": "nrl_cowboys_home_col",
+   "club": 120,
+   "name": "HOME 2017",
+   "texture": "nrl_cowboys_home_rll4_2017"
+  },
+  {
+   "guid": 60188,
+   "rll4": "nrl_cowboys_indigenous_col",
+   "club": 120,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_cowboys_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60189,
+   "rll4": "nrl_cowboys_nines_col",
+   "club": 120,
+   "name": "NINES 2017",
+   "texture": "nrl_cowboys_nines_rll4_2017"
+  },
+  {
+   "guid": 60190,
+   "rll4": "nrl_cowboys_wil_col",
+   "club": 120,
+   "name": "WOMEN IN LEAGUE 2017",
+   "texture": "nrl_cowboys_wil_rll4_2017"
+  },
+  {
+   "guid": 60191,
+   "rll4": "nrl_dragons_anzac_col",
+   "club": 121,
+   "name": "ANZAC 2017",
+   "texture": "nrl_dragons_anzac_rll4_2017"
+  },
+  {
+   "guid": 60192,
+   "rll4": "nrl_dragons_away_col",
+   "club": 121,
+   "name": "AWAY 2017",
+   "texture": "nrl_dragons_away_rll4_2017"
+  },
+  {
+   "guid": 60193,
+   "rll4": "nrl_dragons_home_col",
+   "club": 121,
+   "name": "HOME 2017",
+   "texture": "nrl_dragons_home_rll4_2017"
+  },
+  {
+   "guid": 60194,
+   "rll4": "nrl_dragons_indigenous_col",
+   "club": 121,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_dragons_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60195,
+   "rll4": "nrl_dragons_nines_col",
+   "club": 121,
+   "name": "NINES 2017",
+   "texture": "nrl_dragons_nines_rll4_2017"
+  },
+  {
+   "guid": 60196,
+   "rll4": "nrl_eels_away_col",
+   "club": 122,
+   "name": "AWAY 2017",
+   "texture": "nrl_eels_away_rll4_2017"
+  },
+  {
+   "guid": 60197,
+   "rll4": "nrl_eels_heritage_col",
+   "club": 122,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_eels_heritage_rll4_2017"
+  },
+  {
+   "guid": 60198,
+   "rll4": "nrl_eels_home_col",
+   "club": 122,
+   "name": "HOME 2017",
+   "texture": "nrl_eels_home_rll4_2017"
+  },
+  {
+   "guid": 60199,
+   "rll4": "nrl_eels_indigenous_col",
+   "club": 122,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_eels_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60200,
+   "rll4": "nrl_eels_nines_col",
+   "club": 122,
+   "name": "NINES 2017",
+   "texture": "nrl_eels_nines_rll4_2017"
+  },
+  {
+   "guid": 60201,
+   "rll4": "nrl_knights_away_col",
+   "club": 123,
+   "name": "AWAY 2017",
+   "texture": "nrl_knights_away_rll4_2017"
+  },
+  {
+   "guid": 60202,
+   "rll4": "nrl_knights_clash_col",
+   "club": 123,
+   "name": "CLASH 2017",
+   "texture": "nrl_knights_clash_rll4_2017"
+  },
+  {
+   "guid": 60203,
+   "rll4": "nrl_knights_home_col",
+   "club": 123,
+   "name": "HOME 2017",
+   "texture": "nrl_knights_home_rll4_2017"
+  },
+  {
+   "guid": 60204,
+   "rll4": "nrl_knights_indigenous_col",
+   "club": 123,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_knights_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60205,
+   "rll4": "nrl_knights_nines_col",
+   "club": 123,
+   "name": "NINES 2017",
+   "texture": "nrl_knights_nines_rll4_2017"
+  },
+  {
+   "guid": 60206,
+   "rll4": "nrl_panthers_away_col",
+   "club": 124,
+   "name": "AWAY 2017",
+   "texture": "nrl_panthers_away_rll4_2017"
+  },
+  {
+   "guid": 60207,
+   "rll4": "nrl_panthers_clash_col",
+   "club": 124,
+   "name": "CLASH 2017",
+   "texture": "nrl_panthers_clash_rll4_2017"
+  },
+  {
+   "guid": 60208,
+   "rll4": "nrl_panthers_home_col",
+   "club": 124,
+   "name": "HOME 2017",
+   "texture": "nrl_panthers_home_rll4_2017"
+  },
+  {
+   "guid": 60209,
+   "rll4": "nrl_panthers_indigenous_col",
+   "club": 124,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_panthers_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60210,
+   "rll4": "nrl_panthers_nines_col",
+   "club": 124,
+   "name": "NINES 2017",
+   "texture": "nrl_panthers_nines_rll4_2017"
+  },
+  {
+   "guid": 60211,
+   "rll4": "nrl_rabbitohs_anzac_col",
+   "club": 125,
+   "name": "ANZAC 2017",
+   "texture": "nrl_rabbitohs_anzac_rll4_2017"
+  },
+  {
+   "guid": 60212,
+   "rll4": "nrl_rabbitohs_away_col",
+   "club": 125,
+   "name": "AWAY 2017",
+   "texture": "nrl_rabbitohs_away_rll4_2017"
+  },
+  {
+   "guid": 60213,
+   "rll4": "nrl_rabbitohs_home_col",
+   "club": 125,
+   "name": "HOME 2017",
+   "texture": "nrl_rabbitohs_home_rll4_2017"
+  },
+  {
+   "guid": 60214,
+   "rll4": "nrl_rabbitohs_indigenous_col",
+   "club": 125,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_rabbitohs_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60215,
+   "rll4": "nrl_rabbitohs_nines_col",
+   "club": 125,
+   "name": "NINES 2017",
+   "texture": "nrl_rabbitohs_nines_rll4_2017"
+  },
+  {
+   "guid": 60216,
+   "rll4": "nrl_raiders_away_col",
+   "club": 126,
+   "name": "AWAY 2017",
+   "texture": "nrl_raiders_away_rll4_2017"
+  },
+  {
+   "guid": 60217,
+   "rll4": "nrl_raiders_clash_col",
+   "club": 126,
+   "name": "CLASH 2017",
+   "texture": "nrl_raiders_clash_rll4_2017"
+  },
+  {
+   "guid": 60218,
+   "rll4": "nrl_raiders_home_col",
+   "club": 126,
+   "name": "HOME 2017",
+   "texture": "nrl_raiders_home_rll4_2017"
+  },
+  {
+   "guid": 60219,
+   "rll4": "nrl_raiders_indigenous_col",
+   "club": 126,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_raiders_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60220,
+   "rll4": "nrl_raiders_nines_col",
+   "club": 126,
+   "name": "NINES 2017",
+   "texture": "nrl_raiders_nines_rll4_2017"
+  },
+  {
+   "guid": 60221,
+   "rll4": "nrl_roosters_anzac_col",
+   "club": 127,
+   "name": "ANZAC 2017",
+   "texture": "nrl_roosters_anzac_rll4_2017"
+  },
+  {
+   "guid": 60222,
+   "rll4": "nrl_roosters_away_col",
+   "club": 127,
+   "name": "AWAY 2017",
+   "texture": "nrl_roosters_away_rll4_2017"
+  },
+  {
+   "guid": 60223,
+   "rll4": "nrl_roosters_home_col",
+   "club": 127,
+   "name": "HOME 2017",
+   "texture": "nrl_roosters_home_rll4_2017"
+  },
+  {
+   "guid": 60224,
+   "rll4": "nrl_roosters_indigenous_col",
+   "club": 127,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_roosters_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60225,
+   "rll4": "nrl_roosters_nines_away_col",
+   "club": 127,
+   "name": "NINES AWAY 2017",
+   "texture": "nrl_roosters_nines_away_rll4_2017"
+  },
+  {
+   "guid": 60226,
+   "rll4": "nrl_roosters_nines_col",
+   "club": 127,
+   "name": "NINES 2017",
+   "texture": "nrl_roosters_nines_rll4_2017"
+  },
+  {
+   "guid": 60227,
+   "rll4": "nrl_seaeagles_away_col",
+   "club": 128,
+   "name": "AWAY 2017",
+   "texture": "nrl_seaeagles_away_rll4_2017"
+  },
+  {
+   "guid": 60228,
+   "rll4": "nrl_seaeagles_home_col",
+   "club": 128,
+   "name": "HOME 2017",
+   "texture": "nrl_seaeagles_home_rll4_2017"
+  },
+  {
+   "guid": 60229,
+   "rll4": "nrl_seaeagles_indigenous_col",
+   "club": 128,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_seaeagles_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60230,
+   "rll4": "nrl_seaeagles_nines_col",
+   "club": 128,
+   "name": "NINES 2017",
+   "texture": "nrl_seaeagles_nines_rll4_2017"
+  },
+  {
+   "guid": 60231,
+   "rll4": "nrl_sharks_away_col",
+   "club": 129,
+   "name": "AWAY 2017",
+   "texture": "nrl_sharks_away_rll4_2017"
+  },
+  {
+   "guid": 60232,
+   "rll4": "nrl_sharks_heritage_col",
+   "club": 129,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_sharks_heritage_rll4_2017"
+  },
+  {
+   "guid": 60233,
+   "rll4": "nrl_sharks_home_col",
+   "club": 129,
+   "name": "HOME 2017",
+   "texture": "nrl_sharks_home_rll4_2017"
+  },
+  {
+   "guid": 60234,
+   "rll4": "nrl_sharks_indigenous_col",
+   "club": 129,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_sharks_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60235,
+   "rll4": "nrl_sharks_nines_col",
+   "club": 129,
+   "name": "NINES 2017",
+   "texture": "nrl_sharks_nines_rll4_2017"
+  },
+  {
+   "guid": 60236,
+   "rll4": "nrl_storm_away_col",
+   "club": 130,
+   "name": "AWAY 2017",
+   "texture": "nrl_storm_away_rll4_2017"
+  },
+  {
+   "guid": 60237,
+   "rll4": "nrl_storm_heritage_col",
+   "club": 130,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_storm_heritage_rll4_2017"
+  },
+  {
+   "guid": 60238,
+   "rll4": "nrl_storm_home_col",
+   "club": 130,
+   "name": "HOME 2017",
+   "texture": "nrl_storm_home_rll4_2017"
+  },
+  {
+   "guid": 60239,
+   "rll4": "nrl_storm_indigenous_col",
+   "club": 130,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_storm_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60240,
+   "rll4": "nrl_storm_nines_col",
+   "club": 130,
+   "name": "NINES 2017",
+   "texture": "nrl_storm_nines_rll4_2017"
+  },
+  {
+   "guid": 60241,
+   "rll4": "nrl_storm_wil_col",
+   "club": 130,
+   "name": "WOMEN IN LEAGUE 2017",
+   "texture": "nrl_storm_wil_rll4_2017"
+  },
+  {
+   "guid": 60242,
+   "rll4": "nrl_tigers_away_col",
+   "club": 131,
+   "name": "AWAY 2017",
+   "texture": "nrl_tigers_away_rll4_2017"
+  },
+  {
+   "guid": 60243,
+   "rll4": "nrl_tigers_home_col",
+   "club": 131,
+   "name": "HOME 2017",
+   "texture": "nrl_tigers_home_rll4_2017"
+  },
+  {
+   "guid": 60244,
+   "rll4": "nrl_tigers_indigenous_col",
+   "club": 131,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_tigers_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60245,
+   "rll4": "nrl_tigers_nines_col",
+   "club": 131,
+   "name": "NINES 2017",
+   "texture": "nrl_tigers_nines_rll4_2017"
+  },
+  {
+   "guid": 60246,
+   "rll4": "nrl_titans_away_col",
+   "club": 132,
+   "name": "AWAY 2017",
+   "texture": "nrl_titans_away_rll4_2017"
+  },
+  {
+   "guid": 60247,
+   "rll4": "nrl_titans_clash_col",
+   "club": 132,
+   "name": "CLASH 2017",
+   "texture": "nrl_titans_clash_rll4_2017"
+  },
+  {
+   "guid": 60248,
+   "rll4": "nrl_titans_heritage_col",
+   "club": 132,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_titans_heritage_rll4_2017"
+  },
+  {
+   "guid": 60249,
+   "rll4": "nrl_titans_home_col",
+   "club": 132,
+   "name": "HOME 2017",
+   "texture": "nrl_titans_home_rll4_2017"
+  },
+  {
+   "guid": 60250,
+   "rll4": "nrl_titans_indigenous_col",
+   "club": 132,
+   "name": "INDIGENOUS 2017",
+   "texture": "nrl_titans_indigenous_rll4_2017"
+  },
+  {
+   "guid": 60251,
+   "rll4": "nrl_titans_nines_col",
+   "club": 132,
+   "name": "NINES 2017",
+   "texture": "nrl_titans_nines_rll4_2017"
+  },
+  {
+   "guid": 60252,
+   "rll4": "nrl_warriors_away_col",
+   "club": 133,
+   "name": "AWAY 2017",
+   "texture": "nrl_warriors_away_rll4_2017"
+  },
+  {
+   "guid": 60253,
+   "rll4": "nrl_warriors_heritage_col",
+   "club": 133,
+   "name": "HERITAGE 2017",
+   "texture": "nrl_warriors_heritage_rll4_2017"
+  },
+  {
+   "guid": 60254,
+   "rll4": "nrl_warriors_home_col",
+   "club": 133,
+   "name": "HOME 2017",
+   "texture": "nrl_warriors_home_rll4_2017"
+  },
+  {
+   "guid": 60255,
+   "rll4": "nrl_warriors_nines_col",
+   "club": 133,
+   "name": "NINES 2017",
+   "texture": "nrl_warriors_nines_rll4_2017"
+  },
+  {
+   "guid": 60256,
+   "rll4": "nrl_warriors_wil_col",
+   "club": 133,
+   "name": "WOMEN IN LEAGUE 2017",
+   "texture": "nrl_warriors_wil_rll4_2017"
+  },
+  {
+   "guid": 60257,
+   "rll4": "nswcup_bears_away_col",
+   "club": 72,
+   "name": "AWAY 2017",
+   "texture": "nswcup_bears_away_rll4_2017"
+  },
+  {
+   "guid": 60258,
+   "rll4": "nswcup_bears_home_col",
+   "club": 72,
+   "name": "HOME 2017",
+   "texture": "nswcup_bears_home_rll4_2017"
+  },
+  {
+   "guid": 60259,
+   "rll4": "nswcup_bulldogs_home_col",
+   "club": 69,
+   "name": "HOME 2017",
+   "texture": "nswcup_bulldogs_home_rll4_2017"
+  },
+  {
+   "guid": 60260,
+   "rll4": "nswcup_jets_away_col",
+   "club": 71,
+   "name": "AWAY 2017",
+   "texture": "nswcup_jets_away_rll4_2017"
+  },
+  {
+   "guid": 60261,
+   "rll4": "nswcup_jets_home_col",
+   "club": 71,
+   "name": "HOME 2017",
+   "texture": "nswcup_jets_home_rll4_2017"
+  },
+  {
+   "guid": 60262,
+   "rll4": "nswcup_knights_home_col",
+   "club": 70,
+   "name": "HOME 2017",
+   "texture": "nswcup_knights_home_rll4_2017"
+  },
+  {
+   "guid": 60263,
+   "rll4": "nswcup_panthers_away_col",
+   "club": 73,
+   "name": "AWAY 2017",
+   "texture": "nswcup_panthers_away_rll4_2017"
+  },
+  {
+   "guid": 60264,
+   "rll4": "nswcup_panthers_home_col",
+   "club": 73,
+   "name": "HOME 2017",
+   "texture": "nswcup_panthers_home_rll4_2017"
+  },
+  {
+   "guid": 60265,
+   "rll4": "nswcup_seaeagles_away_col",
+   "club": 67,
+   "name": "AWAY 2017",
+   "texture": "nswcup_seaeagles_away_rll4_2017"
+  },
+  {
+   "guid": 60266,
+   "rll4": "nswcup_seaeagles_home_col",
+   "club": 67,
+   "name": "HOME 2017",
+   "texture": "nswcup_seaeagles_home_rll4_2017"
+  },
+  {
+   "guid": 60267,
+   "rll4": "nswcup_warriors_away_col",
+   "club": 78,
+   "name": "AWAY 2017",
+   "texture": "nswcup_warriors_away_rll4_2017"
+  },
+  {
+   "guid": 60268,
+   "rll4": "nswcup_warriors_home_col",
+   "club": 78,
+   "name": "HOME 2017",
+   "texture": "nswcup_warriors_home_rll4_2017"
+  },
+  {
+   "guid": 60269,
+   "rll4": "qldcup_bears_away_col",
+   "club": 150,
+   "name": "AWAY 2017",
+   "texture": "qldcup_bears_away_rll4_2017"
+  },
+  {
+   "guid": 60270,
+   "rll4": "qldcup_bears_home_col",
+   "club": 150,
+   "name": "HOME 2017",
+   "texture": "qldcup_bears_home_rll4_2017"
+  },
+  {
+   "guid": 60271,
+   "rll4": "qldcup_blackhawks_away_col",
+   "club": 160,
+   "name": "AWAY 2017",
+   "texture": "qldcup_blackhawks_away_rll4_2017"
+  },
+  {
+   "guid": 60272,
+   "rll4": "qldcup_blackhawks_home_col",
+   "club": 160,
+   "name": "HOME 2017",
+   "texture": "qldcup_blackhawks_home_rll4_2017"
+  },
+  {
+   "guid": 60273,
+   "rll4": "qldcup_capras_away_col",
+   "club": 151,
+   "name": "AWAY 2017",
+   "texture": "qldcup_capras_away_rll4_2017"
+  },
+  {
+   "guid": 60274,
+   "rll4": "qldcup_capras_home_col",
+   "club": 151,
+   "name": "HOME 2017",
+   "texture": "qldcup_capras_home_rll4_2017"
+  },
+  {
+   "guid": 60275,
+   "rll4": "qldcup_cutters_away_col",
+   "club": 153,
+   "name": "AWAY 2017",
+   "texture": "qldcup_cutters_away_rll4_2017"
+  },
+  {
+   "guid": 60276,
+   "rll4": "qldcup_cutters_home_col",
+   "club": 153,
+   "name": "HOME 2017",
+   "texture": "qldcup_cutters_home_rll4_2017"
+  },
+  {
+   "guid": 60277,
+   "rll4": "qldcup_devils_away_col",
+   "club": 155,
+   "name": "AWAY 2017",
+   "texture": "qldcup_devils_away_rll4_2017"
+  },
+  {
+   "guid": 60278,
+   "rll4": "qldcup_devils_home_col",
+   "club": 155,
+   "name": "HOME 2017",
+   "texture": "qldcup_devils_home_rll4_2017"
+  },
+  {
+   "guid": 60279,
+   "rll4": "qldcup_dolphins_away_col",
+   "club": 157,
+   "name": "AWAY 2017",
+   "texture": "qldcup_dolphins_away_rll4_2017"
+  },
+  {
+   "guid": 60280,
+   "rll4": "qldcup_dolphins_home_col",
+   "club": 157,
+   "name": "HOME 2017",
+   "texture": "qldcup_dolphins_home_rll4_2017"
+  },
+  {
+   "guid": 60281,
+   "rll4": "qldcup_falcons_away_col",
+   "club": 159,
+   "name": "AWAY 2017",
+   "texture": "qldcup_falcons_away_rll4_2017"
+  },
+  {
+   "guid": 60282,
+   "rll4": "qldcup_falcons_home_col",
+   "club": 159,
+   "name": "HOME 2017",
+   "texture": "qldcup_falcons_home_rll4_2017"
+  },
+  {
+   "guid": 60283,
+   "rll4": "qldcup_hunters_away_col",
+   "club": 156,
+   "name": "AWAY 2017",
+   "texture": "qldcup_hunters_away_rll4_2017"
+  },
+  {
+   "guid": 60284,
+   "rll4": "qldcup_hunters_home_col",
+   "club": 156,
+   "name": "HOME 2017",
+   "texture": "qldcup_hunters_home_rll4_2017"
+  },
+  {
+   "guid": 60285,
+   "rll4": "qldcup_jets_away_col",
+   "club": 152,
+   "name": "AWAY 2017",
+   "texture": "qldcup_jets_away_rll4_2017"
+  },
+  {
+   "guid": 60286,
+   "rll4": "qldcup_jets_home_col",
+   "club": 152,
+   "name": "HOME 2017",
+   "texture": "qldcup_jets_home_rll4_2017"
+  },
+  {
+   "guid": 60287,
+   "rll4": "qldcup_magpies_away_col",
+   "club": 158,
+   "name": "AWAY 2017",
+   "texture": "qldcup_magpies_away_rll4_2017"
+  },
+  {
+   "guid": 60288,
+   "rll4": "qldcup_magpies_home_col",
+   "club": 158,
+   "name": "HOME 2017",
+   "texture": "qldcup_magpies_home_rll4_2017"
+  },
+  {
+   "guid": 60289,
+   "rll4": "qldcup_manlyseagulls_away_col",
+   "club": 163,
+   "name": "AWAY 2017",
+   "texture": "qldcup_manlyseagulls_away_rll4_2017"
+  },
+  {
+   "guid": 60290,
+   "rll4": "qldcup_manlyseagulls_home_col",
+   "club": 163,
+   "name": "HOME 2017",
+   "texture": "qldcup_manlyseagulls_home_rll4_2017"
+  },
+  {
+   "guid": 60291,
+   "rll4": "qldcup_pride_away_col",
+   "club": 154,
+   "name": "AWAY 2017",
+   "texture": "qldcup_pride_away_rll4_2017"
+  },
+  {
+   "guid": 60292,
+   "rll4": "qldcup_pride_home_col",
+   "club": 154,
+   "name": "HOME 2017",
+   "texture": "qldcup_pride_home_rll4_2017"
+  },
+  {
+   "guid": 60293,
+   "rll4": "qldcup_seagulls_away_col",
+   "club": 161,
+   "name": "AWAY 2017",
+   "texture": "qldcup_seagulls_away_rll4_2017"
+  },
+  {
+   "guid": 60294,
+   "rll4": "qldcup_seagulls_home_col",
+   "club": 161,
+   "name": "HOME 2017",
+   "texture": "qldcup_seagulls_home_rll4_2017"
+  },
+  {
+   "guid": 60295,
+   "rll4": "qldcup_tigers_away_col",
+   "club": 149,
+   "name": "AWAY 2017",
+   "texture": "qldcup_tigers_away_rll4_2017"
+  },
+  {
+   "guid": 60296,
+   "rll4": "qldcup_tigers_home_col",
+   "club": 149,
+   "name": "HOME 2017",
+   "texture": "qldcup_tigers_home_rll4_2017"
+  },
+  {
+   "guid": 60297,
+   "rll4": "rep_indallstars_col",
+   "club": 105,
+   "name": "ALL STARS 2017",
+   "texture": "rep_indallstars_rll4_2017"
+  },
+  {
+   "guid": 60298,
+   "rll4": "rep_nsw_col",
+   "club": 19,
+   "name": "ORIGIN 2017",
+   "texture": "rep_nsw_rll4_2017"
+  },
+  {
+   "guid": 60299,
+   "rll4": "rep_qld_col",
+   "club": 18,
+   "name": "ORIGIN 2017",
+   "texture": "rep_qld_rll4_2017"
+  },
+  {
+   "guid": 60300,
+   "rll4": "sl_centurions_away_col",
+   "club": 144,
+   "name": "AWAY 2017",
+   "texture": "sl_centurions_away_rll4_2017"
+  },
+  {
+   "guid": 60301,
+   "rll4": "sl_centurions_home_col",
+   "club": 144,
+   "name": "HOME 2017",
+   "texture": "sl_centurions_home_rll4_2017"
+  },
+  {
+   "guid": 60302,
+   "rll4": "sl_devils_away_col",
+   "club": 164,
+   "name": "AWAY 2017",
+   "texture": "sl_devils_away_rll4_2017"
+  },
+  {
+   "guid": 60303,
+   "rll4": "sl_devils_home_col",
+   "club": 164,
+   "name": "HOME 2017",
+   "texture": "sl_devils_home_rll4_2017"
+  },
+  {
+   "guid": 60304,
+   "rll4": "sl_dragons_away_col",
+   "club": 145,
+   "name": "AWAY 2017",
+   "texture": "sl_dragons_away_rll4_2017"
+  },
+  {
+   "guid": 60305,
+   "rll4": "sl_dragons_home_col",
+   "club": 145,
+   "name": "HOME 2017",
+   "texture": "sl_dragons_home_rll4_2017"
+  },
+  {
+   "guid": 60306,
+   "rll4": "sl_giants_away_col",
+   "club": 136,
+   "name": "AWAY 2017",
+   "texture": "sl_giants_away_rll4_2017"
+  },
+  {
+   "guid": 60307,
+   "rll4": "sl_giants_home_col",
+   "club": 136,
+   "name": "HOME 2017",
+   "texture": "sl_giants_home_rll4_2017"
+  },
+  {
+   "guid": 60308,
+   "rll4": "sl_hullfc_away_col",
+   "club": 137,
+   "name": "AWAY 2017",
+   "texture": "sl_hullfc_away_rll4_2017"
+  },
+  {
+   "guid": 60309,
+   "rll4": "sl_hullfc_home_col",
+   "club": 137,
+   "name": "HOME 2017",
+   "texture": "sl_hullfc_home_rll4_2017"
+  },
+  {
+   "guid": 60310,
+   "rll4": "sl_rhinos_away_col",
+   "club": 139,
+   "name": "AWAY 2017",
+   "texture": "sl_rhinos_away_rll4_2017"
+  },
+  {
+   "guid": 60311,
+   "rll4": "sl_rhinos_home_col",
+   "club": 139,
+   "name": "HOME 2017",
+   "texture": "sl_rhinos_home_rll4_2017"
+  },
+  {
+   "guid": 60312,
+   "rll4": "sl_sthelens_away_col",
+   "club": 140,
+   "name": "AWAY 2017",
+   "texture": "sl_sthelens_away_rll4_2017"
+  },
+  {
+   "guid": 60313,
+   "rll4": "sl_sthelens_home_col",
+   "club": 140,
+   "name": "HOME 2017",
+   "texture": "sl_sthelens_home_rll4_2017"
+  },
+  {
+   "guid": 60314,
+   "rll4": "sl_tigers_away_col",
+   "club": 135,
+   "name": "AWAY 2017",
+   "texture": "sl_tigers_away_rll4_2017"
+  },
+  {
+   "guid": 60315,
+   "rll4": "sl_tigers_home_col",
+   "club": 135,
+   "name": "HOME 2017",
+   "texture": "sl_tigers_home_rll4_2017"
+  },
+  {
+   "guid": 60316,
+   "rll4": "sl_vikings_away_col",
+   "club": 168,
+   "name": "AWAY 2017",
+   "texture": "sl_vikings_away_rll4_2017"
+  },
+  {
+   "guid": 60317,
+   "rll4": "sl_vikings_home_col",
+   "club": 168,
+   "name": "HOME 2017",
+   "texture": "sl_vikings_home_rll4_2017"
+  },
+  {
+   "guid": 60318,
+   "rll4": "sl_warriors_away_col",
+   "club": 143,
+   "name": "AWAY 2017",
+   "texture": "sl_warriors_away_rll4_2017"
+  },
+  {
+   "guid": 60319,
+   "rll4": "sl_warriors_home_col",
+   "club": 143,
+   "name": "HOME 2017",
+   "texture": "sl_warriors_home_rll4_2017"
+  },
+  {
+   "guid": 60320,
+   "rll4": "sl_wildcats_away_col",
+   "club": 141,
+   "name": "AWAY 2017",
+   "texture": "sl_wildcats_away_rll4_2017"
+  },
+  {
+   "guid": 60321,
+   "rll4": "sl_wildcats_home_col",
+   "club": 141,
+   "name": "HOME 2017",
+   "texture": "sl_wildcats_home_rll4_2017"
+  },
+  {
+   "guid": 60322,
+   "rll4": "sl_wolves_away_col",
+   "club": 142,
+   "name": "AWAY 2017",
+   "texture": "sl_wolves_away_rll4_2017"
+  },
+  {
+   "guid": 60323,
+   "rll4": "sl_wolves_home_col",
+   "club": 142,
+   "name": "HOME 2017",
+   "texture": "sl_wolves_home_rll4_2017"
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "NRL WOMEN'S PREMIERSHIP",
+  "shortName": "NRLW",
+  "sortIndex": 2,
+  "clubs": [
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195
+  ],
+  "B": 1
+}

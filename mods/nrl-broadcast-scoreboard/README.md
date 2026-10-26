@@ -65,6 +65,13 @@ python tools\club_icons.py add --icon nrl_bears --image resources\new-team-logos
 `--hud-score-image` downsizes the art to 128x128 and premultiplies its alpha, the same as the textures
 in `textures/`.
 
+## On report banner
+
+`defaulthudresources.xaml` also holds the "<NAME> ON REPORT" banner for
+[mods/referee-on-report](../referee-on-report/README.md): a copy of the try confirmed banner
+without the arrows, bound to the scorecard's `MatchStateMessage` / `ShowMatchState`. Nothing
+sets those without referee-on-report, so the banner stays hidden.
+
 ## Fonts
 
 The exe hard-codes its Noesis font file list (`paNoesisFontProvider`), so new

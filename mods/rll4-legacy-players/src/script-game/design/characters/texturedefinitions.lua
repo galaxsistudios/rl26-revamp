@@ -1,0 +1,699 @@
+Definitions = {
+	head = {
+		{
+			height = 2048,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 3
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 4
+		}
+	},
+	body = {
+		{
+			height = 4096,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 2048,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 1024,
+			width = 512,
+			level = 3
+		},
+		{
+			height = 512,
+			width = 256,
+			level = 4
+		}
+	},
+	bodyTattoo = {
+		{
+			height = 2048,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 256,
+			level = 3
+		},
+		{
+			height = 512,
+			width = 256,
+			level = 4
+		}
+	},
+	eyes = {
+		{
+			height = 512,
+			width = 512,
+			level = 1
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 2
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 3
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 3
+		}
+	},
+	hairCapMat = {
+		{
+			height = 32,
+			width = 32,
+			level = 1
+		},
+		{
+			height = 32,
+			width = 32,
+			level = 1
+		},
+		{
+			height = 32,
+			width = 32,
+			level = 1
+		},
+		{
+			height = 32,
+			width = 32,
+			level = 1
+		}
+	},
+	hairRectangle = {
+		{
+			height = 1024,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 512,
+			level = 3
+		}
+	},
+	hairSquare = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 3
+		}
+	},
+	hairTie = {
+		{
+			height = 128,
+			width = 256,
+			level = 1
+		},
+		{
+			height = 128,
+			width = 256,
+			level = 1
+		},
+		{
+			height = 64,
+			width = 128,
+			level = 2
+		},
+		{
+			height = 32,
+			width = 64,
+			level = 3
+		}
+	},
+	headBand = {
+		{
+			height = 128,
+			width = 512,
+			level = 1
+		},
+		{
+			height = 128,
+			width = 512,
+			level = 1
+		},
+		{
+			height = 64,
+			width = 256,
+			level = 2
+		},
+		{
+			height = 32,
+			width = 128,
+			level = 3
+		}
+	},
+	eyewear = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 3
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 4
+		}
+	},
+	helmet = {
+		{
+			height = 2048,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 3
+		}
+	},
+	headStrapping = {
+		{
+			height = 2048,
+			width = 512,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 256,
+			level = 2
+		},
+		{
+			height = 1024,
+			width = 128,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 64,
+			level = 3
+		}
+	},
+	shoes = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 3
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 4
+		}
+	},
+	mouthwear = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 256,
+			level = 3
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 4
+		}
+	},
+	logo = {
+		{
+			height = 256,
+			width = 256,
+			level = 1
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 2
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 2
+		},
+		{
+			height = 128,
+			width = 128,
+			level = 2
+		}
+	},
+	uniformTop = {
+		{
+			height = 2048,
+			width = 4096,
+			level = 1
+		},
+		{
+			height = 2048,
+			width = 4096,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 2048,
+			level = 2
+		},
+		{
+			height = 1024,
+			width = 2048,
+			level = 2
+		}
+	},
+	uniformBottom = {
+		{
+			height = 2048,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 2048,
+			width = 2048,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 2
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 2
+		}
+	},
+	uniformSocksLong = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		}
+	},
+	uniformSocksShort = {
+		{
+			height = 512,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 256,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 256,
+			width = 512,
+			level = 2
+		}
+	},
+	uniformNumberPlate = {
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 1024,
+			width = 1024,
+			level = 1
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		},
+		{
+			height = 512,
+			width = 512,
+			level = 2
+		}
+	}
+}
+
+-- rll4-legacy-players: tier-1 head items for the face scans converted from
+-- Rugby League Live 4 (generated by mods/rll4-legacy-players/build.py - edit
+-- that, not this block). assetmap imports this file (after
+-- assetmapitems) before the native asset map reads ItemMaps, so the items
+-- are added to tier1head and to the texture lists assetmapitems built from it.
+do
+	local ItemMaps = import("design.characters.assetmapitems").ItemMaps
+
+	local function add(mapName, item)
+		local map = ItemMaps[mapName]
+
+		if map.item_setup_lookup[item.guid] ~= nil or map.item_setup_lookup[item.name] ~= nil then
+			return
+		end
+
+		table.insert(map.item_setup, item)
+
+		map.item_setup_lookup[item.guid] = item
+		map.item_setup_lookup[item.name] = item
+	end
+
+	-- name-only items (texture lists): no guid, lookup by name if the map has one
+	local function addNamed(mapName, item)
+		local map = ItemMaps[mapName]
+		local lookup = map.item_setup_lookup
+
+		if lookup then
+			if lookup[item.name] ~= nil then
+				return
+			end
+
+			lookup[item.name] = item
+		else
+			for _, existing in ipairs(map.item_setup) do
+				if existing.name == item.name then
+					return
+				end
+			end
+		end
+
+		table.insert(map.item_setup, item)
+	end
+
+	local heads = {
+		{ 10002, "rll4_mattmoylan_10002", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Matt Moylan
+		{ 10005, "rll4_trentmerrin_10005", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Trent Merrin
+		{ 10006, "rll4_joshmansour_10006", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh Mansour
+		{ 10011, "rll4_timbrowne_10011", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tim Browne
+		{ 10012, "rll4_peterwallace_10012", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Peter Wallace
+		{ 10013, "rll4_tyronepeachey_10013", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tyrone Peachey
+		{ 10017, "rll4_mitchrein_10017", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Mitch Rein
+		{ 10018, "rll4_leilanilatu_10018", nil, nil }, -- Leilani Latu
+		{ 10024, "rll4_aaronwoods_10024", nil, nil }, -- Aaron Woods
+		{ 10030, "rll4_chrislawrence_10030", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Chris Lawrence
+		{ 10031, "rll4_kylelovett_10031", nil, nil }, -- Kyle Lovett
+		{ 10032, "rll4_mattballin_10032", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Matt Ballin
+		{ 10036, "rll4_jamalidris_10036", "rll4_strands_dreads02_col", "rll4_strands_dreads02_dir" }, -- Jamal Idris
+		{ 10037, "rll4_jordanrankin_10037", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Jordan Rankin
+		{ 10039, "rll4_timgrant_10039", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tim Grant
+		{ 10040, "rll4_avaseumanufagai_10040", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Ava Seumanufagai
+		{ 10045, "rll4_mattmcilwrick_10045", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Matt McIlwrick
+		{ 10059, "rll4_kurtmann_10059", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kurt Mann
+		{ 10061, "rll4_nenemacdonald_10061", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Nene Macdonald
+		{ 10062, "rll4_jasonnightingale_10062", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jason Nightingale
+		{ 10063, "rll4_garethwiddop_10063", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Gareth Widdop
+		{ 10065, "rll4_russellpacker_10065", nil, nil }, -- Russell Packer
+		{ 10069, "rll4_joelthompson_10069", nil, nil }, -- Joel Thompson
+		{ 10072, "rll4_willmatthews_10072", nil, nil }, -- Will Matthews
+		{ 10073, "rll4_jakemarketo_10073", nil, nil }, -- Jake Marketo
+		{ 10074, "rll4_leesonahmau_10074", nil, nil }, -- Leeson Ah Mau
+		{ 10081, "rll4_joshmccrone_10081", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh McCrone
+		{ 10093, "rll4_jakefriend_10093", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jake Friend
+		{ 10096, "rll4_blakeferguson_10096", nil, nil }, -- Blake Ferguson
+		{ 10097, "rll4_boydcordner_10097", nil, nil }, -- Boyd Cordner
+		{ 10098, "rll4_shaunkennydowall_10098", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Shaun Kenny-Dowall
+		{ 10100, "rll4_dylannapa_10100", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Dylan Napa
+		{ 10103, "rll4_kaneevans_10103", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kane Evans
+		{ 10105, "rll4_aidanguerra_10105", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Aidan Guerra
+		{ 10106, "rll4_michaelgordon_10106", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Michael Gordon
+		{ 10111, "rll4_dalecopley_10111", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Dale Copley
+		{ 10112, "rll4_paulcarter_10112", nil, nil }, -- Paul Carter
+		{ 10113, "rll4_zanetetevano_10113", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Zane Tetevano
+		{ 10129, "rll4_gerardbeale_10129", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Gerard Beale
+		{ 10133, "rll4_faamanubrown_10133", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Fa'amanu Brown
+		{ 10134, "rll4_jaysonbukuya_10134", nil, nil }, -- Jayson Bukuya
+		{ 10136, "rll4_manaiacherrington_10136", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Manaia Cherrington
+		{ 10139, "rll4_sosaiafeki_10139", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Sosaia Feki
+		{ 10140, "rll4_andrewfifita_10140", nil, nil }, -- Andrew Fifita
+		{ 10142, "rll4_paulgallen_10142", nil, nil }, -- Paul Gallen
+		{ 10143, "rll4_wadegraham_10143", nil, nil }, -- Wade Graham
+		{ 10144, "rll4_chrisheighington_10144", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Chris Heighington
+		{ 10149, "rll4_jeremylatimore_10149", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jeremy Latimore
+		{ 10151, "rll4_lukelewis_10151", nil, nil }, -- Luke Lewis
+		{ 10153, "rll4_jamesmaloney_10153", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- James Maloney
+		{ 10157, "rll4_mattprior_10157", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Matt Prior
+		{ 10166, "rll4_tonywilliams_10166", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tony Williams
+		{ 10167, "rll4_willhopoate_10167", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Will Hopoate
+		{ 10168, "rll4_brettmorris_10168", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Brett Morris
+		{ 10169, "rll4_joshmorris_10169", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh Morris
+		{ 10170, "rll4_kerrodholland_10170", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kerrod Holland
+		{ 10171, "rll4_brenkolee_10171", nil, nil }, -- Brenko Lee
+		{ 10172, "rll4_joshreynolds_10172", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh Reynolds
+		{ 10174, "rll4_aidentolman_10174", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Aiden Tolman
+		{ 10175, "rll4_michaellichaa_10175", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Michael Lichaa
+		{ 10176, "rll4_jamesgraham_10176", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- James Graham
+		{ 10177, "rll4_joshjackson_10177", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh Jackson
+		{ 10178, "rll4_gregeastwood_10178", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Greg Eastwood
+		{ 10180, "rll4_samkasiano_10180", nil, nil }, -- Sam Kasiano
+		{ 10182, "rll4_dannyfualalo_10182", "rll4_hair_wavyclumps_col", "rll4_hair_wavyclumps_dir" }, -- Danny Fualalo
+		{ 10184, "rll4_greginglis_10184", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Greg Inglis
+		{ 10187, "rll4_brysongoodwin_10187", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Bryson Goodwin
+		{ 10188, "rll4_aarongray_10188", "rll4_hair_wavyclumps_col", "rll4_hair_wavyclumps_dir" }, -- Aaron Gray
+		{ 10191, "rll4_georgeburgess_10191", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- George Burgess
+		{ 10192, "rll4_robbiefarah_10192", nil, nil }, -- Robbie Farah
+		{ 10193, "rll4_robbierochow_10193", nil, nil }, -- Robbie Rochow
+		{ 10194, "rll4_johnsutton_10194", nil, nil }, -- John Sutton
+		{ 10195, "rll4_kyleturner_10195", "rll4_hair_wavyclumps_col", "rll4_hair_wavyclumps_dir" }, -- Kyle Turner
+		{ 10196, "rll4_samburgess_10196", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Sam Burgess
+		{ 10199, "rll4_jasonclark_10199", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jason Clark
+		{ 10202, "rll4_lachlancoote_10202", nil, nil }, -- Lachlan Coote
+		{ 10204, "rll4_justinoneill_10204", nil, nil }, -- Justin O'Neill
+		{ 10205, "rll4_kanelinnett_10205", nil, nil }, -- Kane Linnett
+		{ 10206, "rll4_antoniowinterstein_10206", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Antonio Winterstein
+		{ 10207, "rll4_michaelmorgan_10207", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Michael Morgan
+		{ 10208, "rll4_johnathanthurston_10208", nil, nil }, -- Johnathan Thurston
+		{ 10209, "rll4_matthewscott_10209", nil, nil }, -- Matthew Scott
+		{ 10210, "rll4_jakegranville_10210", nil, nil }, -- Jake Granville
+		{ 10211, "rll4_scottbolton_10211", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Scott Bolton
+		{ 10212, "rll4_gavincooper_10212", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Gavin Cooper
+		{ 10213, "rll4_ethanlowe_10213", nil, nil }, -- Ethan Lowe
+		{ 10218, "rll4_patrickkaufusi_10218", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Patrick Kaufusi
+		{ 10220, "rll4_edricklee_10220", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Edrick Lee
+		{ 10221, "rll4_jarrodcroker_10221", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jarrod Croker
+		{ 10222, "rll4_joeyleilua_10222", nil, nil }, -- Joey Leilua
+		{ 10224, "rll4_blakeaustin_10224", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Blake Austin
+		{ 10226, "rll4_shannonboyd_10226", nil, nil }, -- Shannon Boyd
+		{ 10227, "rll4_joshhodgson_10227", nil, nil }, -- Josh Hodgson
+		{ 10233, "rll4_lukebateman_10233", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Luke Bateman
+		{ 10235, "rll4_claypriest_10235", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Clay Priest
+		{ 10236, "rll4_davetaylor_10236", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Dave Taylor
+		{ 10237, "rll4_kurtbaptiste_10237", nil, nil }, -- Kurt Baptiste
+		{ 10238, "rll4_billyslater_10238", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Billy Slater
+		{ 10239, "rll4_suliasivunivalu_10239", nil, nil }, -- Suliasi Vunivalu
+		{ 10240, "rll4_willchambers_10240", nil, nil }, -- Will Chambers
+		{ 10241, "rll4_cheyseblair_10241", nil, nil }, -- Cheyse Blair
+		{ 10244, "rll4_coopercronk_10244", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Cooper Cronk
+		{ 10246, "rll4_cameronsmith_10246", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Cameron Smith
+		{ 10249, "rll4_tohuharris_10249", nil, nil }, -- Tohu Harris
+		{ 10251, "rll4_timglasby_10251", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tim Glasby
+		{ 10255, "rll4_dariusboyd_10255", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Darius Boyd
+		{ 10256, "rll4_coreyoates_10256", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Corey Oates
+		{ 10257, "rll4_jordankahu_10257", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Jordan Kahu
+		{ 10258, "rll4_jamesroberts_10258", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- James Roberts
+		{ 10259, "rll4_davidmead_10259", nil, nil }, -- David Mead
+		{ 10262, "rll4_joshmcguire_10262", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh McGuire
+		{ 10263, "rll4_andrewmccullough_10263", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Andrew McCullough
+		{ 10264, "rll4_adamblair_10264", "rll4_hair_wavyclumps_col", "rll4_hair_wavyclumps_dir" }, -- Adam Blair
+		{ 10265, "rll4_samthaiday_10265", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Sam Thaiday
+		{ 10266, "rll4_mattgillett_10266", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Matt Gillett
+		{ 10270, "rll4_alexglenn_10270", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Alex Glenn
+		{ 10271, "rll4_tevitapangaijnr_10271", nil, nil }, -- Tevita Pangai Jnr
+		{ 10272, "rll4_benjimarshall_10272", nil, nil }, -- Benji Marshall
+		{ 10273, "rll4_jarrydhayne_10273", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jarryd Hayne
+		{ 10274, "rll4_anthonydon_10274", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Anthony Don
+		{ 10275, "rll4_dansarginson_10275", "rll4_hair_wavyclumps_col", "rll4_hair_wavyclumps_dir" }, -- Dan Sarginson
+		{ 10278, "rll4_kaneelgey_10278", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kane Elgey
+		{ 10280, "rll4_ryanjames_10280", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Ryan James
+		{ 10282, "rll4_jarrodwallace_10282", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jarrod Wallace
+		{ 10283, "rll4_kevinproctor_10283", "rll4_strands_dreads01_col", "rll4_strands_dreads01_dir" }, -- Kevin Proctor
+		{ 10284, "rll4_chrismcqueen_10284", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Chris McQueen
+		{ 10286, "rll4_tyroneroberts_10286", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Tyrone Roberts
+		{ 10291, "rll4_manuvatuvei_10291", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Manu Vatuvei
+		{ 10292, "rll4_davidfusitua_10292", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- David Fusitu'a
+		{ 10293, "rll4_solomonekata_10293", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Solomone Kata
+		{ 10296, "rll4_shaunjohnson_10296", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Shaun Johnson
+		{ 10297, "rll4_jacoblillyman_10297", nil, nil }, -- Jacob Lillyman
+		{ 10298, "rll4_issacluke_10298", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Issac Luke
+		{ 10299, "rll4_albertvete_10299", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Albert Vete
+		{ 10300, "rll4_bodenethompson_10300", nil, nil }, -- Bodene Thompson
+		{ 10301, "rll4_ryanhoffman_10301", nil, nil }, -- Ryan Hoffman
+		{ 10302, "rll4_simonmannering_10302", nil, nil }, -- Simon Mannering
+		{ 10305, "rll4_charliegubb_10305", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Charlie Gubb
+		{ 10312, "rll4_akuilauate_10312", nil, nil }, -- Akuila Uate
+		{ 10314, "rll4_blakegreen_10314", nil, nil }, -- Blake Green
+		{ 10316, "rll4_natemyles_10316", nil, nil }, -- Nate Myles
+		{ 10322, "rll4_lewisbrown_10322", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Lewis Brown
+		{ 10324, "rll4_brentonlawrence_10324", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Brenton Lawrence
+		{ 10327, "rll4_semiradradra_10327", nil, nil }, -- Semi Radradra
+		{ 10328, "rll4_michaeljennings_10328", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Michael Jennings
+		{ 10329, "rll4_bradtakairangi_10329", "rll4_strands_braids01_col", "rll4_strands_braids01_dir" }, -- Brad Takairangi
+		{ 10330, "rll4_joshhoffman_10330", nil, nil }, -- Josh Hoffman
+		{ 10332, "rll4_coreynorman_10332", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Corey Norman
+		{ 10333, "rll4_timmannah_10333", nil, nil }, -- Tim Mannah
+		{ 10336, "rll4_manumau_10336", nil, nil }, -- Manu Ma'u
+		{ 10337, "rll4_beauscott_10337", nil, nil }, -- Beau Scott
+		{ 10338, "rll4_tepaimoeroa_10338", "rll4_strands_braids01_col", "rll4_strands_braids01_dir" }, -- Tepai Moeroa
+		{ 10339, "rll4_kennyedwards_10339", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kenny Edwards
+		{ 10340, "rll4_siosaiavave_10340", "rll4_hair_curly_col", "rll4_hair_curly_dir" }, -- Siosaia Vave
+		{ 10341, "rll4_frankpritchard_10341", nil, nil }, -- Frank Pritchard
+		{ 10345, "rll4_nathanross_10345", nil, nil }, -- Nathan Ross
+		{ 10346, "rll4_petermatautia_10346", nil, nil }, -- Peter Mata'utia
+		{ 10347, "rll4_brendanelliot_10347", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Brendan Elliot
+		{ 10348, "rll4_brocklamb_10348", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Brock Lamb
+		{ 10349, "rll4_trenthodkinson_10349", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Trent Hodkinson
+		{ 10351, "rll4_rorykostjasyn_10351", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Rory Kostjasyn
+		{ 10352, "rll4_korbinsims_10352", nil, nil }, -- Korbin Sims
+		{ 10354, "rll4_sionematautia_10354", nil, nil }, -- Sione Mata'utia
+		{ 10355, "rll4_jamiebuhrer_10355", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Jamie Buhrer
+		{ 10358, "rll4_joshstarling_10358", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Josh Starling
+		{ 10390, "rll4_shaunfensom_10390", nil, nil }, -- Shaun Fensom
+		{ 10422, "rll4_lukegale_10422", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Luke Gale
+		{ 10475, "rll4_nathanielpeteru_10475", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Nathaniel Peteru
+		{ 10481, "rll4_williamzillman_10481", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- William Zillman
+		{ 10496, "rll4_jermainemcgillvary_10496", nil, nil }, -- Jermaine McGillvary
+		{ 10607, "rll4_frankwinterstein_10607", nil, nil }, -- Frank Winterstein
+		{ 10633, "rll4_jamesgavet_10633", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- James Gavet
+		{ 10664, "rll4_jackstockwell_10664", "rll4_hair_wavy_col", "rll4_hair_wavy_dir" }, -- Jack Stockwell
+		{ 10682, "rll4_danielalvaro_10682", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Daniel Alvaro
+		{ 10695, "rll4_kaysapritchard_10695", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Kaysa Pritchard
+		{ 10921, "rll4_seanoloughlin_10921", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Sean O'Loughlin
+		{ 13824, "rll4_marcogiompaolo_13824", "rll4_hair_short_col", "rll4_hair_short_dir" }, -- Marco Giompaolo
+	}
+
+	for _, head in ipairs(heads) do
+		add("tier1head", {
+			guid = head[1],
+			name = head[2],
+			sex = "m",
+			team = "rll4",
+			wrinkleConfig = "tier1_head_male"
+		})
+		add("tier1head_textures_col", { guid = head[1], name = head[2] .. "_col", blend = "creator_copy_rgb" })
+		add("tier1head_textures_mat", { guid = head[1], name = head[2] .. "_mat", blend = "creator_overlay_mat" })
+		add("tier1head_textures_nrm", { guid = head[1], name = head[2] .. "_nrm", blend = "creator_copy_rgb" })
+
+		-- a tier-1 head's hair is always hairTop item (head guid + 1000), see
+		-- assetmap's hairTop filename; the model is the player's RLL4 strand
+		-- cards, drawn with the RLL4 strand texture they were made for
+		if head[3] then
+			addNamed("hairColMap_textures", { name = head[3], blend = "creator_copy" })
+			addNamed("hairDirMap_textures", { name = head[4], blend = "creator_copy" })
+			add("hairTop", {
+				guid = head[1] + 1000,
+				name = head[2],
+				tier1 = true,
+				colTexture = head[3],
+				matTexture = "straight_short_mat",
+				dirTexture = head[4],
+				permutations = {
+					hairGear = "",
+					sex = ""
+				}
+			})
+		end
+	end
+end

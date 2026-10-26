@@ -130,6 +130,11 @@ def read_blob_full(blobset_path, entry):
 
     if main_c == main_u and vram_c == vram_u:
         return raw, folder, file_hash, bpath
+    # A compressed main with no vram component at all (Rugby 25's lua
+    # bundle, for one) is framed from byte 0 - an empty vram is not a raw
+    # "prefix" case.
+    if main_c != main_u and vram_u == 0:
+        return decode_outer_zstd_frames(raw), folder, file_hash, bpath
     if main_c == main_u or vram_c == vram_u:
         prefix = raw[:main_u]
         remainder = decode_outer_zstd_frames(raw[main_u:])

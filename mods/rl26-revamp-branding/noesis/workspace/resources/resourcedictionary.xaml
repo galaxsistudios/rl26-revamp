@@ -1,0 +1,878 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+	xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"      
+	xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+	xmlns:paEx="clr-namespace:paNoesisExtensions" 
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+	xmlns:GenericControls="clr-namespace:GenericControls"
+    xmlns:controls="clr-namespace:Workspace.Controls">
+
+    <!-- Merged Dictionaries -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Controls/baScreenControl.xaml"/>
+        <ResourceDictionary Source="Controls/baFillControl.xaml"/>
+        <ResourceDictionary Source="Controls/BackgroundControl.xaml"/>
+        <ResourceDictionary Source="Controls/ScrollingControl.xaml"/>
+        <ResourceDictionary Source="Controls/AnimatedItemsControl.xaml"/>
+        <ResourceDictionary Source="TooltipIcons/XboxOne.xaml"/>
+        <ResourceDictionary Source="TooltipIcons/PS4.xaml"/>
+        <ResourceDictionary Source="TooltipIcons/PS5.xaml"/>
+        <ResourceDictionary Source="TooltipIcons/NintendoSwitch.xaml"/>
+        <ResourceDictionary Source="TooltipIcons/PC.xaml"/>
+        <ResourceDictionary Source="Styles/DefaultStyles_BigAnt.xaml"/>
+        <ResourceDictionary Source="Styles/TextStyles_BigAnt.xaml"/>
+        <ResourceDictionary Source="Styles/Style_Tooltips.xaml"/>
+        <ResourceDictionary Source="StyleThemes/NoesisTheme.Brushes.DarkBlue.xaml"/>
+        <!--<ResourceDictionary Source="StyleThemes/NoesisTheme.Colors.Dark.xaml"/>
+        <ResourceDictionary Source="StyleThemes/NoesisTheme.DarkBlue.xaml"/>-->
+        <ResourceDictionary Source="HUDCommonStyles.xaml"/>
+        <ResourceDictionary Source="PlatformIcons.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+
+    <!-- Converter Definitions -->
+    <paEx:paLocalisationConverter x:Key="localise"/>
+    <paEx:paDynamicResourceConverter x:Key="dynamicResource"/>
+    <paEx:paCompetitionLogoConverter x:Key="competitionLogoConverter"/>
+    <paEx:paGridLengthConverter x:Key="GridLengthConverter"/>
+    <paEx:paSecondsToTimeStringConverter x:Key="SecondsToTimeStringConverter"/>
+    <paEx:paBackgroundToTextColourConverter x:Key="BackgroundToTextColourConverter"/>
+    <!--<paEx:paBooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>-->
+    <!-- <paEx:paLocaliseAndParseInlinesConverter x:Key="localiseAndParseInlinesConverter"/> -->
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <paEx:paBooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterHidden"
+                                         TrueValue="Visible"
+                                         FalseValue="Hidden" />
+    <paEx:paBooleanToVisibilityConverter x:Key="BooleanToVisibilityInvertedConverter"
+                                         TrueValue="Collapsed"
+                                         FalseValue="Visible" />
+    <paEx:paUppercaseConverter x:Key="UppercaseConverter"/>
+    <paEx:paComparisonMultiValueConverter x:Key="ComparisonMultiValueConverter"/>
+    <paEx:paColorToSolidColorBrushValueConverter  x:Key="ColorToSolidColorBrushConverter" />
+    <paEx:paCombiningConverter x:Key="UppercaseLocalise"
+                               Converter1="{StaticResource localise}"
+                               Converter2="{StaticResource UppercaseConverter}"/>
+    <paEx:paStringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+
+    <!-- Safe Area Style Definition -->
+    <Style TargetType="GenericControls:SafeArea">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GenericControls:SafeArea">
+                    <Viewbox RenderTransformOrigin="0.5,0.5">
+                        <Grid Margin="{TemplateBinding SafeMargin}">
+                            <Viewbox RenderTransformOrigin="0.5,0.5">
+                                <Canvas Height="1080" Width="1920">
+                                    <Grid Height="1080" Width="1920">
+                                        <Grid>
+                                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                                        </Grid>
+                                    </Grid>
+                                </Canvas>
+                            </Viewbox>
+                        </Grid>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="[Button Tabs]" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <ControlTemplate.Resources>
+                        <Geometry x:Key="UnderlineGeometry">M 0, 0 L 500, 0 z</Geometry>
+                        <Storyboard x:Key="Button animation">
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="ContentHost">
+                                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FF38C8E6"/>
+                            </ColorAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Grid x:Name="LayoutRoot" Height="Auto" Width="Auto" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False" Margin="0.002,0,0.001,0.174">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused">
+                                    <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="ContentHost">
+                                            <EasingColorKeyFrame KeyTime="0" Value="#FF38C8E6"/>
+                                            <EasingColorKeyFrame KeyTime="0:0:0.1" Value="White"/>
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Focused">
+                                    <Storyboard AutoReverse="False">
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="ContentHost">
+                                            <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                            <EasingColorKeyFrame KeyTime="0:0:0.1" Value="#FF38C8E6"/>
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentHost" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Width="Auto" Margin="15,5,0,0"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Match_Options_Button" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="FontSize" Value="38"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Unfocused"/>
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="Highlight">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="FrenchOpen_Highlight">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="MutuaMadrid_Highlight">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="HalleOpen_Highlight">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="ATPCup_Highlight">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="Bg">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="MouseOver"/>
+                                <VisualState x:Name="Pressed"/>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextBox.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="ContentHost">
+                                            <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                            <EasingColorKeyFrame KeyTime="0:0:0.017" Value="#64808080"/>
+                                        </ColorAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5" UseLayoutRounding="False">
+                            <Rectangle x:Name="Bg" Fill="#66000000" Stroke="#7FFFFFFF"/>
+                            <Rectangle x:Name="Highlight" Opacity="0" Stroke="White" StrokeThickness="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="1.299,0.445" StartPoint="-0.336,0.445">
+                                        <GradientStop Color="#FF073B6A" Offset="0"/>
+                                        <GradientStop Color="#FF073B6A" Offset="1"/>
+                                        <GradientStop Color="#FF0569C3" Offset="0.500"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle x:Name="FrenchOpen_Highlight" Visibility="{Binding isFrenchOpen, FallbackValue=Hidden}" Opacity="0" Stroke="White" StrokeThickness="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="1.299,0.445" StartPoint="-0.336,0.445">
+                                        <GradientStop Color="#FF004030" Offset="0"/>
+                                        <GradientStop Color="#FF004030" Offset="1"/>
+                                        <GradientStop Color="#FF00644B" Offset="0.500"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle x:Name="MutuaMadrid_Highlight" Visibility="{Binding isMutuaMadridOpen, FallbackValue=Hidden}" Opacity="0" Stroke="White" StrokeThickness="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="1.299,0.445" StartPoint="-0.336,0.445">
+                                        <GradientStop Color="#FFC35615" Offset="0"/>
+                                        <GradientStop Color="#FFA64911" Offset="1"/>
+                                        <GradientStop Color="#FFC35615" Offset="0.500"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle x:Name="HalleOpen_Highlight" Visibility="{Binding isHalleOpen, FallbackValue=Hidden}" Opacity="0" Stroke="White" StrokeThickness="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="1.299,0.445" StartPoint="-0.336,0.445">
+                                        <GradientStop Color="#FF006A3C" Offset="0"/>
+                                        <GradientStop Color="#FF006A3C" Offset="1"/>
+                                        <GradientStop Color="#FF006A3C" Offset="0.500"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle x:Name="ATPCup_Highlight" Visibility="{Binding isATPCup, FallbackValue=Hidden}" Opacity="0" Stroke="White" StrokeThickness="2">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush EndPoint="1.299,0.445" StartPoint="-0.336,0.445">
+                                        <GradientStop Color="Red" Offset="0"/>
+                                        <GradientStop Color="#FFA64911" Offset="1"/>
+                                        <GradientStop Color="Red" Offset="0.500"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock x:Name="ContentHost" 
+                                        DataContext="{TemplateBinding Content}" Text="{Binding Converter={StaticResource localise}, TargetNullValue=Content}" Foreground="White" RenderTransformOrigin="0.5,0.5" TextAlignment="Center" 
+                                       FontSize="{TemplateBinding FontSize}" Margin="0,10" Padding="0,12,0,0">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform X="0"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TrainingTileContentHolder" TargetType="{x:Type ListBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <StackPanel
+							IsItemsHost="True"
+							Orientation="Vertical"
+							IsEnabled="True"
+							ScrollViewer.CanContentScroll="False"
+							KeyboardNavigation.DirectionalNavigation="Cycle"
+						/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="PlayerIndicatorControl">
+        <Canvas>
+            <Canvas>
+                <Grid Height="42" Width="42" Canvas.Left="{Binding XPos}" Canvas.Top="{Binding YPos}">
+                    <Ellipse Stroke="White">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="{Binding Colour}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock TextWrapping="Wrap" FontSize="24" TextAlignment="Center" Text="{Binding Label}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+            </Canvas>
+        </Canvas>
+    </ControlTemplate>
+
+    <!-- Inventory Slot Template -->
+    <ControlTemplate x:Key="CardListItemTemplate" TargetType="{x:Type ListBoxItem}">
+        <ControlTemplate.Resources>
+            <Storyboard x:Key="Card_Small_Selected">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="BG_Highlight">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Key="Card_Small_Unselected">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="BG_Highlight">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </ControlTemplate.Resources>
+        <Grid x:Name="Card_Small" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Rectangle x:Name="BG_Standard" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RadiusX="5" RadiusY="5" Opacity="0.5">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF2B2B2B" Offset="0"/>
+                        <GradientStop Color="#FF1F1D1D" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Rectangle x:Name="BG_Outline" Stroke="#FF0F0F0F" StrokeThickness="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" RadiusX="5" RadiusY="5" Opacity="0.5"/>
+            <Rectangle x:Name="BG_Highlight" Stroke="White" StrokeThickness="4" Margin="-3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0" RadiusX="5" RadiusY="5"/>
+            <Grid x:Name="Opacity_Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="{Binding MasterOpacity}">
+                <Grid x:Name="Inactive_Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid Margin="0" Width="75" Height="75">
+                        <Canvas VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,55,55" Visibility="Hidden">
+                            <Ellipse HorizontalAlignment="Left" Height="53.333" VerticalAlignment="Top" Width="53.334" Stroke="#4CFFFFFF" StrokeThickness="0.5" Fill="#33000000"/>
+                            <Path Fill="White" HorizontalAlignment="Left" Height="15.166" StrokeThickness="0.5" VerticalAlignment="Top" Data="M4.5916441,-5.256618E-18 L5.8243555,5.256618E-18 5.8243555,4.5916498 10.415999,4.5916498 10.415999,5.82435 5.8243555,5.82435 5.8243555,10.415999 4.5916441,10.415999 4.5916441,5.82435 -5.2569647E-18,5.82435 5.2569647E-18,4.5916498 4.5916441,4.5916498 z" RenderTransformOrigin="0.500000006225985,0.500000028200048" Stretch="Fill" Width="15.165" Opacity="0.3" Canvas.Left="19.086" Canvas.Top="19.054">
+                                <Path.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Path.RenderTransform>
+                            </Path>
+                        </Canvas>
+                    </Grid>
+                </Grid>
+                <Grid x:Name="Active_Grid"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Visible">
+                    <Grid x:Name="Backgrounds_Grid" Margin="7.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Rectangle x:Name="Image_Type_BG" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Binding_Image_Type_BG}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle x:Name="Image_Club_BG" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Binding_Club_BG_Image}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle x:Name="Centre_Image" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,10">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Binding_Centre_Image}" Stretch="Uniform"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                    <Grid x:Name="Foreground_Grid" Margin="7.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.025*"/>
+                            <ColumnDefinition Width="0.275*"/>
+                            <ColumnDefinition Width="0.410*"/>
+                            <ColumnDefinition Width="0.275*"/>
+                            <ColumnDefinition Width="0.015*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.025*"/>
+                            <RowDefinition Height="0.2*"/>
+                            <RowDefinition Height="0.64*"/>
+                            <RowDefinition Height="0.175*"/>
+                            <RowDefinition Height="0.05*"/>
+                        </Grid.RowDefinitions>
+                        <Rectangle x:Name="Favourite_Icon" Visibility="{Binding Binding_Player_FavouriteVisibility}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Binding_Player_Favourite_Icon}" Stretch="Uniform" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Grid x:Name="Duplicate_Count_Section" Visibility="{Binding Binding_DuplicateSectionVisibility}" Grid.Column="3" Grid.Row="1" >
+                            <Rectangle x:Name="Duplciate_Background" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Rectangle.Fill>
+                                    <ImageBrush ImageSource="{Binding Binding_DuplicateBg_Image}" Stretch="Uniform"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <TextBlock x:Name="Duplicate_Text" Text="{Binding Binding_DuplicateText, FallbackValue=88}" Padding="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Foreground="White" Style="{DynamicResource HeaderMidStyle}" FontSize="8"/>
+                        </Grid>
+                    </Grid>
+                    <!--<TextBlock x:Name="CardSeriesText" Text="{Binding Binding_Card_Series, FallbackValue=2023 BIG ANT LEAGUE}" Padding="0,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource DataMidStyle}" FontSize="5"/>-->
+                    <Grid x:Name="Overall_Grid" Margin="5,20,0,50" Visibility="{Binding Binding_PlayerStats_Visibility}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.05*"/>
+                            <ColumnDefinition Width="0.2*"/>
+                            <ColumnDefinition Width="0.75*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.25*"/>
+                            <RowDefinition Height="0.2*"/>
+                            <RowDefinition Height="0.3*"/>
+                            <RowDefinition Height="0.25*"/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="Player_OverallNumber_Area" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" MinHeight="10">
+                            <TextBlock x:Name="Player_OverallNumber" Text="{Binding Binding_Player_Overall, FallbackValue=55}" Padding="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource HeaderMidStyle}" FontSize="18"/>
+                        </Grid>
+                        <Grid x:Name="Player_PositionText_Area" Grid.Column="1" Grid.Row="1" Margin="0,0,0,0" MinHeight="6">
+                            <TextBlock x:Name="Player_PositionText" Text="{Binding Binding_Player_Position, FallbackValue=FWD}" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource HeaderSmallStyle}" FontSize="9"/>
+                        </Grid>
+                        <Grid Grid.Column="1" Grid.Row="2" Margin="0,0,0,0" MinHeight="8">
+                            <Rectangle x:Name="Player_Shield_Icon">
+                                <Rectangle.Fill>
+                                    <ImageBrush ImageSource="{Binding Binding_Club_Image}" Stretch="Uniform"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Grid>
+                        <Grid Grid.Column="1" Grid.Row="3" Margin="0,0,0,0" MinHeight="8">
+                            <Rectangle x:Name="Player_Archetype_Icon">
+                                <Rectangle.Fill>
+                                    <ImageBrush ImageSource="{Binding Binding_Player_Archetype_Icon}" Stretch="Uniform"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Grid>
+                    </Grid>
+                    <Grid x:Name="Contracts_Grid" Margin="0,0,0,8" VerticalAlignment="Bottom" Visibility="{Binding Binding_ContractsInfo_Visibility}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.05*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="0.05*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.1*"/>
+                            <RowDefinition Height="0.2*"/>
+                            <RowDefinition Height="0.7*"/>
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="Bronze_Uses_Bar" Grid.Column="1" Grid.Row="1" Margin="5,0,5,0" MinHeight="5">
+                            <Rectangle Fill="#FF695032"/>
+                        </Grid>
+                        <Grid x:Name="Bronze_Uses_Text" Grid.Column="1" Grid.Row="2" Margin="0,0,0,0" MinHeight="12">
+                            <TextBlock x:Name="BronzeUsesText" Text="{Binding Binding_Bronze_Contracts, FallbackValue=5}" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource DataSmallStyle}" FontSize="12"/>
+                        </Grid>
+                        <Grid x:Name="Gold_Uses_Bar" Grid.Column="2" Grid.Row="1" Margin="5,0,5,0" MinHeight="5">
+                            <Rectangle Fill="#FFD2AF73"/>
+                        </Grid>
+                        <Grid x:Name="Gold_Uses_Text" Grid.Column="2" Grid.Row="2" Margin="0,0,0,0" MinHeight="12">
+                            <TextBlock x:Name="GoldUsesText" Text="{Binding Binding_Gold_Contracts, FallbackValue=5}" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource DataSmallStyle}" FontSize="12"/>
+                        </Grid>
+                        <Grid x:Name="Emerald_Uses_Bar" Grid.Column="3" Grid.Row="1" Margin="5,0,5,0" MinHeight="5">
+                            <Rectangle Fill="#FF00827D"/>
+                        </Grid>
+                        <Grid x:Name="Emerald_Uses_Text" Grid.Column="3" Grid.Row="2" Margin="0,0,0,0" MinHeight="12">
+                            <TextBlock x:Name="EmeraldUsesText" Text="{Binding Binding_Emerald_Contracts, FallbackValue=5}" Padding="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" TextAlignment="Center" Foreground="Black" Style="{DynamicResource DataSmallStyle}" FontSize="12"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding CardHighlighted}" Value="True">
+                <DataTrigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource Card_Small_Selected}"/>
+                </DataTrigger.EnterActions>
+                <DataTrigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource Card_Small_Unselected}"/>
+                </DataTrigger.ExitActions>
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!-- Inventory Slot Style -->
+    <Style x:Key="CardListItemStyle" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Template" Value="{StaticResource CardListItemTemplate}"/>
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="IsEnabled" Value="True"/>
+        <Setter Property="Margin" Value="5,9,5,10"/>
+        <Setter Property="MinHeight" Value="147.5"/>
+        <Setter Property="noesis:StyleInteraction.Triggers">
+            <Setter.Value>
+                <noesis:StyleTriggerCollection>
+                    <b:EventTrigger EventName="MouseEnter">
+                        <noesis:SetFocusAction/>
+                    </b:EventTrigger>
+                </noesis:StyleTriggerCollection>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CardListItemStyle_Hover" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Template" Value="{StaticResource CardListItemTemplate}"/>
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="IsEnabled" Value="True"/>
+        <Setter Property="MinHeight" Value="135"/>
+        <Setter Property="noesis:StyleInteraction.Triggers">
+            <Setter.Value>
+                <noesis:StyleTriggerCollection>
+                    <b:EventTrigger EventName="MouseEnter">
+                        <noesis:SetFocusAction/>
+                    </b:EventTrigger>
+                </noesis:StyleTriggerCollection>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <ControlTemplate x:Key="Panel_Button" TargetType="{x:Type Button}">
+        <Grid>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="FocusStates">
+                    <VisualState x:Name="Unfocused">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Base">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Outline">
+                                <SplineDoubleKeyFrame KeyTime="0" Value="1"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="Base">
+                                <EasingColorKeyFrame KeyTime="0" Value="#FF0569C3"/>
+                                <EasingColorKeyFrame KeyTime="0:0:0.017" Value="#80000000"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="Outline">
+                                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                <EasingColorKeyFrame KeyTime="0:0:0.017" Value="White"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.StrokeThickness)" Storyboard.TargetName="Outline">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="2"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="2"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="Focused">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Outline">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Base">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Base_Copy">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="100"/>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="Base_Copy">
+                                <EasingColorKeyFrame KeyTime="0" Value="Black"/>
+                                <EasingColorKeyFrame KeyTime="0:0:0.017" Value="#FF0569C3"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="Outline">
+                                <EasingColorKeyFrame KeyTime="0" Value="White"/>
+                                <EasingColorKeyFrame KeyTime="0:0:0.017" Value="White"/>
+                            </ColorAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.StrokeThickness)" Storyboard.TargetName="Outline">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="2"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.017" Value="2"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Rectangle x:Name="Base" Fill="#7F000000" Height="Auto" Stroke="{x:Null}" VerticalAlignment="Stretch" Width="Auto"/>
+            <Rectangle x:Name="Base_Copy" Height="Auto" Stroke="{x:Null}" VerticalAlignment="Stretch" Width="Auto" Opacity="0" Fill="Black"/>
+            <Rectangle x:Name="Outline" Fill="{x:Null}" Height="Auto" Stroke="#FF48A4FF" VerticalAlignment="Stretch" Width="Auto" Opacity="0"/>
+        </Grid>
+    </ControlTemplate>
+
+
+    <ControlTemplate x:Key="_ListBoxItemTemplate" TargetType="ListBoxItem">
+        <Border Name="_Border" Padding="0" BorderThickness="2" SnapsToDevicePixels="true" Background="Transparent">
+            <ContentPresenter/>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsSelected" Value="true">
+                <Setter TargetName="_Border" Property="Background" Value="{Binding HighlightBackgroundColour, FallbackValue=#FF0569C3}"/>
+                <Setter TargetName="_Border" Property="BorderBrush" Value="White"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="false">
+                <Setter TargetName="_Border" Property="Background" Value="{x:Null}"/>
+                <Setter TargetName="_Border" Property="BorderBrush" Value="{x:Null}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="_ListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="noesis:StyleInteraction.Triggers">
+            <Setter.Value>
+                <noesis:StyleTriggerCollection>
+                    <b:DataTrigger Binding="{TemplateBinding ListBoxItem.IsSelected}" Value="True">
+                        <noesis:SetFocusAction/>
+                    </b:DataTrigger>
+                </noesis:StyleTriggerCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" Value="{StaticResource _ListBoxItemTemplate}"/>
+        <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
+
+    <ControlTemplate x:Key="_ListBoxItemTemplateSolid" TargetType="ListBoxItem">
+        <Grid>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="FocusStates">
+                    <VisualState x:Name="Unfocused"/>
+                    <VisualState x:Name="Focused"/>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="MouseOver"/>
+                    <VisualState x:Name="Pressed"/>
+                    <VisualState x:Name="Disabled"/>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="SelectionStates">
+                    <VisualState x:Name="Unselected">
+                    </VisualState>
+                    <VisualState x:Name="Selected"/>
+                    <VisualState x:Name="SelectedUnfocused">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Opacity)" Storyboard.TargetName="Highlight">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Rectangle x:Name="BackgroundColour" Fill="Black" Opacity="{Binding m_backgroundOpacity, Mode=OneWay, FallbackValue=1}" />
+            <Rectangle x:Name="Highlight" Fill="#FF0569C3" Stroke="White" StrokeThickness="3" Opacity="0"/>
+            <ContentPresenter/>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="_ListBoxItemSolidStyle" TargetType="ListBoxItem">
+        <Setter Property="noesis:StyleInteraction.Triggers">
+            <Setter.Value>
+                <noesis:StyleTriggerCollection>
+                    <b:DataTrigger Binding="{TemplateBinding ListBoxItem.IsSelected}" Value="True">
+                        <noesis:SetFocusAction/>
+                    </b:DataTrigger>
+                </noesis:StyleTriggerCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" Value="{StaticResource _ListBoxItemTemplateSolid}"/>
+        <Setter Property="Margin" Value="5,0,5,0"/>
+    </Style>
+
+    <!-- Slider -->
+    <ControlTemplate x:Key="SliderThumbHorizontalTop" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+            <Path x:Name="grip" Data="M 0,6 C0,6 5.5,0 5.5,0 5.5,0 11,6 11,6 11,6 11,18 11,18 11,18 0,18 0,18 0,18 0,6 0,6 z" Fill="{StaticResource SliderThumb.Static.Background}" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" VerticalAlignment="Center"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="SliderThumbHorizontalBottom" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+            <Path x:Name="grip" Data="M 0,12 C0,12 5.5,18 5.5,18 5.5,18 11,12 11,12 11,12 11,0 11,0 11,0 0,0 0,0 0,0 0,12 0,12 z" Fill="{StaticResource SliderThumb.Static.Background}" Stretch="Fill" SnapsToDevicePixels="True" Stroke="{StaticResource SliderThumb.Static.Border}" StrokeThickness="1" VerticalAlignment="Center"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center" Margin="0,7,0,-7">
+            <Path x:Name="grip" Data="M0,0 C0,0 11,0 11,0 11,0 5.4851642,17.810849 5.4851642,17.810849 5.4851642,17.810849 0,0 0,0 z" Fill="#FF5B608A" Stretch="Fill" SnapsToDevicePixels="True" StrokeThickness="1" VerticalAlignment="Center" Height="11" Margin="0,3,0,4"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="SliderHorizontal" TargetType="{x:Type Slider}">
+        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+            <Grid Margin="30.5,0,30.281,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TickBar x:Name="TopTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,0,0,2" Placement="Top" Grid.Row="0" Visibility="Collapsed"/>
+                <TickBar x:Name="BottomTick" Fill="{TemplateBinding Foreground}" Height="4" Margin="0,2,0,0" Placement="Bottom" Grid.Row="2" Visibility="Collapsed"/>
+                <Border x:Name="TrackBackground" BorderThickness="1" Background="#FF5B608A" Height="5" Margin="-30.5,6.5,-31.276,6.5" Grid.Row="1" VerticalAlignment="center">
+                    <Canvas Margin="-6,-1">
+                        <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource SystemColors.HighlightBrushKey}" Height="4.0" Visibility="Hidden"/>
+                    </Canvas>
+                </Border>
+                <Track x:Name="PART_Track" Grid.Row="1">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}"/>
+                    </Track.IncreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb x:Name="Thumb" Focusable="False" Height="18" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbHorizontalDefault}" VerticalAlignment="Center" Width="11"/>
+                    </Track.Thumb>
+                </Track>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalTop}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="5,2,5,0"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbHorizontalBottom}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="5,0,5,2"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsSelectionRangeEnabled" Value="true">
+                <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="true">
+                <Setter Property="Foreground" TargetName="Thumb" Value="Blue"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="SliderThumbVerticalLeft" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+            <Path x:Name="grip" Data="M 6,11 C6,11 0,5.5 0,5.5 0,5.5 6,0 6,0 6,0 18,0 18,0 18,0 18,11 18,11 18,11 6,11 6,11 z" Fill="{StaticResource SliderThumb.Static.Background}" Stretch="Fill" Stroke="{StaticResource SliderThumb.Static.Border}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="SliderThumbVerticalRight" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+            <Path x:Name="grip" Data="M 12,11 C12,11 18,5.5 18,5.5 18,5.5 12,0 12,0 12,0 0,0 0,0 0,0 0,11 0,11 0,11 12,11 12,11 z" Fill="{StaticResource SliderThumb.Static.Background}" Stretch="Fill" Stroke="{StaticResource SliderThumb.Static.Border}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="SliderThumbVerticalDefault" TargetType="{x:Type Thumb}">
+        <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+            <Path x:Name="grip" Data="M0.5,0.5 L18.5,0.5 18.5,11.5 0.5,11.5z" Fill="{StaticResource SliderThumb.Static.Background}" Stretch="Fill" Stroke="{StaticResource SliderThumb.Static.Border}"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.MouseOver.Border}"/>
+            </Trigger>
+            <Trigger Property="IsDragging" Value="true">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Pressed.Border}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Fill" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Background}"/>
+                <Setter Property="Stroke" TargetName="grip" Value="{StaticResource SliderThumb.Disabled.Border}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="SliderVertical" TargetType="{x:Type Slider}">
+        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition MinWidth="{TemplateBinding MinWidth}" Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TickBar x:Name="TopTick" Grid.Column="0" Fill="{TemplateBinding Foreground}" Margin="0,0,2,0" Placement="Left" Visibility="Collapsed" Width="4"/>
+                <TickBar x:Name="BottomTick" Grid.Column="2" Fill="{TemplateBinding Foreground}" Margin="2,0,0,0" Placement="Right" Visibility="Collapsed" Width="4"/>
+                <Border x:Name="TrackBackground" BorderBrush="{StaticResource SliderThumb.Track.Border}" BorderThickness="1" Background="{StaticResource SliderThumb.Track.Background}" Grid.Column="1" HorizontalAlignment="center" Margin="0,5" Width="4.0">
+                    <Canvas Margin="-1,-6">
+                        <Rectangle x:Name="PART_SelectionRange" Fill="{DynamicResource SystemColors.HighlightBrushKey}" Visibility="Hidden" Width="4.0"/>
+                    </Canvas>
+                </Border>
+                <Track x:Name="PART_Track" Grid.Column="1">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}"/>
+                    </Track.DecreaseRepeatButton>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}"/>
+                    </Track.IncreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb x:Name="Thumb" Focusable="False" Height="11" OverridesDefaultStyle="True" Template="{StaticResource SliderThumbVerticalDefault}" VerticalAlignment="Top" Width="18"/>
+                    </Track.Thumb>
+                </Track>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbVerticalLeft}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="2,5,0,5"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+                <Setter Property="Template" TargetName="Thumb" Value="{StaticResource SliderThumbVerticalRight}"/>
+                <Setter Property="Margin" TargetName="TrackBackground" Value="0,5,2,5"/>
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter Property="Visibility" TargetName="TopTick" Value="Visible"/>
+                <Setter Property="Visibility" TargetName="BottomTick" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsSelectionRangeEnabled" Value="true">
+                <Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="true">
+                <Setter Property="Foreground" TargetName="Thumb" Value="Blue"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+
+    <DataTemplate x:Key="RLL26_Logo">
+        <Viewbox>
+            <Grid Width="2000" Height="717">
+                <Path Data="F0 M1129 702.7C1129 702 1133 673.1 1138 638.5C1143 603.9 1147 575.5 1147 575.3C1147 575.1 1149.8 575 1153.2 575L1159.5 575L1159 584.2C1158.7 589.3 1158.5 593.7 1158.7 593.9C1158.8 594.1 1161.4 592 1164.4 589.4C1175.8 579.2 1188.9 573.1 1199 573C1208 573 1212.8 574.6 1217.1 578.9C1222.8 584.5 1224.4 591.5 1223.7 606.5C1222.8 625.6 1218.8 643.2 1213.3 652.8C1210 658.5 1203.8 663.6 1197.6 665.7C1192 667.6 1170.1 668.2 1156.2 666.7L1149 666L1148.9 671.7C1148.9 674.9 1147.9 683.4 1146.7 690.5L1144.5 703.5L1136.8 703.8C1130.8 704 1129 703.8 1129 702.7ZM691 666.7C679.5 664 672.7 658.2 669.3 648.5C666.6 640.9 666.9 619.4 669.8 607.5C674.1 590.4 679.5 582.3 689.9 577.6C698.5 573.8 705.8 572.7 720.5 573.3C735.5 573.8 741.4 575.5 746.5 580.6C754.4 588.5 753.2 607.6 744.1 617.3C738.1 623.9 730 626 702.1 628.6L682.7 630.3L683.4 636.2C683.7 639.4 684.6 643.3 685.5 644.9C686.9 647.6 692.4 653 693.8 653C694.2 653 697.2 653.5 700.5 654C705.4 654.8 733.2 653.9 739.4 652.7C740.6 652.5 742.4 662 741.3 663.1C737.7 666.5 701.4 669.1 691 666.7ZM882.3 667C872.1 664.6 867 656.6 866.2 641.7C865.7 632 867.8 614.4 870.7 603.5C874.7 588.6 881.8 579.1 891.8 575.4C898.8 572.9 921.2 572.4 938 574.4C945.3 575.3 952.3 576.3 953.5 576.6C955.6 577.1 955.6 577.3 949.3 621.3C945.9 645.6 943 665.6 943 665.8C943 665.9 940.2 666 936.9 666L930.8 666L931.2 657.1L931.6 648.2L925.8 653.5C913 665 896.1 670.3 882.3 667ZM1267 666.6C1256.2 664.2 1249.9 659.4 1245.8 650.5C1243.7 646 1243.5 644.1 1243.5 630.5C1243.6 595.3 1254 578 1277.4 573.9C1286.6 572.3 1308.1 573.2 1314 575.4C1325.3 579.6 1329.5 588.8 1326.6 603.1C1324.1 614.9 1318.4 621.3 1307.7 624.5C1303.2 625.8 1289.1 627.6 1266.6 629.6L1258.8 630.3L1259.2 635.9C1260.4 652.2 1268.6 655.9 1298.4 653.9C1307.2 653.4 1314.7 652.7 1315.2 652.4C1316.2 651.8 1316.7 653.2 1317.3 658.7L1317.8 663L1312.7 664.5C1300.6 667.9 1277.6 669 1267 666.6ZM1355 665.3C1350.3 662.9 1349.1 661.7 1346.5 656.5C1343.6 650.6 1343.5 650.2 1343.5 635.5C1343.6 603.1 1352.5 581.6 1368.6 575.4C1372.7 573.8 1376.2 573.5 1389.5 573.5C1398.3 573.5 1408.2 573.7 1411.5 574L1417.5 574.5L1417.8 569.5C1417.9 566.8 1418.9 558.3 1420 550.7C1421.1 543.1 1422 536.4 1422 535.9C1422 535.4 1425.7 535 1430.1 535L1438.2 535L1437.6 538.2C1436.8 543.1 1420 663.5 1420 664.8C1420 665.6 1417.8 666 1413.6 666L1407.2 666L1407.7 656.2L1408.3 646.5L1403.4 651C1391.8 661.8 1381 667 1368.5 667.7C1361.2 668.1 1360 667.9 1355 665.3ZM553.4 663.8C553.7 662.5 557.8 633.5 562.6 599.3L571.3 537.1L577.9 536.4C590.2 535.1 625 535.4 631 536.9C642.5 539.8 648.7 545 651.5 554.2C653.4 560.7 653.4 566.7 651.5 576.4C649.8 585.8 647.3 591.4 642.9 596.5C639.4 600.5 631.1 605 627.3 605C626.1 605 624.8 605.5 624.5 606C624.2 606.5 624.3 607 624.9 607C627 607 632.4 612.6 634.2 616.7C635.5 619.7 645 662.6 645 665.7C645 665.9 641.3 666 636.7 666L628.4 666L624.6 645.8C620 620.7 619.4 618.8 615.8 615.3L612.9 612.5L595 612.2L577.1 611.9L576.5 614.2C576.3 615.5 574.7 626.6 573 639C571.3 651.4 569.7 662.5 569.5 663.8C569 665.9 568.4 666 561 666C553.2 666 553 665.9 553.4 663.8ZM787.3 664.4C785.6 662.8 783.8 655.6 776.6 620C771.9 596.6 768 576.9 768 576.2C768 575.4 770.3 575 775.9 575L783.9 575L784.9 580.2C785.5 583.1 788.5 599.9 791.5 617.5C794.6 635.1 797.3 650.3 797.6 651.2C798 652.5 799.2 653 802.2 653C808 653 811.7 648.6 820 631.6C828.3 614.7 832.8 602.6 836.5 586.8L839.3 575L847.1 575C853.2 575 855 575.3 855 576.4C855 579.8 849.5 598.6 844.8 611C835.5 636 823.1 657.9 815.7 662.8C812 665.2 810.6 665.5 800.6 665.8C790.9 666.2 789.2 666 787.3 664.4ZM972 664.2C971.9 663.3 974.7 642.8 978.1 618.8L984.3 575L990.3 575L996.2 575L995.8 584.5C995.7 589.7 995.6 594 995.7 594C995.9 594 998.5 591.7 1001.6 588.9C1016.6 575.3 1030.9 570.3 1044.2 574C1050.9 575.9 1055 582.1 1056.3 591.9C1056.4 592.8 1059.2 591 1063.5 587.1C1073.3 578.4 1083.2 573.6 1092.6 573.2C1104 572.6 1110.6 575.7 1114.1 583.4C1115.1 585.7 1116 589.5 1116 591.9C1116 595.8 1107.8 657.9 1106.5 663.8C1106 665.8 1105.4 666 1098.5 666C1092.2 666 1091 665.7 1091 664.4C1091 663.5 1093.1 647.9 1095.6 629.7C1099.1 605.1 1100 595.7 1099.4 593.1C1097.6 585.8 1087.6 584.1 1077.2 589.4C1072.5 591.8 1055.1 605.5 1054.9 606.9C1054.9 607.2 1053 620.5 1050.7 636.5L1046.5 665.5L1038.7 665.8C1031.1 666.1 1030.9 666 1031.5 663.8C1031.8 662.5 1034 646.9 1036.5 629C1041.6 591.7 1041.5 590 1035.2 587.3C1027.4 584 1017.3 587.8 1004.4 598.7C1000.1 602.4 996.3 605.7 996 606.2C995.7 606.6 993.7 619.5 991.6 634.7C989.6 650 987.6 663.3 987.4 664.2C986.9 665.7 985.7 666 979.4 666C973 666 972 665.8 972 664.2ZM1192.3 652.2C1200 648.3 1203.2 641 1206.5 619.3C1209.2 601.1 1208.1 590.7 1203.2 588.1C1202 587.5 1198.5 587 1195.4 587C1188.1 587 1176.8 592.3 1166 600.8L1158.4 606.8L1155.6 627.6C1154 639.1 1152.5 650 1152.2 651.8L1151.7 655.2L1169.6 654.8C1186 654.5 1187.9 654.3 1192.3 652.2ZM904.7 652.4C910.5 650.5 920.8 643.7 927.1 637.8L931.7 633.5L934.9 610.5C936.6 597.9 938 587.1 938 586.6C938 586.2 930 585.9 920.2 586.1C903.5 586.5 902.1 586.7 897.5 589.1C893.5 591.1 892 592.7 889.7 597.1C886.1 604.2 883.1 618.7 882.3 633.2C881.6 646.3 882.5 650.1 886.9 652.5C890.4 654.4 898.9 654.4 904.7 652.4ZM1380.4 652.6C1386.2 650.8 1393.5 646.2 1402 638.9L1408.6 633.3L1411.4 611.9C1412.9 600.1 1414.4 589.5 1414.7 588.2L1415.2 586L1399.7 586C1376.6 586 1370.6 587.9 1366 597C1363.1 602.8 1360 619.2 1359.3 632.7C1358.7 645.8 1359.5 649.8 1363.4 652.5C1366 654.4 1374.3 654.4 1380.4 652.6ZM704.4 616.4C723.8 614.6 727.5 613.7 731.1 610.1C735.9 605.2 737.5 593 733.7 589.3C731.6 587.2 725.6 586 716.5 586C706.9 586 700.6 587.4 696.2 590.3C692.1 593 687.5 602.2 685.6 611.2C684 619.3 681.7 618.6 704.4 616.4ZM1280.4 616.4C1300 614.5 1303.6 613.7 1307.1 609.9C1310.2 606.6 1312.7 597.7 1311.6 593.6C1310.1 587.7 1305.7 586 1291.4 586C1282.5 586 1275.7 587.6 1271.1 590.9C1267.7 593.4 1263.8 601.1 1262 609C1261.4 612 1260.6 615.3 1260.3 616.2C1259.7 618.4 1259.8 618.4 1280.4 616.4ZM620.3 596.1C625.5 594.4 631.4 588.3 633.4 582.4C634.4 579.7 635.4 573.5 635.7 568.5C636.2 560.2 636 559.2 633.8 556C630.3 550.8 627.1 550.1 605 550.1L585.4 550L582.6 570.2C581.1 581.4 579.6 592.2 579.3 594.4L578.7 598.2L597.6 597.7C608 597.5 618.2 596.7 620.3 596.1ZM631.5 518.6C597.7 510.8 582.3 486 578 432.6C576 406.8 577.1 379.5 581.1 359.7C589.4 318.6 610.6 299.2 653.8 293.5C672.9 291 712.2 291.8 732.5 295.1C741.2 296.5 756.4 300.1 757.4 301C758.1 301.7 754.8 340.9 753.4 348L753 350.5L711.2 350.5L669.4 350.5L664.5 353.1C658.6 356.1 654.9 361.5 652.3 371C649.6 380.6 649.6 431.4 652.3 441C654.7 449.8 658.6 455.8 663.5 458.4C668.1 460.8 681.1 461.7 693.7 460.5L701 459.8L701.2 424.7L701.5 389.5L734.5 389.5L767.5 389.5L767.5 452.5L767.5 515.5L742.1 515.5L716.7 515.5L714.9 509C714 505.4 712.7 500.5 712 498.1L710.9 493.7L707.2 497.2C697 506.8 684.4 514.2 672.5 517.5C664.3 519.8 639.6 520.4 631.5 518.6ZM865.6 518.4C822.9 512.6 803.9 495.1 796.3 454.7C795 447.9 794.7 433.2 794.3 371.2L793.9 296L828.4 296L863 296L863 363.2C863.1 428.2 863.6 443.9 865.9 452.6C868.7 462.9 875.5 467.9 887.8 468.7C902.2 469.7 910.7 466.3 915 458.1C919 450.1 919.3 446.2 919.7 369.8L920.1 296L954.6 296L989.1 296L988.7 370.8C988.4 422.9 987.9 447.7 987.1 452.8C985 465.7 982.1 475.3 977.8 484C968 504.1 949.7 515 919.1 518.9C907.8 520.4 877.8 520.1 865.6 518.4ZM40.5 516C29.5 513.7 21.5 509.4 14.3 501.8C8.8 495.9 6.2 491.5 3.4 483C1.7 477.8 1.5 471.8 1.2 386.8L0.9 296L35.4 296L70 296L70.2 375L70.5 454L73.8 457.2L77 460.5L117.3 461L157.5 461.5L159.1 486.5C159.9 500.2 160.4 511.8 160.1 512.2C157.2 515.4 53.9 518.7 40.5 516ZM214.6 515.4C201.5 512.2 188.8 502.5 183.3 491.4C177.5 479.9 177.5 480.6 177.5 406C177.5 331.4 177.5 332.1 183.3 320.6C188.9 309.3 201.5 299.7 215.1 296.5C229 293.3 339.1 295.8 342.8 299.4C343.2 299.9 341.5 329.9 340.4 341.8L339.8 348L297.1 348C243.6 348 247.1 346.6 247 367.8L247 381L288 381L329 381L329 403.5L329 426L288 426L247 426L247 441.8C247.1 465.8 243 464 297.1 464L339.8 464L340.4 470.2C341.5 481.6 343.2 512.1 342.8 512.5C342.6 512.8 338.4 513.4 333.4 513.9C305.5 517.1 225.6 518.1 214.6 515.4ZM1055.8 515.4C1039.2 511.4 1025.9 499.2 1021 483.3C1019.1 477 1019 474.1 1019 406C1019 337.9 1019.1 335 1021 328.7C1026 312.6 1039.2 300.5 1056.2 296.5C1070 293.3 1180.1 295.8 1183.8 299.5C1184.2 299.9 1182.5 331.2 1181.4 342.2L1180.8 348L1137.8 348L1094.8 348L1091.4 351.4L1088 354.8L1088 367.9L1088 381L1129 381L1170 381L1170 403.5L1170 426L1129 426L1088 426L1088 441.6L1088 457.2L1091.4 460.6L1094.8 464L1137.8 464L1180.8 464L1181.4 469.8C1182.4 480.4 1184.3 512.1 1183.8 512.5C1183.6 512.7 1179.4 513.4 1174.4 513.9C1146.7 517.1 1066.6 518.1 1055.8 515.4ZM350 514.8C350 514.1 362.9 467.6 378.7 411.5C410.3 299.7 408.7 304.3 418 299L422.5 296.5L458.3 296.2C499.6 295.9 501.9 296.2 508.7 303C511 305.2 513.2 308.2 513.9 309.7C515 312.5 572 514.3 572 515.4C572 515.7 556.3 516 537 516L502 516L501.5 513.8C498.4 500.7 491 468.7 491 468.4C491 468.2 477.4 468.1 460.8 468.2L430.5 468.5L425.1 492.2L419.6 516L384.8 516C357.6 516 350 515.7 350 514.8ZM478.4 413.8C477.6 410.3 474.9 398.9 472.5 388.5C469 373.6 465 352.1 465 348.5C465 348.2 463.1 348 460.7 348L456.4 348L455.2 357.8C454.5 363.1 451.3 379.1 448 393.2C444.7 407.3 442 419.1 442 419.4C442 419.8 450.5 420 460.9 420L479.8 420L478.4 413.8ZM337 274.9C278.9 270.1 252.8 246.5 247.1 193.2C246.4 186.6 246 154.5 246 102.5L246 22L285 22L323.9 22L324.3 106.8C324.6 196.3 324.7 196.8 329.3 205.6C331.6 210.1 337.3 214.7 342.2 216.2C344.6 216.8 350.8 217.4 356 217.4C374.8 217.5 381.6 212.4 385.7 195.2C387.1 189.4 387.4 177.1 387.7 105.3L388.1 22L427.1 22L466.1 22L465.7 106.8C465.3 201.1 465.2 202.4 458.4 222.9C449.3 250.4 432.6 264.7 402 271.6C383.7 275.7 360.9 276.8 337 274.9ZM563.5 275C536.3 271.4 519.5 259.2 508 234.8C497.7 212.7 492.3 169.4 494.8 128.8C497.5 85.1 505.3 61.7 523 44C535.9 31 550.7 24.1 574.7 19.9C605 14.6 661.5 17.1 691.2 25.1C700.5 27.6 700 24.1 696.5 57.4C695.1 70.5 694 81.8 694 82.4C694 83.2 681 83.5 646.8 83.5C599.6 83.5 599.5 83.5 594.5 85.8C587.9 88.9 585.7 91.1 582.6 97.9C577.5 109.4 575.1 136.9 576.9 163.7C578.8 190.3 582.3 200.1 592.1 205.5C597.4 208.5 597.7 208.5 612.5 208.5C620.8 208.5 629.2 208.1 631.2 207.7L635 206.9L635 167.5L635 128L672.5 128L710 128L710 199.5L710 271L681.2 271L652.3 271L649.4 259.4C647.8 253 646.2 247.4 645.9 246.8C645.5 246.2 643.6 247.4 641.4 249.6C631.9 259.1 619.6 266.8 607.4 271C595.4 275.2 577.6 276.8 563.5 275ZM798 273C781.2 272.6 761.8 271.9 754.8 271.5L742 270.7L742 146.5L742 22.3L746.8 21.7C768.4 19 866.1 18.5 884.5 21C906.8 24 920.2 29.3 928.9 38.5C937.9 48 941.8 59.3 942.7 79C944.3 114.3 932.4 134.4 907 139C903.4 139.7 899.9 140.4 899.2 140.6C897.1 141.2 897.9 143 900.2 143C905.3 143.1 916.9 146.2 923.5 149.3C937.1 155.8 945.2 167.6 949.1 186.5C950.9 194.9 951.1 198.9 950.7 212C950.3 225.2 949.9 228.7 947.6 235.7C941.4 254.9 928 265.2 902.5 270.1C883.3 273.9 863.1 274.4 798 273ZM4 146.5C4 28.6 4.1 22 5.8 21.9C6.7 21.9 11.1 21.5 15.5 21C29.7 19.3 106 17.9 125.5 19C179.2 21.9 202.6 35.1 211.6 67.5C214 76.4 214.6 102.3 212.6 112C208 133.8 194.4 147.2 172.1 151.8C167.6 152.7 164.1 153.9 164.3 154.4C164.5 154.9 166.8 155.9 169.6 156.5C182.2 159.4 194.2 168.1 199.3 178.3C201 181.5 206.3 200.3 213 226.8C219.1 250.6 224 270.3 224 270.6C224 271.4 143.1 271 142.6 270.2C142.4 269.8 138.3 251.9 133.6 230.6C128.9 209.2 124.2 190.1 123.2 188.1C119.7 181.5 116.7 180.5 97.8 180.2L81 179.8L81 225.4L81 271L42.5 271L4 271L4 146.5ZM1032.7 270.3C1032.3 270 1032 252.5 1032 231.4L1032 193.2L991 107.8L950.1 22.5L989.7 22.2C1011.5 22.1 1029.7 22.3 1030.1 22.7C1030.5 23.2 1038.3 42.3 1047.5 65.2C1064.6 108.1 1064.1 106.5 1068.5 131.8C1069 134.4 1069.6 135 1071.5 135C1072.9 135 1074 134.6 1074 134.1C1074 133.6 1075.1 126.9 1076.5 119.3C1078.9 106.4 1080.2 102.6 1095.7 63.8L1112.4 22L1152.2 22C1174.1 22 1192 22.3 1192 22.6C1192 23 1173.7 61.4 1151.2 107.9L1110.5 192.5L1110.2 231.8L1109.9 271L1071.6 271C1050.6 271 1033 270.7 1032.7 270.3ZM862.1 219.1C866.8 217.7 870.6 213.5 872 208.2C873.5 202.5 873.4 183.7 871.9 177.6C870.4 171.7 866.4 167.6 860.6 166.1C858 165.5 847.9 165 837.1 165L818 165L818 192.3C818 207.4 818.3 220 818.8 220.4C819.8 221.6 857.8 220.4 862.1 219.1ZM124.3 122.9C132.1 120.3 136 112.3 136 99C136 90.6 134.2 83.4 131.3 80C127.2 75.1 121.3 74 99.8 74L81 74L81 99.6L81 125.2L100.8 124.7C113 124.4 121.9 123.7 124.3 122.9ZM860.4 117C862 116.2 864.3 114.2 865.4 112.7C867.3 110.1 867.5 108.5 867.5 95.6C867.5 73.5 866.6 72.8 837.2 72.2L818 71.8L818 95.5L818 119.2L837.8 118.8C852.8 118.6 858.2 118.1 860.4 117Z"
+                      Fill="White" />
+                <Path Data="F0 M1773.5 516.9C1739.6 514.5 1710.2 507.7 1689.5 497.4C1632.2 469 1608.9 401.5 1609 264C1609.1 135.9 1631.5 65.8 1683.3 31.3C1714.6 10.5 1760.6 1 1830.5 1C1886.9 1 1918.8 4.2 1952.2 13.3C1964 16.4 1964 16.4 1964 19.5C1964 21.1 1962.9 40.5 1961.5 62.5C1960.1 84.5 1959 104.2 1959 106.2L1959 110L1890.2 110C1851.8 110 1817.3 110.5 1812 111C1800.6 112.2 1789 115.3 1783.5 118.5C1767.1 128 1759.5 148.9 1757.4 189.7L1756.7 203L1765 198C1779 189.6 1793.8 184.7 1815.3 181.3C1831.1 178.8 1875.4 178.8 1892.3 181.3C1926.6 186.4 1947.8 195.6 1964.5 212.5C1987.5 235.8 1997.2 271.4 1997.3 332C1997.3 384.4 1991.1 422.9 1978.5 448C1969.8 465.5 1953.6 483.2 1938.1 492.4C1914.5 506.3 1882.5 514.2 1839 517C1820.2 518.1 1791.1 518.1 1773.5 516.9ZM1229.3 461.8C1229.7 418.2 1229.9 413.8 1231.8 405.7C1234.1 396.3 1239.8 383.1 1245 375.3C1246.8 372.7 1276.3 342.4 1310.5 308C1344.7 273.6 1378.4 239 1385.5 231C1428.4 182.5 1445.6 152.6 1438.5 139C1434.6 131.5 1427.6 130.6 1371.5 130.5C1346.2 130.5 1305.9 130.7 1282 131L1238.5 131.5L1236.1 74.7C1234.7 40.9 1234.1 17.6 1234.6 17C1235.7 16 1271.9 9.8 1290 7.6C1356.7 -0.8 1444.5 -1.2 1491 6.6C1551.4 16.7 1585.4 44.9 1594.5 92.4C1599.5 118.4 1597.5 158.6 1590 181C1583.8 199.7 1570.6 220.3 1549.6 244.5C1535.6 260.5 1519.6 276.5 1465.7 328.5C1434.5 358.6 1409.1 383.4 1409.2 383.6C1409.4 383.8 1412 383.3 1415 382.5C1432.7 377.7 1433.7 377.6 1523.8 377.3L1609 376.9L1609 442.9L1609 509L1418.9 509L1228.8 509L1229.3 461.8ZM1826.5 406.9C1838.4 404.8 1847.4 397.3 1850.5 386.7C1853.1 378 1854.2 358.9 1853.7 333.5C1853.1 303.9 1852 298.9 1844.1 290.7C1841.5 287.9 1838.7 286.3 1833.5 284.7C1827.3 282.8 1824.3 282.5 1807.5 282.5C1786.3 282.5 1781 283.5 1764.2 290.7L1755.7 294.4L1756.3 320.6C1757.6 370.8 1761 388.1 1771.5 398.7C1775.6 402.7 1778 404.2 1782.6 405.6C1793.8 408.8 1812.6 409.4 1826.5 406.9Z"
+                      Fill="{StaticResource RLGreen}" />
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RLL26_Logo_White">
+        <Viewbox>
+            <Grid Width="2000" Height="717">
+                <Path Data="F0 M1129 702.7C1129 702 1133 673.1 1138 638.5C1143 603.9 1147 575.5 1147 575.3C1147 575.1 1149.8 575 1153.2 575L1159.5 575L1159 584.2C1158.7 589.3 1158.5 593.7 1158.7 593.9C1158.8 594.1 1161.4 592 1164.4 589.4C1175.8 579.2 1188.9 573.1 1199 573C1208 573 1212.8 574.6 1217.1 578.9C1222.8 584.5 1224.4 591.5 1223.7 606.5C1222.8 625.6 1218.8 643.2 1213.3 652.8C1210 658.5 1203.8 663.6 1197.6 665.7C1192 667.6 1170.1 668.2 1156.2 666.7L1149 666L1148.9 671.7C1148.9 674.9 1147.9 683.4 1146.7 690.5L1144.5 703.5L1136.8 703.8C1130.8 704 1129 703.8 1129 702.7ZM691 666.7C679.5 664 672.7 658.2 669.3 648.5C666.6 640.9 666.9 619.4 669.8 607.5C674.1 590.4 679.5 582.3 689.9 577.6C698.5 573.8 705.8 572.7 720.5 573.3C735.5 573.8 741.4 575.5 746.5 580.6C754.4 588.5 753.2 607.6 744.1 617.3C738.1 623.9 730 626 702.1 628.6L682.7 630.3L683.4 636.2C683.7 639.4 684.6 643.3 685.5 644.9C686.9 647.6 692.4 653 693.8 653C694.2 653 697.2 653.5 700.5 654C705.4 654.8 733.2 653.9 739.4 652.7C740.6 652.5 742.4 662 741.3 663.1C737.7 666.5 701.4 669.1 691 666.7ZM882.3 667C872.1 664.6 867 656.6 866.2 641.7C865.7 632 867.8 614.4 870.7 603.5C874.7 588.6 881.8 579.1 891.8 575.4C898.8 572.9 921.2 572.4 938 574.4C945.3 575.3 952.3 576.3 953.5 576.6C955.6 577.1 955.6 577.3 949.3 621.3C945.9 645.6 943 665.6 943 665.8C943 665.9 940.2 666 936.9 666L930.8 666L931.2 657.1L931.6 648.2L925.8 653.5C913 665 896.1 670.3 882.3 667ZM1267 666.6C1256.2 664.2 1249.9 659.4 1245.8 650.5C1243.7 646 1243.5 644.1 1243.5 630.5C1243.6 595.3 1254 578 1277.4 573.9C1286.6 572.3 1308.1 573.2 1314 575.4C1325.3 579.6 1329.5 588.8 1326.6 603.1C1324.1 614.9 1318.4 621.3 1307.7 624.5C1303.2 625.8 1289.1 627.6 1266.6 629.6L1258.8 630.3L1259.2 635.9C1260.4 652.2 1268.6 655.9 1298.4 653.9C1307.2 653.4 1314.7 652.7 1315.2 652.4C1316.2 651.8 1316.7 653.2 1317.3 658.7L1317.8 663L1312.7 664.5C1300.6 667.9 1277.6 669 1267 666.6ZM1355 665.3C1350.3 662.9 1349.1 661.7 1346.5 656.5C1343.6 650.6 1343.5 650.2 1343.5 635.5C1343.6 603.1 1352.5 581.6 1368.6 575.4C1372.7 573.8 1376.2 573.5 1389.5 573.5C1398.3 573.5 1408.2 573.7 1411.5 574L1417.5 574.5L1417.8 569.5C1417.9 566.8 1418.9 558.3 1420 550.7C1421.1 543.1 1422 536.4 1422 535.9C1422 535.4 1425.7 535 1430.1 535L1438.2 535L1437.6 538.2C1436.8 543.1 1420 663.5 1420 664.8C1420 665.6 1417.8 666 1413.6 666L1407.2 666L1407.7 656.2L1408.3 646.5L1403.4 651C1391.8 661.8 1381 667 1368.5 667.7C1361.2 668.1 1360 667.9 1355 665.3ZM553.4 663.8C553.7 662.5 557.8 633.5 562.6 599.3L571.3 537.1L577.9 536.4C590.2 535.1 625 535.4 631 536.9C642.5 539.8 648.7 545 651.5 554.2C653.4 560.7 653.4 566.7 651.5 576.4C649.8 585.8 647.3 591.4 642.9 596.5C639.4 600.5 631.1 605 627.3 605C626.1 605 624.8 605.5 624.5 606C624.2 606.5 624.3 607 624.9 607C627 607 632.4 612.6 634.2 616.7C635.5 619.7 645 662.6 645 665.7C645 665.9 641.3 666 636.7 666L628.4 666L624.6 645.8C620 620.7 619.4 618.8 615.8 615.3L612.9 612.5L595 612.2L577.1 611.9L576.5 614.2C576.3 615.5 574.7 626.6 573 639C571.3 651.4 569.7 662.5 569.5 663.8C569 665.9 568.4 666 561 666C553.2 666 553 665.9 553.4 663.8ZM787.3 664.4C785.6 662.8 783.8 655.6 776.6 620C771.9 596.6 768 576.9 768 576.2C768 575.4 770.3 575 775.9 575L783.9 575L784.9 580.2C785.5 583.1 788.5 599.9 791.5 617.5C794.6 635.1 797.3 650.3 797.6 651.2C798 652.5 799.2 653 802.2 653C808 653 811.7 648.6 820 631.6C828.3 614.7 832.8 602.6 836.5 586.8L839.3 575L847.1 575C853.2 575 855 575.3 855 576.4C855 579.8 849.5 598.6 844.8 611C835.5 636 823.1 657.9 815.7 662.8C812 665.2 810.6 665.5 800.6 665.8C790.9 666.2 789.2 666 787.3 664.4ZM972 664.2C971.9 663.3 974.7 642.8 978.1 618.8L984.3 575L990.3 575L996.2 575L995.8 584.5C995.7 589.7 995.6 594 995.7 594C995.9 594 998.5 591.7 1001.6 588.9C1016.6 575.3 1030.9 570.3 1044.2 574C1050.9 575.9 1055 582.1 1056.3 591.9C1056.4 592.8 1059.2 591 1063.5 587.1C1073.3 578.4 1083.2 573.6 1092.6 573.2C1104 572.6 1110.6 575.7 1114.1 583.4C1115.1 585.7 1116 589.5 1116 591.9C1116 595.8 1107.8 657.9 1106.5 663.8C1106 665.8 1105.4 666 1098.5 666C1092.2 666 1091 665.7 1091 664.4C1091 663.5 1093.1 647.9 1095.6 629.7C1099.1 605.1 1100 595.7 1099.4 593.1C1097.6 585.8 1087.6 584.1 1077.2 589.4C1072.5 591.8 1055.1 605.5 1054.9 606.9C1054.9 607.2 1053 620.5 1050.7 636.5L1046.5 665.5L1038.7 665.8C1031.1 666.1 1030.9 666 1031.5 663.8C1031.8 662.5 1034 646.9 1036.5 629C1041.6 591.7 1041.5 590 1035.2 587.3C1027.4 584 1017.3 587.8 1004.4 598.7C1000.1 602.4 996.3 605.7 996 606.2C995.7 606.6 993.7 619.5 991.6 634.7C989.6 650 987.6 663.3 987.4 664.2C986.9 665.7 985.7 666 979.4 666C973 666 972 665.8 972 664.2ZM1192.3 652.2C1200 648.3 1203.2 641 1206.5 619.3C1209.2 601.1 1208.1 590.7 1203.2 588.1C1202 587.5 1198.5 587 1195.4 587C1188.1 587 1176.8 592.3 1166 600.8L1158.4 606.8L1155.6 627.6C1154 639.1 1152.5 650 1152.2 651.8L1151.7 655.2L1169.6 654.8C1186 654.5 1187.9 654.3 1192.3 652.2ZM904.7 652.4C910.5 650.5 920.8 643.7 927.1 637.8L931.7 633.5L934.9 610.5C936.6 597.9 938 587.1 938 586.6C938 586.2 930 585.9 920.2 586.1C903.5 586.5 902.1 586.7 897.5 589.1C893.5 591.1 892 592.7 889.7 597.1C886.1 604.2 883.1 618.7 882.3 633.2C881.6 646.3 882.5 650.1 886.9 652.5C890.4 654.4 898.9 654.4 904.7 652.4ZM1380.4 652.6C1386.2 650.8 1393.5 646.2 1402 638.9L1408.6 633.3L1411.4 611.9C1412.9 600.1 1414.4 589.5 1414.7 588.2L1415.2 586L1399.7 586C1376.6 586 1370.6 587.9 1366 597C1363.1 602.8 1360 619.2 1359.3 632.7C1358.7 645.8 1359.5 649.8 1363.4 652.5C1366 654.4 1374.3 654.4 1380.4 652.6ZM704.4 616.4C723.8 614.6 727.5 613.7 731.1 610.1C735.9 605.2 737.5 593 733.7 589.3C731.6 587.2 725.6 586 716.5 586C706.9 586 700.6 587.4 696.2 590.3C692.1 593 687.5 602.2 685.6 611.2C684 619.3 681.7 618.6 704.4 616.4ZM1280.4 616.4C1300 614.5 1303.6 613.7 1307.1 609.9C1310.2 606.6 1312.7 597.7 1311.6 593.6C1310.1 587.7 1305.7 586 1291.4 586C1282.5 586 1275.7 587.6 1271.1 590.9C1267.7 593.4 1263.8 601.1 1262 609C1261.4 612 1260.6 615.3 1260.3 616.2C1259.7 618.4 1259.8 618.4 1280.4 616.4ZM620.3 596.1C625.5 594.4 631.4 588.3 633.4 582.4C634.4 579.7 635.4 573.5 635.7 568.5C636.2 560.2 636 559.2 633.8 556C630.3 550.8 627.1 550.1 605 550.1L585.4 550L582.6 570.2C581.1 581.4 579.6 592.2 579.3 594.4L578.7 598.2L597.6 597.7C608 597.5 618.2 596.7 620.3 596.1ZM631.5 518.6C597.7 510.8 582.3 486 578 432.6C576 406.8 577.1 379.5 581.1 359.7C589.4 318.6 610.6 299.2 653.8 293.5C672.9 291 712.2 291.8 732.5 295.1C741.2 296.5 756.4 300.1 757.4 301C758.1 301.7 754.8 340.9 753.4 348L753 350.5L711.2 350.5L669.4 350.5L664.5 353.1C658.6 356.1 654.9 361.5 652.3 371C649.6 380.6 649.6 431.4 652.3 441C654.7 449.8 658.6 455.8 663.5 458.4C668.1 460.8 681.1 461.7 693.7 460.5L701 459.8L701.2 424.7L701.5 389.5L734.5 389.5L767.5 389.5L767.5 452.5L767.5 515.5L742.1 515.5L716.7 515.5L714.9 509C714 505.4 712.7 500.5 712 498.1L710.9 493.7L707.2 497.2C697 506.8 684.4 514.2 672.5 517.5C664.3 519.8 639.6 520.4 631.5 518.6ZM865.6 518.4C822.9 512.6 803.9 495.1 796.3 454.7C795 447.9 794.7 433.2 794.3 371.2L793.9 296L828.4 296L863 296L863 363.2C863.1 428.2 863.6 443.9 865.9 452.6C868.7 462.9 875.5 467.9 887.8 468.7C902.2 469.7 910.7 466.3 915 458.1C919 450.1 919.3 446.2 919.7 369.8L920.1 296L954.6 296L989.1 296L988.7 370.8C988.4 422.9 987.9 447.7 987.1 452.8C985 465.7 982.1 475.3 977.8 484C968 504.1 949.7 515 919.1 518.9C907.8 520.4 877.8 520.1 865.6 518.4ZM40.5 516C29.5 513.7 21.5 509.4 14.3 501.8C8.8 495.9 6.2 491.5 3.4 483C1.7 477.8 1.5 471.8 1.2 386.8L0.9 296L35.4 296L70 296L70.2 375L70.5 454L73.8 457.2L77 460.5L117.3 461L157.5 461.5L159.1 486.5C159.9 500.2 160.4 511.8 160.1 512.2C157.2 515.4 53.9 518.7 40.5 516ZM214.6 515.4C201.5 512.2 188.8 502.5 183.3 491.4C177.5 479.9 177.5 480.6 177.5 406C177.5 331.4 177.5 332.1 183.3 320.6C188.9 309.3 201.5 299.7 215.1 296.5C229 293.3 339.1 295.8 342.8 299.4C343.2 299.9 341.5 329.9 340.4 341.8L339.8 348L297.1 348C243.6 348 247.1 346.6 247 367.8L247 381L288 381L329 381L329 403.5L329 426L288 426L247 426L247 441.8C247.1 465.8 243 464 297.1 464L339.8 464L340.4 470.2C341.5 481.6 343.2 512.1 342.8 512.5C342.6 512.8 338.4 513.4 333.4 513.9C305.5 517.1 225.6 518.1 214.6 515.4ZM1055.8 515.4C1039.2 511.4 1025.9 499.2 1021 483.3C1019.1 477 1019 474.1 1019 406C1019 337.9 1019.1 335 1021 328.7C1026 312.6 1039.2 300.5 1056.2 296.5C1070 293.3 1180.1 295.8 1183.8 299.5C1184.2 299.9 1182.5 331.2 1181.4 342.2L1180.8 348L1137.8 348L1094.8 348L1091.4 351.4L1088 354.8L1088 367.9L1088 381L1129 381L1170 381L1170 403.5L1170 426L1129 426L1088 426L1088 441.6L1088 457.2L1091.4 460.6L1094.8 464L1137.8 464L1180.8 464L1181.4 469.8C1182.4 480.4 1184.3 512.1 1183.8 512.5C1183.6 512.7 1179.4 513.4 1174.4 513.9C1146.7 517.1 1066.6 518.1 1055.8 515.4ZM350 514.8C350 514.1 362.9 467.6 378.7 411.5C410.3 299.7 408.7 304.3 418 299L422.5 296.5L458.3 296.2C499.6 295.9 501.9 296.2 508.7 303C511 305.2 513.2 308.2 513.9 309.7C515 312.5 572 514.3 572 515.4C572 515.7 556.3 516 537 516L502 516L501.5 513.8C498.4 500.7 491 468.7 491 468.4C491 468.2 477.4 468.1 460.8 468.2L430.5 468.5L425.1 492.2L419.6 516L384.8 516C357.6 516 350 515.7 350 514.8ZM478.4 413.8C477.6 410.3 474.9 398.9 472.5 388.5C469 373.6 465 352.1 465 348.5C465 348.2 463.1 348 460.7 348L456.4 348L455.2 357.8C454.5 363.1 451.3 379.1 448 393.2C444.7 407.3 442 419.1 442 419.4C442 419.8 450.5 420 460.9 420L479.8 420L478.4 413.8ZM337 274.9C278.9 270.1 252.8 246.5 247.1 193.2C246.4 186.6 246 154.5 246 102.5L246 22L285 22L323.9 22L324.3 106.8C324.6 196.3 324.7 196.8 329.3 205.6C331.6 210.1 337.3 214.7 342.2 216.2C344.6 216.8 350.8 217.4 356 217.4C374.8 217.5 381.6 212.4 385.7 195.2C387.1 189.4 387.4 177.1 387.7 105.3L388.1 22L427.1 22L466.1 22L465.7 106.8C465.3 201.1 465.2 202.4 458.4 222.9C449.3 250.4 432.6 264.7 402 271.6C383.7 275.7 360.9 276.8 337 274.9ZM563.5 275C536.3 271.4 519.5 259.2 508 234.8C497.7 212.7 492.3 169.4 494.8 128.8C497.5 85.1 505.3 61.7 523 44C535.9 31 550.7 24.1 574.7 19.9C605 14.6 661.5 17.1 691.2 25.1C700.5 27.6 700 24.1 696.5 57.4C695.1 70.5 694 81.8 694 82.4C694 83.2 681 83.5 646.8 83.5C599.6 83.5 599.5 83.5 594.5 85.8C587.9 88.9 585.7 91.1 582.6 97.9C577.5 109.4 575.1 136.9 576.9 163.7C578.8 190.3 582.3 200.1 592.1 205.5C597.4 208.5 597.7 208.5 612.5 208.5C620.8 208.5 629.2 208.1 631.2 207.7L635 206.9L635 167.5L635 128L672.5 128L710 128L710 199.5L710 271L681.2 271L652.3 271L649.4 259.4C647.8 253 646.2 247.4 645.9 246.8C645.5 246.2 643.6 247.4 641.4 249.6C631.9 259.1 619.6 266.8 607.4 271C595.4 275.2 577.6 276.8 563.5 275ZM798 273C781.2 272.6 761.8 271.9 754.8 271.5L742 270.7L742 146.5L742 22.3L746.8 21.7C768.4 19 866.1 18.5 884.5 21C906.8 24 920.2 29.3 928.9 38.5C937.9 48 941.8 59.3 942.7 79C944.3 114.3 932.4 134.4 907 139C903.4 139.7 899.9 140.4 899.2 140.6C897.1 141.2 897.9 143 900.2 143C905.3 143.1 916.9 146.2 923.5 149.3C937.1 155.8 945.2 167.6 949.1 186.5C950.9 194.9 951.1 198.9 950.7 212C950.3 225.2 949.9 228.7 947.6 235.7C941.4 254.9 928 265.2 902.5 270.1C883.3 273.9 863.1 274.4 798 273ZM4 146.5C4 28.6 4.1 22 5.8 21.9C6.7 21.9 11.1 21.5 15.5 21C29.7 19.3 106 17.9 125.5 19C179.2 21.9 202.6 35.1 211.6 67.5C214 76.4 214.6 102.3 212.6 112C208 133.8 194.4 147.2 172.1 151.8C167.6 152.7 164.1 153.9 164.3 154.4C164.5 154.9 166.8 155.9 169.6 156.5C182.2 159.4 194.2 168.1 199.3 178.3C201 181.5 206.3 200.3 213 226.8C219.1 250.6 224 270.3 224 270.6C224 271.4 143.1 271 142.6 270.2C142.4 269.8 138.3 251.9 133.6 230.6C128.9 209.2 124.2 190.1 123.2 188.1C119.7 181.5 116.7 180.5 97.8 180.2L81 179.8L81 225.4L81 271L42.5 271L4 271L4 146.5ZM1032.7 270.3C1032.3 270 1032 252.5 1032 231.4L1032 193.2L991 107.8L950.1 22.5L989.7 22.2C1011.5 22.1 1029.7 22.3 1030.1 22.7C1030.5 23.2 1038.3 42.3 1047.5 65.2C1064.6 108.1 1064.1 106.5 1068.5 131.8C1069 134.4 1069.6 135 1071.5 135C1072.9 135 1074 134.6 1074 134.1C1074 133.6 1075.1 126.9 1076.5 119.3C1078.9 106.4 1080.2 102.6 1095.7 63.8L1112.4 22L1152.2 22C1174.1 22 1192 22.3 1192 22.6C1192 23 1173.7 61.4 1151.2 107.9L1110.5 192.5L1110.2 231.8L1109.9 271L1071.6 271C1050.6 271 1033 270.7 1032.7 270.3ZM862.1 219.1C866.8 217.7 870.6 213.5 872 208.2C873.5 202.5 873.4 183.7 871.9 177.6C870.4 171.7 866.4 167.6 860.6 166.1C858 165.5 847.9 165 837.1 165L818 165L818 192.3C818 207.4 818.3 220 818.8 220.4C819.8 221.6 857.8 220.4 862.1 219.1ZM124.3 122.9C132.1 120.3 136 112.3 136 99C136 90.6 134.2 83.4 131.3 80C127.2 75.1 121.3 74 99.8 74L81 74L81 99.6L81 125.2L100.8 124.7C113 124.4 121.9 123.7 124.3 122.9ZM860.4 117C862 116.2 864.3 114.2 865.4 112.7C867.3 110.1 867.5 108.5 867.5 95.6C867.5 73.5 866.6 72.8 837.2 72.2L818 71.8L818 95.5L818 119.2L837.8 118.8C852.8 118.6 858.2 118.1 860.4 117Z"
+                      Fill="White" />
+                <Path Data="F0 M1773.5 516.9C1739.6 514.5 1710.2 507.7 1689.5 497.4C1632.2 469 1608.9 401.5 1609 264C1609.1 135.9 1631.5 65.8 1683.3 31.3C1714.6 10.5 1760.6 1 1830.5 1C1886.9 1 1918.8 4.2 1952.2 13.3C1964 16.4 1964 16.4 1964 19.5C1964 21.1 1962.9 40.5 1961.5 62.5C1960.1 84.5 1959 104.2 1959 106.2L1959 110L1890.2 110C1851.8 110 1817.3 110.5 1812 111C1800.6 112.2 1789 115.3 1783.5 118.5C1767.1 128 1759.5 148.9 1757.4 189.7L1756.7 203L1765 198C1779 189.6 1793.8 184.7 1815.3 181.3C1831.1 178.8 1875.4 178.8 1892.3 181.3C1926.6 186.4 1947.8 195.6 1964.5 212.5C1987.5 235.8 1997.2 271.4 1997.3 332C1997.3 384.4 1991.1 422.9 1978.5 448C1969.8 465.5 1953.6 483.2 1938.1 492.4C1914.5 506.3 1882.5 514.2 1839 517C1820.2 518.1 1791.1 518.1 1773.5 516.9ZM1229.3 461.8C1229.7 418.2 1229.9 413.8 1231.8 405.7C1234.1 396.3 1239.8 383.1 1245 375.3C1246.8 372.7 1276.3 342.4 1310.5 308C1344.7 273.6 1378.4 239 1385.5 231C1428.4 182.5 1445.6 152.6 1438.5 139C1434.6 131.5 1427.6 130.6 1371.5 130.5C1346.2 130.5 1305.9 130.7 1282 131L1238.5 131.5L1236.1 74.7C1234.7 40.9 1234.1 17.6 1234.6 17C1235.7 16 1271.9 9.8 1290 7.6C1356.7 -0.8 1444.5 -1.2 1491 6.6C1551.4 16.7 1585.4 44.9 1594.5 92.4C1599.5 118.4 1597.5 158.6 1590 181C1583.8 199.7 1570.6 220.3 1549.6 244.5C1535.6 260.5 1519.6 276.5 1465.7 328.5C1434.5 358.6 1409.1 383.4 1409.2 383.6C1409.4 383.8 1412 383.3 1415 382.5C1432.7 377.7 1433.7 377.6 1523.8 377.3L1609 376.9L1609 442.9L1609 509L1418.9 509L1228.8 509L1229.3 461.8ZM1826.5 406.9C1838.4 404.8 1847.4 397.3 1850.5 386.7C1853.1 378 1854.2 358.9 1853.7 333.5C1853.1 303.9 1852 298.9 1844.1 290.7C1841.5 287.9 1838.7 286.3 1833.5 284.7C1827.3 282.8 1824.3 282.5 1807.5 282.5C1786.3 282.5 1781 283.5 1764.2 290.7L1755.7 294.4L1756.3 320.6C1757.6 370.8 1761 388.1 1771.5 398.7C1775.6 402.7 1778 404.2 1782.6 405.6C1793.8 408.8 1812.6 409.4 1826.5 406.9Z"
+                      Fill="White" />
+            </Grid>
+        </Viewbox>
+    </DataTemplate> 
+
+    <DataTemplate x:Key="ProTeam_Logo">
+        <Viewbox>
+            <Grid>
+                <Path Data="M211.4 25.4C195.8 17.2 180 8.9 164.5.4H.2v248.4c25.4-3.7 51-7 76.6-10v-77.5c29.1-2.2 58-4.1 87.4-5.6 15.8-9.3 31.4-18.4 47.1-27.3 0-34.3 0-68.8.2-103.1ZM77.2 109V52.5c19-.6 38.1-.9 57.1-1.3v55.3c-19.1.7-38.2 1.7-57.1 2.6ZM.2.2v.2H0L.2.2ZM378.8 223.6c28 .4 56 1.1 84 2.4-20-31.5-40.1-62.5-60.1-93.1 14.5-7.8 29.1-15.8 43.6-23.6V24.8c-15.4-8.3-31-16.5-46.4-24.7H233.1c0 75.3-.4 150.7-.6 226 25.8-1.3 51.8-2 77.7-2.6v-87.1h11.5c18.9 28.9 38 57.9 56.9 87.1ZM310.3 49h58.8v38.4h-58.8V49ZM527 229.7c42.3 3.1 84.6 7.2 126.5 12.6 15.4-6.9 31-13.7 46.4-20.8V27.3C684.3 18 668.7 8.9 653.2 0v.2H526.3c-15.4 8.3-30.8 16.7-46.2 24.8 0 59 .4 118.1.4 177.1 15.6 8.9 31 18.2 46.6 27.6ZM622.7 52.5c0 44.7.2 89.4.4 134.1-21.7-1.9-43.6-3.7-65.5-5 0-43.6-.2-87-.4-130.5 21.9.4 43.8.9 65.5 1.5ZM.2 278.1c50.6-8.3 101.5-14.7 152.7-19.3v39.1c-15.9 1.7-31.7 3.5-47.5 5.6-.2 43.9-.4 87.9-.4 131.8-19.5 3.5-38.8 7.6-58.1 12.1.2-45.2.2-90.3.2-135.5-15.6 2.4-31.4 5.2-46.9 8.2v-41.9ZM226.1 380.3c25.8-2 51.8-3.7 77.5-4.5v37.8c-45.4 1.5-90.9 5.4-136 11.7.2-56 .6-111.8.6-167.8 44.7-3.7 89.8-6.1 134.7-7v37.8c-25.6.7-51 1.9-76.4 3.5v25c21.9-1.5 44-2.6 65.8-3.3v38c-22.1.9-44 2.2-65.8 3.9l-.4-.2v25Zm144.3-130h-.4c-18.4 54.1-36.9 108.3-55.3 163.2 20-.6 40.3-.6 60.3-.2 3.9-11.3 7.8-22.6 11.7-33.9 14.3.4 28.4.9 42.7 1.7 3.9 11.7 7.8 23.4 11.7 35 20 1.3 40.1 3.1 60.1 5.6-18.6-57.5-37.1-113.8-55.5-169.3-25-1.1-50.3-1.9-75.3-2Zm46 92.1c-5.6-.2-11.3-.4-16.9-.6 2.8-8.2 5.6-16.5 8.5-24.7 2.8 8.5 5.8 16.9 8.5 25.4l-.2-.2ZM700 278.7V460c-19.1-5.4-38.4-10.2-57.7-14.5v-82.3c-12.1 14.3-24.1 28.6-36.2 42.6-12.1-18.4-24.3-36.5-36.4-54.1.2 26.5.2 53.2.2 79.7-19.3-3.3-38.8-6.1-58.2-8.5 0-55.6-.4-111.1-.4-166.7 18.7 1.3 37.3 3 55.8 4.8 13 18.5 26 37.3 39 56.5 12.8-15.6 25.8-31.3 38.6-47.3 18.5 2.6 37 5.4 55.3 8.3Zm-55.3-8.4s0 0 0 0c-.1 0-.1 0-.2 0h.2Z"
+                      Fill="White" />
+            </Grid>
+        </Viewbox>
+    </DataTemplate>
+
+
+
+
+</ResourceDictionary>

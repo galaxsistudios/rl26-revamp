@@ -1,0 +1,96 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "ANZAC 2022",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60018,
+          "uniformBottom": 60018,
+          "uniformSocks": 60018
+        }
+      },
+      {
+        "name": "HOME 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60059,
+          "uniformBottom": 60059,
+          "uniformSocks": 60059
+        }
+      },
+      {
+        "name": "ALTERNATE 2022",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60060,
+          "uniformBottom": 60060,
+          "uniformSocks": 60060
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60089,
+          "uniformBottom": 60089,
+          "uniformSocks": 60089
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60090,
+          "uniformBottom": 60090,
+          "uniformSocks": 60090
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60196,
+          "uniformBottom": 60196,
+          "uniformSocks": 60196
+        }
+      },
+      {
+        "name": "HERITAGE 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60197,
+          "uniformBottom": 60197,
+          "uniformSocks": 60197
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60198,
+          "uniformBottom": 60198,
+          "uniformSocks": 60198
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60199,
+          "uniformBottom": 60199,
+          "uniformSocks": 60199
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60200,
+          "uniformBottom": 60200,
+          "uniformSocks": 60200
+        }
+      }
+    ]
+  }
+}

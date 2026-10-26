@@ -1,0 +1,99 @@
+# rll4-legacy-kits
+
+Adds 323 older kits to RL26 clubs:
+
+- **80 from RLL4 kit mods** in `resources/old-jerseys/`: 2021-2024 home/away/alternate sets, plus
+  ANZAC, Indigenous, City, Heritage, Pride and Community kits, for the 17 current NRL clubs
+  (ids 118-134) and the State of Origin sides (Queensland 18, New South Wales 19).
+- **243 from the installed Rugby League Live 4 itself** (`add-rll4`, below), all 2017:
+  - NRL home/away/ANZAC/Indigenous/heritage/Nines/clash/Women in League kits, plus the Holden
+    Cup kits as `U20 HOME/AWAY 2017`, on clubs 118-133;
+  - NSW Cup and QLD Cup clubs;
+  - Super League, Championship and League 1 clubs;
+  - Origin, Indigenous All Stars and the men's World Cup sides.
+
+Each source is a single texture in RLL4's layout, with shirt, shorts and socks together. The
+conversion to RL26's three separate textures is done through the 3D meshes, not by cutting up
+the image.
+[build_kits.py](build_kits.py)'s docstring explains how. The kit list (source file → club,
+kit name, design guid) is [kits.json](kits.json).
+
+## Pieces
+
+| Part | Where | Installed by |
+|---|---|---|
+| 6 textures per kit (`characters/uniforms/textures/m_{top,shorts,socks}_<club>_rll4_<kit>_col_{1,2}`) | appended blobset entries | `build_kits.py install` |
+| every new texture name registered in `characters/player/global.texsrc` (entry 31558; the compositor draws unlisted source textures as black) | replaced entry, backed up | `build_kits.py texsrc` |
+| design items (guid 60001-60080 in `uniformTop` / `uniformBottom` / `uniformSocks`) | `src/script-game/intermediatelua/data/jigglyjointsconfig.lua` (generated) | `build.py` (entry 39959) |
+| kit slots on clubs 118-134, 18 and 19 (`uniforms.add`, copying HOME or AWAY for number/name styling) | `defaultdata/defaultdata_clubs/*.json` (generated) | `build.py` (entry 39957) |
+
+The new kit names (e.g. `HOME 2024`) only show up with [unlock-all-kits](../unlock-all-kits/)
+applied, because the exe drops any kit whose name isn't on its built-in list.
+
+Design items copy the Broncos' 2026 home items (guid 105 top, 104 shorts, 104 socks). Those use
+the `top_round05` / `shorts01` / `socks01` models, which are the meshes the textures are baked for.
+Each new kit copies whichever of the club's HOME or AWAY kit has the number colour that stands out
+more against the new jersey's back. Referee clash colours are guessed from the jersey's colours.
+
+## Build and install (game closed)
+
+```powershell
+# 0. (once) add the installed RLL4's own kits to kits.json
+python mods\rll4-legacy-kits\build_kits.py add-rll4
+
+# 1. textures + previews (into _build\rll4-legacy-kits; first run caches the mesh mapping)
+python mods\rll4-legacy-kits\build_kits.py bake
+python mods\rll4-legacy-kits\build_kits.py sheet            # _build\rll4-legacy-kits\sheet.png
+
+# 2. regenerate the Lua + club overrides (needs a STOCK clubs file)
+python tools\extract_m3mp.py --entry 39957 --out <tmp>\39957   # or decode _backup\entry_39957.blob.bak
+python mods\rll4-legacy-kits\build_kits.py generate --clubs <tmp>\39957\defaultdata\defaultdata_clubs
+
+# 3. append the textures (6 per kit) (--replace re-writes ones added before)
+python mods\rll4-legacy-kits\build_kits.py install --confirm
+
+# 3b. register them in the compositor's texture table (entry 31558)
+python mods\rll4-legacy-kits\build_kits.py texsrc --confirm
+
+# 4. rebuild the script and clubs bundles
+python tools\pack.py restore --entry 39959
+python tools\build.py full --confirm
+python tools\pack.py restore --entry 39957
+python tools\build.py full --list manifests\39957.xml --extracted <tmp>\39957 --out _build\entry_39957.m3mp --confirm
+```
+
+Undo: remove this folder, `pack.py restore --entry 31558`, rebuild 39959 and 39957, and `add_entries.py remove-all` (that also
+removes every other appended entry, so re-add the other mods' entries afterwards).
+
+## Kits from the installed RLL4
+
+`python mods\rll4-legacy-kits\build_kits.py add-rll4` finds RLL4 through Steam (or `--rll4 <folder>`
+/ `RLL4_DIR`) and appends a `kits.json` row with `"rll4": "<texture>"` for every RLL4 kit texture
+([rll4_game_kits.json](rll4_game_kits.json) maps to a club: `characters/uniforms/textures/<team
+prefix>_<kit>_col`). Rows already in `kits.json` are kept, so it's safe to re-run. `bake` then
+reads those textures straight from the game (`tools/rll4_source.py`), so RLL4's kits never ship
+with the mod. Skipped:
+
+- referee and cheerleader kits;
+- the women's sides (the bake is male-only);
+- RLL4 teams RL26 doesn't have, e.g. Wyong, Mounties, Wentworthville, Coventry, Oxford,
+  Toronto, and the smaller nations.
+
+The NSW Cup kits land on RL26's NSW Cup clubs, which only show up with the NSW Cup unhide mods.
+Featherstone has no current-season club in RL26, so its kits go on "Featherstone Rovers 2025"
+(91).
+
+## Adding more kits
+
+Drop the RLL4 texture in `resources/old-jerseys/`, add a row to `kits.json` (next free guid,
+club id, a name of at most 24 characters, a unique `texture` slug), then run steps 1-4 above
+(`bake --only <slug>` is enough for step 1).
+
+## Known gaps
+
+- Male models only (`top_round05` m, `shorts01` m). The women's clubs don't get these kits.
+- RLL4's sleeves are short cap sleeves, so the underside of RL26's longer sleeves takes the
+  nearest shirt colour, and thin RLL4 cuff trims mostly disappear.
+- RL26's collar is taller than RLL4's neckline, so it takes the neckline's colour.
+- `holden_sharks_away_col.pc.dds` is actually the Sea Eagles' 2022 Pride jersey (TripADeal,
+  PointsBet, KFC, URM sponsors), so it's added to Manly as `PRIDE 2022`.

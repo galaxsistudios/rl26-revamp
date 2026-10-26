@@ -1,0 +1,24 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "AWAY 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60260,
+          "uniformBottom": 60260,
+          "uniformSocks": 60260
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60261,
+          "uniformBottom": 60261,
+          "uniformSocks": 60261
+        }
+      }
+    ]
+  }
+}

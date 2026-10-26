@@ -208,6 +208,51 @@
                     </b:Interaction.Triggers>
                 </Grid>
 
+                <!--On report banner (mods/referee-on-report): slides out from under the bar like the
+                    try confirmed banner, no arrows. MatchStateMessage/ShowMatchState are set by
+                    sim/hud/gameplayscore_hud.lua; the stock game never uses them.-->
+                <Grid Height="30" VerticalAlignment="Top" Grid.ColumnSpan="7" ClipToBounds="True">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#1A1A1A" Offset="0"/>
+                            <GradientStop Color="#000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Grid.RenderTransform>
+                        <TranslateTransform Y="0"/>
+                    </Grid.RenderTransform>
+
+                    <TextBlock Text="{Binding MatchStateMessage}" d:Text="MUNSTER ON REPORT" Style="{StaticResource ScoreBoardJoyride}" FontSize="16"/>
+                    <b:Interaction.Triggers>
+                        <b:DataTrigger Binding="{Binding ShowMatchState}" Value="True">
+                            <b:ControlStoryboardAction>
+                                <b:ControlStoryboardAction.Storyboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)" From="0" To="45" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </b:ControlStoryboardAction.Storyboard>
+                            </b:ControlStoryboardAction>
+                        </b:DataTrigger>
+                        <b:DataTrigger Binding="{Binding ShowMatchState}" Value="False">
+                            <b:ControlStoryboardAction>
+                                <b:ControlStoryboardAction.Storyboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)" From="45" To="0" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </b:ControlStoryboardAction.Storyboard>
+                            </b:ControlStoryboardAction>
+                        </b:DataTrigger>
+                    </b:Interaction.Triggers>
+                </Grid>
+
                 <!--Home name-->
                 <Grid x:Name="HomeTeam"
                       Grid.Column="1">

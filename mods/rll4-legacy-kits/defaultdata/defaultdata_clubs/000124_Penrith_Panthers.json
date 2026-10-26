@@ -1,0 +1,105 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2024",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60022,
+          "uniformBottom": 60022,
+          "uniformSocks": 60022
+        }
+      },
+      {
+        "name": "AWAY 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60023,
+          "uniformBottom": 60023,
+          "uniformSocks": 60023
+        }
+      },
+      {
+        "name": "INDIGENOUS 2021",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60024,
+          "uniformBottom": 60024,
+          "uniformSocks": 60024
+        }
+      },
+      {
+        "name": "HERITAGE 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60062,
+          "uniformBottom": 60062,
+          "uniformSocks": 60062
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60093,
+          "uniformBottom": 60093,
+          "uniformSocks": 60093
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60094,
+          "uniformBottom": 60094,
+          "uniformSocks": 60094
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60206,
+          "uniformBottom": 60206,
+          "uniformSocks": 60206
+        }
+      },
+      {
+        "name": "CLASH 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60207,
+          "uniformBottom": 60207,
+          "uniformSocks": 60207
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60208,
+          "uniformBottom": 60208,
+          "uniformSocks": 60208
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60209,
+          "uniformBottom": 60209,
+          "uniformSocks": 60209
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60210,
+          "uniformBottom": 60210,
+          "uniformSocks": 60210
+        }
+      }
+    ]
+  }
+}

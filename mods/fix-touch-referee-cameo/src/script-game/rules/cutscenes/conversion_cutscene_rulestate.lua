@@ -43,10 +43,15 @@ function ConversionCutsceneRuleState.onEnterSolid(arg_2_0, arg_2_1, arg_2_2, arg
 	var_2_10 = var_2_3.matchType.conversionType == native.EMTKickType.DropKick and var_2_10 .. "_NoTee" or var_2_10
 
 	local var_2_11 = arg_2_1.ruleStateGuidManager:alloc()
+	-- The kicker's side as primarySide, for cutscene actor filters with side = "primary"
+	-- (Rugby 25's post-conversion reactions): without it no actor matches and
+	-- the cutscene ends at once (duration -0.5).
+	local var_2_kicker = arg_2_7:getGameObject(arg_2_0.kickerId)
 
 	arg_2_10:add(cutsceneplayevent_request.CutscenePlayEventRequest({
 		cutsceneName = var_2_10,
 		targetIds = var_2_9,
+		primarySide = var_2_kicker and var_2_kicker.side,
 		guid = var_2_11,
 		constrainBounds = cutscene_helper.getSafeCutsceneConstrainBounds(),
 		onFinishedState = arg_2_0.nextState,
@@ -78,11 +83,14 @@ InTouchReactionRuleState.HideBallMarkers = true
 InTouchReactionRuleState.CutsceneGroup = "Conversion_Fail_NoTee"
 
 function InTouchReactionRuleState.onEnterSolid(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+	local var_5_player = arg_5_7:getGameObject(arg_5_0.playerId)
+
 	arg_5_10:add(cutsceneplayevent_request.CutscenePlayEventRequest({
 		cutsceneName = InTouchReactionRuleState.CutsceneGroup,
 		targetIds = {
 			arg_5_0.playerId
 		},
+		primarySide = var_5_player and var_5_player.side,
 		guid = arg_5_1.ruleStateGuidManager:alloc(),
 		constrainBounds = cutscene_helper.getSafeCutsceneConstrainBounds(),
 		onFinishedState = arg_5_0.nextState,

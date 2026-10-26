@@ -1,0 +1,17 @@
+{
+  "frontendVisible": 1,
+  "uniforms": {
+    "from": 38,
+    "rename": {
+      "HOME": "HOME 2025",
+      "AWAY": "AWAY 2025",
+      "INDIGENOUS": "INDIGENOUS 2025",
+      "AWAY 2026": "AWAY",
+      "HOME 2026": "HOME"
+    },
+    "order": [
+      "HOME",
+      "AWAY"
+    ]
+  }
+}

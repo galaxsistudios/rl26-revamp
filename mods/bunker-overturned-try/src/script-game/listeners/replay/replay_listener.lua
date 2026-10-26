@@ -29,6 +29,218 @@ local ProvisionalTryHiddenAliases = {
 	"unsuccessfultryattempt"
 }
 
+-- replay-team-stinger: moments Select() plays on their own ahead of a try or field goal
+-- (a big hit that strips or jolts the ball loose). These get their own replay first.
+local LeadUpReplayAliases = {
+	"ballstrip",
+	"knockon"
+}
+
+-- replay-team-stinger debug: every queued replay's moments go to replaymoments_debug.txt
+-- (game folder).
+local ReplayMomentsDebug = true
+local replayMomentsLogFile
+
+local function replayMomentsLog(arg_text)
+	if not ReplayMomentsDebug then
+		return
+	end
+
+	pcall(function()
+		if not replayMomentsLogFile and io and io.open then
+			replayMomentsLogFile = io.open("replaymoments_debug.txt", "a")
+		end
+
+		if replayMomentsLogFile then
+			replayMomentsLogFile:write(tostring(arg_text) .. "\n")
+			replayMomentsLogFile:flush()
+		end
+	end)
+end
+
+local function replayMomentsSeconds(arg_value)
+	local var_ok, var_seconds = pcall(function()
+		return arg_value:ToSeconds()
+	end)
+
+	return var_ok and rawtype(var_seconds) == "number" and string.format("%.2f", var_seconds) or tostring(arg_value)
+end
+
+local function replayMomentsDescribe(arg_moments)
+	local var_parts = {}
+
+	pcall(function()
+		for iter_0, iter_1 in arg_moments.moments:iter() do
+			local var_shots = iter_1.cameraShots
+			local var_first = var_shots and var_shots.count > 0 and var_shots:get(1)
+			local var_last = var_shots and var_shots.count > 0 and var_shots:get(var_shots.count)
+
+			table.insert(var_parts, string.format("%s@%s [%s..%s, %s shots]", tostring(iter_1.name), replayMomentsSeconds(iter_1.time), var_first and replayMomentsSeconds(var_first.shotStart.time) or "?", var_last and replayMomentsSeconds(var_last.shotEnd.time) or "?", var_shots and tostring(var_shots.count) or "?"))
+		end
+	end)
+
+	return table.concat(var_parts, ", ")
+end
+
+-- replay-team-stinger: lead-up replay (big hit / strip before a try or field goal).
+-- The ballstrip/knockon moments use the video referee's 8-angle sequence, so onBallStrip
+-- and onKnockOnEvent also record a single-pass bighit moment at the same time, and the
+-- lead-up plays that instead.
+local function leadUpSinglePass(arg_lead, arg_bighits)
+	local var_ok, var_result = pcall(function()
+		local var_time = arg_lead:get(1).time:ToSeconds()
+
+		for iter_0, iter_1 in arg_bighits.moments:iter() do
+			if math.abs(iter_1.time:ToSeconds() - var_time) < 0.05 then
+				local var_moments = native.CReplayMoments()
+
+				var_moments:addExistingMoment(iter_1)
+
+				return var_moments
+			end
+		end
+	end)
+
+	if not var_ok then
+		replayMomentsLog("  single-pass lookup error: " .. tostring(var_result))
+	end
+
+	return var_ok and var_result or nil
+end
+
+-- The lead-up replay doesn't end through a barrier: after a try that barrier is the RL26
+-- logo wipe back into the conversion. It holds its last frame, kicks replay-team-stinger's
+-- team stinger (if installed), and once that covers the screen swaps itself for the try
+-- replay in place. The try replay then ends the stock way. A skipped lead-up skips both.
+local LeadUpCoverTimeout = 1.5
+
+local function leadUpStinger(arg_universe)
+	local var_ok, var_hud = pcall(function()
+		return arg_universe:getServices().hud:getElement("logotransition")
+	end)
+
+	return var_ok and var_hud and var_hud.teamStinger or nil
+end
+
+local function leadUpEndState(arg_leadUp, arg_universe, arg_engine, ...)
+	local var_build = arg_leadUp.followUpReplay
+
+	arg_leadUp.followUpReplay = nil
+
+	local var_stack = arg_universe:getUniverseStateStack()
+
+	if not var_build or arg_leadUp.skipFinished or not tablex.indexOf(var_stack.nextStack, arg_leadUp) then
+		replayMomentsLog("  lead-up replay ending, no try replay (skipped " .. tostring(arg_leadUp.skipFinished) .. ")")
+
+		return replay_ustate.ReplayUniverseState.endState(arg_leadUp, arg_universe, arg_engine, ...)
+	end
+
+	local var_ok, var_followUp = pcall(var_build)
+
+	if not var_ok or not var_followUp then
+		replayMomentsLog("  try replay build error: " .. tostring(var_followUp))
+
+		return replay_ustate.ReplayUniverseState.endState(arg_leadUp, arg_universe, arg_engine, ...)
+	end
+
+	var_followUp.teamStingerTeam = arg_leadUp.teamStingerTeam
+	arg_leadUp.leadUpFollowUp = var_followUp
+	arg_leadUp.leadUpHold = 0
+	arg_leadUp.stateEnded = true
+
+	local var_stinger = leadUpStinger(arg_universe)
+	local var_kicked = false
+
+	if var_stinger and var_followUp.teamStingerTeam then
+		local var_kickOk, var_kickResult = pcall(var_stinger.kick, var_stinger, var_followUp)
+
+		var_kicked = var_kickOk and var_kickResult
+	end
+
+	arg_leadUp.leadUpStinger = var_kicked and var_stinger or nil
+
+	replayMomentsLog("  lead-up replay ending, " .. (var_kicked and "stinger kicked" or "no stinger, cutting") .. " into the try replay")
+end
+
+local function leadUpSwap(arg_leadUp, arg_universe, arg_engine)
+	local var_followUp = arg_leadUp.leadUpFollowUp
+
+	arg_leadUp.leadUpFollowUp = nil
+
+	local var_stack = arg_universe:getUniverseStateStack()
+	local var_index = tablex.indexOf(var_stack.nextStack, arg_leadUp)
+
+	if not var_index then
+		replayMomentsLog("  lead-up replay left the stack, no try replay")
+
+		return false
+	end
+
+	var_stack:removeState(arg_leadUp, arg_universe, arg_engine)
+	table.insert(var_stack.nextStack, var_index, var_followUp)
+	var_followUp:onPush(arg_engine)
+	var_stack:solidifyState(var_followUp)
+
+	var_followUp.leadUpStinger = arg_leadUp.leadUpStinger
+
+	-- Releases the stinger once the try replay is playing (TeamStinger.updateReveal).
+	function var_followUp.update(arg_self, arg_1, arg_2, arg_3, arg_4, arg_5, ...)
+		replay_ustate.ReplayUniverseState.update(arg_self, arg_1, arg_2, arg_3, arg_4, arg_5, ...)
+
+		local var_stinger = arg_self.leadUpStinger
+
+		if var_stinger then
+			local var_activeOk, var_active = pcall(var_stinger.isActiveFor, var_stinger, arg_self)
+
+			if var_activeOk and var_active then
+				pcall(var_stinger.updateReveal, var_stinger, arg_self, arg_5 or 0)
+			else
+				arg_self.leadUpStinger = nil
+			end
+		end
+	end
+
+	replayMomentsLog(string.format("  swapped in the try replay at %d of %d", var_index, #var_stack.nextStack))
+
+	return true
+end
+
+local function leadUpUpdate(arg_leadUp, arg_1, arg_2, arg_3, arg_4, arg_5, ...)
+	replay_ustate.ReplayUniverseState.update(arg_leadUp, arg_1, arg_2, arg_3, arg_4, arg_5, ...)
+
+	if arg_leadUp.leadUpHold then
+		arg_leadUp.leadUpHold = arg_leadUp.leadUpHold + (arg_5 or 0)
+
+		local var_stinger = arg_leadUp.leadUpStinger
+		local var_covered = true
+
+		if var_stinger then
+			local var_ok, var_result = pcall(var_stinger.isCovered, var_stinger)
+
+			var_covered = var_ok and var_result
+		end
+
+		if var_covered or arg_leadUp.leadUpHold > LeadUpCoverTimeout then
+			arg_leadUp.leadUpHold = nil
+
+			local var_ok, var_swapped = pcall(leadUpSwap, arg_leadUp, arg_1, arg_2)
+
+			if not var_ok then
+				replayMomentsLog("  swap error: " .. tostring(var_swapped))
+			end
+
+			-- Couldn't swap: end the lead-up the stock way, and let the stinger go.
+			if not (var_ok and var_swapped) and tablex.indexOf(arg_1:getUniverseStateStack().nextStack, arg_leadUp) then
+				if var_stinger then
+					pcall(var_stinger.release, var_stinger)
+				end
+
+				replay_ustate.ReplayUniverseState.endState(arg_leadUp, arg_1, arg_2)
+			end
+		end
+	end
+end
+
 local var_0_0 = native.getEnvironment()
 local var_0_1 = var_0_0:argExists("noreplays")
 local var_0_2 = var_0_0:argExists("interactiveReplays")
@@ -195,6 +407,8 @@ local function var_0_11(arg_7_0, arg_7_1)
 end
 
 function ReplayListener.startRecording(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	replayMomentsLog("  startRecording at " .. replayMomentsSeconds(arg_8_5))
+
 	if arg_8_3:getComponent("matchInData").gameMode == native.EGameMode.Practice then
 		return
 	end
@@ -215,6 +429,8 @@ function ReplayListener.startRecording(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8
 end
 
 function ReplayListener.stopRecording(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	replayMomentsLog("  stopRecording at " .. replayMomentsSeconds(arg_9_4))
+
 	profile.push("stopRecording")
 
 	local var_9_0 = arg_9_3.replayManager
@@ -258,6 +474,8 @@ function ReplayListener.mark(arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, a
 end
 
 function ReplayListener.killCurrentSegment(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	replayMomentsLog("  killCurrentSegment at " .. replayMomentsSeconds(arg_11_5))
+
 	local var_11_0 = arg_11_4.replayManager
 
 	var_11_0:endSegment(arg_11_2, arg_11_5)
@@ -308,6 +526,20 @@ function ReplayListener.queueReplay(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 	local var_13_9
 	local var_13_10 = var_0_11(var_13_2, var_13_8)
 
+	if ReplayMomentsDebug then
+		local var_d_0, var_d_1 = pcall(function()
+			local var_d_2 = arg_13_0.matchSim and arg_13_0.matchSim:editSolidState():getRuleState()
+
+			return type(var_d_2)
+		end)
+
+		replayMomentsLog(string.format("--- replay queued at %s during %s, video referee %s", replayMomentsSeconds(arg_13_1.time), var_d_0 and tostring(var_d_1) or "?", tostring(arg_13_1.isVideoReferee)))
+
+		for iter_d_0, iter_d_1 in pairs(var_13_10) do
+			replayMomentsLog("  found " .. tostring(iter_d_0) .. ": " .. replayMomentsDescribe(iter_d_1))
+		end
+	end
+
 	-- bunker-overturned-try: the celebration's replay of a provisional try.
 	local var_p_0 = not arg_13_1.isVideoReferee and provisionalTry().replayPending
 
@@ -316,7 +548,34 @@ function ReplayListener.queueReplay(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 			var_13_10[iter_p_1] = nil
 		end
 	end
+
+	-- replay-team-stinger: Select() returns a ball strip or knock-on alone and never gets
+	-- to the try (or field goal) after it. Split them: the lead-up replay is queued and
+	-- carries the scoring replay as followUpReplay, which replay-team-stinger's
+	-- screenwipe.lua pushes behind the team stinger at the lead-up's end barrier.
+	local var_l_0
+
+	if not arg_13_1.isVideoReferee and not var_p_0 and not var_13_3.onlineMultiplayer and (var_13_10.tryscored or var_13_10.goal) then
+		local var_l_1 = {}
+
+		for iter_l_0, iter_l_1 in ipairs(LeadUpReplayAliases) do
+			var_l_1[iter_l_1] = var_13_10[iter_l_1]
+			var_13_10[iter_l_1] = nil
+		end
+
+		var_l_0 = next(var_l_1) and replaymoments_selection.Select(var_l_1, var_13_8) or nil
+
+		-- Play the hit once: swap in the single-pass bighit moment recorded at the same time.
+		local var_l_4 = var_l_0 and leadUpSinglePass(var_l_0, var_13_10.bighit)
+
+		if var_l_4 then
+			var_l_0 = var_l_4
+		end
+	end
+
 	local var_13_11 = replaymoments_selection.Select(var_13_10, var_13_8)
+
+	replayMomentsLog("  selected: " .. (var_13_11 and replayMomentsDescribe(var_13_11) or "nothing") .. (var_l_0 and ("; lead-up: " .. replayMomentsDescribe(var_l_0)) or ""))
 
 	if not var_13_11 or var_13_11.count == 0 then
 		print("[Replay] Failed to find any suitable replay moment for playback")
@@ -345,19 +604,42 @@ function ReplayListener.queueReplay(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_
 				}))
 			end
 
-			local var_p_1 = replay_ustate.ReplayUniverseState({
-				skipRuleName = "Default",
-				loopPlayBack = false,
-				hudFeature = "Replay",
-				engine = VERIFY(var_13_5),
-				network = VERIFY(var_13_1),
-				services = arg_13_4,
-				gameobjects = arg_13_8,
-				replayManager = var_13_2,
-				replayInstance = var_13_13,
-				skipStateProvider = arg_13_4.skipStateProvider,
-				skipConfig = {}
-			})
+			local function var_l_2(arg_l_0)
+				return replay_ustate.ReplayUniverseState({
+					skipRuleName = "Default",
+					loopPlayBack = false,
+					hudFeature = "Replay",
+					engine = VERIFY(var_13_5),
+					network = VERIFY(var_13_1),
+					services = arg_13_4,
+					gameobjects = arg_13_8,
+					replayManager = var_13_2,
+					replayInstance = arg_l_0,
+					skipStateProvider = arg_13_4.skipStateProvider,
+					skipConfig = {}
+				})
+			end
+
+			-- replay-team-stinger: lead-up replay first, the scoring replay built when it ends.
+			local var_l_3 = var_l_0 and var_13_2:createReplayInstance(var_l_0)
+			local var_p_1
+
+			if var_l_0 then
+				replayMomentsLog("  lead-up instance " .. (var_l_3 and "built" or "FAILED"))
+			end
+
+			if var_l_3 then
+				var_p_1 = var_l_2(var_l_3)
+
+				function var_p_1.followUpReplay()
+					return var_l_2(var_13_13)
+				end
+
+				var_p_1.endState = leadUpEndState
+				var_p_1.update = leadUpUpdate
+			else
+				var_p_1 = var_l_2(var_13_13)
+			end
 
 			-- bunker-overturned-try: replay-team-stinger's screenwipe.lua stingers out of
 			-- this replay back to the referee.
@@ -467,6 +749,8 @@ function ReplayListener.onConversionOutcome(arg_22_0, arg_22_1, arg_22_2, arg_22
 end
 
 function ReplayListener.onDisposal(arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+	replayMomentsLog("  event onDisposal at " .. replayMomentsSeconds(arg_23_1.time))
+
 	if arg_23_1.disposalType == native.EDisposalType.Kick then
 		if arg_23_1.disposalSubType ~= native.EDisposalSubType.PlayTheBall then
 			local var_23_0 = arg_23_8:getBallObject():getBallTrajectory()
@@ -517,10 +801,18 @@ function ReplayListener.onInTouch(arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28
 end
 
 function ReplayListener.onKnockOnEvent(arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8, arg_29_9)
+	replayMomentsLog("  event onKnockOnEvent at " .. replayMomentsSeconds(arg_29_1.time))
+
 	arg_29_0:addMoment(replaymoments_config.Moments.KnockOn.name, arg_29_1.offenderId, arg_29_1.time, arg_29_1.time, arg_29_1.position, arg_29_6, arg_29_8, arg_29_4)
+
+	-- replay-team-stinger: a single-pass shot of it for the lead-up replay (the knockon
+	-- moment uses the video referee's 8-angle sequence).
+	arg_29_0:addMoment(replaymoments_config.Moments.BigHit.name, arg_29_1.offenderId, arg_29_1.time, arg_29_1.time, arg_29_1.position, arg_29_6, arg_29_8, arg_29_4)
 end
 
 function ReplayListener.onBigHit(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7, arg_30_8, arg_30_9)
+	replayMomentsLog("  event onBigHit at " .. replayMomentsSeconds(arg_30_1.time))
+
 	local var_30_0 = VERIFY(arg_30_1.maker)
 	local var_30_1 = arg_30_8:getGameObject(var_30_0).pos
 
@@ -574,6 +866,8 @@ function ReplayListener.onIncrementTackleCountEvent(arg_38_0, arg_38_1, arg_38_2
 end
 
 function ReplayListener.onTackleCompletedEvent(arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
+	replayMomentsLog("  event onTackleCompletedEvent at " .. replayMomentsSeconds(arg_39_1.time))
+
 	ASSERT(arg_39_1.maker)
 	ASSERT(arg_39_1.time)
 	ASSERT(arg_39_1.position)
@@ -586,7 +880,13 @@ function ReplayListener.onTackleCompletedEvent(arg_39_0, arg_39_1, arg_39_2, arg
 end
 
 function ReplayListener.onBallStrip(arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6, arg_40_7, arg_40_8, arg_40_9)
+	replayMomentsLog("  event onBallStrip at " .. replayMomentsSeconds(arg_40_1.time))
+
 	arg_40_0:addMoment(replaymoments_config.Moments.BallStrip.name, arg_40_1.maker, arg_40_1.time, arg_40_1.time, arg_40_1.position, arg_40_6, arg_40_8, arg_40_4)
+
+	-- replay-team-stinger: a single-pass shot of it for the lead-up replay (the ballstrip
+	-- moment uses the video referee's 8-angle sequence).
+	arg_40_0:addMoment(replaymoments_config.Moments.BigHit.name, arg_40_1.maker, arg_40_1.time, arg_40_1.time, arg_40_1.position, arg_40_6, arg_40_8, arg_40_4)
 end
 
 function ReplayListener.onTryAttempt(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
@@ -596,6 +896,8 @@ function ReplayListener.onTryAttempt(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg
 end
 
 function ReplayListener.onTryScored(arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6, arg_42_7, arg_42_8, arg_42_9)
+	replayMomentsLog("  event onTryScored at " .. replayMomentsSeconds(arg_42_1.time))
+
 	-- bunker-overturned-try: record it like a stock bunker try, so the first replay has
 	-- try moments and the bunker replay has its video referee moment.
 	if arg_42_1.provisionalTry then

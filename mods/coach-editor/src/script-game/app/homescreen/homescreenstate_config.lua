@@ -279,11 +279,11 @@ local var_0_12 = {
 			},
 			clubInfoMap = {
 				home = {
-					clubId = 13,
+					clubId = 130,
 					uniformCategory = native.CClubUniformCategory.Home
 				},
 				away = {
-					clubId = 1,
+					clubId = 118,
 					uniformCategory = native.CClubUniformCategory.Away
 				}
 			}
@@ -303,11 +303,11 @@ local var_0_12 = {
 			},
 			clubInfoMap = {
 				home = {
-					clubId = 42,
+					clubId = 194,
 					uniformCategory = native.CClubUniformCategory.Home
 				},
 				away = {
-					clubId = 32,
+					clubId = 184,
 					uniformCategory = native.CClubUniformCategory.Away
 				}
 			}

@@ -1,0 +1,1521 @@
+﻿<Page x:Class="Workspace.Views.background.MenuBackgroundView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+      xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+      xmlns:paEx="clr-namespace:paNoesisExtensions"
+      xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+      xmlns:ViewModels="clr-namespace:Workspace.ViewModels"
+      xmlns:controls="clr-namespace:Workspace.Controls"
+      xmlns:local="clr-namespace:Workspace.Views.background"
+      mc:Ignorable="d"
+      x:Name="MainBackgroundView"
+      Focusable="False"
+      Width="Auto"
+      Height="Auto"
+      d:DesignHeight="1080"
+      d:DesignWidth="1920">
+
+
+    <Page.Resources>
+
+        <GradientStopCollection x:Key="GreenGlow">
+            <GradientStop Color="{Binding MainColour}" />
+            <GradientStop Color="#00000000"
+                          Offset="0.8" />
+        </GradientStopCollection>
+
+        <GradientStopCollection x:Key="HomeGlow">
+            <GradientStop Color="{Binding HomeTeamColour}" />
+            <GradientStop Color="#00000000"
+                          Offset="1" />
+        </GradientStopCollection>
+        <GradientStopCollection x:Key="AwayGlow">
+            <GradientStop Color="{Binding AwayTeamColour}" />
+            <GradientStop Color="#00000000"
+                          Offset="1" />
+        </GradientStopCollection>
+
+        <DataTemplate x:Key="RLL_Lines">
+            <Border Width="6"
+                    Margin="20,0"
+                    x:Name="LineBorder">
+                <Rectangle Width="2"
+                           HorizontalAlignment="Center"
+                           Fill="{StaticResource RLWhite}">
+                    <Rectangle.Effect>
+                        <BlurEffect Radius="1" />
+                    </Rectangle.Effect>
+                </Rectangle>
+                <Border.Effect>
+                    <DropShadowEffect Color="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=(Border.Background).(SolidColorBrush.Color)}"
+                                      BlurRadius="40"
+                                      Opacity="0.8"
+                                      Direction="0"
+                                      ShadowDepth="0" />
+                </Border.Effect>
+
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background"
+                                Value="{StaticResource RLGreen}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=Tag}"
+                                         Value="HomeCol">
+                                <Setter Property="Background"
+                                        Value="{Binding ElementName=LeftLinesCol, Path=Fill}" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=Tag}"
+                                         Value="AwayCol">
+                                <Setter Property="Background"
+                                        Value="{Binding ElementName=RightLinesCol, Path=Fill}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </DataTemplate>
+
+
+
+        <DataTemplate x:Key="HighlightedItemText">
+            <Grid Opacity="0.2"
+                  Margin="0,-40">
+
+                <TextBlock  Text="{Binding RelativeSource={RelativeSource AncestorType=local:MenuBackgroundView}, Path=DataContext.HighlightedTileText, Converter={StaticResource UppercaseConverter}, FallbackValue=''}"
+                            x:Name="HeaderTextTB"
+                            d:Text="MENU TEXT"
+                            Style="{StaticResource Display_XXL}">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush StartPoint="0,0.5"
+                                             EndPoint="1,0.5">
+                            <GradientStop Color="#0F2A4A"
+                                          Offset="0" />
+                            <GradientStop Color="#0A4FA8"
+                                          Offset="0.3" />
+                            <GradientStop Color="#4C9BFF"
+                                          Offset="0.5" />
+                            <GradientStop Color="#0A4FA8"
+                                          Offset="0.7" />
+                            <GradientStop Color="#0F2A4A"
+                                          Offset="1" />
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+
+        <!--When we change the selection on the home screen, this storyboard plays-->
+        <Storyboard x:Key="MenuTextOutroSB"
+                    Completed="MenuTextExitEvent">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextSP"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.12"
+                                      Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!--After the menu text has completed changing, this storyboard plays-->
+        <Storyboard x:Key="MenuTextIntroSB">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextSP"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00.12"
+                                      Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Style TargetType="local:MenuBackgroundView">
+            <Setter Property="MenuTextCommand"
+                    Value="{Binding MenuTextChangeCommand}" />
+            <Setter Property="Background" Value="{StaticResource RLBlack}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LightMode}" Value="True">
+                    <Setter Property="Background" Value="#808080"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        
+
+    </Page.Resources>
+    <!--<Page.Style>
+        <Style TargetType="Page">
+           
+        </Style>
+    </Page.Style>-->
+
+    <Grid ClipToBounds="True"
+          x:Name="RootGrid">
+
+        <Grid x:Name="SplitGrid">
+
+            <Grid.Resources>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="ContentTemplate"
+                            Value="{StaticResource RLL_Lines}" />
+                </Style>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="{Binding ElementName=GridHeightRect, Path=Height, Converter={StaticResource GridLengthConverter}}" />
+            </Grid.RowDefinitions>
+
+            <!--If we ever need to animate the grid rows, we animate this rectangle's height - hacky, but works surprisingly well </3-->
+            <Rectangle x:Name="GridHeightRect"
+                       Height="0.5"
+                       d:Height="0.2"
+                       Visibility="Hidden" />
+
+            <!--Controls the lines' colour - ALSO hacky, but I don't have time to make it cleaner :(-->
+            <Rectangle x:Name="LeftLinesCol"
+                       Visibility="Hidden">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding HomeTeamColour}" />
+                </Rectangle.Fill>
+
+                <i:Interaction.Triggers>
+                    <ei:PropertyChangedTrigger Binding="{Binding HomeTeamColour}">
+                        <ei:ControlStoryboardAction ControlStoryboardOption="Play">
+                            <ei:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                                  Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                                        <EasingColorKeyFrame KeyTime="0:0:0.5"
+                                                             Value="{Binding HomeTeamColour}" />
+                                    </ColorAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </ei:ControlStoryboardAction.Storyboard>
+                        </ei:ControlStoryboardAction>
+                    </ei:PropertyChangedTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+            <Rectangle x:Name="RightLinesCol"
+                       Visibility="Hidden">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="{Binding AwayTeamColour}" />
+                </Rectangle.Fill>
+
+                <i:Interaction.Triggers>
+                    <ei:PropertyChangedTrigger Binding="{Binding AwayTeamColour}">
+                        <ei:ControlStoryboardAction ControlStoryboardOption="Play">
+                            <ei:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                                        <EasingColorKeyFrame KeyTime="0:0:0.5"
+                                                             Value="{Binding AwayTeamColour}" />
+                                    </ColorAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </ei:ControlStoryboardAction.Storyboard>
+                        </ei:ControlStoryboardAction>
+                    </ei:PropertyChangedTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
+            <!--glow opacity dummy elements-->
+            <Rectangle x:Name="TeamGlowOpacity"
+                       Opacity="0.3"
+                       Visibility="Hidden" />
+            <Rectangle x:Name="GreenGlowOpacity"
+                       Opacity="0.3"
+                       Visibility="Hidden" />
+
+
+
+            <!--Wall image-->
+            <!--<Viewbox Stretch="UniformToFill"
+                     x:Name="WallVB">
+                <Image Source="../../Images/Background/rugbyleague_mainmenu/wall_image.png"
+                       x:Name="Wall" />
+            </Viewbox>-->
+
+
+            <!--Menu text-->
+            <controls:baResolutionScaledViewbox x:Name="MenuTextRSV"
+                                                HorizontalAlignment="Right"
+                                                DisableWidthScaling="True"
+                                                VerticalAlignment="Top">
+                <Grid  Margin="-50"
+                       ClipToBounds="True"
+                       x:Name="MenuText"
+                       Height="820">
+                    <Grid.Effect>
+                        <BlurEffect Radius="30" />
+                    </Grid.Effect>
+                    <StackPanel x:Name="MenuTextSP">
+                        <StackPanel.Resources>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="ContentTemplate"
+                                        Value="{StaticResource HighlightedItemText}" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <ContentPresenter x:Name="TB1" />
+                        <ContentPresenter x:Name="TB2" />
+                        <ContentPresenter x:Name="TB3" />
+                        <ContentPresenter x:Name="TB4" />
+                    </StackPanel>
+                </Grid>
+            </controls:baResolutionScaledViewbox>
+
+
+            <controls:baResolutionScaledViewbox x:Name="LogoRSV">
+
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Width="1600"
+                            Height="700">
+
+                    <ContentPresenter ContentTemplate="{StaticResource RLL26_Logo}" Height="500" />
+
+
+                    <controls:paTextBlock FormattedText="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=StartGame}"
+                                          FontSize="50"
+                                          GlowyTooltipEnabled="True"
+                                          Style="{StaticResource Display_XL}"
+                                          HorizontalAlignment="Center"
+                                          Margin="0,100,0,-20" />
+                </StackPanel>
+            </controls:baResolutionScaledViewbox>
+
+            <Viewbox x:Name="TeamSelectBGShapes" Stretch="UniformToFill">
+                <Canvas Width="1920" Height="1080">
+                    <Canvas x:Name="HomeBGShapes" Width="960" Height="1080">
+                        <Canvas.Clip>
+                            <PathGeometry Figures="M0,6.9421465E-15 L550.66667,1.5777218E-29 959.83333,853.5 960,900 0,900z"/>
+                        </Canvas.Clip>
+
+                        <Rectangle x:Name="HomeSmallBGShape" Width="1500" Height="200" RenderTransformOrigin="0.5,0.5" Canvas.Left="-600" Canvas.Top="250" Opacity="0.1">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="64"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding ElementName=LeftLinesCol, Path=(Rectangle.Fill).(SolidColorBrush.Color)}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Rectangle x:Name="HomeLargeBGShape_1" Width="1500" Height="400" RenderTransformOrigin="0.5,0.5" Canvas.Left="-320" Canvas.Top="250" Opacity="0.05">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="64"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding ElementName=LeftLinesCol, Path=(Rectangle.Fill).(SolidColorBrush.Color)}"
+                                                 d:Color="Red" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Canvas>
+
+                    <Canvas x:Name="AwayBGShapes" Width="960" Height="1080" Canvas.Right="0">
+                        <Canvas.Clip>
+                            <PathGeometry Figures="M960,6.9421465E-15 L409.33333,1.5777218E-29 L0.16667,853.5 L0,900 L960,900 z"/>
+                        </Canvas.Clip>
+
+                        <Rectangle x:Name="AwaySmallBGShape" Width="1500" Height="200" RenderTransformOrigin="0.5,0.5" Canvas.Right="-600" Canvas.Top="250" Opacity="0.1">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-64"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding ElementName=RightLinesCol, Path=(Rectangle.Fill).(SolidColorBrush.Color)}"
+                                                 d:Color="Blue" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+
+                        <Rectangle x:Name="AwayLargeBGShape_1" Width="1500" Height="400" RenderTransformOrigin="0.5,0.5" Canvas.Right="-320" Canvas.Top="250" Opacity="0.05">
+                            <Rectangle.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-64"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </Rectangle.RenderTransform>
+                            <Rectangle.Fill>
+                                <SolidColorBrush Color="{Binding ElementName=RightLinesCol, Path=(Rectangle.Fill).(SolidColorBrush.Color)}"
+                                                 d:Color="Blue" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+            <!--Right lines-->
+            <controls:baResolutionScaledViewbox HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom">
+
+                <Grid x:Name="RightLinesGrid"
+                      Opacity="1"
+                      Height="1020"
+                      Width="500"
+                      VerticalAlignment="Bottom"
+                      HorizontalAlignment="Right">
+                    <Grid.OpacityMask>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FFFFFFFF" Offset="0.86"/>
+                            <GradientStop Color="#00FFFFFF" Offset="0.9"/>
+                        </LinearGradientBrush>
+                    </Grid.OpacityMask>
+                    <StackPanel x:Name="RightLinesSP"
+                                Tag="AwayCol"
+                                Margin="-180"
+                                HorizontalAlignment="Right"
+                                Orientation="Horizontal"
+                                RenderTransformOrigin="0.5,0.5">
+                        <StackPanel.RenderTransform>
+                            <RotateTransform Angle="30" />
+                        </StackPanel.RenderTransform>
+
+                        <ContentPresenter x:Name="LL1" />
+                        <ContentPresenter x:Name="LL2"
+                                          Opacity="{Binding ElementName=LL1, Path=Opacity}" />
+                        <ContentPresenter x:Name="LL3" />
+                        <ContentPresenter x:Name="LL4" />
+                        <ContentPresenter x:Name="LL5" />
+                    </StackPanel>
+                </Grid>
+            </controls:baResolutionScaledViewbox>
+
+
+            <!--Left lines-->
+            <controls:baResolutionScaledViewbox VerticalAlignment="Top"
+                                                HorizontalAlignment="Left">
+                <Grid ClipToBounds="True"
+                      x:Name="LeftLinesGrid"
+                      Opacity="1"
+                      Height="500"
+                      HorizontalAlignment="Left"
+                      Width="200"
+                      VerticalAlignment="Top">
+                    <StackPanel x:Name="LeftLinesSP"
+                                Tag="HomeCol"
+                                Margin="-80"
+                                Orientation="Horizontal"
+                                RenderTransformOrigin="0.5,0.5">
+                        <StackPanel.RenderTransform>
+                            <RotateTransform Angle="30" />
+                        </StackPanel.RenderTransform>
+                        <ContentPresenter x:Name="RL1" />
+                        <ContentPresenter x:Name="RL2" />
+                    </StackPanel>
+                </Grid>
+            </controls:baResolutionScaledViewbox>
+
+
+
+            <!--Wall glow-->
+            <Rectangle x:Name="WallGlow"
+                       Grid.Row="0"
+                       RenderTransformOrigin="0.5,0.5"
+                       Opacity="{Binding ElementName=GreenGlowOpacity, Path=Opacity}">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform ScaleX="-1"
+                                    ScaleY="-1" />
+                </Rectangle.RenderTransform>
+                <Rectangle.Fill>
+                    <RadialGradientBrush MappingMode="Absolute"
+                                         RadiusX="820"
+                                         RadiusY="1100"
+                                         GradientStops="{StaticResource GreenGlow}" />
+                </Rectangle.Fill>
+            </Rectangle>
+
+
+            <!--Floor image-->
+            <Viewbox  x:Name="FloorVB"
+                      Grid.Row="1"
+                      Stretch="UniformToFill"
+                      HorizontalAlignment="Center">
+                <Image Source="../../Images/Background/rugbyleague_mainmenu/floor_image.png"
+                       HorizontalAlignment="Center"
+                       x:Name="Floor"/>
+            </Viewbox>
+
+            <!--Floor glow-->
+            <Rectangle x:Name="FloorGlow"
+                       Grid.Row="1"
+                       RenderTransformOrigin="0.5,0.5"
+                       Opacity="{Binding ElementName=GreenGlowOpacity, Path=Opacity}">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform ScaleX="-1" />
+                </Rectangle.RenderTransform>
+                <Rectangle.Fill>
+                    <RadialGradientBrush MappingMode="Absolute"
+                                         RadiusX="1200"
+                                         RadiusY="350"
+                                         GradientStops="{StaticResource GreenGlow}" />
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Rectangle Grid.Row="1"
+                       VerticalAlignment="Top"
+                       Height="100"
+                       Opacity="0.5">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0.5,0"
+                                         EndPoint="0.5,1">
+                        <GradientStop Color="#000000" />
+                        <GradientStop Color="#00000000"
+                                      Offset="1" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <!--Home glow-->
+                <Rectangle x:Name="HomeGlow"
+                           Margin="-200,-500,-800,-500"
+                           RenderTransformOrigin="0.5,0.5"
+                           Opacity="{Binding ElementName=TeamGlowOpacity, Path=Opacity}">
+
+                    <Rectangle.Fill>
+                        <RadialGradientBrush GradientStops="{StaticResource HomeGlow}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <!--away glow-->
+                <Rectangle x:Name="AwayGlow"
+                           Grid.Column="1"
+                           Margin="-800,-500,-200,-500"
+                           RenderTransformOrigin="0.5,0.5"
+                           Opacity="{Binding ElementName=TeamGlowOpacity, Path=Opacity}">
+
+                    <Rectangle.Fill>
+                        <RadialGradientBrush GradientStops="{StaticResource AwayGlow}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Grid>
+
+            <Border ClipToBounds="True"
+                    Grid.Row="1"
+                    x:Name="HomeFloorGlowContainer">
+
+                <Rectangle x:Name="HomeFloorGlow"
+                           Grid.Row="1"
+                           Margin="-100,-300,800,0"
+                           Height="400"
+                           RenderTransformOrigin="0.5,0.5"
+                           Opacity="{Binding ElementName=TeamGlowOpacity, Path=Opacity}">
+                    <Rectangle.Fill>
+                        <RadialGradientBrush GradientStops="{StaticResource HomeGlow}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Border>
+            <Border ClipToBounds="True"
+                    Grid.Row="1"
+                    x:Name="AwayFloorGlowContainer">
+
+                <Rectangle x:Name="AwayFloorGlow"
+                           Grid.Row="1"
+                           Margin="800,-300,-100,0"
+                           Height="400"
+                           RenderTransformOrigin="0.5,0.5"
+                           Opacity="{Binding ElementName=TeamGlowOpacity, Path=Opacity}">
+                    <Rectangle.Fill>
+                        <RadialGradientBrush GradientStops="{StaticResource AwayGlow}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+            </Border>
+
+            <controls:baResolutionScaledViewbox HorizontalAlignment="Left"
+                                                VerticalAlignment="Top" 
+                                                x:Name="TopLeftLogoRSV">
+
+                <Grid HorizontalAlignment="Left"
+                      VerticalAlignment="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <ContentPresenter ContentTemplate="{StaticResource RLL26_Logo}"
+                                      Width="250"
+                                      Height="72"
+                                      Grid.Row="1"
+                                      Grid.Column="1" />
+                </Grid>
+            </controls:baResolutionScaledViewbox>
+
+
+
+
+
+            <!--Team lines-->
+            <Grid x:Name="TEAMSTATEGRID">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+
+                <!--HOME team lines-->
+                <controls:baResolutionScaledViewbox HorizontalAlignment="Right"
+                                                    Grid.Column="0">
+                    <Grid x:Name="HomeTeamLinesGrid"
+                          Opacity="1"
+                          Width="600"
+                          ClipToBounds="True"
+                          Height="900" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.2"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform Y="-80"/>
+                            </TransformGroup>
+                        </Grid.RenderTransform>
+                        <StackPanel x:Name="HomeTeamLinesSP"
+                                    Tag="HomeCol"
+                                    Margin="10,-130"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    RenderTransformOrigin="0.5,0.5">
+                            <StackPanel.RenderTransform>
+                                <RotateTransform Angle="-30" />
+                            </StackPanel.RenderTransform>
+                            <ContentPresenter x:Name="HL1" />
+                            <ContentPresenter x:Name="HL2" />
+                            <ContentPresenter x:Name="HL3" />
+                            <ContentPresenter x:Name="HL4" />
+                            <ContentPresenter x:Name="HL5" />
+                        </StackPanel>
+
+                    </Grid>
+                </controls:baResolutionScaledViewbox>
+
+
+                <!--AWAY team lines-->
+                <controls:baResolutionScaledViewbox HorizontalAlignment="Left"
+                                                    Grid.Column="1">
+                    <Grid x:Name="AwayTeamLinesGrid"
+                          Opacity="1"
+                          Width="600"
+                          Height="900"
+                          ClipToBounds="True" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleY="1.2"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform Y="-80"/>
+                            </TransformGroup>
+                        </Grid.RenderTransform>
+                        <StackPanel x:Name="AwayTeamLinesSP"
+                                    Tag="AwayCol"
+                                    Margin="10,-130"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Left"
+                                    RenderTransformOrigin="0.5,0.5">
+                            <StackPanel.RenderTransform>
+                                <RotateTransform Angle="30" />
+                            </StackPanel.RenderTransform>
+                            <ContentPresenter x:Name="AL1" />
+                            <ContentPresenter x:Name="AL2" />
+                            <ContentPresenter x:Name="AL3" />
+                            <ContentPresenter x:Name="AL4" />
+                            <ContentPresenter x:Name="AL5" />
+                        </StackPanel>
+
+                    </Grid>
+                </controls:baResolutionScaledViewbox>
+
+                <!--left home lines-->
+                <controls:baResolutionScaledViewbox HorizontalAlignment="Left"
+                                                    VerticalAlignment="Bottom">
+
+                    <Grid x:Name="LeftLinesHomeGrid"
+                          Opacity="1"
+                          Height="1020"
+                          Width="500"
+                          VerticalAlignment="Bottom"
+                          HorizontalAlignment="Right">
+                        <StackPanel x:Name="LeftLinesHomeSP"
+                                    Tag="HomeCol"
+                                    Margin="-180"
+                                    HorizontalAlignment="Left"
+                                    Orientation="Horizontal"
+                                    RenderTransformOrigin="0.5,0.5">
+                            <StackPanel.RenderTransform>
+                                <RotateTransform Angle="-30" />
+                            </StackPanel.RenderTransform>
+
+                            <ContentPresenter x:Name="LHL1" />
+                            <ContentPresenter x:Name="LHL2" />
+                        </StackPanel>
+                    </Grid>
+                </controls:baResolutionScaledViewbox>
+            </Grid>
+
+        </Grid>
+
+        <!--Full Glow-->
+        <Rectangle RenderTransformOrigin="0.5,0.5"
+                   Opacity="0.2"
+                   x:Name="GlowOverlay">
+            <Rectangle.RenderTransform>
+                <ScaleTransform ScaleX="-1" />
+            </Rectangle.RenderTransform>
+            <Rectangle.Fill>
+                <RadialGradientBrush MappingMode="Absolute"
+                                     RadiusX="2300"
+                                     RadiusY="2200"
+                                     GradientStops="{StaticResource GreenGlow}" />
+            </Rectangle.Fill>
+        </Rectangle>
+
+        <!--VISUAL STATES-->
+
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+
+                <!--SIGN ON-->
+
+                <VisualState x:Name="SignOn">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL3"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0.3" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0.2" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+
+                <!--MAIN NO TITLE-->
+
+                <VisualState x:Name="MainNoTitles">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.2" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-180">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.3" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="0.5">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:0.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+                <!--HOMESCREEN-->
+
+                <VisualState x:Name="Main">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.2" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-180">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.3" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="0.5">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:0.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+                <!--DATA-->
+
+                <VisualState x:Name="Data">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL3"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.2" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-250">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.3" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="0.5">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:0.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+
+                <!--DATA NO FLOOR-->
+
+                <VisualState x:Name="DataNoFloor">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL3"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.2" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-180">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.3" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="0">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:0.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00.5"
+                                                 Value="{Binding MainColour}" />
+                        </ColorAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+
+                <!--TEAM SELECT-->
+                <VisualState x:Name="TeamSelect">
+
+                    <Storyboard RepeatBehavior="Forever">
+                        
+                        <!--#region keep everything hidden-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesHomeSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00"
+                                                     Value="-290">
+
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00"
+                                                     Value="-280">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL3"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0.5" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0.25">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <!--#endregion-->
+                        
+                        
+                        <!--IDLE ANIMATION HERE!!!-->
+                        
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamSelectBGShapes"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:7"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:8"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeSmallBGShape"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeLargeBGShape_1"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwaySmallBGShape"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwayLargeBGShape_1"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeSmallBGShape"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:01"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:08"
+                                                  Value="-530" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HomeLargeBGShape_1"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:07"
+                                                  Value="-870" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwaySmallBGShape"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:01"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:08"
+                                                  Value="530" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="AwayLargeBGShape_1"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:07"
+                                                  Value="870" />
+                        </DoubleAnimationUsingKeyFrames>
+
+
+                        <!--<ColorAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:0.5"
+                                                 Value="{Binding HomeTeamColour, Mode=TwoWay}" />
+                        </ColorAnimationUsingKeyFrames>
+                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="RightLinesCol"
+                                                      Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)">
+                            <EasingColorKeyFrame KeyTime="00:00:00.5"
+                                                 Value="{Binding AwayTeamColour, Mode=TwoWay}" />
+                        </ColorAnimationUsingKeyFrames>-->
+                    </Storyboard>
+                </VisualState>
+
+
+                <VisualStateGroup.Transitions>
+                    <VisualTransition To="TeamSelect">
+                        <Storyboard FillBehavior="HoldEnd">
+                            
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TopLeftLogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LogoRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="LeftLinesHomeSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-290">
+
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="RightLinesSP"
+                                                          Storyboard.TargetProperty="(StackPanel.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5"
+                                                     Value="-280">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseOut" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL1"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LL3"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TEAMSTATEGRID"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GlowOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TeamGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0.5" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GreenGlowOpacity"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:001.15"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GridHeightRect"
+                                                       Storyboard.TargetProperty="(Rectangle.Height)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.5"
+                                                  Value="0.25">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        </Storyboard>
+
+
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+
+
+
+
+        <!--TRIGGERS-->
+
+        <i:Interaction.Triggers>
+            <ei:DataTrigger Binding="{Binding PlayOutro}"
+                            Value="True">
+                <ei:ControlStoryboardAction Storyboard="{StaticResource MenuTextOutroSB}" 
+                                            ControlStoryboardOption="Play" />
+            </ei:DataTrigger>
+
+            <i:EventTrigger EventName="Loaded">
+                <ei:GoToStateAction StateName="SignOn" />
+            </i:EventTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="signon">
+                <ei:GoToStateAction StateName="SignOn" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="teamselect">
+                <ei:GoToStateAction StateName="TeamSelect" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="main">
+                <ei:GoToStateAction StateName="Main" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="mainnotitle">
+                <ei:GoToStateAction StateName="MainNoTitles" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="data">
+                <ei:GoToStateAction StateName="Data" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="datanofloor">
+                <ei:GoToStateAction StateName="DataNoFloor" />
+            </ei:DataTrigger>
+
+        </i:Interaction.Triggers>
+
+    </Grid>
+
+</Page>

@@ -72,6 +72,49 @@ settings.
   - The stinger releases itself if it's been covering for 5 s (`TeamStingerMaxHold`).
   - At worst, a failure loses the effect, never the match.
 
+## Big hit / strip before a try
+
+The stock replay picker (`design/replaymoments_selection.lua`, `Select`) returns a `ballstrip` or
+`knockon` moment on its own, ahead of `tryscored` and `goal`. Those moments also use the video
+referee's 8-angle sequence. So a strip just before a try replayed only the strip, several times
+over. Now the hit plays once, the stinger plays between, and then the try replays:
+
+```
+celebration -> stinger -> hit replay (once) -> stinger -> try replay -> stock logo wipe back
+```
+
+All of this lives in `listeners/replay/replay_listener.lua`. **That file belongs to
+bunker-overturned-try**, because two mods can't override one file, so build both. Without
+replay-team-stinger the hit cuts straight to the try.
+
+- **Single pass:** `onBallStrip`/`onKnockOnEvent` also record a `bighit` moment at the same time
+  (`Sequences.BigHit`: one close tripod shot, 1 s either side, half speed). `leadUpSinglePass`
+  swaps it in for the lead-up.
+- **Split:** when a `tryscored` or `goal` moment is there too, the `ballstrip`/`knockon` moments are
+  taken out (`LeadUpReplayAliases`). The hit replay is queued, carrying the scoring replay as
+  `followUpReplay`, a function that builds it on demand. Video referee, provisional-try and online
+  replays are left alone.
+- **No barrier between the replays:** a try replay's end barrier is the RL26 logo wipe into the
+  conversion (`LogoScreenWipeOut`), not `ScreenWipeOut`, so a barrier hook never fired. The hit
+  replay instead gets per-instance overrides:
+  - `endState` builds the try replay, kicks the stinger with it and holds the last frame
+    (`stateEnded`, so no barrier).
+  - `update` waits for `isCovered` (or `LeadUpCoverTimeout`, 1.5 s). It then removes itself and
+    inserts the try replay at the same stack index, marked solid.
+  - The try replay's own `update` override calls `TeamStinger:updateReveal`, which releases the
+    stinger once it plays.
+  - The try replay then ends the stock way. The sim's pending wipe and the logo wipe run once, as
+    after any replay.
+- **Skipping:** skipping the hit replay ends it the stock way, without the try replay. If the swap
+  can't happen, it ends the stock way too and the stinger is released.
+
+`replaymoments_debug.txt` (`ReplayMomentsDebug` in that file) logs:
+- every replay event, and where recording starts and stops;
+- the moments found and selected;
+- `lead-up replay ending, stinger kicked into the try replay` → `swapped in the try replay at N of M`.
+
+`teamstinger_debug.txt` logs each replay's playback window.
+
 ## Outro for bunker-overturned-try
 
 A replay flagged `provisionalTryReplay` (set by bunker-overturned-try's `replay_listener.lua`)

@@ -1,0 +1,99 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60046,
+          "uniformBottom": 60046,
+          "uniformSocks": 60046,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "AWAY 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60047,
+          "uniformBottom": 60047,
+          "uniformSocks": 60047,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "INDIGENOUS 2022",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60048,
+          "uniformBottom": 60048,
+          "uniformSocks": 60048
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60107,
+          "uniformBottom": 60107,
+          "uniformSocks": 60107
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60108,
+          "uniformBottom": 60108,
+          "uniformSocks": 60108
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60242,
+          "uniformBottom": 60242,
+          "uniformSocks": 60242
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60243,
+          "uniformBottom": 60243,
+          "uniformSocks": 60243,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60244,
+          "uniformBottom": 60244,
+          "uniformSocks": 60244,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60245,
+          "uniformBottom": 60245,
+          "uniformSocks": 60245
+        }
+      }
+    ]
+  }
+}

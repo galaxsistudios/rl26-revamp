@@ -1,0 +1,123 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60025,
+          "uniformBottom": 60025,
+          "uniformSocks": 60025
+        }
+      },
+      {
+        "name": "AWAY 2024",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60026,
+          "uniformBottom": 60026,
+          "uniformSocks": 60026
+        }
+      },
+      {
+        "name": "ANZAC 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60027,
+          "uniformBottom": 60027,
+          "uniformSocks": 60027
+        }
+      },
+      {
+        "name": "INDIGENOUS 2022",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60028,
+          "uniformBottom": 60028,
+          "uniformSocks": 60028
+        }
+      },
+      {
+        "name": "HOME 2022",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60063,
+          "uniformBottom": 60063,
+          "uniformSocks": 60063
+        }
+      },
+      {
+        "name": "AWAY 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60064,
+          "uniformBottom": 60064,
+          "uniformSocks": 60064
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60095,
+          "uniformBottom": 60095,
+          "uniformSocks": 60095
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60096,
+          "uniformBottom": 60096,
+          "uniformSocks": 60096
+        }
+      },
+      {
+        "name": "ANZAC 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60211,
+          "uniformBottom": 60211,
+          "uniformSocks": 60211
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60212,
+          "uniformBottom": 60212,
+          "uniformSocks": 60212
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60213,
+          "uniformBottom": 60213,
+          "uniformSocks": 60213
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 60214,
+          "uniformBottom": 60214,
+          "uniformSocks": 60214
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60215,
+          "uniformBottom": 60215,
+          "uniformSocks": 60215
+        }
+      }
+    ]
+  }
+}

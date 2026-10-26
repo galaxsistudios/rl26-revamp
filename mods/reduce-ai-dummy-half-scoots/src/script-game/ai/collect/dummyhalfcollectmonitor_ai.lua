@@ -23,6 +23,65 @@ local OwnFortyScootChance = 0.25
 local OwnFortyDistance = 40
 local OwnFortyMaxTackleCount = 3
 
+-- Debug: append one line per AI play-the-ball decision to
+-- reduce_scoots_debug.txt in the game folder. Turn off for release.
+local DebugLog = true
+local MechanicNames = {}
+
+for iter_0_0, iter_0_1 in ipairs({ "None", "Scoot", "PassQuick", "PassFlat", "PassDeep", "PassBack", "Kick", "HitUp" }) do
+	if native.CGameplayMechanic[iter_0_1] ~= nil then
+		MechanicNames[native.CGameplayMechanic[iter_0_1]] = iter_0_1
+	end
+end
+
+local function debugWrite(arg_0_0)
+	if not DebugLog then
+		return
+	end
+
+	pcall(function()
+		local var_0_2 = io.open("reduce_scoots_debug.txt", "a")
+
+		if var_0_2 then
+			var_0_2:write(os.date("%H:%M:%S"), " ", arg_0_0, "\n")
+			var_0_2:flush()
+			var_0_2:close()
+		end
+	end)
+end
+
+-- Marker offset from the ball player along the attacking direction (+ = towards
+-- the attacking side's own try line, i.e. onside side for defenders is negative).
+local function markerInfo(arg_0_0, arg_0_1, arg_0_2, arg_0_3)
+	if not arg_0_1 then
+		return "-"
+	end
+
+	local var_0_4 = arg_0_2:getGameObject(arg_0_1, playertype.TypeId)
+
+	if not var_0_4 then
+		return tostring(arg_0_1) .. "@?"
+	end
+
+	local var_0_5 = arg_0_3:getPlayDir().x
+
+	return string.format("%s@dx%.2f,dy%.2f", tostring(arg_0_1), (var_0_4.pos.x - arg_0_3.pos.x) * var_0_5, var_0_4.pos.y - arg_0_3.pos.y)
+end
+
+local function logDecision(arg_0_0, arg_0_1, arg_0_2, arg_0_3, arg_0_4, arg_0_5, arg_0_6, arg_0_7, arg_0_8)
+	if not DebugLog then
+		return
+	end
+
+	pcall(function()
+		local var_0_9 = arg_0_1.knowledgeBank
+		local var_0_10 = var_0_9.teamTackleMarkerKnowledge
+		local var_0_11 = var_0_9.playerMechanicDecisionPool:get(arg_0_2).preferredMechanic
+
+		debugWrite(string.format("PTB t=%.2f dh=%s side=%s tackle=%s pref=%s roll=%.2f mkr1=%s off1=%s mkr2=%s off2=%s branch=%s", arg_0_6, tostring(arg_0_2), tostring(arg_0_3.side), tostring(arg_0_4:getMatchProgressionEntity().tackleCount), MechanicNames[var_0_11] or tostring(var_0_11), arg_0_0.scootRoll or -1, markerInfo(arg_0_0, var_0_10.primaryId, arg_0_5, arg_0_3), tostring(var_0_10.primaryOffside), markerInfo(arg_0_0, var_0_10.secondaryId, arg_0_5, arg_0_3), tostring(var_0_10.secondaryOffside), arg_0_7))
+	end)
+end
+
 -- Passes tried, in order, when a scoot is vetoed.
 local FallbackPasses = {
 	{
@@ -136,15 +195,23 @@ function DummyHalfCollectMonitorAi.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, ar
 		if var_6_3 and not var_6_2 then
 			arg_6_0.scooted = forceDummyHalfScoot(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11, var_6_1)
 
+			logDecision(arg_6_0, arg_6_2, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_10, "ownforty-scoot")
+
 			return arg_6_0
 		end
+
+		local var_6_5 = "stock"
 
 		if var_6_2 and not var_6_3 and arg_6_0.scootRoll >= ScootChance then
 			arg_6_0.passed = forceDummyHalfPass(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
 
 			if arg_6_0.passed then
+				logDecision(arg_6_0, arg_6_2, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_10, "veto-pass")
+
 				return arg_6_0
 			end
+
+			var_6_5 = "veto-nopass"
 		end
 
 		arg_6_0.scooted = arg_6_0.scootMixin:update(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11, var_6_1)
@@ -155,6 +222,14 @@ function DummyHalfCollectMonitorAi.update(arg_6_0, arg_6_1, arg_6_2, arg_6_3, ar
 			}
 
 			arg_6_0.passed = arg_6_0.passMixin:update(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11, var_6_4)
+		end
+
+		-- Only log once something happened, so a frame with no pass ready
+		-- doesn't spam the file.
+		if arg_6_0.scooted or arg_6_0.passed or not arg_6_0.loggedWait then
+			logDecision(arg_6_0, arg_6_2, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_10, var_6_5 .. (arg_6_0.scooted and "-scoot" or arg_6_0.passed and "-pass" or "-wait"))
+
+			arg_6_0.loggedWait = true
 		end
 	end
 

@@ -1,0 +1,717 @@
+﻿<UserControl x:Class="Workspace.Views.HUD.Rugby.paBunkerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:Workspace.Views.HUD.Rugby"
+             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+             xmlns:paEx="clr-namespace:paNoesisExtensions"
+             xmlns:Controls="clr-namespace:Workspace.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
+             d:Visibility="Visible"
+             Visibility="{Binding Visibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+    <UserControl.Resources>
+
+        <Storyboard x:Key="LoadingAnims"
+                    RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_1">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0"
+                                        Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.5"
+                                      Value="0" />
+
+
+                <LinearDoubleKeyFrame KeyTime="0:0:0.7"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="1" />
+
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_2">
+                <LinearDoubleKeyFrame KeyTime="0:0:0"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.1"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.6"
+                                      Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_3">
+                <LinearDoubleKeyFrame KeyTime="0:0:0.1"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.2"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.7"
+                                      Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_4">
+                <LinearDoubleKeyFrame KeyTime="0:0:0.2"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.3"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_5">
+                <LinearDoubleKeyFrame KeyTime="0:0:0"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.3"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.4"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="0.2" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_6">
+                <LinearDoubleKeyFrame KeyTime="0:0:0"
+                                      Value="0.4" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.2"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.4"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.5"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="0.4" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_7">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0"
+                                        Value="0.6" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.3"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.5"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.6"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="0.6" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity"
+                                           Storyboard.TargetName="Ellipse_8">
+                <DiscreteDoubleKeyFrame KeyTime="0:0:0"
+                                        Value="0.8" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.4"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.6"
+                                      Value="0" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.7"
+                                      Value="1" />
+                <LinearDoubleKeyFrame KeyTime="0:0:0.8"
+                                      Value="0.8" />
+            </DoubleAnimationUsingKeyFrames>
+
+        </Storyboard>
+
+        <DataTemplate x:Key="RLL_Lines">
+            <Border Width="6"
+                    Margin="20,0"
+                    x:Name="LineBorder">
+                <Rectangle Width="2"
+                           HorizontalAlignment="Center"
+                           Fill="{StaticResource RLWhite}">
+                    <Rectangle.Effect>
+                        <BlurEffect Radius="1" />
+                    </Rectangle.Effect>
+                </Rectangle>
+                <Border.Effect>
+                    <DropShadowEffect Color="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=(Border.Background).(SolidColorBrush.Color)}"
+                                      BlurRadius="40"
+                                      Opacity="0.8"
+                                      Direction="0"
+                                      ShadowDepth="0" />
+                </Border.Effect>
+
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background"
+                                Value="{StaticResource RLGreen}" />
+                    </Style>
+                </Border.Style>
+            </Border>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <Grid Background="{StaticResource RLBlack}"
+          ClipToBounds="True">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+
+                <VisualState x:Name="Default">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+                <VisualState x:Name="Pending">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+
+                <VisualState x:Name="Try">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)"
+                                                       RepeatBehavior="Forever"
+                                                       BeginTime="0:0:0.5">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="0.5" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.2" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0.7" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.35"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.4"
+                                                  Value="0.2" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.55"
+                                                  Value="0.7" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:02.3"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.75" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                                                  Value="1">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.75" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                                                  Value="1">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                                       RepeatBehavior="Forever">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0.5" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:1"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:02"
+                                                  Value="0.5" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(noesis:Text.StrokeThickness)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="8" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+
+
+
+
+                <VisualState x:Name="NoTry">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)"
+                                                       RepeatBehavior="Forever"
+                                                       BeginTime="0:0:0.5">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="0.5" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.2" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
+                                                  Value="0.7" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.35"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.4"
+                                                  Value="0.2" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.55"
+                                                  Value="0.7" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:02.3"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.75" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                                                  Value="1">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="0.75" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                                                  Value="1">
+                                <EasingDoubleKeyFrame.EasingFunction>
+                                    <QuinticEase EasingMode="EaseInOut" />
+                                </EasingDoubleKeyFrame.EasingFunction>
+                            </EasingDoubleKeyFrame>
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                                                       Storyboard.TargetProperty="(noesis:Text.StrokeThickness)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Ellipse x:Name="FloorGlow"
+                 Fill="{StaticResource RLWhite05}"
+                 VerticalAlignment="Bottom"
+                 Height="100"
+                 Margin="100,-10">
+            <Ellipse.Effect>
+                <BlurEffect Radius="100" />
+            </Ellipse.Effect>
+        </Ellipse>
+
+
+        <Controls:baResolutionScaledViewbox VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Right">
+            
+        <Grid x:Name="RightLinesGrid"
+              Opacity="1"
+              Height="1080"
+              Width="700">
+            <StackPanel x:Name="RightLinesSP"
+                        Margin="-120,-180"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <RotateTransform Angle="30" />
+                </StackPanel.RenderTransform>
+
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+            </StackPanel>
+        </Grid>
+        </Controls:baResolutionScaledViewbox>
+
+        <Controls:baResolutionScaledViewbox VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Left">
+            
+        <Grid x:Name="LeftLinesGrid"
+              Opacity="1"
+              Height="1080"
+              Width="700">
+            <StackPanel x:Name="LeftLinesSP"
+                        Margin="-120,-180"
+                        HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        RenderTransformOrigin="0.5,0.5">
+                <StackPanel.RenderTransform>
+                    <RotateTransform Angle="-30" />
+                </StackPanel.RenderTransform>
+
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+                <ContentPresenter ContentTemplate="{StaticResource RLL_Lines}" />
+            </StackPanel>
+        </Grid>
+        </Controls:baResolutionScaledViewbox>
+
+        <Grid x:Name="LayoutBorder">
+
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="900*" />
+                <RowDefinition Height="180*" />
+            </Grid.RowDefinitions>
+
+            <Border CornerRadius="0,0,27,27"
+                    Grid.Column="1"
+                    x:Name="GameplayRootBorder">
+
+                <Grid x:Name="GameplayGrid">
+
+
+                    <!--all of the corner radiuses are commented out because its too fucking hard to get it to clip before we update noesis. 0/10-->
+                    <!--CornerRadius="0,0,25,25"-->
+                    <Border Background="{StaticResource RLBlack}">
+
+                        <Border x:Name="GameplayTexture">
+                            <Border.Background>
+                                <ImageBrush ImageSource="{Binding CameraTexture}" Stretch="UniformToFill" />
+                            </Border.Background>
+                            <Border Background="{StaticResource RLBlack}"
+                                x:Name="GameplayOverlay"/>
+                        </Border>
+                    </Border>
+                    <!--CornerRadius="0,0,25,25"-->
+
+
+                    <Border BorderBrush="{StaticResource RLGreen}"
+                            BorderThickness="4,0,4,4"
+                            ClipToBounds="True"
+                            x:Name="GameplayBorder">
+                        <!--CornerRadius="0,0,25,25"-->
+
+                        <!--CornerRadius="0,0,25,25"-->
+
+                        <Border BorderBrush="{StaticResource RLGreen}"
+                                BorderThickness="20,0,20,20"
+                                x:Name="GameplayBlurBorder"
+                                Margin="-5">
+                            <Border.Effect>
+                                <BlurEffect Radius="50" />
+                            </Border.Effect>
+
+
+                        </Border>
+
+                    </Border>
+
+
+                </Grid>
+            </Border>
+
+            <Controls:baResolutionScaledViewbox Grid.Column="1">
+                
+            
+            <Grid  VerticalAlignment="Center"
+                  x:Name="InformationGrid" Width="1600">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <ContentPresenter x:Name="RLL26_Logo"
+                                  ContentTemplate="{StaticResource RLL26_Logo}"
+                                  Width="525" Height="150"
+                                  VerticalAlignment="Bottom"
+                                  Grid.Row="0" />
+
+                <TextBlock x:Name="DecisionTextBlock"
+                           d:Text="TRY"
+                           Text="{Binding DecisionText, Mode=TwoWay, Converter={StaticResource UppercaseConverter}, FallbackValue=' '}"
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource Display_XL}"
+                           FontSize="300"
+                           Grid.Row="2"
+                           noesis:Text.Stroke="{StaticResource RLGreen}"
+                           noesis:Text.StrokeThickness="8"
+                           VerticalAlignment="Top"
+                           RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </TextBlock.RenderTransform>
+
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="50"
+                                          ShadowDepth="0"
+                                          Direction="0"
+                                          Color="{StaticResource RLGreenCol}" />
+                    </TextBlock.Effect>
+
+                </TextBlock>
+
+
+                <StackPanel  x:Name="LoadingSP"
+                             Grid.Row="2">
+
+                    <Grid x:Name="LoadingRootGrid"
+                          Margin="0,40">
+                        <Viewbox Width="115"
+                                 Height="115"
+                                 VerticalAlignment="Center"
+                                 x:Name="LoadingVB">
+
+                            <Grid Width="140"
+                                  Height="140"
+                                  HorizontalAlignment="Left"
+                                  x:Name="LoadingGrid">
+                                <Grid.Resources>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Width"
+                                                Value="15" />
+                                        <Setter Property="Height"
+                                                Value="15" />
+                                        <Setter Property="Fill"
+                                                Value="{StaticResource RLWhite70}" />
+                                        <Setter Property="Margin"
+                                                Value="-10" />
+                                        <Setter Property="Opacity"
+                                                Value="0" />
+                                        <d:Setter Property="Opacity"
+                                                  Value="1" />
+                                    </Style>
+                                </Grid.Resources>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <Ellipse x:Name="Ellipse_1"
+                                         Grid.Column="3" />
+                                <Ellipse x:Name="Ellipse_2"
+                                         Grid.Column="5"
+                                         Grid.Row="1" />
+                                <Ellipse x:Name="Ellipse_3"
+                                         Grid.Column="6"
+                                         Grid.Row="3" />
+                                <Ellipse x:Name="Ellipse_4"
+                                         Grid.Column="5"
+                                         Grid.Row="5" />
+                                <Ellipse x:Name="Ellipse_5"
+                                         Grid.Column="3"
+                                         Grid.Row="6" />
+                                <Ellipse x:Name="Ellipse_6"
+                                         Grid.Column="1"
+                                         Grid.Row="5" />
+                                <Ellipse x:Name="Ellipse_7"
+                                         Grid.Column="0"
+                                         Grid.Row="3" />
+                                <Ellipse x:Name="Ellipse_8"
+                                         Grid.Column="1"
+                                         Grid.Row="1" />
+                                <Ellipse x:Name="Ellipse_9"
+                                         Grid.Column="3" />
+
+                            </Grid>
+                        </Viewbox>
+                    </Grid>
+
+                    <StackPanel Grid.Row="3"
+                                Margin="0,50,0,0"
+                                HorizontalAlignment="Center"
+                                x:Name="PendingDecisionBorder">
+                        <StackPanel.Resources>
+                            <DataTemplate x:Key="DecPending">
+
+                                <TextBlock Margin="0,-50"
+                                           Text="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=Bunker_DecisionPending}"
+                                           x:Name="PendingDecisionTextBlock"
+                                           Style="{StaticResource Display_XL}"
+                                           FontSize="100"
+                                           FontWeight="SemiBold"
+                                           noesis:Text.CharacterSpacing="200" />
+                            </DataTemplate>
+                        </StackPanel.Resources>
+
+                        <ContentPresenter ContentTemplate="{StaticResource DecPending}" />
+                        <ContentPresenter ContentTemplate="{StaticResource DecPending}"
+                                          Opacity="0.1" />
+                        <ContentPresenter ContentTemplate="{StaticResource DecPending}"
+                                          Opacity="0.05" />
+
+                    </StackPanel>
+                </StackPanel>
+
+
+
+            </Grid>
+            </Controls:baResolutionScaledViewbox>
+
+
+            <Controls:baResolutionScaledViewbox HorizontalAlignment="Center"
+                                                Grid.Column="1"
+                                                Grid.Row="1"
+                                                VerticalAlignment="Center" DisableWidthScaling="True">
+
+                <Border Height="100">
+                    
+            <TextBlock x:Name="BunkerTextBlock"
+                       Text="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=TheBunker}"
+                       Style="{StaticResource Row_M}"
+                       FontSize="80"
+                       noesis:Text.Stroke="{StaticResource RLGreen}"
+                       noesis:Text.StrokeThickness="3">
+
+                <TextBlock.Effect>
+                    <DropShadowEffect BlurRadius="50"
+                                      ShadowDepth="0"
+                                      Direction="0"
+                                      Color="{StaticResource RLGreenCol}" />
+                </TextBlock.Effect>
+
+            </TextBlock>
+                </Border>
+            </Controls:baResolutionScaledViewbox>
+
+        </Grid>
+
+        <i:Interaction.Triggers>
+
+            <i:EventTrigger EventName="Loaded">
+                <ei:GoToStateAction StateName="Default" />
+
+                <ei:ControlStoryboardAction Storyboard="{StaticResource LoadingAnims}"
+                                            ControlStoryboardOption="Play" />
+            </i:EventTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualKey}"
+                            Value="Default">
+                <ei:GoToStateAction StateName="Default" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualKey}"
+                            Value="Pending">
+                <ei:GoToStateAction StateName="Pending" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualKey}"
+                            Value="Try">
+                <ei:GoToStateAction StateName="Try" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualKey}"
+                            Value="NoTry">
+                <ei:GoToStateAction StateName="NoTry" />
+            </ei:DataTrigger>
+        </i:Interaction.Triggers>
+
+    </Grid>
+
+</UserControl>

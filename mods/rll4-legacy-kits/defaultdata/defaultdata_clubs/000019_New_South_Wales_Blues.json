@@ -1,0 +1,66 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2021",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60075,
+          "uniformBottom": 60075,
+          "uniformSocks": 60075,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "HOME 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60076,
+          "uniformBottom": 60076,
+          "uniformSocks": 60076,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "HOME 2023",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60077,
+          "uniformBottom": 60077,
+          "uniformSocks": 60077,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "ALTERNATE 2023",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60078,
+          "uniformBottom": 60078,
+          "uniformSocks": 60078,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "ORIGIN 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60298,
+          "uniformBottom": 60298,
+          "uniformSocks": 60298,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      }
+    ]
+  }
+}

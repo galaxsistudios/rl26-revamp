@@ -306,6 +306,18 @@ function TeamShieldRuleState.onEnterSolid(arg_8_0, arg_8_1, arg_8_2, arg_8_3, ar
 		onFinishedState = arg_8_0.nextState
 	}))
 
+	-- match-intro-versus (initial_cutscene.lua): versus overlay + locker-room team stingers.
+	-- The stock initial_cutscene has no MatchIntroVersus, so this does nothing without that mod.
+	if initial_cutscene.MatchIntroVersus then
+		local var_8_26, var_8_27 = pcall(initial_cutscene.MatchIntroVersus, var_8_0, arg_8_3, var_8_2, var_8_22)
+
+		if var_8_26 then
+			arg_8_0.matchIntroVersus = var_8_27
+		elseif initial_cutscene.introVersusLog then
+			initial_cutscene.introVersusLog("create error: " .. tostring(var_8_27))
+		end
+	end
+
 	local var_8_23 = VERIFY(var_8_2.cutsceneInfo).playGFIntroCutscene or var_0_1:argExists("gfintro")
 
 	if var_8_23 then
@@ -371,9 +383,33 @@ function TeamShieldRuleState.updateSolid(arg_16_0, arg_16_1, arg_16_2, arg_16_3,
 	if arg_16_0.introVersusHud then
 		arg_16_0.introVersusHud:update()
 	end
+
+	-- match-intro-versus
+	local var_16_7 = arg_16_0.matchIntroVersus
+
+	if var_16_7 then
+		local var_16_8, var_16_9 = pcall(var_16_7.update, var_16_7, arg_16_3)
+
+		if not var_16_8 then
+			if initial_cutscene.introVersusLog then
+				initial_cutscene.introVersusLog("update error: " .. tostring(var_16_9))
+			end
+
+			pcall(var_16_7.dispose, var_16_7)
+
+			arg_16_0.matchIntroVersus = nil
+		end
+	end
 end
 
 function TeamShieldRuleState.onExitSolid(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9, arg_19_10)
+	-- match-intro-versus
+	if arg_19_0.matchIntroVersus then
+		pcall(arg_19_0.matchIntroVersus.dispose, arg_19_0.matchIntroVersus)
+
+		arg_19_0.matchIntroVersus = nil
+	end
+
 	arg_19_0.homeTexture:unload()
 	arg_19_0.awayTexture:unload()
 

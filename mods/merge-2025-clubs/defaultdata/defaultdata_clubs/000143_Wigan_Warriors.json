@@ -1,0 +1,21 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2025",
+        "copyOf": "HOME",
+        "fromClub": 28
+      },
+      {
+        "name": "AWAY 2025",
+        "copyOf": "AWAY",
+        "fromClub": 28
+      },
+      {
+        "name": "THIRD 2025",
+        "copyOf": "THIRD",
+        "fromClub": 28
+      }
+    ]
+  }
+}

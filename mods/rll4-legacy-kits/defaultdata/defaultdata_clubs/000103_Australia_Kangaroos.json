@@ -1,0 +1,33 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60113,
+          "uniformBottom": 60113,
+          "uniformSocks": 60113
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60114,
+          "uniformBottom": 60114,
+          "uniformSocks": 60114
+        }
+      },
+      {
+        "name": "WORLD CUP 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60115,
+          "uniformBottom": 60115,
+          "uniformSocks": 60115
+        }
+      }
+    ]
+  }
+}

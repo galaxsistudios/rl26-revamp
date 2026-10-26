@@ -34,8 +34,14 @@ isPlayTheBallInProgress and isTackleMarker => TackleMarkerAi
 
 isInWayOfKick and not isLeavingPlay => GetOutOfWayOfKickAi
 
-isQuickDefensivePlayTheBall and isDefendingSide and not isFlaggedOffside and not isLeavingPlay and not isImportantDefensivePlayer and not isPrimaryDefensivePlayer and not canTackle => QuickDefensiveOnsideAi
-isDefenseHeldTackle and isDefendingSide and not isFlaggedOffside and not isLeavingPlay and not isImportantDefensivePlayer and not isPrimaryDefensivePlayer and not canTackle => QuickDefensiveOnsideAi
+-- early-defensive-retreat: "not isFlaggedOffside" removed from these two, so offside defenders also sprint to 10 m behind the ball
+-- (stock sent them to GetOnsideAi, which walked them to a stale onside point until the tackle was held)
+-- early-defensive-retreat: the human double-tap also sends back the important/primary defenders near the ruck (stock left them hovering);
+-- only players who can still join the tackle, and the designated tackle markers, stay
+-- fullback-sweeper-defence: "not isFullBack" added to both. QuickDefensiveOnsideAi targets exactly 10 m behind the ball,
+-- so it dragged a deep fullback forward to the 10 m line on every tackle.
+isQuickDefensivePlayTheBall and isDefendingSide and not isFullBack and not isLeavingPlay and not isTackleMarker and not canTackle => QuickDefensiveOnsideAi
+isDefenseHeldTackle and isDefendingSide and not isFullBack and not isLeavingPlay and not isImportantDefensivePlayer and not isPrimaryDefensivePlayer and not canTackle => QuickDefensiveOnsideAi
 
 isOffside and isEnteringPlay => GetOnsideAi
 isFlaggedOffside and not isLeavingPlay => GetOnsideAi
@@ -59,7 +65,8 @@ isPlayTheBallInProgress and isDummyHalf and amExpectedCollector => DummyHalfColl
 
 isTackleCollapsing and isDummyHalf => DummyHalfAi
 isPlayTheBallInProgress and isDummyHalf => DummyHalfAi
-isPlayTheBallInProgress and isPostDummyHalf and shouldScoot => HitGapAi
+-- reduce-ai-dummy-half-scoots: hasBall added, so a dummy half who has already passed doesn't enter HitGapAi (which clears the set play)
+isPlayTheBallInProgress and isPostDummyHalf and hasBall and shouldScoot => HitGapAi
 -- reduce-ai-dummy-half-scoots: outside backs scooting from their own end (markers square) run the gap too
 isPlayTheBallInProgress and isPostDummyHalf and hasBall and (isWinger or isCentre) => HitGapAi
 isPlayTheBallInProgress and isPostDummyHalf => DummyHalfAi
@@ -89,6 +96,12 @@ isDefendingSide and reactionTimeValid and (lineBroken or ballCarrierInGoal) and 
 isDefendingSide and reactionTimeValid and (lineBroken or ballCarrierInGoal) and lastLineOfDefence => PursueLineBreakerAi
 isDefendingSide and reactionTimeValid and lineBroken and imBroken => DefensiveLineBrokenAi
 isDefendingSide and reactionTimeValid and lineBroken and isInPlayKick => DefensiveRespondToKickAi
+
+-- fullback-sweeper-defence: the fullback stays the sweeper until the line is broken. Stock let him become the
+-- primary/important defender on the dummy half, so he charged the ruck after every play-the-ball.
+-- DefensiveMovementPassiveAi (unused in stock) is the mod's sweeper controller: depth by tackle count and field
+-- position, and it still tackles anyone who reaches him. Kicks in flight and his last 8 m stay stock.
+isDefendingSide and isFullBack and not lineBroken and not ballCarrierInGoal and not isInPlayKick and not isSomewhatNearOwnTryLine => DefensiveMovementPassiveAi
 
 isDefendingSide and reactionTimeValid and not isPlayTheBallInProgress and isPrimaryDefensivePlayer and playerWithinPrimaryDefensiveCone and (teamUrgencyModerate or teamUrgencyHigh) and not isTackleCollapsing => PrimaryDefensiveMovementAi
 isDefendingSide and reactionTimeValid and not isPlayTheBallInProgress and isPrimaryDefensivePlayer and teamUrgencyHigh and not isTackleCollapsing => PrimaryDefensiveMovementAi

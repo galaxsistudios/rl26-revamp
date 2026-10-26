@@ -1,0 +1,16 @@
+{
+  "name": "WOMEN'S SUPER LEAGUE",
+  "shortName": "WSL",
+  "sortIndex": 8,
+  "clubs": [
+    196,
+    197,
+    198,
+    199,
+    200,
+    201,
+    202,
+    203
+  ],
+  "B": 1
+}

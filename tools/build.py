@@ -102,9 +102,13 @@ def scan_mod_overrides(mods_dir):
                 dirnames.remove("__pycache__")
             for fn in filenames:
                 # README.md documents a mod; *.py is a program-style mod's
-                # installer (e.g. mods/unlock-all-kits/install.py) - neither
-                # is a bundle file.
+                # installer (e.g. mods/unlock-all-kits/install.py). Any file
+                # at the mod root is a generator's config or data (e.g.
+                # mods/r25-imports/imports.json, mods/crowd-team-kits/*.npz):
+                # bundle paths always have directories, so none is a bundle file.
                 if fn.lower() == "readme.md" or fn.lower().endswith(".py"):
+                    continue
+                if dirpath == mod_path:
                     continue
                 abs_path = os.path.join(dirpath, fn)
                 rel = os.path.relpath(abs_path, mod_path).replace(os.sep, "/")

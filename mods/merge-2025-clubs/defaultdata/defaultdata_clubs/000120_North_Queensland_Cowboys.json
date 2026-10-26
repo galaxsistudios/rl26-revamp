@@ -1,0 +1,26 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "ALTERNATE 2025",
+        "copyOf": "ALTERNATE",
+        "fromClub": 3
+      },
+      {
+        "name": "INDIGENOUS 2025",
+        "copyOf": "INDIGENOUS",
+        "fromClub": 3
+      },
+      {
+        "name": "NORTHERN LIGHTS 2025",
+        "copyOf": "NORTHERN LIGHTS",
+        "fromClub": 3
+      },
+      {
+        "name": "ANZAC ROUND 2025",
+        "copyOf": "ANZAC ROUND",
+        "fromClub": 3
+      }
+    ]
+  }
+}

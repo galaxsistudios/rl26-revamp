@@ -1,0 +1,13 @@
+{
+  "npcType": 1,
+  "firstname": "Wayne",
+  "surname": "Bennett",
+  "visual": {
+    "hairTexture_cap": 1,
+    "hairColour1": 1000,
+    "hairColour2": 1000,
+    "beardColour1": 1000,
+    "beardColour2": 1000,
+    "bodyHair_colour": 1001
+  }
+}

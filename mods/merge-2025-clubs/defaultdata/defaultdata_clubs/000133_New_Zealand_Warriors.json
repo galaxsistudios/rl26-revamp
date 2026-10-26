@@ -1,0 +1,36 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2025",
+        "copyOf": "HOME",
+        "fromClub": 16
+      },
+      {
+        "name": "AWAY 2025",
+        "copyOf": "AWAY",
+        "fromClub": 16
+      },
+      {
+        "name": "INDIGENOUS 2025",
+        "copyOf": "INDIGENOUS",
+        "fromClub": 16
+      },
+      {
+        "name": "ANZAC ROUND 2025",
+        "copyOf": "ANZAC ROUND",
+        "fromClub": 16
+      },
+      {
+        "name": "PASIFIKA 2025",
+        "copyOf": "PASIFIKA",
+        "fromClub": 16
+      },
+      {
+        "name": "DEAR WARRIOR 2025",
+        "copyOf": "DEAR WARRIOR",
+        "fromClub": 16
+      }
+    ]
+  }
+}

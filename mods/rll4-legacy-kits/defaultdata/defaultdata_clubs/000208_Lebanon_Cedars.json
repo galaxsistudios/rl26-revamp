@@ -1,0 +1,27 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME RLWC",
+        "set": {
+          "uniformTop": 60123,
+          "uniformBottom": 60123,
+          "uniformSocks": 60123,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME RLWC",
+        "set": {
+          "uniformTop": 60124,
+          "uniformBottom": 60124,
+          "uniformSocks": 60124
+        }
+      }
+    ]
+  }
+}

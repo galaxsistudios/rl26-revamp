@@ -8,6 +8,31 @@ ClubIconColourSetMap = {
 	-- new-club-icons: generic colour sets (see clublist.lua var_0_18).
 	nrl_bears = "dark_red",
 	nrl_chiefs = "gold",
+	-- new-club-icons: classic emblems reuse their club's colour set.
+	nrl_broncos_classic_1 = "nrl_broncos",
+	nrl_broncos_classic_2 = "nrl_broncos",
+	nrl_raiders_classic_1 = "nrl_raiders",
+	nrl_raiders_classic_2 = "nrl_raiders",
+	nrl_bulldogs_classic_1 = "nrl_bulldogs",
+	nrl_bulldogs_classic_2 = "nrl_bulldogs",
+	nrl_sharks_classic_1 = "nrl_sharks",
+	nrl_titans_classic_1 = "nrl_titans",
+	nrl_seaeagles_classic_1 = "nrl_seaeagles",
+	nrl_seaeagles_classic_2 = "nrl_seaeagles",
+	nrl_storm_classic_1 = "nrl_storm",
+	nrl_warriors_classic_1 = "nrl_warriors",
+	nrl_warriors_classic_2 = "nrl_warriors",
+	nrl_knights_classic_1 = "nrl_knights",
+	nrl_knights_classic_2 = "nrl_knights",
+	nrl_cowboys_classic_1 = "nrl_cowboys",
+	nrl_cowboys_classic_2 = "nrl_cowboys",
+	nrl_eels_classic_1 = "nrl_eels",
+	nrl_eels_classic_2 = "nrl_eels",
+	nrl_panthers_classic_1 = "nrl_panthers",
+	nrl_panthers_classic_2 = "nrl_panthers",
+	nrl_rabbitohs_classic_1 = "nrl_rabbitohs",
+	nrl_roosters_classic_1 = "nrl_roosters",
+	nrl_tigers_classic_1 = "nrl_tigers",
 	nrl_warriors = "nrl_warriors",
 	rep_czechrep = "dark_red",
 	cus_87 = "dark_red",
@@ -280,6 +305,54 @@ ClubIconColourSetMap = {
 	qld_tigers = "orange"
 }
 ColourSets = var_0_0.ColourSets
+
+-- new-club-icons: names for the added emblems. The game has no localisation
+-- strings for them, and every icon label is native.Localise("Club_<icon>")
+-- at call time, so wrap Localise once to answer those keys.
+ModClubIconLabels = {
+	Club_nrl_bears = "North Sydney Bears",
+	Club_nrl_chiefs = "PNG Chiefs",
+	Club_nrl_broncos_classic_1 = "Brisbane Broncos Classic #1",
+	Club_nrl_broncos_classic_2 = "Brisbane Broncos Classic #2",
+	Club_nrl_raiders_classic_1 = "Canberra Raiders Classic #1",
+	Club_nrl_raiders_classic_2 = "Canberra Raiders Classic #2",
+	Club_nrl_bulldogs_classic_1 = "Canterbury-Bankstown Bulldogs Classic #1",
+	Club_nrl_bulldogs_classic_2 = "Canterbury-Bankstown Bulldogs Classic #2",
+	Club_nrl_sharks_classic_1 = "Cronulla-Sutherland Sharks Classic #1",
+	Club_nrl_titans_classic_1 = "Gold Coast Titans Classic #1",
+	Club_nrl_seaeagles_classic_1 = "Manly Warringah Sea Eagles Classic #1",
+	Club_nrl_seaeagles_classic_2 = "Manly Warringah Sea Eagles Classic #2",
+	Club_nrl_storm_classic_1 = "Melbourne Storm Classic #1",
+	Club_nrl_warriors_classic_1 = "New Zealand Warriors Classic #1",
+	Club_nrl_warriors_classic_2 = "New Zealand Warriors Classic #2",
+	Club_nrl_knights_classic_1 = "Newcastle Knights Classic #1",
+	Club_nrl_knights_classic_2 = "Newcastle Knights Classic #2",
+	Club_nrl_cowboys_classic_1 = "North Queensland Cowboys Classic #1",
+	Club_nrl_cowboys_classic_2 = "North Queensland Cowboys Classic #2",
+	Club_nrl_eels_classic_1 = "Parramatta Eels Classic #1",
+	Club_nrl_eels_classic_2 = "Parramatta Eels Classic #2",
+	Club_nrl_panthers_classic_1 = "Penrith Panthers Classic #1",
+	Club_nrl_panthers_classic_2 = "Penrith Panthers Classic #2",
+	Club_nrl_rabbitohs_classic_1 = "South Sydney Rabbitohs Classic #1",
+	Club_nrl_roosters_classic_1 = "Sydney Roosters Classic #1",
+	Club_nrl_tigers_classic_1 = "Wests Tigers Classic #1"
+}
+
+if native and native.Localise and not ModClubIconLocaliseBase then
+	ModClubIconLocaliseBase = native.Localise
+
+	pcall(function()
+		native.Localise = function(arg_ml_0, ...)
+			local var_ml_0 = type(arg_ml_0) == "string" and ModClubIconLabels[arg_ml_0]
+
+			if var_ml_0 then
+				return var_ml_0
+			end
+
+			return ModClubIconLocaliseBase(arg_ml_0, ...)
+		end
+	end)
+end
 Competitions = {
 	"allstarsmatch",
 	"anzactest",

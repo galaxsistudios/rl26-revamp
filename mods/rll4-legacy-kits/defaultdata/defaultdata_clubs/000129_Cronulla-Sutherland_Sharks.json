@@ -1,0 +1,138 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2024",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60041,
+          "uniformBottom": 60041,
+          "uniformSocks": 60041,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "AWAY 2024",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60042,
+          "uniformBottom": 60042,
+          "uniformSocks": 60042
+        }
+      },
+      {
+        "name": "HERITAGE 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60043,
+          "uniformBottom": 60043,
+          "uniformSocks": 60043
+        }
+      },
+      {
+        "name": "INDIGENOUS 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60044,
+          "uniformBottom": 60044,
+          "uniformSocks": 60044,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "ANZAC 2022",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60070,
+          "uniformBottom": 60070,
+          "uniformSocks": 60070,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "U20 AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60103,
+          "uniformBottom": 60103,
+          "uniformSocks": 60103
+        }
+      },
+      {
+        "name": "U20 HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60104,
+          "uniformBottom": 60104,
+          "uniformSocks": 60104,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "AWAY 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60231,
+          "uniformBottom": 60231,
+          "uniformSocks": 60231
+        }
+      },
+      {
+        "name": "HERITAGE 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60232,
+          "uniformBottom": 60232,
+          "uniformSocks": 60232,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "HOME 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60233,
+          "uniformBottom": 60233,
+          "uniformSocks": 60233,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "INDIGENOUS 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60234,
+          "uniformBottom": 60234,
+          "uniformSocks": 60234,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "NINES 2017",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 60235,
+          "uniformBottom": 60235,
+          "uniformSocks": 60235,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      }
+    ]
+  }
+}
