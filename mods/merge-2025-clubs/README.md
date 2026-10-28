@@ -31,6 +31,11 @@ every team appears once with all its kits:
   1895 Cup, then International and the World Cups; the hidden leagues follow. Their names lose the season
   year ("NATIONAL RUGBY LEAGUE 2026" -> "NATIONAL RUGBY LEAGUE"), and REPRESENTATIVE / REPRESENTATIVE WOMENS
   become NRL REPRESENTATIVE / NRLW REPRESENTATIVE. Competition logos are keyed by tournament, not name.
+
+  Quick Match's team select (Noesis, native `getAllLeagues`) follows the sort index by itself. The Academy
+  club select (and the older match-setup pickers) scroll leagues with `adjustLeagueIdBy` -> native
+  `getRelativeLeagueId`, which walks leagues in id order. The mod's `app/academy/academy_clubselect_state.lua`
+  collects the leagues that cycle visits, sorts them by sort index and steps through those instead.
 - **Scripts that hard-coded 2025 club ids** now use the 2026 ones:
 
   | File | Was | Now |
