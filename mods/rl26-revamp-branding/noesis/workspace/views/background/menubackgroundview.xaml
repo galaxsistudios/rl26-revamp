@@ -120,6 +120,51 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
+        <!--RL26 Revamp title screen: players in (VisualStateKey "title")-->
+        <Storyboard x:Key="TitleIntroSB">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.6" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <SineEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:0.15" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:0.75" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                              Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00" Value="-380,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:0.15" Value="-380,0,0,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:1.05" Value="0">
+                    <EasingThicknessKeyFrame.EasingFunction>
+                        <QuinticEase EasingMode="EaseOut" />
+                    </EasingThicknessKeyFrame.EasingFunction>
+                </EasingThicknessKeyFrame>
+            </ThicknessAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                           Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:0.30" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:0.90" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                              Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,0,-380,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:0.30" Value="0,0,-380,0" />
+                <EasingThicknessKeyFrame KeyTime="00:00:1.20" Value="0">
+                    <EasingThicknessKeyFrame.EasingFunction>
+                        <QuinticEase EasingMode="EaseOut" />
+                    </EasingThicknessKeyFrame.EasingFunction>
+                </EasingThicknessKeyFrame>
+            </ThicknessAnimationUsingKeyFrames>
+        </Storyboard>
+
         <!--After the menu text has completed changing, this storyboard plays-->
         <Storyboard x:Key="MenuTextIntroSB">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextSP"
@@ -262,22 +307,255 @@
             </controls:baResolutionScaledViewbox>
 
 
+            <!--RL26 Revamp title screen: backdrop behind the smoke-->
+            <Viewbox x:Name="TitleBgVB"
+                     Grid.RowSpan="2"
+                     Stretch="Uniform"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Stretch"
+                     Margin="-2000,0"
+                     Opacity="0"
+                     IsHitTestVisible="False">
+                <Image Source="{Binding TitleBgImage}" Width="2044" Height="1080" />
+            </Viewbox>
+
+            <!--RL26 Revamp title screen: Herbie-->
+            <controls:baResolutionScaledViewbox x:Name="TitleHerbieRSV"
+                                                Grid.RowSpan="2"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom"
+                                                Margin="-380,0,0,0"
+                                                Opacity="0"
+                                                IsHitTestVisible="False">
+                <Canvas Width="700" Height="1080">
+                    <Image x:Name="TitleHerbieSmoke0" Source="{Binding TitleSmokeBlueImage}" Width="1200" Height="1200" Canvas.Left="-420" Canvas.Top="260"
+                           Opacity="0.85" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.18" Duration="0:0:11" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.12" Duration="0:0:11" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="-4" To="9" Duration="0:0:11" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.X)" From="0" To="78" Duration="0:0:9" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)" From="0" To="-78" Duration="0:0:12" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" From="0.85" To="0.51" Duration="0:0:8" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                    <Image x:Name="TitleHerbieSmoke1" Source="{Binding TitleSmokeImage}" Width="1000" Height="1000" Canvas.Left="60" Canvas.Top="20"
+                           Opacity="0.7" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.18" Duration="0:0:8" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.12" Duration="0:0:8" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="-4" To="9" Duration="0:0:8" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.X)" From="0" To="70" Duration="0:0:6" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)" From="0" To="-70" Duration="0:0:9" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" From="0.7" To="0.42" Duration="0:0:5" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                    <Image Source="{Binding TitleHerbieImage}" Width="773" Height="960"
+                           Canvas.Left="-80" Canvas.Top="150" RenderTransformOrigin="0.5,1">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)" From="-7.0" To="7.0"
+                                                         Duration="0:0:6.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)" From="0" To="-12"
+                                                         Duration="0:0:5.0" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.025"
+                                                         Duration="0:0:7.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.025"
+                                                         Duration="0:0:7.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                </Canvas>
+            </controls:baResolutionScaledViewbox>
+
+            <!--RL26 Revamp title screen: Jesse-->
+            <controls:baResolutionScaledViewbox x:Name="TitleJesseRSV"
+                                                Grid.RowSpan="2"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,-380,0"
+                                                Opacity="0"
+                                                IsHitTestVisible="False">
+                <Canvas Width="800" Height="1080">
+                    <Image x:Name="TitleJesseSmoke0" Source="{Binding TitleSmokeBlueImage}" Width="1200" Height="1200" Canvas.Left="60" Canvas.Top="280"
+                           Opacity="0.85" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.18" Duration="0:0:12" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.12" Duration="0:0:12" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="-4" To="9" Duration="0:0:12" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.X)" From="0" To="78" Duration="0:0:10" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)" From="0" To="-78" Duration="0:0:13" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" From="0.85" To="0.51" Duration="0:0:9" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                    <Image x:Name="TitleJesseSmoke1" Source="{Binding TitleSmokeImage}" Width="1000" Height="1000" Canvas.Left="-330" Canvas.Top="60"
+                           Opacity="0.7" RenderTransformOrigin="0.5,0.5">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.18" Duration="0:0:9" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.12" Duration="0:0:9" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(RotateTransform.Angle)" From="-4" To="9" Duration="0:0:9" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.X)" From="0" To="70" Duration="0:0:7" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(TranslateTransform.Y)" From="0" To="-70" Duration="0:0:10" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" From="0.7" To="0.42" Duration="0:0:6" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                    <Image Source="{Binding TitleJesseImage}" Width="926" Height="880"
+                           Canvas.Left="-140" Canvas.Top="230" RenderTransformOrigin="0.5,1">
+                        <Image.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Image.RenderTransform>
+                        <Image.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)" From="-6.0" To="6.0"
+                                                         Duration="0:0:7.0" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)" From="0" To="-14"
+                                                         Duration="0:0:5.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="1" To="1.03"
+                                                         Duration="0:0:8.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="1" To="1.03"
+                                                         Duration="0:0:8.5" AutoReverse="True" RepeatBehavior="Forever">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Image.Triggers>
+                    </Image>
+                </Canvas>
+            </controls:baResolutionScaledViewbox>
+
             <controls:baResolutionScaledViewbox x:Name="LogoRSV">
-
+            
                 <StackPanel VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Width="1600"
-                            Height="700">
-
-                    <ContentPresenter ContentTemplate="{StaticResource RLL26_Logo}" Height="500" />
-
-
-                    <controls:paTextBlock FormattedText="{Binding Converter={StaticResource UppercaseLocalise}, ConverterParameter=StartGame}"
-                                          FontSize="50"
+                            HorizontalAlignment="Center">
+            
+                    <ContentPresenter ContentTemplate="{StaticResource RLL26_Logo}" Height="240">
+                        <ContentPresenter.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="28" ShadowDepth="6" Direction="270" Opacity="0.85" />
+                        </ContentPresenter.Effect>
+                    </ContentPresenter>
+            
+                    <controls:paTextBlock x:Name="TitlePrompt"
+                                          FormattedText="PRESS |ACCEPT| TO CONTINUE"
+                                          FontSize="42"
                                           GlowyTooltipEnabled="True"
                                           Style="{StaticResource Display_XL}"
                                           HorizontalAlignment="Center"
-                                          Margin="0,100,0,-20" />
+                                          Margin="0,50,0,0">
+                        <controls:paTextBlock.Effect>
+                            <DropShadowEffect Color="Black" BlurRadius="28" ShadowDepth="6" Direction="270" Opacity="0.85" />
+                        </controls:paTextBlock.Effect>
+                        <controls:paTextBlock.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)" From="1" To="0.45" Duration="0:0:1.1" BeginTime="0:0:1.2">
+                                            <DoubleAnimation.EasingFunction>
+                                                <SineEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </controls:paTextBlock.Triggers>
+                    </controls:paTextBlock>
                 </StackPanel>
             </controls:baResolutionScaledViewbox>
 
@@ -697,6 +975,31 @@
 
                 <VisualState x:Name="SignOn">
                     <Storyboard>
+                        <!--RL26 Revamp title screen: players reset (the intro is TitleIntroSB)-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00" Value="-380,0,0,0" />
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00" Value="0,0,-380,0" />
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
@@ -783,6 +1086,40 @@
 
                 <VisualState x:Name="MainNoTitles">
                     <Storyboard>
+                        <!--RL26 Revamp title screen: players out-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="-1400,0,0,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="0,0,-1400,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:001.15"
@@ -879,6 +1216,40 @@
 
                 <VisualState x:Name="Main">
                     <Storyboard>
+                        <!--RL26 Revamp title screen: players out-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="-1400,0,0,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="0,0,-1400,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:001.15"
@@ -976,6 +1347,40 @@
 
                 <VisualState x:Name="Data">
                     <Storyboard>
+                        <!--RL26 Revamp title screen: players out-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="-1400,0,0,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="0,0,-1400,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:001.15"
@@ -1078,6 +1483,40 @@
 
                 <VisualState x:Name="DataNoFloor">
                     <Storyboard>
+                        <!--RL26 Revamp title screen: players out-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="-1400,0,0,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="0,0,-1400,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.35"
@@ -1181,6 +1620,40 @@
 
                     <Storyboard RepeatBehavior="Forever">
                         
+                        <!--RL26 Revamp title screen: players out-->
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleBgVB"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleHerbieRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="-1400,0,0,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.45" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="TitleJesseRSV"
+                                                          Storyboard.TargetProperty="(FrameworkElement.Margin)">
+                            <EasingThicknessKeyFrame KeyTime="00:00:00.5" Value="0,0,-1400,0">
+                                <EasingThicknessKeyFrame.EasingFunction>
+                                    <CubicEase EasingMode="EaseIn" />
+                                </EasingThicknessKeyFrame.EasingFunction>
+                            </EasingThicknessKeyFrame>
+                        </ThicknessAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightLinesGrid"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.8" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
                         <!--#region keep everything hidden-->
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MenuTextRSV"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
@@ -1477,6 +1950,12 @@
             <ei:DataTrigger Binding="{Binding PlayOutro}"
                             Value="True">
                 <ei:ControlStoryboardAction Storyboard="{StaticResource MenuTextOutroSB}" 
+                                            ControlStoryboardOption="Play" />
+            </ei:DataTrigger>
+
+            <ei:DataTrigger Binding="{Binding VisualStateKey}"
+                            Value="title">
+                <ei:ControlStoryboardAction Storyboard="{StaticResource TitleIntroSB}"
                                             ControlStoryboardOption="Play" />
             </ei:DataTrigger>
 

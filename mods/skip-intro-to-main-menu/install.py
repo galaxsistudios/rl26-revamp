@@ -29,11 +29,16 @@ back by pattern too, so it works whatever other exe patches (unlock-all-kits)
 are applied before or after this one. The first apply also keeps a copy of
 the exe it patched as _backup/rugbyleague1.exe.<md5>.bak.
 
-A Steam update or "Verify integrity of game files" restores the original exe;
-unlock-all-kits/launch.py (the Steam launch option) re-applies this patch too.
+The skip is opt-in: rl26_revamp.ini next to the exe (written by the Lua on
+first boot) must say `skip_intro = true`. --sync, which
+unlock-all-kits/launch.py (the Steam launch option) runs on every launch,
+applies the patch when it's on and undoes it when it's off. A Steam update or
+"Verify integrity of game files" restores the original exe, and the next
+launch puts the patch back if the skip is on.
 
 Usage (game closed):
     python mods\\skip-intro-to-main-menu\\install.py            # dry run
+    python mods\\skip-intro-to-main-menu\\install.py --sync     # match rl26_revamp.ini
     python mods\\skip-intro-to-main-menu\\install.py --apply    # back up, then patch
     python mods\\skip-intro-to-main-menu\\install.py --status   # patched or not
     python mods\\skip-intro-to-main-menu\\install.py --restore  # undo this patch
@@ -49,6 +54,7 @@ import sys
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_EXE = r"D:\SteamLibrary\steamapps\common\Rugby League\rugbyleague1.exe"
 BACKUP_DIR = os.path.join(REPO_ROOT, "_backup")
+CONFIG_NAME = "rl26_revamp.ini"  # in the game folder; see waitforsignin_state.lua
 
 
 def _pattern(hex_with_wildcards):
@@ -128,11 +134,37 @@ def restore(exe, log=print):
         sys.exit(f"not restoring: {e}. Use Steam's 'Verify integrity of game files'.")
     if st == "stock":
         log(f"{exe} isn't patched - nothing to undo")
-        return
+        return "not patched"
     data[off:off + 2] = JUMP_STOCK
     with open(exe, "wb") as f:
         f.write(data)
     log(f"restored the splash check in {exe} (md5 {md5(data)})")
+    return "restored"
+
+
+def skip_enabled(exe):
+    """skip_intro from rl26_revamp.ini next to the exe (same parse as the Lua);
+    off when the file or key is missing."""
+    path = os.path.join(os.path.dirname(os.path.abspath(exe)), CONFIG_NAME)
+    value = None
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                m = re.match(r"\s*([\w]+)\s*=\s*(\w+)", line)
+                if m and m.group(1).lower() == "skip_intro":
+                    value = m.group(2).lower()
+    except OSError:
+        return False
+    return value in ("true", "1", "yes", "on")
+
+
+def sync(exe, log=print):
+    """Apply the patch if rl26_revamp.ini turns the skip on, undo it otherwise."""
+    if skip_enabled(exe):
+        return apply(exe, log=log)
+    if status(exe)[0] != "patched":
+        return f"skip_intro off in {CONFIG_NAME} - not patched"
+    return restore(exe, log=log)
 
 
 def main():
@@ -142,14 +174,21 @@ def main():
     g.add_argument("--apply", action="store_true", help="back up the exe, then patch it")
     g.add_argument("--restore", action="store_true", help="undo this patch")
     g.add_argument("--status", action="store_true", help="report whether the exe is patched")
+    g.add_argument("--sync", action="store_true", help=f"apply or undo to match skip_intro in {CONFIG_NAME}")
     args = ap.parse_args()
 
     if args.restore:
         restore(args.exe)
         return
+    if args.sync:
+        try:
+            print(sync(args.exe))
+        except PatchError as e:
+            sys.exit(f"refusing to patch: {e}")
+        return
     if args.status:
         st, detail = status(args.exe)
-        print(f"{args.exe}\n  splash skip: {st}  ({detail})")
+        print(f"{args.exe}\n  splash skip: {st}  ({detail})\n  skip_intro in {CONFIG_NAME}: {skip_enabled(args.exe)}")
         return
     try:
         result = apply(args.exe, write=args.apply)

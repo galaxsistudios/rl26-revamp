@@ -17,6 +17,8 @@ Noesis XAML bundle (entry 57662).
   - Lua copies of the green (script bundle 39959, from decompiled/src):
     uicolours.rlgreencol (menu background stripes) and the native skin
     colour RLLMainColour (focus outlines).
+  - The start screen (menubackgroundview.xaml LogoRSV + visual states):
+    see title_screen.py, which also installs its three new textures.
 
 build.py skips *.py, so this script lives alongside the mod files.
 
@@ -38,6 +40,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 MOD_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import club_icons  # noqa: E402
+
+sys.path.insert(0, MOD_DIR)
+import title_screen  # noqa: E402
 
 LOGO = os.path.join(ROOT, "resources", "rl26-revamp", "rl26-revamped-logo.png")
 # any shipped-style uncompressed BGRA DDS works as the header template
@@ -71,22 +76,16 @@ COLOUR_EDITS = [
 
 # (file, regex, replacement, expected_count) - give width-only logo slots a height
 SIZE_EDITS = [
-    # title screen: logo 500 tall (~1395 wide), so the 1200x350 StackPanel
-    # holding it and the "press start" text grows to 1600x700
-    ("views/background/menubackgroundview.xaml",
-     r'(x:Name="LogoRSV">\s*<StackPanel VerticalAlignment="Center"\s+HorizontalAlignment="Center"\s+Width=")1200'
-     r'("\s+Height=")350("\s*>\s*<ContentPresenter ContentTemplate="\{StaticResource RLL26_Logo\}") />',
-     r'\g<1>1600\g<2>700\g<3> Height="500" />', 1),
+    # (the title screen logo panel is rebuilt by title_screen.py)
     # menu corner logo (was 250x40 at y=100): 72 tall, raised to y=70 so it
     # clears the home screen featured slider (top edge ~y=158)
     ("views/background/menubackgroundview.xaml",
      r'(<RowDefinition Height=")100("\s*/>\s*<RowDefinition />\s*</Grid.RowDefinitions>\s*'
      r'<ContentPresenter ContentTemplate="\{StaticResource RLL26_Logo\}"\s+Width="250"\s+Height=")40"',
      r'\g<1>70\g<2>72"', 1),
-    # bunker decision banner (was 525 wide, ~83 tall)
-    ("views/hud/rugby/pabunkercontrol.xaml",
-     r'(ContentTemplate="\{StaticResource RLL26_Logo\}"\s+Width="525")',
-     r'\1 Height="150"', 1),
+    # bunker decision banner (was 525 wide, ~83 tall): Height="150" now lives in
+    # bunker-broadcast-decision's copy of views/hud/rugby/pabunkercontrol.xaml, which
+    # owns that file (two mods can't override one file)
     # dynasty card watermarks (130/150 wide, ~21-24 tall); [^<>]* keeps Width
     # inside the tag that directly wraps the logo
     ("resources/cards/dynastycard.xaml",
@@ -107,6 +106,13 @@ LUA_EDITS = [
     ("intermediatelua/skin/colour_map.lua",
      "RLLMainColour = {\n\t36,\n\t218,\n\t97,\n\t255\n}",
      "RLLMainColour = {\n\t30,\n\t111,\n\t217,\n\t255\n}", 1),
+    # start screen art: bindable texture properties + their loader (title_screen.py)
+    ("app/noesis/homescreen/nvm_background.lua",
+     "\t\tLightMode = ns.Bool\n\t}\n}",
+     "\t\tLightMode = ns.Bool,\n" + title_screen.lua_title_art()[0].rstrip(",\n") + "\n\t}\n}", 1),
+    ("app/noesis/homescreen/nvm_background.lua",
+     "function NVMBackground.setVisualKey(",
+     title_screen.lua_title_art()[1] + "function NVMBackground.setVisualKey(", 1),
 ]
 
 
@@ -203,6 +209,9 @@ def build_xaml(extracted):
             raise SystemExit(f"{rel}: expected {count} matches of {pattern!r}, found {n}")
         files.set(rel, text)
 
+    rel = "views/background/menubackgroundview.xaml"
+    files.set(rel, title_screen.apply_xaml(files.get(rel)))
+
     white, blue = logo_paths()
     rel = "resources/resourcedictionary.xaml"
     text = files.get(rel)
@@ -219,14 +228,15 @@ def build_xaml(extracted):
 def build_lua():
     src_root = os.path.join(ROOT, "decompiled", "src", "script-game")
     out_root = os.path.join(MOD_DIR, "src", "script-game")
-    for rel, old, new, count in LUA_EDITS:
+    for rel in dict.fromkeys(e[0] for e in LUA_EDITS):  # every edit to a file, then write it once
         with open(os.path.join(src_root, rel), "rb") as fh:
             raw = fh.read().decode("utf-8")
         crlf = "\r\n" in raw
         text = raw.replace("\r\n", "\n")
-        if text.count(old) != count:
-            raise SystemExit(f"{rel}: expected {count}x {old!r}, found {text.count(old)}")
-        text = text.replace(old, new)
+        for _rel, old, new, count in (e for e in LUA_EDITS if e[0] == rel):
+            if text.count(old) != count:
+                raise SystemExit(f"{rel}: expected {count}x {old!r}, found {text.count(old)}")
+            text = text.replace(old, new)
         if crlf:
             text = text.replace("\n", "\r\n")
         path = os.path.join(out_root, rel)

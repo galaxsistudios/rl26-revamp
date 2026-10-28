@@ -10,6 +10,70 @@ local var_0_1 = native:getEnvironment()
 local var_0_2 = native.standalone
 local var_0_3 = var_0_1:argExists("impersonateuser") and var_0_1:getArg("impersonateuser")
 
+-- skip-intro-to-main-menu: rl26_revamp.ini in the game folder turns the skip on
+-- (skip_intro = true). install.py / unlock-all-kits launch.py read the same file
+-- for the splash exe patch. A missing file is written with the default (off).
+SkipIntroConfigFile = "rl26_revamp.ini"
+SkipIntroDefaultConfig = "; RL26 Revamp settings. Restart the game after changing them.\n" ..
+	"\n" ..
+	"; true = boot straight to the main menu (no splash logos, no start screen).\n" ..
+	"; The splash logos are only skipped when the game is started through\n" ..
+	"; unlock-all-kits launch.py, which applies the exe patch to match this.\n" ..
+	"skip_intro = false\n"
+
+function skipIntroEnabled()
+	local ok, enabled = pcall(function()
+		local file = io.open(SkipIntroConfigFile, "r")
+
+		if not file then
+			file = io.open(SkipIntroConfigFile, "w")
+
+			if file then
+				file:write(SkipIntroDefaultConfig)
+				file:close()
+			end
+
+			return false
+		end
+
+		local value
+
+		for line in file:lines() do
+			local key, v = line:match("^%s*([%w_]+)%s*=%s*([%w_]+)")
+
+			if key and key:lower() == "skip_intro" then
+				value = v:lower()
+			end
+		end
+
+		file:close()
+
+		return value == "true" or value == "1" or value == "yes" or value == "on"
+	end)
+
+	return ok and enabled or false
+end
+
+-- Start screen intro problems go to rl26_revamp_debug.txt in the game folder.
+function skipIntroLog(msg)
+	pcall(function()
+		local file = io.open("rl26_revamp_debug.txt", "a")
+
+		if file then
+			file:write(os.date("%H:%M:%S "), tostring(msg), "\n")
+			file:close()
+		end
+	end)
+end
+
+-- rl26-revamp-branding's NVMBackground title art (nil without that mod).
+function titleArtViewModel(uiServices)
+	local background = uiServices.mixins.background
+	local viewModel = background and background.viewModel
+
+	return viewModel and viewModel.loadTitleArt and viewModel or nil
+end
+
 Class("ReturnFromMatchAttractModeState")
 
 function ReturnFromMatchAttractModeState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
@@ -66,7 +130,21 @@ function WaitForSignInState.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, a
 
 	-- skip-intro-to-main-menu: only the boot path passes attractModeEnabled; a sign-out
 	-- or return-from-attract still waits for a button press.
-	arg_2_0.autoSignInPending = arg_2_6.attractModeEnabled and true or false
+	arg_2_0.autoSignInPending = arg_2_6.attractModeEnabled and skipIntroEnabled() or false
+
+	-- skip-intro-to-main-menu: start loading the start screen art now, so it's
+	-- usually bound by the time the splash screens are gone.
+	local ok, err = pcall(function()
+		local viewModel = titleArtViewModel(arg_2_5)
+
+		if viewModel then
+			viewModel:loadTitleArt(arg_2_2)
+		end
+	end)
+
+	if not ok then
+		skipIntroLog("loadTitleArt failed: " .. tostring(err))
+	end
 end
 
 function WaitForSignInState.exit(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
@@ -90,6 +168,45 @@ function WaitForSignInState.update(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, 
 		end
 
 		arg_4_6:playSound("SplashIntro")
+
+		-- skip-intro-to-main-menu: the start screen is showing now
+		arg_4_0.titleIntroPending = true
+		arg_4_0.titleIntroFrames = 0
+	end
+
+	-- skip-intro-to-main-menu: slide in the RL26 Revamp title art
+	-- (rl26-revamp-branding title_screen.py) once its textures are bound, or
+	-- after ~3 s regardless. "signon" first brings the logo back after a
+	-- sign-out, "title" plays the intro.
+	if arg_4_0.titleIntroPending then
+		arg_4_0.titleIntroFrames = arg_4_0.titleIntroFrames + 1
+
+		local ok, ready = pcall(function()
+			local viewModel = titleArtViewModel(arg_4_6)
+
+			return not viewModel or viewModel:updateTitleArt()
+		end)
+
+		if not ok then
+			skipIntroLog("updateTitleArt failed: " .. tostring(ready))
+		elseif not ready and arg_4_0.titleIntroFrames == 180 then
+			skipIntroLog("title art still not loaded after 180 frames, playing the intro anyway")
+		end
+
+		if not ok or ready or arg_4_0.titleIntroFrames >= 180 then
+			arg_4_0.titleIntroPending = false
+
+			local ok2, err2 = pcall(function()
+				arg_4_6:setBackgroundVisual("signon")
+				arg_4_6:setBackgroundVisual("title")
+			end)
+
+			if not ok2 then
+				skipIntroLog("setBackgroundVisual failed: " .. tostring(err2))
+			else
+				skipIntroLog("title intro played after " .. arg_4_0.titleIntroFrames .. " frames, art bound: " .. tostring(ok and ready))
+			end
+		end
 	end
 
 	local var_4_1 = arg_4_2:getInputControlDistributor():getControlManager(native.EInputControlFocusLevel.Game)

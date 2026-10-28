@@ -95,7 +95,8 @@ def main():
             if patch is None:
                 log(f"{mod}: not present, skipped")
                 continue
-            log(f"{mod}: {patch.apply(exe, log=log)}")
+            # sync() = the patch follows a setting (skip-intro's rl26_revamp.ini)
+            log(f"{mod}: {getattr(patch, 'sync', patch.apply)(exe, log=log)}")
         except Exception as e:
             log(f"{mod} FAILED: {e}")  # the game still runs fine without it
 
