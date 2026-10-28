@@ -53,7 +53,7 @@ function RefereeViewState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 			arg_1_4:blockingAlert(arg_1_1, arg_1_2, {
 				options = "ok",
 				canCancel = true,
-				text = native.Localise("AcademyEditBlockedRefereeDatabaseFull"),
+				text = arg_1_6.npcType == native.CNpcType.Coach and playergenerator.coachText("AcademyEditBlockedRefereeDatabaseFull") or native.Localise("AcademyEditBlockedRefereeDatabaseFull"),
 				input = var_1_0:getInput()
 			})
 

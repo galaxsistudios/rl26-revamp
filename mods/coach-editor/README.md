@@ -16,7 +16,9 @@ Why the stock game has no coach editor:
   passed through `stateData`.
 - `playergenerator.createBogStandardNPCWithEthnicity` uses `DefaultPlayerVisuals.CoachCreator`
   for coaches, and that doesn't exist in this build's exe. The mod uses the chosen ethnicity's
-  face instead, with the generator's existing `Coach_Suit`/`Coach_TrackSuit` uniforms.
+  face instead. The generator's `Coach_Suit`/`Coach_TrackSuit` are `DefaultUniforms` values
+  Lua can't load, so new coaches get the civilian polo and black jeans (guids 20001/20002,
+  female 20101/20102).
 
 Files (whole-file overrides of the decompiled stock files):
 
@@ -28,7 +30,11 @@ Files (whole-file overrides of the decompiled stock files):
 | `app/academy/academyrefereecreateethnicity_state.lua` | carries `npcType`, previews with it |
 | `app/academy/academy_referee_hub_create.lua` | carries `npcType` into create and back-navigation |
 | `app/referee/referee_view_state.lua` | creates the NPC with `npcType` |
-| `game/player/playergenerator.lua` | coach branch uses the ethnicity visual |
+| `game/player/playergenerator.lua` | coach branch uses the ethnicity visual and a polo + jeans uniform (the stock branch asked `DefaultTeamVisuals` for `Coach_Suit`, which is a `DefaultUniforms` value, so it crashed); adds `isCoachNPC` |
+| `app/playermodel/playermodel_mixin.lua` | Coach-type NPCs passed as `referee` take the stock `coach` path (own uniform, no referee kit) |
+| `app/playermodel/playermodel.lua` | `coach` role fills the body from the NPC identity and leaves the uniform alone |
+| `app/academy/academy_referee_edit_hub.lua`, `app/referee/referee_viewstate_hub_state.lua` (+ create/edit/delete/view above) | coach wording: referee string keys run through `playergenerator.coachText`/`npcText`/`coachTiles` (Referee/Umpire -> Coach), so no new string-table keys are needed |
+| `app/academy/academy_referee_appearancestate_edit_state.lua` | coaches only get Body/Skin/Head/Hair (no strapping, tattoos, headwear, boots) |
 | `app/academy/refereelist_layout.lua`, `academy_referee_list.lua` | list frame title can be passed in (stock hard-codes "Referee"); coach lists say "Coach" |
 
 All overrides are generated from the stock decompiled files by `generate.py` (build.py skips

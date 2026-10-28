@@ -1,6 +1,7 @@
 ﻿import("app.academy.academy_referee_list")
 import("core.foundation.stringx")
 import("design.academy_config")
+import("game.player.playergenerator")
 
 local var_0_0 = academy_referee_list.AcademyRefereeListState
 
@@ -35,8 +36,8 @@ function AcademyRefereeDeleteState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg
 		columns = academy_config.RefereeColumns,
 		columnInitialSort = academy_config.RefereeColumnsInitialSort,
 		itemParams = {},
-		boxTitle = native.Localise(var_1_3 == native.CNpcType.Coach and "DeleteCoach" or "DeleteReferee"),
-		listTitle = var_1_3 == native.CNpcType.Coach and native.Localise("Coach") or nil,
+		boxTitle = var_1_3 == native.CNpcType.Coach and playergenerator.coachText("DeleteReferee") or native.Localise("DeleteReferee"),
+		listTitle = var_1_3 == native.CNpcType.Coach and playergenerator.coachText("Referee") or nil,
 		searchOptions = var_1_0,
 		searchOptionsReset = var_1_1
 	})
@@ -59,7 +60,7 @@ function AcademyRefereeDeleteState.update(arg_2_0, arg_2_1, arg_2_2, arg_2_3, ar
 		arg_2_6:blockingAlert(arg_2_2, arg_2_3, {
 			options = "yesno",
 			canCancel = true,
-			text = stringx.interp(native.Localise("RefereeDeleteConfirm"), {
+			text = stringx.interp(playergenerator.npcText(var_2_3, "RefereeDeleteConfirm"), {
 				name = var_2_3.fullName
 			}),
 			input = var_2_6:getInput(),

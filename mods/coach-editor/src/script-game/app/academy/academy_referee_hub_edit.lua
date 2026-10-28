@@ -4,6 +4,7 @@ import("app.academy.academy_referee_list")
 import("app.sharing.sharing_searchtags_aide")
 import("core.statemachine.statemachine")
 import("design.academy_config")
+import("game.player.playergenerator")
 
 local var_0_0 = academy_referee_edit.AcademyRefereeEdit
 
@@ -23,7 +24,7 @@ function AcademyRefereeEditEdit.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_
 		arg_1_5:blockingAlert(arg_1_2, arg_1_3, {
 			options = "ok",
 			canCancel = true,
-			text = native.Localise("AcademyEditBlockedRefereeDatabaseFull"),
+			text = playergenerator.npcText(arg_1_7.referee, "AcademyEditBlockedRefereeDatabaseFull"),
 			input = arg_1_6.partyMember:getInput()
 		})
 
@@ -78,8 +79,8 @@ function AcademyRefereeEditList.enter(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 		columns = academy_config.RefereeColumns,
 		columnInitialSort = academy_config.RefereeColumnsInitialSort,
 		itemParams = {},
-		boxTitle = native.Localise(arg_4_7.isCoach and "EditCoach" or "EditReferee"),
-		listTitle = arg_4_7.isCoach and native.Localise("Coach") or nil,
+		boxTitle = arg_4_7.isCoach and playergenerator.coachText("EditReferee") or native.Localise("EditReferee"),
+		listTitle = arg_4_7.isCoach and playergenerator.coachText("Referee") or nil,
 		searchOptions = assert(arg_4_7.searchOptions),
 		searchOptionsReset = assert(arg_4_7.searchOptionsReset)
 	})

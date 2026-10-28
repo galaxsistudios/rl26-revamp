@@ -4,16 +4,24 @@ import("core.foundation.class")
 import("core.foundation.tablex")
 import("core.statemachine.statemachine")
 import("design.academy_config")
+import("game.player.playergenerator")
 
 local var_0_0 = referee_view_state.RefereeViewState
 
 Class("AcademyRefereeCreateViewState", var_0_0)
 
 function AcademyRefereeCreateViewState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	local var_1_ce = arg_1_7.npcType == native.CNpcType.Coach
+	local var_1_ce_tiles = academy_referee_viewstate_tiles.CreateTiles(arg_1_6.partyMember, arg_1_6)
+
+	if var_1_ce then
+		playergenerator.coachTiles(var_1_ce_tiles)
+	end
+
 	var_0_0.enter(arg_1_0, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, tablex.merge(arg_1_7, {
 		canEdit = true,
-		title = native.Localise("CreateReferee"),
-		tiles = academy_referee_viewstate_tiles.CreateTiles(arg_1_6.partyMember, arg_1_6)
+		title = var_1_ce and playergenerator.coachText("CreateReferee") or native.Localise("CreateReferee"),
+		tiles = var_1_ce_tiles
 	}))
 
 	arg_1_0.exitWaitTime = academy_config.CreatePlayerExitWaitTime
