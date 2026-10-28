@@ -142,8 +142,10 @@ def replace_added_entry(blobset_path, logical_path, blob_bytes, new_sizes, sourc
     print(f"replace entry {rec['entry_index']}: {logical_path.lower()} from {source_desc}, sizes {new_sizes}")
     if not confirm:
         return rec["entry_index"]
-    with open(rec["blob_path"], "wb") as f:
+    tmp = rec["blob_path"] + ".tmp"  # new file, not in place - see pack.replace_file
+    with open(tmp, "wb") as f:
         f.write(blob_bytes)
+    os.replace(tmp, rec["blob_path"])
     pack.write_entry_sizes(blobset_path, size_off, rec["entry_index"], *new_sizes)
     rec["sizes"], rec["source"] = new_sizes, source_desc
     save_registry(reg)

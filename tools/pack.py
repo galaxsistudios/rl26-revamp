@@ -116,6 +116,15 @@ def blob_path(blobset_path, folder, file_hash):
     return os.path.join(os.path.dirname(blobset_path), folder, file_hash)
 
 
+def replace_file(src_path, dst_path):
+    """Copy src over dst via a temp file + os.replace, so dst gets a NEW file
+    instead of being rewritten in place. snapshot.py hard-links stock blobs
+    into _snapshots/; an in-place write would silently edit the snapshot too."""
+    tmp = dst_path + ".tmp"
+    shutil.copy2(src_path, tmp)
+    os.replace(tmp, dst_path)
+
+
 def entry_record_offset(size_table_off, index):
     return size_table_off + index * 16
 
@@ -212,8 +221,7 @@ def do_install(blobset_path, entry_index, bundle_path, confirm, sizes=None):
     # live file before the "append", which on a just-deleted file is really a
     # fresh write): replace the blob file's content entirely, don't append to
     # the old bytes.
-    with open(bundle_path, "rb") as src, open(bpath, "wb") as dst:
-        shutil.copyfileobj(src, dst)
+    replace_file(bundle_path, bpath)
 
     _data, _files_count, _hash_table_off, size_table_off = read_index(blobset_path)
     if sizes is None:
@@ -280,7 +288,7 @@ def do_restore(blobset_path, entry_index):
         f.write(backup_data[backup_hash_off + entry_index * 8: backup_hash_off + entry_index * 8 + 8])
     write_entry_sizes(blobset_path, live_size_off, entry_index, main_c, main_u, vram_c, vram_u)
 
-    shutil.copy2(meta["blob_backup"], meta["blob_path"])
+    replace_file(meta["blob_backup"], meta["blob_path"])
 
     os.remove(meta_path)
     return meta
