@@ -352,8 +352,12 @@ def generate_identity():
         ("local function var_0_25(arg_38_0, arg_38_1, arg_38_2)\n",
          """-- team-coaches: "Coach: <name>" row; pressing it opens TeamCoachesPickerState
 local function teamCoachesCoachRow(arg_tc_0, arg_tc_1)
-	local var_tc_0, var_tc_2 = coach_helper.getClubCoach(arg_tc_0, arg_tc_1.club)
+	local var_tc_0, var_tc_2, var_tc_3 = coach_helper.getClubCoach(arg_tc_0, arg_tc_1.club)
 	local var_tc_1 = var_tc_0 and coach_helper.getCoachName(var_tc_0) or var_tc_2 and string.format("#%s (not found)", tostring(var_tc_2)) or coach_helper.localiseOr("None", "None")
+
+	if var_tc_0 and var_tc_3 then
+		var_tc_1 = var_tc_1 .. " (default)"
+	end
 
 	return optionmenu_aide.createButton(string.format("%s: %s", coach_helper.localiseOr("Coach", "Coach"), var_tc_1), {
 		teamCoachesButton = true,
@@ -374,6 +378,14 @@ local function var_0_25(arg_38_0, arg_38_1, arg_38_2)
         ("	arg_41_0.goBackFactory = arg_41_8\n",
          "	arg_41_0.goBackFactory = arg_41_7.teamCoachesIdentityGoBack or arg_41_8\n"
          "	arg_41_7.teamCoachesIdentityGoBack = nil\n\n"
+         "	-- team-coaches: create any missing default coaches (saved with the club)\n"
+         "	pcall(function()\n"
+         "		local var_tc_2 = arg_41_5:getRefereeManager()\n\n"
+         "		coach_helper.getCoachIndex(var_tc_2, true)\n\n"
+         "		if coach_helper.ensureDefaultCoaches(var_tc_2, arg_41_5:getDefaultPlayerVisualManager(), arg_41_5:getDefaultTeamVisualManager()) > 0 and arg_41_7.setDirty then\n"
+         "			arg_41_7.setDirty()\n"
+         "		end\n"
+         "	end)\n\n"
          "	pcall(function()\n"
          "		local var_tc_0 = arg_41_7.club\n\n"
          "		local var_tc_1 = coach_helper.tryGetField(var_tc_0, \"academyId\")\n\n"
@@ -440,6 +452,7 @@ pcall(function()
 	for name, source in pairs({
 		teamcoaches_happy_01 = "rl1_conversion_very_positive_01",
 		teamcoaches_happy_02 = "rl1_conversion_very_positive_02",
+		teamcoaches_happy_03 = "rl1_conversion_positive_02",
 		teamcoaches_gutted_01 = "rl1_conversion_negative_01",
 		teamcoaches_gutted_02 = "rl1_conversion_negative_02",
 		teamcoaches_gutted_03 = "rl1_conversion_negative_03"

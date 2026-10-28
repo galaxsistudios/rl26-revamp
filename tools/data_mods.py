@@ -532,10 +532,13 @@ def _append_records(bundle_path, data, files, verbose):
     reader/writer). Each file is {"new": true, "<table name>": {field:
     value}, ...} with one key per schema table (a missing table is written
     as absent) and "visual": the record's visual blob, a file path relative
-    to the JSON. The id must not exist yet."""
+    to the JSON. The id must not exist yet. Works for players and NPCs
+    (referees/coaches), which share the visual-before-tables record form
+    (defaultdata_npcs added 2026-10-27 for team-coaches' default coaches)."""
     import bigant_db
-    if bundle_path != "defaultdata/defaultdata_players":
-        raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players")
+    if bundle_path not in ("defaultdata/defaultdata_players", "defaultdata/defaultdata_npcs"):
+        raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players and "
+                         f"defaultdata_npcs")
     db = bigant_db.load(data)
     ids = set(db.by_id())
     for fpath in sorted(files):

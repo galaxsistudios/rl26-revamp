@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7003.visual.bin",
+  "npcs": {
+    "id": 7003,
+    "firstname": "Ivan",
+    "surname": "Cleary",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 11,
+    "height": 183,
+    "weight": 86,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 69,
+    "conversions": 20,
+    "conversionAttempts": 27,
+    "tries": 21
+  },
+  "Nines": {}
+}

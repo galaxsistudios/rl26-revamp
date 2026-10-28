@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7011.visual.bin",
+  "npcs": {
+    "id": 7011,
+    "firstname": "John",
+    "surname": "Strange",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 2,
+    "height": 185,
+    "weight": 87,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 24,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 9
+  },
+  "Nines": {}
+}

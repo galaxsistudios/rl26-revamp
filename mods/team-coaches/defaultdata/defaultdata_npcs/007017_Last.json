@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7017.visual.bin",
+  "npcs": {
+    "id": 7017,
+    "firstname": "Andy",
+    "surname": "Last",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 11,
+    "height": 185,
+    "weight": 96,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 69,
+    "conversions": 20,
+    "conversionAttempts": 27,
+    "tries": 21
+  },
+  "Nines": {}
+}

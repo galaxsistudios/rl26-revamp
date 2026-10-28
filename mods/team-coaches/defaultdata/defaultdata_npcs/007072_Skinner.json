@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7072.visual.bin",
+  "npcs": {
+    "id": 7072,
+    "firstname": "Jess",
+    "surname": "Skinner",
+    "sex": 1,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 24,
+    "height": 175,
+    "weight": 109,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 0,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 0
+  },
+  "Nines": {}
+}

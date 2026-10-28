@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7002.visual.bin",
+  "npcs": {
+    "id": 7002,
+    "firstname": "Justin",
+    "surname": "Holbrook",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 7,
+    "height": 185,
+    "weight": 92,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 8,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 0
+  },
+  "Nines": {}
+}

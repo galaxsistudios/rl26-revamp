@@ -5343,6 +5343,7 @@ pcall(function()
 	for name, source in pairs({
 		teamcoaches_happy_01 = "rl1_conversion_very_positive_01",
 		teamcoaches_happy_02 = "rl1_conversion_very_positive_02",
+		teamcoaches_happy_03 = "rl1_conversion_positive_02",
 		teamcoaches_gutted_01 = "rl1_conversion_negative_01",
 		teamcoaches_gutted_02 = "rl1_conversion_negative_02",
 		teamcoaches_gutted_03 = "rl1_conversion_negative_03"

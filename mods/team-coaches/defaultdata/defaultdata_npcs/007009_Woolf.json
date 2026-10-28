@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7009.visual.bin",
+  "npcs": {
+    "id": 7009,
+    "firstname": "Kristian",
+    "surname": "Woolf",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 7,
+    "height": 189,
+    "weight": 95,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 8,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 0
+  },
+  "Nines": {}
+}

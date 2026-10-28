@@ -1,0 +1,798 @@
+{
+  "_comment": "Creator looks for the coaches make_coach_records.py adds; keys are explained in coach_look.py. _default_male / _default_female apply to every added coach first, then the coach's own entry; coach_look.vary fills anything still unset (hair, colour, facial hair, skin, age, build, face) with picks seeded by the coach's id.",
+  "_default_male": {},
+  "_default_female": {},
+  "Craig Bellamy": {
+    "_from": "photo (Wikimedia, older) aged to his current grey hair",
+    "hair": 336,
+    "hairColour": [
+      1002,
+      1004
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1003,
+    "skin": 8,
+    "redness": 0.5,
+    "eyebrows": 1,
+    "headShape": "round",
+    "jawShape": "round",
+    "mouthShape": "large",
+    "height_cm": 177,
+    "weight_kg": 84,
+    "face": {
+      "faceWidth": 0.5,
+      "faceLength": -0.3,
+      "jawWidth": 0.2,
+      "chinWidth": 0.3,
+      "chinLength": -0.2,
+      "cheekbones": 0.4,
+      "brow": 0.2,
+      "noseWidth": 0.5,
+      "noseLength": 0.2,
+      "noseProjection": 0.3,
+      "eyeSize": -0.4,
+      "eyeDepth": 0.4,
+      "eyelids": 0.3,
+      "mouthWidth": 0.7,
+      "lips": -0.2,
+      "earsOut": 0.3
+    },
+    "age": 66,
+    "build": "average"
+  },
+  "Ivan Cleary": {
+    "_from": "photo (Wikimedia, Wests Tigers era)",
+    "hair": 120,
+    "hairColour": [
+      1001,
+      1003
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1004,
+    "skin": 17,
+    "eyebrows": 1,
+    "headShape": "square",
+    "jawShape": "square",
+    "height_cm": 183,
+    "weight_kg": 86,
+    "face": {
+      "faceWidth": 0.2,
+      "faceLength": 0.2,
+      "jawWidth": 0.7,
+      "jawHeight": 0.3,
+      "jawAngle": 0.5,
+      "chinWidth": 0.5,
+      "chinForward": 0.3,
+      "cheekbones": 0.6,
+      "brow": 0.3,
+      "noseWidth": -0.1,
+      "noseLength": 0.2,
+      "noseBridge": 0.2,
+      "eyeSize": -0.2,
+      "mouthWidth": 0.4,
+      "lips": -0.5,
+      "earsOut": 0.2
+    },
+    "age": 55,
+    "build": "average"
+  },
+  "Trent Robinson": {
+    "_from": "photo (Wikimedia, Catalans era)",
+    "hair": 105,
+    "hairColour": [
+      125,
+      224
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 125,
+    "skin": 16,
+    "redness": 0.3,
+    "eyebrows": 0,
+    "headShape": "oblong",
+    "jawShape": "oblong",
+    "noseShape": "long",
+    "height_cm": 180,
+    "weight_kg": 80,
+    "face": {
+      "faceWidth": -0.6,
+      "faceLength": 0.7,
+      "jawWidth": -0.5,
+      "chinWidth": -0.5,
+      "chinLength": 0.5,
+      "cheekbones": 0.3,
+      "brow": 0.5,
+      "browHeight": -0.3,
+      "noseWidth": -0.4,
+      "noseLength": 0.6,
+      "noseProjection": 0.4,
+      "eyeSize": -0.3,
+      "eyeDepth": 0.6,
+      "eyelids": 0.4,
+      "mouthWidth": -0.2,
+      "lips": -0.6,
+      "earSize": 0.2
+    },
+    "age": 49,
+    "build": "lean"
+  },
+  "Sam Burgess": {
+    "_from": "photo (Wikimedia, 2017); heavy stubble for his short coaching beard",
+    "hair": 120,
+    "hairColour": [
+      345,
+      344
+    ],
+    "stubble": 3,
+    "stubbleColour": 345,
+    "skin": 9,
+    "redness": 0.35,
+    "eyebrows": 4,
+    "headShape": "square",
+    "jawShape": "square",
+    "height_cm": 196,
+    "weight_kg": 112,
+    "face": {
+      "faceWidth": 0.6,
+      "faceLength": 0.2,
+      "headSize": 0.3,
+      "jawWidth": 0.9,
+      "jawHeight": 0.4,
+      "jawAngle": 0.5,
+      "chinWidth": 0.7,
+      "chinForward": 0.2,
+      "cheekbones": 0.3,
+      "brow": 0.7,
+      "browHeight": -0.3,
+      "noseWidth": 0.6,
+      "noseBridge": 0.6,
+      "noseProjection": -0.2,
+      "eyeSize": -0.5,
+      "eyeDepth": 0.6,
+      "mouthWidth": 0.2,
+      "lips": 0.2,
+      "earSize": 0.1
+    },
+    "beard": 0,
+    "age": 37,
+    "build": "muscular"
+  },
+  "Kristian Woolf": {
+    "_from": "photo (Wikimedia, January 2026)",
+    "hair": 389,
+    "hairColour": [
+      1008,
+      1006
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 1006,
+    "skin": 17,
+    "eyebrows": 1,
+    "headShape": "oblong",
+    "jawShape": "oblong",
+    "height_cm": 189,
+    "weight_kg": 95,
+    "face": {
+      "faceWidth": -0.2,
+      "faceLength": 0.6,
+      "jawWidth": 0.4,
+      "jawAngle": 0.6,
+      "chinWidth": 0.2,
+      "chinLength": 0.4,
+      "chinForward": 0.3,
+      "cheekbones": 0.6,
+      "brow": 0.4,
+      "noseWidth": -0.1,
+      "noseLength": 0.4,
+      "noseBridge": 0.3,
+      "eyeSize": -0.3,
+      "eyeDepth": 0.4,
+      "mouthWidth": 0.5,
+      "lips": -0.3
+    },
+    "age": 50,
+    "build": "lean"
+  },
+  "Dean Young": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 224,
+    "skin": 1,
+    "age": 37,
+    "build": "average"
+  },
+  "Justin Holbrook": {
+    "_from": "general knowledge of his appearance",
+    "hair": 40,
+    "hairColour": [
+      1004,
+      1006
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 1004,
+    "skin": 1,
+    "age": 51,
+    "build": "average"
+  },
+  "Kieran Foran": {
+    "_from": "general knowledge of his appearance",
+    "hair": 105,
+    "hairColour": [
+      345,
+      344
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 345,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 1,
+    "age": 36,
+    "build": "lean",
+    "beardColour": [
+      345,
+      344
+    ]
+  },
+  "Josh Hannay": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 224,
+    "skin": 0,
+    "age": 46,
+    "build": "average"
+  },
+  "Andrew Webster": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 224,
+    "skin": 1,
+    "age": 44,
+    "build": "average"
+  },
+  "Scott Prince": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 344,
+    "skin": 3,
+    "age": 46,
+    "build": "lean"
+  },
+  "Billy Slater": {
+    "_from": "general knowledge of his appearance",
+    "hair": 81,
+    "hairColour": [
+      345,
+      344
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 345,
+    "skin": 1,
+    "age": 43,
+    "build": "lean"
+  },
+  "Laurie Daley": {
+    "_from": "general knowledge of his appearance",
+    "hair": 121,
+    "hairColour": [
+      1006,
+      1008
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1006,
+    "skin": 3,
+    "age": 57,
+    "build": "heavy"
+  },
+  "Chris Chester": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 224,
+    "skin": 0,
+    "age": 48,
+    "build": "average"
+  },
+  "Andy Last": {
+    "_from": "general knowledge of his appearance",
+    "hair": 39,
+    "hairColour": [
+      125,
+      224
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 125,
+    "skin": 0,
+    "age": 45,
+    "build": "average"
+  },
+  "Willie Peters": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      345,
+      344
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 345,
+    "skin": 1,
+    "age": 47,
+    "build": "lean"
+  },
+  "Brad Arthur": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      1004,
+      1006
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 1004,
+    "skin": 1,
+    "age": 52,
+    "build": "heavy"
+  },
+  "Eamon O'Carroll": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      345,
+      344
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 345,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 0,
+    "age": 39,
+    "build": "muscular",
+    "beardColour": [
+      345,
+      344
+    ]
+  },
+  "Daryl Powell": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      1000,
+      1002
+    ],
+    "beard": 0,
+    "stubble": 0,
+    "stubbleColour": 1000,
+    "skin": 0,
+    "age": 61,
+    "build": "average"
+  },
+  "Adrian Lam": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      1008,
+      1009
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1008,
+    "skin": 4,
+    "age": 56,
+    "build": "average",
+    "eyesShape": "almond"
+  },
+  "John Cartwright": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      1002,
+      1004
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1002,
+    "skin": 1,
+    "age": 61,
+    "build": "heavy"
+  },
+  "Kurt Haggerty": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      345,
+      344
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 345,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 0,
+    "age": 37,
+    "build": "muscular",
+    "beardColour": [
+      345,
+      344
+    ]
+  },
+  "Sylvain Houles": {
+    "_from": "general knowledge of his appearance",
+    "hair": 81,
+    "hairColour": [
+      1006,
+      1008
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 1006,
+    "skin": 2,
+    "age": 45,
+    "build": "average"
+  },
+  "Mark Applegarth": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 224,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 0,
+    "age": 42,
+    "build": "average",
+    "beardColour": [
+      224,
+      225
+    ]
+  },
+  "Kyle Eastmond": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 344,
+    "skin": 5,
+    "age": 37,
+    "build": "lean",
+    "ethnicity": "african"
+  },
+  "Richard Horne": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      125,
+      224
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 125,
+    "skin": 0,
+    "age": 44,
+    "build": "lean"
+  },
+  "Jason Demetriou": {
+    "_from": "general knowledge of his appearance",
+    "hair": 75,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 344,
+    "skin": 2,
+    "age": 50,
+    "build": "average",
+    "ethnicity": "middleEastern"
+  },
+  "Craig Lingard": {
+    "_from": "general knowledge of his appearance",
+    "hair": 39,
+    "hairColour": [
+      1004,
+      1006
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1004,
+    "skin": 0,
+    "age": 49,
+    "build": "average"
+  },
+  "Scott Taylor": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      125,
+      224
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 125,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 0,
+    "age": 35,
+    "build": "muscular",
+    "beardColour": [
+      125,
+      224
+    ]
+  },
+  "Graham Steadman": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      1000,
+      1002
+    ],
+    "beard": 0,
+    "stubble": 0,
+    "stubbleColour": 1000,
+    "skin": 0,
+    "age": 65,
+    "build": "average"
+  },
+  "Brayden Wiliame": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 344,
+    "skin": 6,
+    "age": 34,
+    "build": "muscular",
+    "ethnicity": "islander"
+  },
+  "Ben Jeffries": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 224,
+    "skin": 0,
+    "age": 44,
+    "build": "lean"
+  },
+  "Steve Georgallis": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 344,
+    "skin": 2,
+    "age": 54,
+    "build": "average",
+    "ethnicity": "middleEastern"
+  },
+  "Craig Sandercock": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      1002,
+      1004
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1002,
+    "skin": 0,
+    "age": 59,
+    "build": "average"
+  },
+  "Leon Pryce": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 344,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_goatee01",
+    "skin": 5,
+    "age": 45,
+    "build": "muscular",
+    "ethnicity": "african",
+    "beardColour": [
+      344,
+      345
+    ]
+  },
+  "Kevin Walters": {
+    "_from": "general knowledge of his appearance",
+    "hair": 121,
+    "hairColour": [
+      1002,
+      1004
+    ],
+    "beard": 0,
+    "stubble": 0,
+    "stubbleColour": 1002,
+    "skin": 1,
+    "age": 59,
+    "build": "average"
+  },
+  "Brian McDermott": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      1004,
+      1006
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 1004,
+    "skin": 0,
+    "age": 56,
+    "build": "heavy"
+  },
+  "Stacey Jones": {
+    "_from": "general knowledge of his appearance",
+    "hair": 120,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 344,
+    "skin": 4,
+    "age": 50,
+    "build": "lean",
+    "ethnicity": "islander"
+  },
+  "Laurent Frayssinous": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      224,
+      225
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 224,
+    "skin": 1,
+    "age": 49,
+    "build": "average"
+  },
+  "Michael Cheika": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 344,
+    "skin": 2,
+    "age": 59,
+    "build": "heavy",
+    "ethnicity": "middleEastern"
+  },
+  "Mick Potter": {
+    "_from": "general knowledge of his appearance",
+    "hair": 266,
+    "hairColour": [
+      1000,
+      1002
+    ],
+    "beard": 0,
+    "stubble": 0,
+    "stubbleColour": 1000,
+    "skin": 0,
+    "age": 63,
+    "build": "average"
+  },
+  "Karmichael Hunt": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 2,
+    "stubbleColour": 344,
+    "skin": 4,
+    "age": 40,
+    "build": "muscular",
+    "ethnicity": "islander"
+  },
+  "Frank Pritchard": {
+    "_from": "general knowledge of his appearance",
+    "hair": 21,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 3,
+    "stubbleColour": 344,
+    "moustache": "moustache_basic01",
+    "chinhair": "chin_middleMedium01",
+    "skin": 5,
+    "age": 43,
+    "build": "heavy",
+    "ethnicity": "islander",
+    "beardColour": [
+      344,
+      345
+    ]
+  },
+  "Jone Wesele": {
+    "_from": "general knowledge of his appearance",
+    "hair": 36,
+    "hairColour": [
+      344,
+      345
+    ],
+    "beard": 0,
+    "stubble": 1,
+    "stubbleColour": 344,
+    "skin": 6,
+    "age": 45,
+    "build": "heavy",
+    "ethnicity": "islander"
+  }
+}

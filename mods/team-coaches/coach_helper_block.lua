@@ -115,6 +115,377 @@ local function loadAssignments()
 	return var_tc_assignments
 end
 
+-- ---------------------------------------------------------------------------
+-- Default coaches: each club (academyId) -> its head coach at the end of the
+-- 2026 season (researched 2026-10-27; interim coaches where that's who
+-- finished the season). A pick made in Identity (teamcoaches_assignments.txt)
+-- always wins over these. Coaches are matched by name, so stock records (and
+-- takeovers like wayne-bennett-coach) are used as they are; the stock data
+-- spells "Matthew Peet" and "Dennis Betts". Coaches the stock database lacks
+-- are added to it by make_coach_records.py (ids 7001+). If one is still
+-- missing at runtime it's created as a user-created coach with the generic
+-- look (FemaleCoaches get the female one), editable in Academy > Referees &
+-- Coaches like any other. Not covered: the QLD Cup and NSW Cup clubs, the All
+-- Stars, and the hidden 2025 clubs.
+DefaultClubCoaches = {
+	-- NRL
+	[118] = "Michael Maguire",
+	[119] = "Cameron Ciraldo",
+	[120] = "Todd Payten",
+	[121] = "Dean Young",
+	[122] = "Jason Ryles",
+	[123] = "Justin Holbrook",
+	[124] = "Ivan Cleary",
+	[125] = "Wayne Bennett",
+	[126] = "Ricky Stuart",
+	[127] = "Trent Robinson",
+	[128] = "Kieran Foran",
+	[129] = "Craig Fitzgibbon",
+	[130] = "Craig Bellamy",
+	[131] = "Benji Marshall",
+	[132] = "Josh Hannay",
+	[133] = "Andrew Webster",
+	[134] = "Kristian Woolf",
+	-- grand final / decider specials
+	[110] = "Michael Maguire",
+	[111] = "Craig Bellamy",
+	[112] = "Scott Prince",
+	[113] = "John Strange",
+	[114] = "Billy Slater",
+	[115] = "Laurie Daley",
+	[116] = "Nathan Cross",
+	[117] = "John Strange",
+	-- Super League
+	[135] = "Chris Chester",
+	[136] = "Jim Lenihan",
+	[137] = "Andy Last",
+	[138] = "Willie Peters",
+	[139] = "Brad Arthur",
+	[140] = "Eamon O'Carroll",
+	[141] = "Daryl Powell",
+	[142] = "Sam Burgess",
+	[143] = "Matthew Peet",
+	[144] = "Adrian Lam",
+	[145] = "John Cartwright",
+	[146] = "Kurt Haggerty",
+	[147] = "Sylvain Houles",
+	[148] = "Mark Applegarth",
+	-- Championship
+	[164] = "Dave Hewitt",
+	[165] = "Kyle Eastmond",
+	[166] = "Alan Kilshaw",
+	[167] = "Paul Crarey",
+	[168] = "Allan Coleman",
+	[169] = "Richard Horne",
+	[170] = "Jason Demetriou",
+	[171] = "James Ford",
+	[172] = "Craig Lingard",
+	[173] = "Kyle Trout",
+	[174] = "Mark Dunning",
+	[175] = "James Newton",
+	[176] = "Mike Grady",
+	[177] = "Anthony Murray",
+	[178] = "Paul March",
+	[179] = "Gary Thornton",
+	[180] = "Jonty Gorley",
+	[181] = "Scott Taylor",
+	[182] = "Ian Hardman",
+	[183] = "Graham Steadman",
+	-- NRLW
+	[184] = "Scott Prince",
+	[185] = "Darrin Borthwick",
+	[186] = "Brayden Wiliame",
+	[187] = "Tony Herman",
+	[188] = "Karyn Murphy",
+	[189] = "Ben Jeffries",
+	[190] = "Ronald Griffiths",
+	[191] = "Ricky Henry",
+	[192] = "Steve Georgallis",
+	[193] = "Nathan Cross",
+	[194] = "John Strange",
+	[195] = "Craig Sandercock",
+	-- Women's Super League
+	[196] = "Amanda Wilkinson",
+	[197] = "Marie Colley",
+	[198] = "Nathan Graham",
+	[199] = "Lois Forsell",
+	[200] = "Paul Arnison",
+	[201] = "Derek Hardman",
+	[202] = "Dennis Betts",
+	[203] = "Leon Pryce",
+	-- State of Origin (2026 series)
+	[18] = "Billy Slater",
+	[19] = "Laurie Daley",
+	[108] = "Nathan Cross",
+	[109] = "John Strange",
+	-- internationals (2026 World Cups)
+	[103] = "Kevin Walters",
+	[104] = "Brian McDermott",
+	[204] = "Stacey Jones",
+	[205] = "Ben Gardiner",
+	[206] = "Laurent Frayssinous",
+	[207] = "Jason Demetriou",
+	[208] = "Michael Cheika",
+	[209] = "Kristian Woolf",
+	[210] = "Mick Potter",
+	[211] = "Karmichael Hunt",
+	[212] = "Jess Skinner",
+	[213] = "Stuart Barrow",
+	[214] = "Frank Pritchard",
+	[215] = "Tom Brindle",
+	[216] = "Jone Wesele",
+	[217] = "Alan Walsh",
+	[218] = "Ricky Henry",
+	[219] = "Craig Sandercock"
+}
+
+FemaleCoaches = {
+	["Karyn Murphy"] = true,
+	["Amanda Wilkinson"] = true,
+	["Marie Colley"] = true,
+	["Lois Forsell"] = true,
+	["Jess Skinner"] = true
+}
+
+local function nameKey(arg_tc_59)
+	return (string.gsub(string.lower(tostring(arg_tc_59 or "")), "[^a-z]", ""))
+end
+
+-- name key -> NPC id for every Coach (and still-Hidden) NPC in a manager
+local var_tc_coachIndex = setmetatable({}, {
+	__mode = "k"
+})
+-- manager -> true when stepping through the coaches (which is the only way
+-- to see user-created ones) worked for its last index
+local var_tc_coachIndexStepped = setmetatable({}, {
+	__mode = "k"
+})
+
+-- Every stock NPC id in defaultdata_npcs (tools/parse_npcs.py --list): safe
+-- to read with getReferee. Unknown ids are never probed - not even the
+-- coaches this mod adds (ids 7001+, make_coach_records.py): if 39954 were
+-- rebuilt without them, reading a missing id could abort natively. Being
+-- Coach type, the stepping below finds them.
+StockNpcIds = {
+	455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469,
+	478, 498, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 536, 537,
+	540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554,
+	555, 556, 557, 558, 559, 560, 561, 562, 563, 564, 565, 566, 567, 568, 569,
+	570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 584, 585,
+	586, 587, 588, 589, 590, 591, 592, 593, 594, 595, 596, 597, 598, 599, 600,
+	601
+}
+
+local function enumInt(arg_tc_71)
+	local var_tc_141, var_tc_142 = pcall(function()
+		return arg_tc_71:toInt()
+	end)
+
+	if var_tc_141 then
+		return var_tc_142
+	end
+
+	return tonumber(arg_tc_71)
+end
+
+-- type int, sex int and full name of an NPC (nil if unreadable)
+local function npcInfo(arg_tc_72)
+	local var_tc_143, var_tc_144, var_tc_145, var_tc_146 = pcall(function()
+		local var_tc_147 = arg_tc_72.identity
+
+		return enumInt(var_tc_147:getOption("npcType")), enumInt(var_tc_147:getOption("sex")), arg_tc_72.fullName
+	end)
+
+	if var_tc_143 and var_tc_144 ~= nil then
+		return var_tc_144, var_tc_145, var_tc_146
+	end
+
+	-- fallback: the identity's npcType / sex properties
+	var_tc_143, var_tc_144, var_tc_145, var_tc_146 = pcall(function()
+		local var_tc_147 = arg_tc_72.identity
+
+		return enumInt(var_tc_147.npcType), enumInt(var_tc_147.sex), arg_tc_72.fullName
+	end)
+
+	if var_tc_143 and var_tc_144 ~= nil then
+		return var_tc_144, var_tc_145, var_tc_146
+	end
+end
+
+local function addToIndex(arg_tc_73, arg_tc_74, arg_tc_75, arg_tc_76)
+	local var_tc_148 = nameKey(arg_tc_75)
+
+	if var_tc_148 ~= "" and arg_tc_73[var_tc_148] == nil then
+		arg_tc_73[var_tc_148] = arg_tc_74
+	end
+end
+
+-- name key -> id for every coach (Coach type, or still Hidden) in a manager.
+-- 1. Read each stock NPC by id. 2. Step getRelativeNPCIdOfType through the
+-- user-created ones too, but ONLY for a type + sex that a stock NPC already
+-- has, starting from that NPC: with no NPC of the asked type + sex the native
+-- stepper reads a null pointer and the game aborts (a pcall can't catch it;
+-- crash 2026-10-27, dump rugbyleague1.exe.25436.dmp, the Hidden-male walk
+-- once unhide-coaches had made every coach a Coach).
+function getCoachIndex(arg_tc_64, arg_tc_65)
+	if not arg_tc_64 then
+		return {}
+	end
+
+	local var_tc_118 = var_tc_coachIndex[arg_tc_64]
+
+	if var_tc_118 and not arg_tc_65 then
+		return var_tc_118
+	end
+
+	var_tc_118 = {}
+
+	local var_tc_149 = enumInt(native.CNpcType.Coach)
+	local var_tc_150 = enumInt(native.CNpcType.Hidden)
+	local var_tc_151 = {}
+	local var_tc_152 = 0
+	local var_tc_153 = 0
+
+	for iter_tc_20, iter_tc_21 in ipairs(StockNpcIds) do
+		local var_tc_154, var_tc_155 = pcall(arg_tc_64.getReferee, arg_tc_64, iter_tc_21)
+
+		if var_tc_154 and var_tc_155 then
+			local var_tc_156, var_tc_157, var_tc_158 = npcInfo(var_tc_155)
+
+			if var_tc_156 then
+				var_tc_152 = var_tc_152 + 1
+
+				if var_tc_156 == var_tc_149 or var_tc_156 == var_tc_150 then
+					addToIndex(var_tc_118, iter_tc_21, var_tc_158)
+
+					var_tc_153 = var_tc_153 + 1
+				end
+
+				if var_tc_156 == var_tc_149 and var_tc_157 ~= nil and var_tc_151[var_tc_157] == nil then
+					var_tc_151[var_tc_157] = iter_tc_21
+				end
+			end
+		end
+	end
+
+	local var_tc_159 = 0
+
+	for iter_tc_22, iter_tc_23 in pairs(var_tc_151) do
+		local var_tc_160 = iter_tc_22 == enumInt(native.CSex.Female) and native.CSex.Female or native.CSex.Male
+		local var_tc_161 = iter_tc_23
+		local var_tc_162 = {
+			[iter_tc_23] = true
+		}
+
+		for iter_tc_24 = 1, 400 do
+			local var_tc_163, var_tc_164 = pcall(arg_tc_64.getRelativeNPCIdOfType, arg_tc_64, var_tc_161, native.CNpcType.Coach, var_tc_160, 1)
+
+			if not var_tc_163 or var_tc_164 == nil or var_tc_162[var_tc_164] then
+				break
+			end
+
+			var_tc_162[var_tc_164] = true
+
+			local var_tc_165, var_tc_166 = pcall(arg_tc_64.getReferee, arg_tc_64, var_tc_164)
+
+			if var_tc_165 and var_tc_166 then
+				local var_tc_167, var_tc_168, var_tc_169 = npcInfo(var_tc_166)
+
+				addToIndex(var_tc_118, var_tc_164, var_tc_169)
+
+				var_tc_159 = var_tc_159 + 1
+			end
+
+			var_tc_161 = var_tc_164
+		end
+	end
+
+	var_tc_coachIndex[arg_tc_64] = var_tc_118
+	var_tc_coachIndexStepped[arg_tc_64] = var_tc_159 > 0
+
+	sidelineLog("coaches: read %d stock NPCs (%d coaches), stepped %d coaches incl. user-created", var_tc_152, var_tc_153, var_tc_159)
+
+	return var_tc_118
+end
+
+function getDefaultCoachId(arg_tc_66, arg_tc_67)
+	local var_tc_121 = DefaultClubCoaches[tonumber(arg_tc_67)]
+
+	return var_tc_121 and getCoachIndex(arg_tc_66)[nameKey(var_tc_121)] or nil, var_tc_121
+end
+
+-- Creates every default coach the manager doesn't have. Returns how many were
+-- created (they live in memory until the next profile save).
+function ensureDefaultCoaches(arg_tc_68, arg_tc_69, arg_tc_70)
+	if not arg_tc_68 then
+		return 0
+	end
+
+	local var_tc_122 = getCoachIndex(arg_tc_68)
+	local var_tc_123 = 0
+
+	-- an empty index means the NPC walk failed; creating then would duplicate
+	-- every default coach on each launch
+	if next(var_tc_122) == nil then
+		sidelineLog("coaches: couldn't index the NPC database, not creating default coaches")
+
+		return 0
+	end
+
+	-- coaches created on an earlier run are user-created and only show up by
+	-- stepping; without that they'd look missing and be created again
+	if not var_tc_coachIndexStepped[arg_tc_68] then
+		sidelineLog("coaches: couldn't step through the coaches (user-created ones unseen), not creating default coaches")
+
+		return 0
+	end
+
+	for iter_tc_18, iter_tc_19 in pairs(DefaultClubCoaches) do
+		local var_tc_124 = nameKey(iter_tc_19)
+
+		if var_tc_122[var_tc_124] == nil then
+			local var_tc_125, var_tc_126 = pcall(function()
+				local var_tc_127 = arg_tc_68.userCreated
+
+				if var_tc_127.canCreateCount <= 0 then
+					error("the user-created referee/coach database is full")
+				end
+
+				local var_tc_128, var_tc_129 = string.match(iter_tc_19, "^(%S+)%s+(.+)$")
+				local var_tc_130 = native.CReferee()
+				local var_tc_131 = var_tc_130.identity
+
+				local var_tc_female = FemaleCoaches[iter_tc_19] == true
+
+				var_tc_131:setOption("sex", enumInt(var_tc_female and native.CSex.Female or native.CSex.Male))
+				var_tc_131:setOption("firstname", var_tc_128)
+				var_tc_131:setOption("surname", var_tc_129)
+				var_tc_131:setOption("npcType", enumInt(native.CNpcType.Coach))
+				var_tc_131:setOption("number", 1)
+				var_tc_131:setOption("voice", 1)
+				var_tc_130.visual:copy(arg_tc_69:get(var_tc_female and native.DefaultPlayerVisuals.PlayerFemaleCaucasian or native.DefaultPlayerVisuals.PlayerMaleCaucasian))
+				var_tc_130.uniform:copy(arg_tc_70:get(var_tc_female and native.DefaultTeamVisuals.NewCustomFemale or native.DefaultTeamVisuals.NewCustomMale))
+				var_tc_130:setNPCHeightWeightIdentityFromVisual()
+
+				return var_tc_127:addReferee(var_tc_130)
+			end)
+
+			if var_tc_125 and var_tc_126 then
+				var_tc_122[var_tc_124] = var_tc_126
+				var_tc_123 = var_tc_123 + 1
+
+				sidelineLog("coaches: created default coach %s (npc id %s) for club %s", iter_tc_19, tostring(var_tc_126), tostring(iter_tc_18))
+			else
+				var_tc_122[var_tc_124] = false
+
+				sidelineLog("coaches: couldn't create %s: %s", iter_tc_19, tostring(var_tc_126))
+			end
+		end
+	end
+
+	return var_tc_123
+end
+
 function getAssignedCoachId(arg_tc_34)
 	return arg_tc_34 and loadAssignments()[tonumber(arg_tc_34)] or nil
 end
@@ -147,8 +518,30 @@ function setAssignedCoachId(arg_tc_35, arg_tc_36, arg_tc_37)
 	sidelineLog("academy: assignment club %s -> coach %s (%s)%s", tostring(arg_tc_35), tostring(arg_tc_36), tostring(arg_tc_37), var_tc_52 and "" or " WRITE FAILED " .. tostring(var_tc_53))
 end
 
+-- The club's coach in the front end: the Identity pick, else the club's
+-- default coach (DefaultClubCoaches), else the club's own coachId. Returns the
+-- NPC, its id, and whether it came from the defaults.
 function getClubCoach(arg_tc_11, arg_tc_12)
-	local var_tc_12 = arg_tc_12 and (getAssignedCoachId(tryGetField(arg_tc_12, "academyId") or tryGetField(arg_tc_12, "id")) or arg_tc_12.coachId)
+	if not arg_tc_12 then
+		return nil
+	end
+
+	local var_tc_132 = tryGetField(arg_tc_12, "academyId") or tryGetField(arg_tc_12, "id")
+	local var_tc_12 = getAssignedCoachId(var_tc_132)
+	local var_tc_133 = false
+
+	if var_tc_12 == nil then
+		local var_tc_134, var_tc_135 = pcall(function()
+			return getDefaultCoachId(arg_tc_11:getRefereeManager(), var_tc_132)
+		end)
+
+		if var_tc_134 and var_tc_135 then
+			var_tc_12 = var_tc_135
+			var_tc_133 = true
+		else
+			var_tc_12 = arg_tc_12.coachId
+		end
+	end
 
 	if var_tc_12 == nil or var_tc_12 == 0 then
 		return nil
@@ -162,7 +555,7 @@ function getClubCoach(arg_tc_11, arg_tc_12)
 		sidelineLog("academy: coachId %s lookup failed: %s", tostring(var_tc_12), tostring(var_tc_14))
 	end
 
-	return var_tc_13 and var_tc_14 or nil, var_tc_12
+	return var_tc_13 and var_tc_14 or nil, var_tc_12, var_tc_133
 end
 
 -- ---------------------------------------------------------------------------
@@ -231,6 +624,18 @@ local function findMatchCoach(arg_tc_20, arg_tc_21, arg_tc_22)
 		end
 
 		sidelineLog("assignment %s for club %s not found in the NPC manager (%s)", tostring(var_tc_58), tostring(tryGet(arg_tc_21, "academyId")), tostring(var_tc_61))
+	end
+
+	if var_tc_59 then
+		local var_tc_136, var_tc_137 = getDefaultCoachId(var_tc_59, tryGet(arg_tc_21, "academyId"))
+
+		if var_tc_136 then
+			local var_tc_138, var_tc_139 = pcall(var_tc_59.getReferee, var_tc_59, var_tc_136)
+
+			if var_tc_138 and var_tc_139 and tryGet(var_tc_139, "visual") then
+				return var_tc_139, "default " .. tostring(var_tc_137)
+			end
+		end
 	end
 
 	local var_tc_21 = tryGet(arg_tc_21, "coach")
@@ -563,6 +968,15 @@ function positionSidelineCoaches(arg_tc_27, arg_tc_28, arg_tc_29, arg_tc_30)
 
 		installReactionHooks()
 		deactivateCoachesBeforeUnload()
+
+		-- default coaches: fresh name index each match (coaches may have been
+		-- created or renamed in Academy since), then create any missing ones
+		pcall(function()
+			local var_tc_140 = tryGet(arg_tc_27, "npcManager")
+
+			getCoachIndex(var_tc_140, true)
+			ensureDefaultCoaches(var_tc_140, tryGet(arg_tc_27, "defaultPlayerVisualManager"), tryGet(arg_tc_27, "defaultTeamVisualManager"))
+		end)
 	end
 
 	for iter_tc_3, iter_tc_4 in ipairs({
@@ -664,8 +1078,9 @@ ReactionChance = {
 -- actor, measured from the animsets' camera and root tracks (scratch cams.py,
 -- 2026-10-26; the actor's forward is +z in clip space - the first pick assumed
 -- -z and the in-game check put camera 3 BEHIND at exactly the mirrored dot).
--- The rest look at the coach's back. wane trims the long disappointed clips
--- (9.4-11.1 s) to about 5.5 s.
+-- The rest look at the coach's back. wane trims the long clips (the
+-- disappointed ones run 9.4-11.1 s) to about 5-5.5 s. weight = relative
+-- chance of being picked (default 1).
 CoachReactionCutscenes = {
 	happy = {
 		{
@@ -675,6 +1090,14 @@ CoachReactionCutscenes = {
 		{
 			name = "teamcoaches_happy_02",
 			cuts = {1, 2}
+		},
+		-- milder than the two "very positive" clips (those read as over-excited
+		-- for a coach), so it gets most of the picks
+		{
+			name = "teamcoaches_happy_03",
+			cuts = {1, 5, 7},
+			wane = 2,
+			weight = 3
 		}
 	},
 	gutted = {
@@ -860,6 +1283,69 @@ function installReactionHooks()
 	end)
 
 	sidelineLog("reactions: hooks %s", var_tc_74 and "installed" or "FAILED " .. tostring(var_tc_75))
+
+	-- The referee cameo's close-up looks across the field at the far touchline, where the
+	-- coaches just stand there. Hide their models for the cameo and show the ones it hid
+	-- again when it ends.
+	local var_tc_110, var_tc_111 = pcall(function()
+		local var_tc_112 = import("rules.cameo.refereecameo_rulestate").RefereeCameoRuleState
+		local var_tc_113 = rawget(var_tc_112, "onEnterSolid")
+		local var_tc_114 = rawget(var_tc_112, "onExitSolid")
+		local var_tc_cameoHidden = {}
+
+		rawset(var_tc_112, "onEnterSolid", function(arg_tc_77, ...)
+			local var_tc_115 = select(7, ...)
+
+			local var_tc_120, var_tc_121 = pcall(function()
+				local var_tc_122 = {}
+
+				for iter_tc_14, iter_tc_15 in pairs(var_tc_coachIdBySide or {}) do
+					local var_tc_116 = iter_tc_15 and var_tc_115:getGameObject(iter_tc_15)
+					local var_tc_117 = var_tc_116 and var_tc_116:getActorModel()
+
+					if var_tc_117 and var_tc_117.visible then
+						var_tc_117.visible = false
+						var_tc_cameoHidden[iter_tc_15] = true
+					end
+
+					table.insert(var_tc_122, string.format("%s=%s", tostring(iter_tc_15), var_tc_117 and (var_tc_cameoHidden[iter_tc_15] and "hidden" or "already hidden") or "no model"))
+				end
+
+				return table.concat(var_tc_122, ", ")
+			end)
+
+			sidelineLog("referee cameo (%s): %s", tostring(arg_tc_77.refereeSignal), var_tc_120 and (var_tc_121 ~= "" and var_tc_121 or "no sideline coaches") or "hide error " .. tostring(var_tc_121))
+
+			return var_tc_113(arg_tc_77, ...)
+		end)
+
+		rawset(var_tc_112, "onExitSolid", function(arg_tc_78, ...)
+			local var_tc_118 = select(7, ...)
+
+			var_tc_114(arg_tc_78, ...)
+
+			local var_tc_123, var_tc_124 = pcall(function()
+				local var_tc_125 = 0
+
+				for iter_tc_16 in pairs(var_tc_cameoHidden) do
+					local var_tc_119 = var_tc_118:getGameObject(iter_tc_16)
+
+					if var_tc_119 then
+						var_tc_119:getActorModel().visible = true
+						var_tc_125 = var_tc_125 + 1
+					end
+				end
+
+				return var_tc_125
+			end)
+
+			sidelineLog("referee cameo ended: %s", var_tc_123 and tostring(var_tc_124) .. " coach(es) shown again" or "show error " .. tostring(var_tc_124))
+
+			var_tc_cameoHidden = {}
+		end)
+	end)
+
+	sidelineLog("referee cameo: coach hiding %s", var_tc_110 and "installed" or "FAILED " .. tostring(var_tc_111))
 end
 
 -- native.Localise with an English fallback for keys the string tables may lack

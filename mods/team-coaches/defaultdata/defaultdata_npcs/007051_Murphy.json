@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7051.visual.bin",
+  "npcs": {
+    "id": 7051,
+    "firstname": "Karyn",
+    "surname": "Murphy",
+    "sex": 1,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 19,
+    "height": 175,
+    "weight": 104,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 54,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 11
+  },
+  "Nines": {}
+}

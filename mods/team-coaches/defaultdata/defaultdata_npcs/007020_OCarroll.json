@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7020.visual.bin",
+  "npcs": {
+    "id": 7020,
+    "firstname": "Eamon",
+    "surname": "O'Carroll",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 5,
+    "height": 185,
+    "weight": 90,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 71,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 6
+  },
+  "Nines": {}
+}

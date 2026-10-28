@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7061.visual.bin",
+  "npcs": {
+    "id": 7061,
+    "firstname": "Paul",
+    "surname": "Arnison",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 3,
+    "height": 185,
+    "weight": 88,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 21,
+    "conversions": 3,
+    "conversionAttempts": 4,
+    "tries": 8
+  },
+  "Nines": {}
+}

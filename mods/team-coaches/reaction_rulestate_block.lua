@@ -85,7 +85,26 @@ function CheerleaderCelebrateRuleState.onEnterSolid(arg_tc_0, arg_tc_1, arg_tc_2
 
 	local var_tc_2 = native.Random(arg_tc_0.randomSeed)
 	local var_tc_3 = arg_tc_0.coachHappy and coach_helper.CoachReactionCutscenes.happy or coach_helper.CoachReactionCutscenes.gutted
-	local var_tc_4 = var_tc_3[var_tc_2:randomInteger(#var_tc_3) + 1]
+	local var_tc_4 = var_tc_3[1]
+	local var_tc_6 = 0
+
+	for iter_tc_4, iter_tc_5 in ipairs(var_tc_3) do
+		var_tc_6 = var_tc_6 + (iter_tc_5.weight or 1)
+	end
+
+	-- weighted pick (the milder clips carry more weight)
+	local var_tc_7 = var_tc_2:randomInteger(var_tc_6)
+
+	for iter_tc_6, iter_tc_7 in ipairs(var_tc_3) do
+		var_tc_7 = var_tc_7 - (iter_tc_7.weight or 1)
+
+		if var_tc_7 < 0 then
+			var_tc_4 = iter_tc_7
+
+			break
+		end
+	end
+
 	local var_tc_5 = var_tc_4.cuts[var_tc_2:randomInteger(#var_tc_4.cuts) + 1]
 
 	arg_tc_0.coachId = var_tc_0

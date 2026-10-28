@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7077.visual.bin",
+  "npcs": {
+    "id": 7077,
+    "firstname": "Alan",
+    "surname": "Walsh",
+    "sex": 0,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 8,
+    "height": 185,
+    "weight": 93,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 157,
+    "conversions": 3,
+    "conversionAttempts": 5,
+    "tries": 88
+  },
+  "Nines": {}
+}

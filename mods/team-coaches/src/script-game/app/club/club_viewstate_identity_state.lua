@@ -392,8 +392,12 @@ end
 
 -- team-coaches: "Coach: <name>" row; pressing it opens TeamCoachesPickerState
 local function teamCoachesCoachRow(arg_tc_0, arg_tc_1)
-	local var_tc_0, var_tc_2 = coach_helper.getClubCoach(arg_tc_0, arg_tc_1.club)
+	local var_tc_0, var_tc_2, var_tc_3 = coach_helper.getClubCoach(arg_tc_0, arg_tc_1.club)
 	local var_tc_1 = var_tc_0 and coach_helper.getCoachName(var_tc_0) or var_tc_2 and string.format("#%s (not found)", tostring(var_tc_2)) or coach_helper.localiseOr("None", "None")
+
+	if var_tc_0 and var_tc_3 then
+		var_tc_1 = var_tc_1 .. " (default)"
+	end
 
 	return optionmenu_aide.createButton(string.format("%s: %s", coach_helper.localiseOr("Coach", "Coach"), var_tc_1), {
 		teamCoachesButton = true,
@@ -471,6 +475,17 @@ Class("ClubViewIdentityState", var_0_26)
 function ClubViewIdentityState.enter(arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8)
 	arg_41_0.goBackFactory = arg_41_7.teamCoachesIdentityGoBack or arg_41_8
 	arg_41_7.teamCoachesIdentityGoBack = nil
+
+	-- team-coaches: create any missing default coaches (saved with the club)
+	pcall(function()
+		local var_tc_2 = arg_41_5:getRefereeManager()
+
+		coach_helper.getCoachIndex(var_tc_2, true)
+
+		if coach_helper.ensureDefaultCoaches(var_tc_2, arg_41_5:getDefaultPlayerVisualManager(), arg_41_5:getDefaultTeamVisualManager()) > 0 and arg_41_7.setDirty then
+			arg_41_7.setDirty()
+		end
+	end)
 
 	pcall(function()
 		local var_tc_0 = arg_41_7.club

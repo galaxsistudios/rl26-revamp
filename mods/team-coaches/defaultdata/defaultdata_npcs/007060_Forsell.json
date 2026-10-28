@@ -1,0 +1,24 @@
+{
+  "new": true,
+  "visual": "7060.visual.bin",
+  "npcs": {
+    "id": 7060,
+    "firstname": "Lois",
+    "surname": "Forsell",
+    "sex": 1,
+    "npcType": 1,
+    "isWorldCup": 0,
+    "shirtNumber": 22,
+    "height": 175,
+    "weight": 107,
+    "countryOfBirth": 0,
+    "uniform": 1
+  },
+  "StandardMatch": {
+    "matchesPlayed": 3,
+    "conversions": 0,
+    "conversionAttempts": 0,
+    "tries": 0
+  },
+  "Nines": {}
+}
