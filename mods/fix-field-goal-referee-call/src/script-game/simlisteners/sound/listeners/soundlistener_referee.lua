@@ -18,6 +18,9 @@ local FieldGoalCallEnabled = false
 local FieldGoalCallBank = "sfx_ref_field_goal"
 local FieldGoalCallDelay = 0.8
 
+-- bunker-broadcast-decision: seconds from VideoRefereeDecisionEvent to the try whistle.
+local BunkerTryWhistleDelay = 3.25
+
 Class("SoundListenerReferee", function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0.soundSystem = arg_1_1
 	arg_1_0.soundManager = arg_1_5
@@ -352,6 +355,14 @@ end
 function SoundListenerReferee.onVideoRefereeDecisionEvent(arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6)
 	local var_30_0
 	local var_30_1 = arg_30_1.isTry and "sfxRefTry" or "sfxRefNoTry"
+
+	-- bunker-broadcast-decision: the try whistle blows as TRY lands on the bunker card
+	-- (VideoRefHud swaps "Pending" for the decision 3 s in), ahead of the stock "Try!" call.
+	if arg_30_1.bunkerBroadcast and arg_30_1.isTry then
+		var_0_2(arg_30_0, "Whistle_Try", {
+			delay = BunkerTryWhistleDelay
+		})
+	end
 
 	var_0_2(arg_30_0, var_30_1, {
 		delay = 4

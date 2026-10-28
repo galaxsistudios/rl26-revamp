@@ -41,6 +41,13 @@ the try music for a provisional try (`provisionalTry`).
 - **No clap-along:** the stock music turns on the crowd clap-along RTPC. A club song skips that,
   because the clapping wouldn't be in time with it.
 
+### Bunker tries
+
+[bunker-broadcast-decision](../bunker-broadcast-decision/) adds `onVideoRefereeDecisionEvent`. A
+bunker TRY starts the try music (or the club's song) `BunkerTryMusicDelay` (3.6 s) after the
+decision event, just after the try whistle. It only runs when the event carries `bunkerBroadcast`.
+Stock bunker tries still have no music.
+
 ## Adding a club's song
 
 1. Name the file after the club icon: `resources/try-songs/<icon>.ogg` (any format ffmpeg reads).

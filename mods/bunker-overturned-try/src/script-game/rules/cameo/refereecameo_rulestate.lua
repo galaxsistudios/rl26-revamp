@@ -4,6 +4,7 @@ import("core.marshalling.types")
 import("game.player.playertype")
 import("rules.match.matchtime")
 import("base.rulestate.rulestateclass")
+import("base.side.sidehelper")
 
 -- bunker-overturned-try: the referee cameo that sends a provisional try upstairs starts while
 -- the try replay is still playing (the sim runs under it). With waitForProvisionalOutro it
@@ -14,8 +15,10 @@ import("base.rulestate.rulestateclass")
 local ProvisionalTrySignalDelay = 0
 -- Seconds from the signal to the cut to the bunker replay (stock cameo: 5 s, which runs on
 -- into the referee crossing his arms). The debug log prints the signal animation's length
--- and events 0.3 s in, to tune this against.
-local ProvisionalTryCameoLength = 2.4
+-- and events 0.3 s in, to tune this against. bunker-broadcast-decision's logo wipe starts
+-- 1 s before the cut and takes ~1 s to cover, so the referee is fully in view for this
+-- minus 1 s (was 2.4 with the instant crossfade; raised 2026-10-27 at the user's request).
+local ProvisionalTryCameoLength = 3.6
 local ProvisionalTryOutroTimeout = 40
 local ProvisionalTryTransitionStates = {
 	ReplayUniverseState = true,
@@ -108,6 +111,144 @@ local function provisionalTryLogRefereeAnim(arg_gamestate, arg_gameobjects, arg_
 	arg_log(var_text)
 end
 
+-- bunker-broadcast-decision (see mods/bunker-broadcast-decision/README.md): the video-referee
+-- cameo in front of a try decision decides whether the bunker presentation runs, and
+-- publishes BunkerBroadcastState {side, scorerId} for TryDecisionPendingRuleState and the
+-- sound listeners (nil = stock presentation). It then kicks the RL26 logo wipe
+-- (LogoTransitionHud, replay-team-stinger's logotransition_hud.lua) BunkerStingerLead before
+-- the cameo ends, flags the queued bunker replay (bunkerLogoWipe) so its barrier and wipe-in
+-- (screenwipe.lua) hold and then release the logo, and holds the cut to the bunker until
+-- the logo covers the screen, for at most BunkerStingerHoldTimeout.
+local BunkerBroadcastEnabled = true
+-- Appends to bunkerbroadcast_debug.txt in the game folder.
+local BunkerBroadcastDebug = true
+-- The stock video-referee cameo timer (setTimer(5) in onEnterSolid).
+local BunkerCameoLength = 5
+-- The logo wipe takes about 1 s to cover.
+local BunkerStingerLead = 1
+local BunkerStingerHoldTimeout = 1.5
+
+local function bunkerBroadcastLog(arg_text)
+	if not BunkerBroadcastDebug then
+		return
+	end
+
+	pcall(function()
+		local var_file = io.open("bunkerbroadcast_debug.txt", "a")
+
+		if var_file then
+			var_file:write(tostring(arg_text) .. "\n")
+			var_file:close()
+		end
+	end)
+end
+
+-- TryDecisionPendingRuleState logs through this too.
+rawset(_G, "BunkerBroadcastLog", bunkerBroadcastLog)
+
+local function bunkerBroadcastBegin(arg_match, arg_gamestate)
+	local var_reason
+	local var_state
+	local var_side
+
+	if not BunkerBroadcastEnabled then
+		var_reason = "disabled"
+	else
+		local var_matchInData = arg_match.matchInData or arg_match:getComponent("matchInData")
+		local var_entity = arg_gamestate:getTryDecisionPendingEntity()
+
+		var_side = var_entity.scoringSide
+
+		if var_side ~= nil and rawtype(var_side) ~= "number" then
+			var_side = var_side:toInt()
+		end
+
+		if var_matchInData.onlineMultiplayer then
+			var_reason = "online"
+		elseif arg_gamestate:getTrainingEntity().trainingActive then
+			var_reason = "training"
+		elseif var_side ~= sidehelper.home and var_side ~= sidehelper.away then
+			var_reason = "no attacking side"
+		else
+			var_state = {
+				side = var_side,
+				scorerId = var_entity.scorerId
+			}
+		end
+	end
+
+	rawset(_G, "BunkerBroadcastState", var_state)
+	bunkerBroadcastLog("cameo: sending it upstairs, bunker presentation " .. (var_state and "on, attacking side " .. tostring(var_side) or "off (" .. tostring(var_reason) .. ")"))
+
+	return var_state ~= nil
+end
+
+local function bunkerStingerKick(arg_self, arg_params, arg_services, arg_why)
+	if arg_self.bunkerKicked then
+		return
+	end
+
+	arg_self.bunkerKicked = true
+
+	local var_ok, var_result = pcall(function()
+		local var_logo = arg_services.hud and arg_services.hud:getElement("logotransition")
+
+		if not var_logo then
+			return "missing"
+		end
+
+		-- the bunker replay queued by onEnterSolid (the last replay in the queue)
+		local var_replay
+
+		for iter_0, iter_1 in ipairs(arg_params.universe.matchSim.universeStateQueue or {}) do
+			if type(iter_1) == "ReplayUniverseState" then
+				var_replay = iter_1
+			end
+		end
+
+		if not var_replay then
+			return "not kicked (no queued bunker replay)"
+		end
+
+		var_replay.bunkerLogoWipe = true
+
+		if var_logo:bunkerKick() then
+			arg_self.bunkerStinger = var_logo
+
+			return "logo wipe kicked"
+		end
+
+		return "not kicked (logo wipe already running), the barrier waits for it"
+	end)
+
+	bunkerBroadcastLog("cameo: " .. arg_why .. ", " .. (var_ok and tostring(var_result) or "error: " .. tostring(var_result)))
+end
+
+-- True once the cut to the bunker can go.
+local function bunkerStingerCovered(arg_self, arg_dt)
+	local var_stinger = arg_self.bunkerStinger
+
+	if not var_stinger then
+		return true
+	end
+
+	arg_self.bunkerHold = (arg_self.bunkerHold or 0) + arg_dt
+
+	local var_ok, var_covered = pcall(var_stinger.bunkerIsCovered, var_stinger)
+
+	if var_ok and var_covered then
+		return true
+	end
+
+	if not var_ok or arg_self.bunkerHold >= BunkerStingerHoldTimeout then
+		bunkerBroadcastLog(string.format("cameo: cutting to the bunker without full cover after %.2fs", arg_self.bunkerHold))
+
+		return true
+	end
+
+	return false
+end
+
 rulestateclass.rulestateclass("RefereeCameoRuleState", function(arg_1_0, arg_1_1)
 	for iter_1_0, iter_1_1 in pairs(RefereeCameoRuleState.MemberDefinitions) do
 		arg_1_0[iter_1_0] = arg_1_1[iter_1_0]
@@ -143,6 +284,18 @@ function RefereeCameoRuleState.apply(arg_4_0, arg_4_1, arg_4_2)
 end
 
 function RefereeCameoRuleState.onEnterSolid(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+	-- bunker-broadcast-decision
+	if arg_5_0.isVideoReferee and type(arg_5_0.nextState) == "TryDecisionPendingRuleState" then
+		local var_b_0, var_b_1 = pcall(bunkerBroadcastBegin, arg_5_5, arg_5_6)
+
+		if not var_b_0 then
+			rawset(_G, "BunkerBroadcastState", nil)
+			bunkerBroadcastLog("cameo: setup error: " .. tostring(var_b_1))
+		end
+
+		arg_5_0.bunkerBroadcast = var_b_0 and var_b_1 or nil
+	end
+
 	local var_5_0, var_5_1, var_5_2 = arg_5_6:getOfficialEntity():getRefereesIds()
 	local var_5_3 = arg_5_7:getGameObject(var_5_0)
 	local var_5_4 = arg_5_0.refereeSignal
@@ -303,6 +456,18 @@ function RefereeCameoRuleState.updateSolid(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 		end
 	end
 
+	-- bunker-broadcast-decision: the stinger starts BunkerStingerLead before the cut, so it
+	-- covers the screen as the cameo ends.
+	if arg_7_0.bunkerBroadcast then
+		arg_7_0.bunkerCameoTime = (arg_7_0.bunkerCameoTime or 0) + arg_7_8
+
+		local var_b_0 = arg_7_0.provisionalSinceSignal and ProvisionalTryCameoLength - arg_7_0.provisionalSinceSignal or BunkerCameoLength - arg_7_0.bunkerCameoTime
+
+		if var_b_0 <= BunkerStingerLead then
+			bunkerStingerKick(arg_7_0, arg_7_1, arg_7_3, "cameo ending")
+		end
+	end
+
 	local var_7_0 = arg_7_0.refereeSignal
 
 	if var_7_0 and not arg_7_0.refereeSignalSent then
@@ -343,7 +508,9 @@ function RefereeCameoRuleState.updateSolid(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 	local var_7_3 = arg_7_3.cameoCamera
 	local var_7_4 = false
 
-	if var_7_1 or var_7_3:isFinished() then
+	-- bunker-broadcast-decision: bunkerLeaving keeps a one-frame skip latched while the
+	-- stinger covers.
+	if var_7_1 or var_7_3:isFinished() or arg_7_0.bunkerLeaving then
 		var_7_4 = true
 	end
 
@@ -351,6 +518,17 @@ function RefereeCameoRuleState.updateSolid(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 		print("Early out if the request has been sent")
 
 		return
+	end
+
+	-- bunker-broadcast-decision: hold the cut to the bunker until the stinger covers it.
+	if arg_7_0.bunkerBroadcast then
+		arg_7_0.bunkerLeaving = true
+
+		bunkerStingerKick(arg_7_0, arg_7_1, arg_7_3, var_7_1 and "cameo skipped" or "cameo finished")
+
+		if not bunkerStingerCovered(arg_7_0, arg_7_8) then
+			return
+		end
 	end
 
 	arg_7_0.haveSentRequest = true

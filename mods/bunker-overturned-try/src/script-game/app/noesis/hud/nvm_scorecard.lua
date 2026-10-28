@@ -206,7 +206,15 @@ function NVMScoreCard.addRedCard(arg_12_0, arg_12_1)
 	arg_12_0.sides[arg_12_1]:addRedCard()
 end
 
+-- bunker-broadcast-decision: no "Try Confirmed" banner under the scoreboard. The bunker card
+-- already shows the decision. Set ShowTryConfirmedBanner = true for the stock banner.
+local ShowTryConfirmedBanner = false
+
 function NVMScoreCard.showTryConfirmed(arg_13_0)
+	if not ShowTryConfirmedBanner then
+		return
+	end
+
 	arg_13_0.ShowTryConfirmed = true
 	arg_13_0.showTryConfirmedTimer = 4
 end

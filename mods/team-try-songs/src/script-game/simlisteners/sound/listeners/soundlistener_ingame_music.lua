@@ -40,6 +40,11 @@ local TrySongs = {
 -- Logs to trysongs_debug.txt in the game folder.
 local TrySongsDebug = false
 
+-- bunker-broadcast-decision: a bunker TRY gets the try music (or the club's song), starting
+-- this long after VideoRefereeDecisionEvent: just after the try whistle (3.25 s,
+-- soundlistener_referee.lua). Stock bunker tries have no music.
+local BunkerTryMusicDelay = 3.6
+
 local function trySongsLog(arg_text)
 	if not TrySongsDebug then
 		return
@@ -217,7 +222,9 @@ function SoundListenerIngameMusic.registerWithMatchSim(arg_4_0, arg_4_1)
 		StopAwayThemeEvent = arg_4_0.onStopAwayThemeEvent,
 		StopHomeThemeEvent = arg_4_0.onStopHomeThemeEvent,
 		StopNationalAnthemEvent = arg_4_0.onStopNationalAnthemEvent,
-		TrainingStartEvent = arg_4_0.onTrainingStartEvent
+		TrainingStartEvent = arg_4_0.onTrainingStartEvent,
+		-- bunker-broadcast-decision
+		VideoRefereeDecisionEvent = arg_4_0.onVideoRefereeDecisionEvent
 	})
 	var_4_0:registerSolidEvents(arg_4_0, arg_4_1, {
 		BreakInPlayEvent = arg_4_0.onBreakInPlayEvent,
@@ -483,6 +490,16 @@ function SoundListenerIngameMusic.onTryScoredEvent(arg_28_0, arg_28_1, arg_28_2,
 		-- team-try-songs: the scoring club's song, if it gets one this match.
 		arg_28_0:startCelebrationMusic(var_0_5, arg_28_0.trySongs[arg_28_1.scoringSide])
 	end
+end
+
+-- bunker-broadcast-decision: music for a TRY given by the bunker (the decision event only
+-- carries bunkerBroadcast when that presentation is running).
+function SoundListenerIngameMusic.onVideoRefereeDecisionEvent(arg_b_0, arg_b_1, arg_b_2, arg_b_3, arg_b_4, arg_b_5, arg_b_6)
+	if not arg_b_0.enabled or not arg_b_1.bunkerBroadcast or not arg_b_1.isTry then
+		return
+	end
+
+	arg_b_0:startCelebrationMusic(BunkerTryMusicDelay, arg_b_1.scoringSide and arg_b_0.trySongs[arg_b_1.scoringSide])
 end
 
 function var_0_9(arg_29_0, arg_29_1, arg_29_2)

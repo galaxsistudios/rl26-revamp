@@ -33,7 +33,7 @@ those still come back "Try".
 |---|---|
 | `rules/try/tryattemptoutcomes.lua` | Rolls for it and builds the rule state chain (below). Settings and debug log. Snapshots player positions at the try. Shares `roll`/`buildReview`/`snapshotPlayers` through `_G.ProvisionalTryState`. |
 | `rules/match/generalgameplay_rulestate.lua` | A plain knock-on by the attacking side that lands in the in-goal (not a grounding attempt) normally becomes a `KnockOnRequest`. It's sent through `trySuccessRequestFactory` as a KnockOn attempt with `forceProvisional` instead. |
-| `rules/cameo/refereecameo_rulestate.lua` | The sim reaches the "send it upstairs" referee cameo while the try replay is still playing. With `waitForProvisionalOutro`, it holds the referee's signal, the cameo timer and skip until the RL26 logo wipe out of the replay starts sliding off (`ProvisionalTryState.outroReleased`, set by replay-team-stinger's `screenwipe.lua`), plus `ProvisionalTrySignalDelay` (0 s). Fallbacks: no replay or wipe left on the universe stack, or 40 s. After the signal, the cameo runs `ProvisionalTryCameoLength` (2.4 s) and cuts to the bunker before the referee crosses his arms (`referee_thebunker_notry` is 6.33 s). |
+| `rules/cameo/refereecameo_rulestate.lua` | The sim reaches the "send it upstairs" referee cameo while the try replay is still playing. With `waitForProvisionalOutro`, it holds the referee's signal, the cameo timer and skip until the RL26 logo wipe out of the replay starts sliding off (`ProvisionalTryState.outroReleased`, set by replay-team-stinger's `screenwipe.lua`), plus `ProvisionalTrySignalDelay` (0 s). Fallbacks: no replay or wipe left on the universe stack, or 40 s. After the signal, the cameo runs `ProvisionalTryCameoLength` (3.6 s; 2.4 s before bunker-broadcast-decision's logo wipe, which covers the last ~1 s) and cuts to the bunker before the referee crosses his arms (`referee_thebunker_notry` is 6.33 s). |
 | `rules/tackle/tackleoutcomes.lua` | Held-up tackles in the in-goal skip `trySuccessRequestFactory` and go straight to the video referee in `heldUpRequestFactory`. They get the same flow: a provisional `TryScoredRequest` (allowed past `validate` when the ball is dead) plus `ReactToScore`. |
 | `rules/try/tryscored_request.lua` | `TryScoredEvent` looks like a try (`tryAttemptOutcome = Try`, `videoRefereeRequired = false`, `provisionalTry = true`). `unsuccessfulAttempt` stays true, so stats never count it. Sets the scoreboard points. The `KnockOnEvent` is held back. |
 | `rules/cutscenes/trydecisionpending_rulestate.lua` | New `ProvisionalTryReviewRuleState`. Its wipe puts players back where they were at the try, at least `ProvisionalTrySpacing` (3 m) apart and `ProvisionalTryRefClearance` (7 m) from officials, facing the try spot. The celebration pulls everyone in to the scorer, so without this they bunch up around the referee. The other officials go to the touchlines (`ProvisionalTryTouchJudgeInfield`), so only the referee is in the cameo. Provisional mode: emits the held-back knock-on, then takes the points off 3 s in (when VideoRefHud swaps Pending for the decision). |
@@ -58,6 +58,15 @@ mod:    ReactToScore(as a try) -> [RefereeCameo(Try) if the ref is close] -> Try
 - **Second replay:** `RefereeCameo`'s stock `QueueReplayEvent` builds the bunker replay from the
   same recording after the first replay's wipe. Captain's challenge already does that. If it
   ever finds no moments, the flow carries on without the bunker replay.
+
+## Also carries bunker-broadcast-decision
+
+`refereecameo_rulestate.lua` and `trydecisionpending_rulestate.lua` also hold
+[bunker-broadcast-decision](../bunker-broadcast-decision/)'s code. That covers the stinger into
+and out of the bunker, the decision hold, and the try celebration or no-try reaction after it,
+including the new `BunkerNoTryReactionRuleState`. It is marked `bunker-broadcast-decision` in
+both files. Provisional tries get it too: the bunker card's NO TRY is followed by the reaction
+shot.
 
 ## Debugging
 

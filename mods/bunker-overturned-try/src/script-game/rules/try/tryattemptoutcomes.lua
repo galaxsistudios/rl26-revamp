@@ -38,6 +38,9 @@ local ProvisionalTryDebug = true
 -- TEST ONLY: turns every real try (not penalty tries) into this outcome, so the flow can be
 -- tested on demand. "KnockOn" or "HeldUp"; nil for normal play.
 local ProvisionalTryTestOutcome = nil
+-- TEST ONLY (bunker-broadcast-decision): every real try goes to the video referee (stock: 25%
+-- of tackled tries), so the bunker TRY flow can be tested on demand. false for normal play.
+local BunkerTestAllTries = true
 
 -- Shared state for the other bunker-overturned-try files: scoreboard points, the replay
 -- selection flag and the debug log. Modules have their own environments, so it lives in _G.
@@ -212,6 +215,13 @@ function trySuccessRequestFactory(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 
 	if var_1_27 and var_1_27.forceVideoReferee then
 		var_1_6 = true
+	end
+
+	-- bunker-broadcast-decision test switch
+	if BunkerTestAllTries and var_1_20 and not var_1_6 then
+		var_1_6 = true
+
+		provisionalTryLog("try attempt: TEST, sent to the video referee")
 	end
 
 	local var_1_29 = arg_1_3:getComponent("matchInfo"):getMatchSecondsElapsed(arg_1_4, arg_1_6)

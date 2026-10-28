@@ -43,6 +43,12 @@ python tools\add_sound_bank.py add --name sfx_ref_field_goal --audio resources\r
   stack shows `sound/sfx_ref_field_goal.bnk`), and `pcall` can't catch it. It crashes on "continue"
   into a match. With the flag off, the field goal just gets its single whistle.
 
+## Also carries bunker-broadcast-decision
+
+`onVideoRefereeDecisionEvent` blows `Whistle_Try` `BunkerTryWhistleDelay` (3.25 s) after a bunker
+TRY decision, when the event carries `bunkerBroadcast`. That is as the TRY text lands. See
+[bunker-broadcast-decision](../bunker-broadcast-decision/).
+
 ## Install
 
 Script mod, entry 39959: `python tools\build.py full --confirm` (game closed).

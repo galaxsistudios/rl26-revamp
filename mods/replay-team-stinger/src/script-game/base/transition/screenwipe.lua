@@ -19,6 +19,13 @@ local TeamStingerOutroStyle = "logo"
 local LogoOutroBarrierTimeout = 3
 local LogoOutroRevealDelay = 0.35
 
+-- bunker-broadcast-decision: the video-referee cameo kicks the logo wipe and flags the
+-- bunker replay (bunkerLogoWipe). Its barrier waits for the logo to cover, and the wipe-in
+-- slides it off BunkerLogoRevealDelay after the replay starts playing (or after
+-- BunkerLogoWipeInTimeout).
+local BunkerLogoRevealDelay = 0.15
+local BunkerLogoWipeInTimeout = 7
+
 local function teamStingerCall(arg_c_0, arg_c_1, ...)
 	local var_c_0, var_c_1 = pcall(arg_c_0[arg_c_1], arg_c_0, ...)
 
@@ -54,6 +61,12 @@ Class("ScreenWipeOut", var_0_0, function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg
 	if var_1_2 and var_1_4 and var_1_4.teamStingerTeam and not var_1_4.camera then
 		arg_1_0.teamStinger = var_1_2
 		arg_1_0.teamStingerReplay = var_1_4
+	end
+
+	-- bunker-broadcast-decision
+	if arg_1_0.logoTransition and var_1_4 and var_1_4.bunkerLogoWipe and not var_1_4.camera then
+		arg_1_0.bunkerLogo = arg_1_0.logoTransition
+		arg_1_0.bunkerLogo.bunkerHold = true
 	end
 
 	-- bunker-overturned-try: debug, every barrier while a provisional try is on.
@@ -93,6 +106,23 @@ function ScreenWipeOut.onFirstFocus(arg_2_0, arg_2_1, arg_2_2)
 	-- replay-team-stinger: normally the stinger slid in during the celebration. If the
 	-- celebration was skipped it starts here, over a frozen last frame.
 	local var_2_0 = arg_2_0.teamStinger
+
+	-- bunker-broadcast-decision: the cameo normally kicked the logo already; if not, kick it
+	-- here over a frozen frame.
+	if arg_2_0.bunkerLogo then
+		local var_2_10, var_2_11 = pcall(arg_2_0.bunkerLogo.bunkerKick, arg_2_0.bunkerLogo)
+
+		if not var_2_10 then
+			logotransition_hud.teamStingerLog("bunker logo: barrier kick error: " .. tostring(var_2_11))
+
+			arg_2_0.bunkerLogo = nil
+		elseif var_2_11 then
+			logotransition_hud.teamStingerLog("bunker logo: kicked at the barrier")
+			arg_2_0.screenWipe:capture()
+		else
+			logotransition_hud.teamStingerLog("bunker logo: already in at the barrier")
+		end
+	end
 
 	if arg_2_0.logoOutro then
 		local var_2_8, var_2_9 = pcall(arg_2_0.logoOutro.kick, arg_2_0.logoOutro)
@@ -158,6 +188,15 @@ end
 
 -- replay-team-stinger
 function ScreenWipeOut.acceptBarrierComplete(arg_15_0, arg_15_1, arg_15_2)
+	-- bunker-broadcast-decision: hold until the logo covers the screen.
+	if arg_15_0.bunkerLogo and arg_15_0.timeInBarrier <= LogoOutroBarrierTimeout then
+		local var_15_7, var_15_8 = pcall(arg_15_0.bunkerLogo.bunkerIsCovered, arg_15_0.bunkerLogo)
+
+		if var_15_7 and not var_15_8 then
+			return false
+		end
+	end
+
 	-- bunker-overturned-try: hold until the logo covers the screen.
 	if arg_15_0.logoOutro and arg_15_0.timeInBarrier <= LogoOutroBarrierTimeout then
 		local var_15_5, var_15_6 = pcall(arg_15_0.logoOutro.readyToTransition, arg_15_0.logoOutro)
@@ -195,7 +234,8 @@ function ScreenWipeOut.onBarrierComplete(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg
 		name = arg_4_0.name,
 		screenWipe = arg_4_0.screenWipe,
 		teamStinger = arg_4_0.teamStinger,
-		logoOutro = arg_4_0.logoOutro
+		logoOutro = arg_4_0.logoOutro,
+		bunkerLogo = arg_4_0.bunkerLogo
 	})
 
 	var_4_1:pushStateAtBarrierEnd(var_4_2)
@@ -222,6 +262,11 @@ Class("ScreenWipeIn", var_0_1, function(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
 	-- bunker-overturned-try
 	arg_6_0.logoOutro = arg_6_3.logoOutro
 	arg_6_0.logoOutroTime = 0
+
+	-- bunker-broadcast-decision
+	arg_6_0.bunkerLogo = arg_6_3.bunkerLogo
+	arg_6_0.bunkerLogoTime = 0
+	arg_6_0.bunkerLogoPlaying = 0
 
 	print("Created ScreenWipeIn")
 end)
@@ -258,7 +303,19 @@ local function releaseLogoOutro(arg_r_0, arg_r_1)
 	end
 end
 
+-- bunker-broadcast-decision: lets the bunker logo wipe slide off.
+local function releaseBunkerLogo(arg_r_0, arg_r_1)
+	local var_r_0 = arg_r_0.bunkerLogo
+
+	if var_r_0 then
+		arg_r_0.bunkerLogo = nil
+
+		pcall(var_r_0.bunkerRelease, var_r_0, arg_r_1)
+	end
+end
+
 function ScreenWipeIn.onRemove(arg_9_0, arg_9_1, arg_9_2)
+	releaseBunkerLogo(arg_9_0, "wipe-in removed")
 	releaseLogoOutro(arg_9_0, "wipe-in removed")
 	-- replay-team-stinger: removed early (e.g. replay skipped): slide the stinger out.
 	if arg_9_0.teamStinger then
@@ -279,7 +336,7 @@ end
 function ScreenWipeIn.isFinished(arg_10_0)
 	local var_10_0 = arg_10_0.screenWipe
 
-	if arg_10_0.logoOutro then
+	if arg_10_0.logoOutro or arg_10_0.bunkerLogo then
 		return false
 	end
 
@@ -324,6 +381,48 @@ function ScreenWipeIn.update(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, a
 
 		if arg_12_0.logoOutroTime >= LogoOutroRevealDelay then
 			releaseLogoOutro(arg_12_0, "reveal")
+		end
+	end
+
+	-- bunker-broadcast-decision: slide the logo off once the bunker replay is visibly playing,
+	-- i.e. its playhead (pools.replayTime, written by ReplayPresenter.presentFrame) has moved.
+	-- isInPlayback alone goes true before the first replay frame is on screen.
+	if arg_12_0.bunkerLogo then
+		arg_12_0.bunkerLogoTime = arg_12_0.bunkerLogoTime + arg_12_5
+
+		local var_12_12 = var_12_0:getStateBelow(arg_12_0)
+		local var_12_13 = var_12_12 and var_12_12.replayPresenter
+		local var_12_14, var_12_15 = true, false
+
+		if var_12_13 then
+			var_12_14, var_12_15 = pcall(function()
+				local var_12_16 = var_12_13:isInPlayback() and var_12_13.pools and var_12_13.pools.replayTime
+				local var_12_17 = var_12_16 and (type(var_12_16) == "number" and var_12_16 or var_12_16:ToSeconds())
+
+				if not var_12_17 then
+					return false
+				end
+
+				if not arg_12_0.bunkerLogoFirstTime then
+					arg_12_0.bunkerLogoFirstTime = var_12_17
+
+					return false
+				end
+
+				return var_12_17 ~= arg_12_0.bunkerLogoFirstTime
+			end)
+		end
+
+		if var_12_14 and var_12_15 then
+			arg_12_0.bunkerLogoPlaying = arg_12_0.bunkerLogoPlaying + arg_12_5
+		end
+
+		if not var_12_13 then
+			releaseBunkerLogo(arg_12_0, "no replay under the wipe-in")
+		elseif arg_12_0.bunkerLogoPlaying >= BunkerLogoRevealDelay then
+			releaseBunkerLogo(arg_12_0, string.format("bunker replay playing, %.2fs after the barrier", arg_12_0.bunkerLogoTime))
+		elseif arg_12_0.bunkerLogoTime > BunkerLogoWipeInTimeout or not var_12_14 then
+			releaseBunkerLogo(arg_12_0, "wipe-in timed out" .. (var_12_14 and "" or ": " .. tostring(var_12_15)))
 		end
 	end
 

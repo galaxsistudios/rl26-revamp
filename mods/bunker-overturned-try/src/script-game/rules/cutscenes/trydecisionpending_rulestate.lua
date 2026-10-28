@@ -6,6 +6,9 @@ import("rules.match.matchtime")
 import("game.player.playertype")
 import("game.umpire.umpiretype")
 import("script-config.rules.rules.rulesenvironment")
+import("core.foundation.class")
+import("game.humanoid.humanoidtype")
+import("game.cutscenes.cutsceneplayevent_request")
 
 -- bunker-overturned-try: shared state, see rules/try/tryattemptoutcomes.lua.
 local function provisionalTry()
@@ -147,6 +150,107 @@ local function provisionalTrySpreadPlayers(arg_gameobjects, arg_time, arg_gamest
 	provisionalTryLog(string.format("review: spread %d players around the try, referee kept clear, %d touch judges sent to the touchlines", #var_players, var_touchJudges))
 end
 
+-- bunker-broadcast-decision (see mods/bunker-broadcast-decision/README.md). Runs when the
+-- video-referee cameo published BunkerBroadcastState (refereecameo_rulestate.lua):
+--   * the decision card stays up BunkerDecisionHoldTime instead of the stock 8 s;
+--   * VideoRefereeDecisionEvent carries bunkerBroadcast + scoringSide, so the referee and
+--     music listeners add the try whistle and the try music;
+--   * leaving it, the RL26 logo wipe covers the cut (LogoTransitionHud.bunkerCoverCut in
+--     replay-team-stinger's logotransition_hud.lua; the request waits up to
+--     BunkerCoverTimeout for it), and the next state is a try celebration (TRY) or
+--     BunkerNoTryReactionRuleState (NO TRY), which then hand on to the stock nextState.
+local BunkerDecisionHoldTime = 6.5
+local BunkerCoverTimeout = 1.5
+-- The reaction shot: the captain's challenge "lost" cutscene (referee, the captain and two
+-- team-mates of BunkerNoTryReactionRuleState.reactingSide). Its animset loads on demand.
+local BunkerNoTryReactionCutscene = "rl1_captains_challenge_lose_01"
+-- false = NO TRY goes straight to the stock restart (still behind the logo wipe).
+local BunkerNoTryReactionEnabled = true
+local BunkerNoTryReactionTimeout = 12
+
+local function bunkerLog(arg_text)
+	local var_log = rawget(_G, "BunkerBroadcastLog")
+
+	if var_log then
+		var_log(arg_text)
+	end
+end
+
+local function bunkerFollowUpState(arg_self, arg_guidManager, arg_gameobjects)
+	if arg_self.isSuccessfulTry then
+		local var_scorer = arg_self.bunkerScorer
+
+		if var_scorer == nil or not arg_gameobjects:getGameObject(var_scorer) then
+			return arg_self.nextState, "stock (scorer not found)"
+		end
+
+		return class.instantiate("BunkerTryCelebrateRuleState", {
+			queueReplay = false,
+			quickCutToCutscene = false,
+			playerIsOnGround = false,
+			nextState = arg_self.nextState,
+			scorer = var_scorer,
+			randomSeed = native.Random.FromSystemTime():nextAsSeed(),
+			guid = arg_guidManager:alloc()
+		}), "try celebration"
+	end
+
+	if not BunkerNoTryReactionEnabled then
+		return arg_self.nextState, "stock restart (reaction shot off)"
+	end
+
+	return class.instantiate("BunkerNoTryReactionRuleState", {
+		nextState = arg_self.nextState,
+		reactingSide = arg_self.bunkerSide,
+		guid = arg_guidManager:alloc()
+	}), "no-try reaction"
+end
+
+-- Kicks the stinger over the decision card once, then true when the cut can go.
+local function bunkerDecisionCovered(arg_self, arg_params, arg_services, arg_dt)
+	if not arg_self.bunkerCoverKicked then
+		arg_self.bunkerCoverKicked = true
+
+		local var_ok, var_result = pcall(function()
+			local var_logo = arg_services.hud and arg_services.hud:getElement("logotransition")
+
+			if not var_logo then
+				return "missing"
+			end
+
+			-- TRY: the scoring team's stinger, falling back to the logo wipe.
+			if arg_self.isSuccessfulTry and var_logo.bunkerTeamCoverCut and var_logo:bunkerTeamCoverCut(arg_self.bunkerSide, arg_params and arg_params.universe) then
+				arg_self.bunkerCover = var_logo
+				arg_self.bunkerCoverTeam = true
+
+				return "skipped, team stinger kicked"
+			end
+
+			if var_logo:bunkerCoverCut(arg_params and arg_params.universe) then
+				arg_self.bunkerCover = var_logo
+
+				return "kicked"
+			end
+
+			return "busy, cutting without it"
+		end)
+
+		bunkerLog("decision: leaving, logo wipe " .. (var_ok and tostring(var_result) or "error: " .. tostring(var_result)))
+	end
+
+	local var_stinger = arg_self.bunkerCover
+
+	if not var_stinger then
+		return true
+	end
+
+	arg_self.bunkerCoverWait = (arg_self.bunkerCoverWait or 0) + arg_dt
+
+	local var_ok, var_covered = pcall(arg_self.bunkerCoverTeam and var_stinger.bunkerTeamIsCovered or var_stinger.bunkerIsCovered, var_stinger)
+
+	return not var_ok or var_covered or arg_self.bunkerCoverWait >= BunkerCoverTimeout
+end
+
 rulestateclass.rulestateclass("TryDecisionPendingRuleState", function(arg_1_0, arg_1_1)
 	for iter_1_0, iter_1_1 in pairs(TryDecisionPendingRuleState.MemberDefinitions) do
 		arg_1_0[iter_1_0] = arg_1_1[iter_1_0]
@@ -175,6 +279,17 @@ function TryDecisionPendingRuleState.onEnterSolid(arg_3_0, arg_3_1, arg_3_2, arg
 	end
 
 	local var_3_2 = arg_3_6:getTryDecisionPendingEntity()
+
+	-- bunker-broadcast-decision: the cameo decided whether the presentation runs.
+	local var_b_0 = rawget(_G, "BunkerBroadcastState")
+
+	if var_b_0 then
+		arg_3_0.bunkerBroadcast = true
+		arg_3_0.bunkerSide = var_b_0.side
+		arg_3_0.bunkerScorer = var_b_0.scorerId
+
+		bunkerLog("decision pending: " .. (arg_3_0.isSuccessfulTry and "TRY" or "NO TRY") .. ", next " .. tostring(type(arg_3_0.nextState)))
+	end
 
 	if var_3_2.decisionPending and var_3_2.outcome == native.ETryAttemptOutcome.Try and arg_3_0.isSuccessfulTry then
 		local var_3_3 = var_3_2.scoringSide
@@ -251,6 +366,11 @@ function TryDecisionPendingRuleState.onExitSolid(arg_4_0, arg_4_1, arg_4_2, arg_
 		var_p_0.replayPending = nil
 	end
 
+	-- bunker-broadcast-decision
+	if arg_4_0.bunkerBroadcast then
+		rawset(_G, "BunkerBroadcastState", nil)
+	end
+
 	arg_4_0.skipStateMixin:release()
 	arg_4_1.universe:useVideoRefToneMap(false)
 
@@ -264,9 +384,28 @@ end
 
 function TryDecisionPendingRuleState.updateSolid(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11)
 	if arg_5_0.skipStateMixin:checkForSkip() and not arg_5_0.sentRuleStateRequest and arg_5_3.network:isMaster() then
+		-- bunker-broadcast-decision: leave behind the stinger instead (below).
+		if arg_5_0.bunkerBroadcast then
+			arg_5_0.bunkerLeaving = true
+		else
+			arg_5_0.sentRuleStateRequest = true
+
+			arg_5_11:addRuleStateRequest(arg_5_0.nextState, arg_5_4:alloc())
+		end
+	end
+
+	-- bunker-broadcast-decision
+	if arg_5_0.bunkerLeaving and not arg_5_0.sentRuleStateRequest and bunkerDecisionCovered(arg_5_0, arg_5_1, arg_5_3, arg_5_8) then
 		arg_5_0.sentRuleStateRequest = true
 
-		arg_5_11:addRuleStateRequest(arg_5_0.nextState, arg_5_4:alloc())
+		local var_b_0, var_b_1, var_b_2 = pcall(bunkerFollowUpState, arg_5_0, arg_5_4, arg_5_7)
+
+		if not var_b_0 then
+			var_b_1, var_b_2 = arg_5_0.nextState, "stock (error: " .. tostring(var_b_1) .. ")"
+		end
+
+		bunkerLog("decision: on to the " .. tostring(var_b_2))
+		arg_5_11:addRuleStateRequest(var_b_1, arg_5_4:alloc())
 	end
 
 	if not arg_5_0.kickedOffTryNoTry then
@@ -277,15 +416,19 @@ function TryDecisionPendingRuleState.updateSolid(arg_5_0, arg_5_1, arg_5_2, arg_
 		local var_5_0 = arg_5_3.soundSystem
 
 		if var_5_0 then
+			-- bunker-broadcast-decision: bunkerBroadcast/scoringSide are read by the referee
+			-- (whistle) and in-game music (try music) listeners.
 			var_5_0:queueSoundOnlyEvent({
 				type = "VideoRefereeDecisionEvent",
 				isTry = arg_5_0.isSuccessfulTry,
+				bunkerBroadcast = arg_5_0.bunkerBroadcast,
+				scoringSide = arg_5_0.bunkerSide,
 				time = arg_5_9
 			})
 		end
 
 		return
-	elseif arg_5_0.timer > 8 then
+	elseif arg_5_0.timer > (arg_5_0.bunkerBroadcast and BunkerDecisionHoldTime or 8) then
 		arg_5_0.skipStateMixin:skip()
 	end
 
@@ -339,5 +482,115 @@ function ProvisionalTryReviewRuleState.updateSolid(arg_10_0, arg_10_1, arg_10_2,
 		arg_10_0.sentRuleStateRequest = true
 
 		arg_10_11:addRuleStateRequest(arg_10_0.nextState, arg_10_4:alloc())
+	end
+end
+
+-- bunker-broadcast-decision: the celebration after a bunker TRY. It plays the stock
+-- TryCelebrateRuleState (signature celebrations and team-coaches' coach reaction included),
+-- but leaves the players idle. The stock updateSolid switches everyone to "TeamScored" and
+-- sends their react-to-score controllers to "finalMove". After the bunker their targets are
+-- stale (set before the replay and decision), so the players off camera ran off across the
+-- field during the celebration.
+local function tryCelebrateClass()
+	return import("rules.cutscenes.trycelebrate_rulestate").TryCelebrateRuleState
+end
+
+rulestateclass.rulestateclass("BunkerTryCelebrateRuleState", function(arg_15_0, arg_15_1)
+	for iter_15_0, iter_15_1 in pairs(BunkerTryCelebrateRuleState.MemberDefinitions) do
+		arg_15_0[iter_15_0] = arg_15_1[iter_15_0]
+	end
+end).MemberDefinitions = {
+	nextState = types.RuleState,
+	scorer = types.ObjectId,
+	randomSeed = types.SignedInteger,
+	quickCutToCutscene = types.Boolean,
+	playersWithinRange = types.Nilable(types.Array(types.ObjectId)),
+	queueReplay = types.Boolean,
+	playerIsOnGround = types.Boolean,
+	guid = types.Guid
+}
+BunkerTryCelebrateRuleState.HideBallMarkers = true
+BunkerTryCelebrateRuleState.HidePlayerMarkers = true
+
+function BunkerTryCelebrateRuleState.onEnterSolid(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10)
+	for iter_16_0, iter_16_1 in arg_16_7:activeObjects(playertype.TypeId) do
+		iter_16_1:setBehaviour("Idle", arg_16_8)
+	end
+
+	bunkerLog("try celebration: players idle, playing the celebration")
+
+	return tryCelebrateClass().onEnterSolid(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10)
+end
+
+function BunkerTryCelebrateRuleState.onExitSolid(arg_17_0, ...)
+	return tryCelebrateClass().onExitSolid(arg_17_0, ...)
+end
+
+function BunkerTryCelebrateRuleState.updateSolid(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+	return
+end
+
+-- bunker-broadcast-decision: the disappointed reaction after a NO TRY, played the way
+-- CaptainsChallengeOutcomeCutsceneRulestate plays its "lost" cutscene (without touching the
+-- challenge count or HUD). Hands on to the stock restart when it finishes, or after
+-- BunkerNoTryReactionTimeout if it never does.
+rulestateclass.rulestateclass("BunkerNoTryReactionRuleState", function(arg_11_0, arg_11_1)
+	for iter_11_0, iter_11_1 in pairs(BunkerNoTryReactionRuleState.MemberDefinitions) do
+		arg_11_0[iter_11_0] = arg_11_1[iter_11_0]
+	end
+end).MemberDefinitions = {
+	nextState = types.RuleState,
+	reactingSide = types.SignedInteger,
+	guid = types.Guid
+}
+BunkerNoTryReactionRuleState.HidePlayerMarkers = true
+BunkerNoTryReactionRuleState.HideBallMarkers = true
+
+-- A barrier in front of the cutscene, exactly like CaptainsChallengeOutcomeCutsceneRulestate
+-- (its pre-wipe flushes finished cutscenes and their animsets before this one loads). The
+-- logo wipe from the decision card hides it.
+function BunkerNoTryReactionRuleState.wipe(arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+	return
+end
+
+function BunkerNoTryReactionRuleState.onEnterSolid(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8, arg_13_9, arg_13_10)
+	local var_13_0 = native.createTable(64, 0)
+
+	for iter_13_0, iter_13_1 in arg_13_7:activeObjects(humanoidtype.TypeId) do
+		table.insert(var_13_0, iter_13_0)
+	end
+
+	arg_13_10:add(cutsceneplayevent_request.CutscenePlayEventRequest({
+		ignoreSkipMixins = true,
+		guid = arg_13_0.guid:derive(arg_13_0.reactingSide),
+		cutsceneName = BunkerNoTryReactionCutscene,
+		targetIds = var_13_0,
+		hideIds = var_13_0,
+		primarySide = arg_13_0.reactingSide,
+		onFinished = function()
+			arg_13_0.readyToProceed = true
+		end
+	}))
+
+	arg_13_0.timer = 0
+
+	bunkerLog("no-try reaction: " .. BunkerNoTryReactionCutscene .. " for side " .. tostring(arg_13_0.reactingSide))
+end
+
+function BunkerNoTryReactionRuleState.updateSolid(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9, arg_14_10, arg_14_11)
+	arg_14_0.timer = arg_14_0.timer + arg_14_8
+
+	if arg_14_0.sentRuleStateRequest or not arg_14_3.network:isMaster() then
+		return
+	end
+
+	if arg_14_0.readyToProceed or arg_14_0.timer >= BunkerNoTryReactionTimeout then
+		arg_14_0.sentRuleStateRequest = true
+
+		if not arg_14_0.readyToProceed then
+			bunkerLog("no-try reaction: timed out")
+		end
+
+		arg_14_11:addRuleStateRequest(arg_14_0.nextState, arg_14_4:alloc())
 	end
 end

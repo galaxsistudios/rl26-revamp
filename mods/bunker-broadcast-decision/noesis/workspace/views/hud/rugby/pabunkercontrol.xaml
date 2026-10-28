@@ -142,6 +142,29 @@
             </Border>
         </DataTemplate>
 
+        <!-- bunker-broadcast-decision: decision colours (explicit, because rl26-revamp-branding
+             recolours RLGreen to the revamp blue). The washes are plain gradients: no blur. -->
+        <Color x:Key="BunkerTryCol">#FF27F06E</Color>
+        <Color x:Key="BunkerNoTryCol">#FFFF2E3F</Color>
+        <SolidColorBrush x:Key="BunkerTryBrush"
+                         Color="{StaticResource BunkerTryCol}" />
+        <SolidColorBrush x:Key="BunkerNoTryBrush"
+                         Color="{StaticResource BunkerNoTryCol}" />
+        <LinearGradientBrush x:Key="BunkerTryWashBrush"
+                             StartPoint="0.5,0"
+                             EndPoint="0.5,1">
+            <GradientStop Color="#0027F06E" Offset="0" />
+            <GradientStop Color="#2227F06E" Offset="0.5" />
+            <GradientStop Color="#8827F06E" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="BunkerNoTryWashBrush"
+                             StartPoint="0.5,0"
+                             EndPoint="0.5,1">
+            <GradientStop Color="#00FF2E3F" Offset="0" />
+            <GradientStop Color="#22FF2E3F" Offset="0.5" />
+            <GradientStop Color="#88FF2E3F" Offset="1" />
+        </LinearGradientBrush>
+
     </UserControl.Resources>
 
     <Grid Background="{StaticResource RLBlack}"
@@ -152,11 +175,6 @@
                 <VisualState x:Name="Default">
                     <Storyboard>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
-                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00"
-                                                  Value="0" />
-                        </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0" />
@@ -181,12 +199,6 @@
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
                                                   Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00"
-                                                  Value="0" />
-                        </DoubleAnimationUsingKeyFrames>
-
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
@@ -202,6 +214,8 @@
 
 
 
+                <!-- bunker-broadcast-decision: the decision fades/scales in once (no flicker loop), its
+                     glow pulses like stock, and the card washes green (TRY) or red (NO TRY). -->
                 <VisualState x:Name="Try">
                     <Storyboard>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingSP"
@@ -209,77 +223,64 @@
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
                                                   Value="0" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                       RepeatBehavior="Forever"
-                                                       BeginTime="0:0:0.5">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryText"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
-                                                  Value="0.5" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
-                                                  Value="0.2" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
-                                                  Value="0.7" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.35"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.4"
-                                                  Value="0.2" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.55"
-                                                  Value="0.7" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:02.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
                                                   Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryText"
                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0.75" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
                                                   Value="1">
                                 <EasingDoubleKeyFrame.EasingFunction>
-                                    <QuinticEase EasingMode="EaseInOut" />
+                                    <QuinticEase EasingMode="EaseOut" />
                                 </EasingDoubleKeyFrame.EasingFunction>
                             </EasingDoubleKeyFrame>
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryText"
                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0.75" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
                                                   Value="1">
                                 <EasingDoubleKeyFrame.EasingFunction>
-                                    <QuinticEase EasingMode="EaseInOut" />
+                                    <QuinticEase EasingMode="EaseOut" />
                                 </EasingDoubleKeyFrame.EasingFunction>
                             </EasingDoubleKeyFrame>
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryText"
                                                        Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
                                                        RepeatBehavior="Forever">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0.5" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:1"
+                            <EasingDoubleKeyFrame KeyTime="00:00:01"
                                                   Value="1" />
                             <EasingDoubleKeyFrame KeyTime="00:00:02"
                                                   Value="0.5" />
                         </DoubleAnimationUsingKeyFrames>
-
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(noesis:Text.StrokeThickness)">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryWash"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
-                                                  Value="8" />
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TryFrame"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="1" />
                         </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
                                                   Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
@@ -287,9 +288,6 @@
                         </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
-
-
-
 
                 <VisualState x:Name="NoTry">
                     <Storyboard>
@@ -298,71 +296,64 @@
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
                                                   Value="0" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(UIElement.Opacity)"
-                                                       RepeatBehavior="Forever"
-                                                       BeginTime="0:0:0.5">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.1"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryText"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.2"
-                                                  Value="0.5" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
-                                                  Value="0.2" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.35"
-                                                  Value="0.7" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:0.5"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.35"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.4"
-                                                  Value="0.2" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.5"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.55"
-                                                  Value="0.7" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:01.6"
-                                                  Value="1" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:02.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.15"
                                                   Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryText"
                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0.75" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
                                                   Value="1">
                                 <EasingDoubleKeyFrame.EasingFunction>
-                                    <QuinticEase EasingMode="EaseInOut" />
+                                    <QuinticEase EasingMode="EaseOut" />
                                 </EasingDoubleKeyFrame.EasingFunction>
                             </EasingDoubleKeyFrame>
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryText"
                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0.75" />
-                            <EasingDoubleKeyFrame KeyTime="00:00:00.4000000"
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
                                                   Value="1">
                                 <EasingDoubleKeyFrame.EasingFunction>
-                                    <QuinticEase EasingMode="EaseInOut" />
+                                    <QuinticEase EasingMode="EaseOut" />
                                 </EasingDoubleKeyFrame.EasingFunction>
                             </EasingDoubleKeyFrame>
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryText"
+                                                       Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.Opacity)"
+                                                       RepeatBehavior="Forever">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
-                                                  Value="0" />
+                                                  Value="0.5" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:01"
+                                                  Value="1" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:02"
+                                                  Value="0.5" />
                         </DoubleAnimationUsingKeyFrames>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DecisionTextBlock"
-                                                       Storyboard.TargetProperty="(noesis:Text.StrokeThickness)">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryWash"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00"
                                                   Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="NoTryFrame"
+                                                       Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <EasingDoubleKeyFrame KeyTime="00:00:00"
+                                                  Value="0" />
+                            <EasingDoubleKeyFrame KeyTime="00:00:00.3"
+                                                  Value="1" />
                         </DoubleAnimationUsingKeyFrames>
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="GameplayOverlay"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
                                                   Value="1" />
                         </DoubleAnimationUsingKeyFrames>
-
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RLL26_Logo"
                                                        Storyboard.TargetProperty="(UIElement.Opacity)">
                             <EasingDoubleKeyFrame KeyTime="00:00:00.2"
@@ -372,6 +363,14 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+
+        <!-- bunker-broadcast-decision: result colour washes, behind everything else -->
+        <Rectangle x:Name="TryWash"
+                   Fill="{StaticResource BunkerTryWashBrush}"
+                   Opacity="0" />
+        <Rectangle x:Name="NoTryWash"
+                   Fill="{StaticResource BunkerNoTryWashBrush}"
+                   Opacity="0" />
 
         <Ellipse x:Name="FloorGlow"
                  Fill="{StaticResource RLWhite05}"
@@ -490,6 +489,15 @@
                         </Border>
 
                     </Border>
+                    <!-- bunker-broadcast-decision: result colour outlines over the frame -->
+                    <Border x:Name="TryFrame"
+                            BorderBrush="{StaticResource BunkerTryBrush}"
+                            BorderThickness="6,0,6,6"
+                            Opacity="0" />
+                    <Border x:Name="NoTryFrame"
+                            BorderBrush="{StaticResource BunkerNoTryBrush}"
+                            BorderThickness="6,0,6,6"
+                            Opacity="0" />
 
 
                 </Grid>
@@ -512,15 +520,18 @@
                                   VerticalAlignment="Bottom"
                                   Grid.Row="0" />
 
-                <TextBlock x:Name="DecisionTextBlock"
+                <!-- bunker-broadcast-decision: TRY (green) / NO TRY (red), each built like the stock
+                     DecisionTextBlock -->
+                <TextBlock x:Name="TryText"
                            d:Text="TRY"
-                           Text="{Binding DecisionText, Mode=TwoWay, Converter={StaticResource UppercaseConverter}, FallbackValue=' '}"
+                           Text="{Binding DecisionText, Converter={StaticResource UppercaseConverter}, FallbackValue=' '}"
                            HorizontalAlignment="Center"
                            Style="{StaticResource Display_XL}"
-                           FontSize="300"
+                           FontSize="340"
                            Grid.Row="2"
-                           noesis:Text.Stroke="{StaticResource RLGreen}"
-                           noesis:Text.StrokeThickness="8"
+                           Opacity="0"
+                           noesis:Text.Stroke="{StaticResource BunkerTryBrush}"
+                           noesis:Text.StrokeThickness="10"
                            VerticalAlignment="Top"
                            RenderTransformOrigin="0.5,0.5">
                     <TextBlock.RenderTransform>
@@ -536,7 +547,36 @@
                         <DropShadowEffect BlurRadius="50"
                                           ShadowDepth="0"
                                           Direction="0"
-                                          Color="{StaticResource RLGreenCol}" />
+                                          Color="{StaticResource BunkerTryCol}" />
+                    </TextBlock.Effect>
+
+                </TextBlock>
+
+                <TextBlock x:Name="NoTryText"
+                           Text="{Binding DecisionText, Converter={StaticResource UppercaseConverter}, FallbackValue=' '}"
+                           HorizontalAlignment="Center"
+                           Style="{StaticResource Display_XL}"
+                           FontSize="340"
+                           Grid.Row="2"
+                           Opacity="0"
+                           noesis:Text.Stroke="{StaticResource BunkerNoTryBrush}"
+                           noesis:Text.StrokeThickness="10"
+                           VerticalAlignment="Top"
+                           RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform />
+                            <SkewTransform />
+                            <RotateTransform />
+                            <TranslateTransform />
+                        </TransformGroup>
+                    </TextBlock.RenderTransform>
+
+                    <TextBlock.Effect>
+                        <DropShadowEffect BlurRadius="50"
+                                          ShadowDepth="0"
+                                          Direction="0"
+                                          Color="{StaticResource BunkerNoTryCol}" />
                     </TextBlock.Effect>
 
                 </TextBlock>

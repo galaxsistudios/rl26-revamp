@@ -32,6 +32,12 @@ local var_0_2 = native.EWipeEventType
 --    that replay's end barrier, and screenwipe.lua kicks the stinger there (kickOutro),
 --    cutting back to the referee who sends the try upstairs.
 --
+-- 6. bunker-broadcast-decision: the bunker replay (queued by the video-referee cameo) is
+--    tagged too, and the cameo kicks it before it ends (kickBunkerReplay), so steps 3-4
+--    run as usual. After the decision, TryDecisionPendingRuleState covers the cut to the
+--    celebration / no-try reaction with kickCover: no barrier there, so the stinger
+--    reveals itself once the new cutscene is playing.
+--
 -- TeamStingerCoverTime/OutTime must match the StingerIn/StingerOut storyboards.
 local TeamStingerDebug = true
 local TeamStingerView = "Workspace/Views/Tests/MatchIntro"
@@ -48,6 +54,14 @@ local TeamStingerRuleStates = {
 	-- field goals and 40m field goals both celebrate here
 	FieldGoalCelebrateRuleState = true
 }
+-- bunker-broadcast-decision: the bunker transitions use the stock RL26 logo wipe
+-- (LogoTransitionHud.bunker* below) while this is false. true = the team stinger
+-- (kickBunkerReplay / kickCover) instead.
+local BunkerTeamStinger = false
+-- A cover (logo or team stinger) holds until a new cutscene has been playing this long, or
+-- gives up after BunkerCoverMaxHold.
+local BunkerCoverRevealDelay = 0.2
+local BunkerCoverMaxHold = 3
 
 local teamStingerLogFile
 local teamStingerLogTried = false
@@ -209,6 +223,58 @@ local function logoPreKickUpdate(arg_hud, arg_dt, arg_uiServices)
 	end
 end
 
+-- bunker-broadcast-decision: the logo wipe over the cut from the bunker decision card to
+-- the celebration / no-try reaction. There's no barrier there, so once it covers it slides
+-- off when a cutscene that wasn't current at the kick has been playing
+-- BunkerCoverRevealDelay, or after BunkerCoverMaxHold.
+local function bunkerCoverUpdate(arg_hud, arg_dt, arg_uiServices)
+	local var_cover = arg_hud.bunkerCover
+
+	if not var_cover then
+		return
+	end
+
+	if not arg_hud.enabled then
+		arg_hud.bunkerCover = nil
+
+		return
+	end
+
+	var_cover.time = var_cover.time + arg_dt
+
+	if not arg_hud.wipeUI:readyToTransition() then
+		if var_cover.time > BunkerCoverMaxHold then
+			arg_hud:bunkerRelease("never covered")
+		end
+
+		return
+	end
+
+	if not var_cover.revealCutscene then
+		local var_universe = arg_uiServices and arg_uiServices.universe
+		local var_listener = var_universe and var_universe.cutsceneListener
+		local var_cutscene = var_listener and var_listener.currentCutscene
+		local var_time = var_cutscene and var_cutscene ~= var_cover.coverCutscene and teamStingerSeconds(var_cutscene.time)
+
+		if var_time and var_time > 0 then
+			var_cover.revealCutscene = var_cutscene
+			var_cover.revealTime = 0
+
+			teamStingerLog(string.format("bunker logo: cutscene %s playing %.2fs after the kick", tostring(var_cutscene.name), var_cover.time))
+		elseif var_cover.time >= BunkerCoverMaxHold then
+			arg_hud:bunkerRelease("no new cutscene after " .. BunkerCoverMaxHold .. "s")
+		end
+
+		return
+	end
+
+	var_cover.revealTime = var_cover.revealTime + arg_dt
+
+	if var_cover.revealTime >= BunkerCoverRevealDelay then
+		arg_hud:bunkerRelease("cutscene playing")
+	end
+end
+
 ns.Class("NVMTeamStinger", ns_viewmodel.ViewModel, function(arg_s_0)
 	ns_viewmodel.ViewModel.init(arg_s_0)
 
@@ -267,6 +333,8 @@ function TeamStinger.update(arg_t_0, arg_t_1, arg_t_2)
 			arg_t_0.time = 0
 
 			teamStingerLog("covered")
+		elseif var_phase == "covered" and arg_t_0.revealOnCutscene then
+			arg_t_0:updateCutsceneReveal(arg_t_1, arg_t_2)
 		elseif var_phase == "covered" and arg_t_0.time >= TeamStingerMaxHold then
 			teamStingerLog("covered for " .. TeamStingerMaxHold .. "s without a replay, releasing")
 			arg_t_0:release()
@@ -301,10 +369,11 @@ function TeamStinger.tagQueuedReplays(arg_t_0, arg_t_1)
 			if iter_t_1.teamStingerChecked == nil then
 				iter_t_1.teamStingerChecked = true
 
-				local var_ok, var_team, var_ruleStateName = pcall(arg_t_0.scoringTeam, arg_t_0, arg_t_1)
+				local var_ok, var_team, var_ruleStateName, var_bunker = pcall(arg_t_0.scoringTeam, arg_t_0, arg_t_1)
 
 				if var_ok then
 					iter_t_1.teamStingerTeam = var_team
+					iter_t_1.teamStingerBunker = var_bunker
 
 					teamStingerLog("replay queued during " .. tostring(var_ruleStateName) .. (var_team and ", stinger for " .. tostring(var_team.FullName) or ", no stinger"))
 				else
@@ -325,6 +394,18 @@ function TeamStinger.scoringTeam(arg_t_0, arg_t_1)
 	local var_ruleState = arg_t_1:editSolidState():getRuleState()
 	local var_ruleStateName = var_ruleState and type(var_ruleState)
 
+	-- bunker-broadcast-decision: the bunker replay. The cameo that sends a try upstairs
+	-- publishes BunkerBroadcastState (attacking side) when the bunker presentation is on.
+	if var_ruleStateName == "RefereeCameoRuleState" then
+		local var_bunker = rawget(_G, "BunkerBroadcastState")
+
+		if not BunkerTeamStinger or not var_ruleState.isVideoReferee or not var_bunker then
+			return nil, var_ruleStateName
+		end
+
+		return arg_t_0:teamForSide(var_bunker.side), var_ruleStateName .. " (bunker)", true
+	end
+
 	if not TeamStingerRuleStates[var_ruleStateName] then
 		return nil, var_ruleStateName
 	end
@@ -335,13 +416,80 @@ function TeamStinger.scoringTeam(arg_t_0, arg_t_1)
 		var_side = arg_t_1:getGameObjects():getGameObject(var_ruleState.scorer).side
 	end
 
-	if var_side == sidehelper.home then
-		return arg_t_0.hud.homeTeamNVM, var_ruleStateName
-	elseif var_side == sidehelper.away then
-		return arg_t_0.hud.awayTeamNVM, var_ruleStateName
+	return arg_t_0:teamForSide(var_side), var_ruleStateName
+end
+
+function TeamStinger.teamForSide(arg_t_0, arg_t_1)
+	if arg_t_1 == sidehelper.home then
+		return arg_t_0.hud.homeTeamNVM
+	elseif arg_t_1 == sidehelper.away then
+		return arg_t_0.hud.awayTeamNVM
+	end
+end
+
+-- bunker-broadcast-decision: called by the video-referee cameo just before it ends, so the
+-- stinger covers the cut to the bunker. The barrier then finds it already in.
+function TeamStinger.kickBunkerReplay(arg_t_0, arg_t_1)
+	local var_replay = arg_t_0:tagQueuedReplays(arg_t_1)
+
+	if var_replay and var_replay.teamStingerBunker then
+		return arg_t_0:kick(var_replay)
 	end
 
-	return nil, var_ruleStateName
+	return false
+end
+
+-- bunker-broadcast-decision: covers a cut with no barrier behind it (the bunker decision
+-- card -> celebration / no-try reaction). Once covered, it reveals when a cutscene that
+-- wasn't current at the kick has been playing BunkerCoverRevealDelay.
+function TeamStinger.kickCover(arg_t_0, arg_t_1, arg_t_2)
+	if not arg_t_0.view or arg_t_0.phase or not arg_t_1 then
+		return false
+	end
+
+	local var_listener = arg_t_2 and arg_t_2.cutsceneListener
+
+	arg_t_0.replay = nil
+	arg_t_0.pendingOutroTeam = nil
+	arg_t_0.viewModel.Team = arg_t_1
+	arg_t_0.viewModel.StingerState = "in"
+	arg_t_0.phase = "in"
+	arg_t_0.time = 0
+	arg_t_0.revealTime = 0
+	arg_t_0.revealDelay = BunkerCoverRevealDelay
+	arg_t_0.revealOnCutscene = true
+	arg_t_0.revealCutscene = nil
+	arg_t_0.coverCutscene = var_listener and var_listener.currentCutscene
+
+	return true
+end
+
+function TeamStinger.updateCutsceneReveal(arg_t_0, arg_t_1, arg_t_2)
+	if not arg_t_0.revealCutscene then
+		local var_universe = arg_t_2 and arg_t_2.universe
+		local var_listener = var_universe and var_universe.cutsceneListener
+		local var_cutscene = var_listener and var_listener.currentCutscene
+		local var_time = var_cutscene and var_cutscene ~= arg_t_0.coverCutscene and teamStingerSeconds(var_cutscene.time)
+
+		if var_time and var_time > 0 then
+			arg_t_0.revealCutscene = var_cutscene
+			arg_t_0.revealTime = 0
+
+			teamStingerLog(string.format("cover: cutscene %s playing after %.2fs", tostring(var_cutscene.name), arg_t_0.time))
+		elseif arg_t_0.time >= BunkerCoverMaxHold then
+			teamStingerLog("cover: no new cutscene after " .. BunkerCoverMaxHold .. "s, releasing")
+			arg_t_0:release()
+		end
+
+		return
+	end
+
+	arg_t_0.revealTime = arg_t_0.revealTime + arg_t_1
+
+	if arg_t_0.revealTime >= arg_t_0.revealDelay then
+		teamStingerLog("cover: releasing")
+		arg_t_0:release()
+	end
 end
 
 -- Kicks the stinger when the celebration cutscene is TeamStingerCoverTime from its end.
@@ -440,6 +588,9 @@ end
 function TeamStinger.reset(arg_t_0)
 	arg_t_0.phase = nil
 	arg_t_0.replay = nil
+	arg_t_0.revealOnCutscene = nil
+	arg_t_0.revealCutscene = nil
+	arg_t_0.coverCutscene = nil
 
 	if arg_t_0.viewModel then
 		arg_t_0.viewModel.StingerState = "hidden"
@@ -520,6 +671,14 @@ function LogoTransitionHud.update(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, a
 		arg_5_0.preKicked = nil
 	end
 
+	-- bunker-broadcast-decision
+	local var_5_6, var_5_7 = pcall(bunkerCoverUpdate, arg_5_0, arg_5_8, arg_5_11)
+
+	if not var_5_6 then
+		teamStingerLog("bunker logo error: " .. tostring(var_5_7))
+		pcall(arg_5_0.bunkerRelease, arg_5_0, "error")
+	end
+
 	arg_5_0:updateImpl(arg_5_1, arg_5_7, arg_5_8, arg_5_12, arg_5_2)
 
 	local var_5_0 = arg_5_0.wipeUI:getWipeProgressState()
@@ -584,7 +743,82 @@ function LogoTransitionHud.isFinished(arg_11_0)
 end
 
 function LogoTransitionHud.setNextStateIsReady(arg_12_0)
+	-- bunker-broadcast-decision: the replay playing state calls this as soon as the replay has
+	-- loaded, before a frame is shown. While the bunker replay holds the logo, only
+	-- bunkerRelease (screenwipe.lua, once the replay is really playing) slides it off.
+	if arg_12_0.bunkerHold then
+		if not arg_12_0.bunkerHoldLogged then
+			arg_12_0.bunkerHoldLogged = true
+
+			teamStingerLog("bunker logo: early release ignored (replay not playing yet)")
+		end
+
+		return
+	end
+
 	arg_12_0.wipeUI:setNextStateIsReady()
+end
+
+-- bunker-broadcast-decision: kicks the logo wipe unless one is already running.
+function LogoTransitionHud.bunkerKick(arg_b_0)
+	if arg_b_0.enabled then
+		return false
+	end
+
+	arg_b_0:kick()
+
+	return true
+end
+
+function LogoTransitionHud.bunkerIsCovered(arg_b_0)
+	return arg_b_0.enabled and arg_b_0.wipeUI:readyToTransition()
+end
+
+-- Kicks the wipe over a cut with no barrier behind it; bunkerCoverUpdate slides it off.
+function LogoTransitionHud.bunkerCoverCut(arg_b_0, arg_b_1)
+	if not arg_b_0:bunkerKick() then
+		return false
+	end
+
+	local var_b_0 = arg_b_1 and arg_b_1.cutsceneListener
+
+	arg_b_0.bunkerCover = {
+		time = 0,
+		coverCutscene = var_b_0 and var_b_0.currentCutscene
+	}
+
+	return true
+end
+
+-- bunker-broadcast-decision: the scoring team's stinger over the cut from a TRY decision to
+-- the celebration (TeamStinger.kickCover reveals it once the celebration is playing). False
+-- when there is no stinger or it is busy, and the caller falls back to bunkerCoverCut.
+function LogoTransitionHud.bunkerTeamCoverCut(arg_b_0, arg_b_1, arg_b_2)
+	local var_b_0 = arg_b_0.teamStinger
+	local var_b_1 = var_b_0 and var_b_0:teamForSide(arg_b_1)
+
+	if not var_b_1 or not var_b_0:kickCover(var_b_1, arg_b_2) then
+		return false
+	end
+
+	teamStingerLog("bunker team stinger: kicked for " .. tostring(var_b_1.FullName))
+
+	return true
+end
+
+function LogoTransitionHud.bunkerTeamIsCovered(arg_b_0)
+	local var_b_0 = arg_b_0.teamStinger
+
+	return not var_b_0 or var_b_0:isCovered() or not var_b_0:isBusy()
+end
+
+function LogoTransitionHud.bunkerRelease(arg_b_0, arg_b_1)
+	arg_b_0.bunkerCover = nil
+	arg_b_0.bunkerHold = nil
+	arg_b_0.bunkerHoldLogged = nil
+
+	teamStingerLog("bunker logo: released (" .. tostring(arg_b_1) .. ")")
+	arg_b_0.wipeUI:setNextStateIsReady()
 end
 
 function LogoTransitionHud.processWipeStateSound(arg_13_0, arg_13_1, arg_13_2)

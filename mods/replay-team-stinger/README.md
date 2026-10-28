@@ -136,6 +136,18 @@ Nothing else sets the flag, so without bunker-overturned-try this path never run
   `LogoOutroRevealDelay` (0.35 s) later.
 - `"team"`: the team stinger again.
 
+## Bunker stingers (bunker-broadcast-decision)
+
+`logotransition_hud.lua` also serves [bunker-broadcast-decision](../bunker-broadcast-decision/):
+
+- `scoringTeam` tags the bunker replay. It must be queued during a video-referee
+  `RefereeCameoRuleState` while `_G.BunkerBroadcastState` is set. The tag uses that state's
+  attacking side and sets `teamStingerBunker`.
+- `kickBunkerReplay` lets the cameo kick the stinger before it ends.
+- `kickCover` covers the cut from the bunker card to the celebration or reaction. Nothing has a
+  barrier there, so it reveals once a new cutscene has been playing `BunkerCoverRevealDelay`
+  (0.2 s), or after `BunkerCoverMaxHold` (3 s).
+
 ## Conversion logo wipe (earlier start)
 
 This is the stock logo wipe after a conversion, also in `logotransition_hud.lua`.
