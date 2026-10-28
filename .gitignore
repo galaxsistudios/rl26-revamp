@@ -1,9 +1,11 @@
-# Whitelist: ignore everything, then allow only mods/ and tools/.
+# Whitelist: ignore everything, then allow only mods/, tools/ and the stats submodule.
 # Anything extracted, decompiled, built or backed up from the game stays local.
 /*
 !/.gitignore
 !/mods/
 !/tools/
+!/.gitmodules
+!/rl26-revamped-stats
 
 # Python caches
 __pycache__/

@@ -1,0 +1,3 @@
+[submodule "rl26-revamped-stats"]
+	path = rl26-revamped-stats
+	url = https://github.com/galaxsistudios/rl26-revamped-stats.git
