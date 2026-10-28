@@ -38,6 +38,8 @@ python tools\build.py full --confirm
 ## Limits
 
 - `assetmap.lua` is a whole-file override (decompiled stock + the table and five changed checks), so
-  no other mod can override it.
+  no other mod can override it. It also carries [unlock-tier1-editing](../unlock-tier1-editing/README.md)'s
+  headWear rule and its generated `FittedHeadwearKinds` table (between the BEGIN/END markers; regenerate
+  with `python mods\unlock-tier1-editing\generate.py`).
 - Not yet tested in game. Her scanned head texture may have some painted hair at the hairline that
   doesn't match the new style.
