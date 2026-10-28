@@ -1,0 +1,207 @@
+﻿<UserControl x:Class="Workspace.Views.Academy.paStadiumSelectView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:Controls="clr-namespace:Workspace.Controls"
+             xmlns:GenericControls="clr-namespace:Workspace.GenericControls"
+             xmlns:paEx="clr-namespace:paNoesisExtensions"
+             xmlns:vm="clr-namespace:Workspace.ViewModels"
+             xmlns:vmAc="clr-namespace:Workspace.ViewModels.Academy"
+             xmlns:local="clr-namespace:Workspace.Views.Academy"
+             xmlns:paBhvrs="clr-namespace:paNoesisBehaviours"
+             xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
+             mc:Ignorable="d"
+             d:DesignHeight="1080"
+             d:DesignWidth="1920"
+             d:DataContext="{d:DesignInstance {x:Type vmAc:paNVMStadiumSelectView}, IsDesignTimeCreatable=True}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../../Resources/Styles/paTabControlStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="StadiumSelectListItem"
+                          DataType="{x:Type vmAc:NVMStadiumSelectViewListItem}">
+                <Grid>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Height"
+                                    Value="40" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsClubGround}"
+                                             Value="True">
+                                    <Setter Property="Height"
+                                            Value="56" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+
+                    <!-- Home/away club ground: primary colour background + club logo.
+                         Focused = inset so the white focus fill shows as a ring. -->
+                    <Border>
+                        <Border.Background>
+                            <SolidColorBrush Color="{Binding ClubColour}" />
+                        </Border.Background>
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Setter Property="Margin"
+                                        Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsClubGround}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Controls:paListBoxItem}, Path=IsFocused}"
+                                                 Value="True">
+                                        <Setter Property="Margin"
+                                                Value="4" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding ClubLogo}"
+                                   Width="40"
+                                   Height="40"
+                                   Margin="12,0,0,0"
+                                   Stretch="Uniform"
+                                   VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Name}"
+                                       VerticalAlignment="Center"
+                                       Margin="14,0,20,0"
+                                       FontWeight="Bold"
+                                       Style="{StaticResource Row_M}">
+                                <TextBlock.Foreground>
+                                    <SolidColorBrush Color="{Binding ClubTextColour}" />
+                                </TextBlock.Foreground>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+
+                    <TextBlock Text="{Binding Name}"
+                               VerticalAlignment="Center"
+                               Margin="20,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock"
+                                   BasedOn="{StaticResource Row_M}">
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource RLWhite70}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Controls:paListBoxItem}, Path=IsFocused}"
+                                                 Value="True">
+                                        <Setter Property="Foreground"
+                                                Value="{StaticResource RLBlack}" />
+                                        <Setter Property="FontWeight"
+                                                Value="Bold" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsClubGround}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+
+            <DataTemplate x:Key="StadiumSelectTabContentTemplate"
+                          DataType="{x:Type vmAc:NVMStadiumSelectViewTabItem}">
+                <Controls:paListBox ItemsSource="{Binding StadiumListItems}"
+                                    x:Name="StadiumListBox"
+                                    Padding="0,2.5"
+                                    SelectedIndex="{Binding StadiumListSelectedIndex, Mode=TwoWay}"
+                                    ItemTemplate="{StaticResource StadiumSelectListItem}">
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="SelectionChanged">
+                            <b:InvokeCommandAction Command="{Binding StadiumListSelectionChangedCommand}"/>
+                        </b:EventTrigger>
+                        <b:DataTrigger Binding="{Binding Repopulate}" Value="True">
+                            <b:InvokeCommandAction Command="{Binding ElementName=StadiumListBox, Path=ForceFocusToFirstElement}" />
+                        </b:DataTrigger>
+                    </b:Interaction.Triggers>
+
+                    <b:Interaction.Behaviors>
+                        <paBhvrs:paFocusOnLoadBehavior />
+                    </b:Interaction.Behaviors>
+                </Controls:paListBox>
+            </DataTemplate>
+            <ImageBrush x:Key="StadiumTexture" ImageSource="{Binding StadiumTexture}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Controls:baScreenControl Focusable="False">
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="105" />
+                <ColumnDefinition Width="550" />
+                <ColumnDefinition Width="50" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="105" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="130" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="175" />
+            </Grid.RowDefinitions>
+
+            <GenericControls:paTabControl TabLeftTooltipString="|L1|"
+                                          TabRightTooltipString="|R1|"
+                                          ShowHeading="True"
+                                          Grid.Row="1"
+                                          x:Name="TabSystem"
+                                          Grid.Column="1"
+                                          ItemsSource="{Binding TabItems}"
+                                          SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}"
+                                          Template="{StaticResource DefaultTabControlTemplate}"
+                                          ContentTemplate="{StaticResource StadiumSelectTabContentTemplate}"
+                                          ItemTemplate="{StaticResource StadiumSelectListItem}"/>
+
+            <Grid Grid.Column="3"
+                  Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="45" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="1"
+                        BorderBrush="{StaticResource RLWhite}"
+                        BorderThickness="1">
+                    <!--<Grid>
+                        <Label Content="{Binding ElementName=TabSystem, Path=SelectedItem.StadiumListItems.Count}" />
+                    </Grid>-->
+
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Background"
+                                    Value="{StaticResource StadiumTexture}" />
+
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=TabSystem, Path=SelectedItem.StadiumListItems.Count}"
+                                             Value="0">
+                                    <Setter Property="Background"
+                                            Value="{StaticResource RLBlack80}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+            </Grid>
+        </Grid>
+    </Controls:baScreenControl>
+</UserControl>
