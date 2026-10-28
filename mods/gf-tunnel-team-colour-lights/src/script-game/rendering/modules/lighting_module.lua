@@ -58,6 +58,17 @@ local function tunnelLightColour(arg_rgb)
 	return native.Colour(math.floor(r + 0.5), math.floor(g + 0.5), math.floor(b + 0.5))
 end
 
+-- Trailer corridor scenes (rl1_trailer_corridor_dramatic_*, played in the match
+-- intro by match-intro-versus). Their accent lights are SpotLight70 / glitch_rim_*
+-- (primary) and roof (secondary); the glitch_spot/fill and PlanarLight_* lights
+-- are white and stay white.
+local DramaticCorridorScenes = {
+	cs_corridor_dramatic_nrl_01 = true,
+	cs_corridor_dramatic_home_stephen_crichton = true,
+	cs_corridor_dramatic_home = true,
+	cs_corridor_dramatic_away = true
+}
+
 local function tunnelSideColours(arg_cutsceneName)
 	local colours = _G.GFTunnelTeamColours
 
@@ -72,6 +83,12 @@ local function tunnelSideColours(arg_cutsceneName)
 		side = colours.home
 	elseif name:find("intro_gf_away_team", 1, true) then
 		side = colours.away
+	elseif name:find("corridor_dramatic", 1, true) then
+		if name:find("_home", 1, true) then
+			side = colours.home
+		elseif name:find("_away", 1, true) then
+			side = colours.away
+		end
 	end
 
 	if not side then
@@ -110,6 +127,28 @@ local function recolourTunnelLights(arg_lights, arg_primary, arg_secondary)
 	end
 end
 
+local function recolourDramaticCorridorLights(arg_lights, arg_primary, arg_secondary)
+	for _, light in ipairs(arg_lights) do
+		local data = light.data
+
+		if data then
+			local lightName = data.name or ""
+
+			if data.colour then
+				if lightName == "SpotLight70" or lightName:match("^glitch_rim_") then
+					data.colour = arg_primary
+				elseif lightName == "roof" then
+					data.colour = arg_secondary
+				end
+			end
+
+			if data.children then
+				recolourDramaticCorridorLights(data.children, arg_primary, arg_secondary)
+			end
+		end
+	end
+end
+
 local function var_0_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	arg_2_3 = arg_2_3 or native.vec3.Zero()
 	arg_2_4 = arg_2_4 or native.vec3.Zero()
@@ -124,6 +163,14 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 
 				if primary then
 					recolourTunnelLights(var_2_1.lighting2, primary, secondary)
+				end
+			end)
+		elseif DramaticCorridorScenes[iter_2_1] then
+			pcall(function()
+				local primary, secondary = tunnelSideColours(arg_2_2)
+
+				if primary then
+					recolourDramaticCorridorLights(var_2_1.lighting2, primary, secondary)
 				end
 			end)
 		end

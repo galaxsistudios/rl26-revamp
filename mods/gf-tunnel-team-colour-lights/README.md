@@ -33,3 +33,12 @@ players go primary / secondary / primary / secondary.
     other club colour is used instead.
 - Script mod, entry 39959: `python tools\build.py full --confirm` (restore 39959 first if it's already
   installed).
+
+## Trailer corridor walks
+
+match-intro-versus plays the trailer's `rl1_trailer_corridor_dramatic_*` walks in its Grand Final trailer intro. Their
+lighting scenes (`cs_corridor_dramatic_nrl_01`, `_home_stephen_crichton`, `_home`, `_away`) are
+recoloured too: the side comes from `_home` / `_away` in the cutscene name, the `SpotLight70` and
+`glitch_rim_*` lights take the primary colour and the three `roof` panels the secondary. The white
+`glitch_spot/fill` and `PlanarLight_*` lights are left alone. Light names repeat in these scenes, so
+lights are matched by name, not by number.

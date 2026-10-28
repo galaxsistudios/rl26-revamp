@@ -77,6 +77,42 @@ local IntroVersusKickOffLabels = {
 	[19] = "8:30PM"
 }
 
+-- Grand Final trailer intro: a SequenceAlternative of each GF intro, picked per match from the
+-- seed (IntroTrailerWeight against IntroTrailerStockWeight). It swaps in the trailer-style locker
+-- room edits (cs_lockerroom_data: the unused camera angles cut together) and adds the trailer's
+-- slow 13-man corridor walks (cs_trailer_data, never played by the stock game; own corridor set,
+-- lights recoloured per side by gf-tunnel-team-colour-lights). The walks go in front of the stock
+-- corridor shots, which stay: gf-intro-effects starts each team's walk-out song on those.
+-- Edits: after = insert behind, before = insert in front, replace = swap.
+local IntroTrailerCorridorAway = "rl1_trailer_corridor_dramatic_nrl_away_blue"
+local IntroTrailerCorridorHome = "rl1_trailer_corridor_dramatic_nrl_home_green"
+local IntroTrailerEnabled = true
+local IntroTrailerWeight = 1
+local IntroTrailerStockWeight = 1
+local IntroTrailerPrefix = "trailer_"
+local IntroTrailerLockers = {
+	{ replace = "rl1_intro_lockers_away{StadiumName}", cutscene = "rl1_intro_lockers_away_trailer{StadiumName}" },
+	{ replace = "rl1_intro_lockers_home{StadiumName}", cutscene = "rl1_intro_lockers_home_trailer{StadiumName}" }
+}
+local IntroTrailerNRL = {
+	IntroTrailerLockers[1],
+	IntroTrailerLockers[2],
+	{ before = "rl1_corridor_away{CompetitionName}{StadiumName}", cutscene = IntroTrailerCorridorAway },
+	{ before = "rl1_corridor_home{CompetitionName}{StadiumName}", cutscene = IntroTrailerCorridorHome }
+}
+local IntroTrailerSuperLeague = {
+	IntroTrailerLockers[1],
+	IntroTrailerLockers[2],
+	{ before = "rl1_gf_corridor_home_away{CompetitionName}{StadiumName}", cutscene = IntroTrailerCorridorAway },
+	{ before = "rl1_gf_corridor_home_away{CompetitionName}{StadiumName}", cutscene = IntroTrailerCorridorHome }
+}
+local IntroTrailerSequences = {
+	gf_intro_NRL = IntroTrailerNRL,
+	gf_intro_NRL_noanthem = IntroTrailerNRL,
+	gf_intro_SuperLeague = IntroTrailerSuperLeague,
+	gf_intro_SuperLeague_noanthem = IntroTrailerSuperLeague
+}
+
 local introVersusLogFile
 local introVersusLogTried = false
 
@@ -268,6 +304,77 @@ local function introVersusAlternativeFor(arg_name, arg_match)
 	return arg_name
 end
 
+-- Registers trailer_<stock name> for each IntroTrailerSequences entry and adds it to
+-- cutscenedata_config.SequenceAlternatives, which getInitialCutsceneName picks from with the match
+-- seed (introVersusAlternativeFor). Skips a sequence that is already registered (the tables are
+-- shared, so a second import must not add it twice).
+local function introTrailerApply()
+	local var_sequences = cutscenedata_config.SequenceList
+
+	if not IntroTrailerEnabled or not var_sequences then
+		return
+	end
+
+	cutscenedata_config.SequenceAlternatives = cutscenedata_config.SequenceAlternatives or {}
+
+	local var_alternatives = cutscenedata_config.SequenceAlternatives
+
+	for iter_name, iter_edits in pairs(IntroTrailerSequences) do
+		local var_stock = var_sequences[iter_name]
+		local var_name = IntroTrailerPrefix .. iter_name
+
+		if var_stock and var_stock.cutscenes and not var_sequences[var_name] then
+			local var_cutscenes = {}
+
+			for iter_0, iter_1 in ipairs(var_stock.cutscenes) do
+				local var_keep = true
+
+				for iter_2, iter_edit in ipairs(iter_edits) do
+					if iter_edit.before == iter_1 then
+						table.insert(var_cutscenes, iter_edit.cutscene)
+					elseif iter_edit.replace == iter_1 then
+						table.insert(var_cutscenes, iter_edit.cutscene)
+
+						var_keep = false
+					end
+				end
+
+				if var_keep then
+					table.insert(var_cutscenes, iter_1)
+				end
+
+				for iter_2, iter_edit in ipairs(iter_edits) do
+					if iter_edit.after == iter_1 then
+						table.insert(var_cutscenes, iter_edit.cutscene)
+					end
+				end
+			end
+
+			var_sequences[var_name] = {
+				cutscenes = var_cutscenes,
+				lightingScenes = var_stock.lightingScenes
+			}
+
+			if not var_alternatives[iter_name] then
+				var_alternatives[iter_name] = {
+					{
+						name = iter_name,
+						weight = IntroTrailerStockWeight
+					}
+				}
+			end
+
+			table.insert(var_alternatives[iter_name], {
+				name = var_name,
+				weight = IntroTrailerWeight
+			})
+
+			introVersusLog("trailer intro: " .. var_name .. " = " .. table.concat(var_cutscenes, ", "))
+		end
+	end
+end
+
+pcall(introTrailerApply)
 pcall(introVersusRegisterSequences)
 
 local function var_0_1(arg_1_0)

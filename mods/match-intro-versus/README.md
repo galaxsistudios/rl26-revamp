@@ -11,6 +11,34 @@ stadium establishing shots (all three, random order per match, ~10 s)
 -> stock intro from there (away walkout, corridor, crowd, home walkout, anthem)
 ```
 
+## Grand Final trailer intro
+
+Each Grand Final has a random chance (50% by default, picked from the match seed) of a trailer-style
+intro, built from footage that ships in the game but is never shown:
+
+- **Locker rooms, re-edited.** The p1 clip of each locker animset (`rl1_intro_lockers_home/away`) holds
+  14 camera tracks, but the stock scenes show one random camera for the whole 6 s take (away 01-04,
+  home 01/03). Cameras away 05-07 and home 02/04-07 are never seen (06/07 even have authored focus
+  pulls; away 06 is a low close-up). `rl1_intro_lockers_away_trailer` / `_home_trailer` (generated at
+  the end of `cs_lockerroom_data.lua`, stadium-cloned like the stock ones) cut between them:
+  - away: cam06 (0) -> cam07 (48) -> cam05 (96) -> cam03 (138)
+  - home: cam07 (0) -> cam02 (66) -> cam06 (105) -> cam04 (135)
+
+  Frames are 30 fps. Edit `LockerTrailerEdits` to re-cut them. A camera the base scene doesn't define
+  goes in `addCameras`.
+- **Trailer corridor walks.** `cs_trailer_data.lua` ships slow, dramatic 13-man corridor walks
+  (`rl1_trailer_corridor_dramatic_*`). They bring their own corridor set (`corridor01.model`) and
+  lighting, and gf-tunnel-team-colour-lights recolours their accent lights to the walking team. They
+  go in **front of** the stock GF corridor shots, which stay, because gf-intro-effects starts each
+  team's walk-out song on `rl1_corridor_<side>`. In the Super League GF both walks come before the
+  joint corridor shot.
+
+The alternatives are registered as `trailer_gf_intro_*` in `cutscenedata_config.SequenceAlternatives`
+and picked by `introVersusAlternativeFor`. The settings are the `IntroTrailer*` tables at the top of
+`initial_cutscene.lua`: `IntroTrailerWeight` / `IntroTrailerStockWeight` set the odds (stock weight 0
+= always, handy for testing), and `IntroTrailerEnabled = false` turns it off. The other trailer pieces
+(`tunnel_walk_*`, `gf_runout_*`) duplicate what the GF intro already shows, with the same GF props.
+
 The stinger is replay-team-stinger's sweep (secondary band, primary panel, crest), in the colours of the
 team whose locker room comes next.
 
@@ -19,6 +47,7 @@ Touches two bundles (see INSTRUCTIONS.md):
 | Files | Entry |
 |---|---|
 | `src/script-game/rules/cutscenes/initial_cutscene.lua` | 39959 (scripts) |
+| `src/script-game/intermediatelua/cutscenes/data/cs_lockerroom_data.lua` (stock copy + trailer locker edits) | 39959 (scripts) |
 | `noesis/workspace/views/testscreens/testscreen.xaml` | 57662 (Noesis XAML) |
 
 **Needs** gf-tunnel-team-colour-lights (its `teamshield_rulestate.lua` has the hooks that drive this) and
