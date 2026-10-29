@@ -43,7 +43,8 @@ native = {
 		__call = function(_, x, y, z) return { x, y, z } end
 	}),
 	AcademyLeagues = { League_NRL2026 = 77, League_NRL = 1 },
-	InputTypes = { Decline = "Decline" }
+	InputTypes = { Decline = "Decline" },
+	EGearAttachmentJoint = { LeftHandBallJoint = "LeftHand", RightHandBallJoint = "RightHand" }
 }
 
 local function loadBlock()
@@ -90,6 +91,9 @@ local function newServices(opts)
 	local s = { log = {}, cameraEnabled = opts.cameraEnabled or false, updates = {}, props = {} }
 	local model = { cameraInfo = opts.cameraInfo, loaded = false }
 	function model.setCameraInfo(self, info, instant) self.cameraInfo = info; self.restoredInstant = instant end
+	function model.attachProp(self, name, joint) self.ballJoint = joint end
+	function model.showProp(self, name) self.ballVisible = true end
+	function model.hideProp(self, name) self.ballVisible = false end
 	s.model = model
 
 	local clubs = {}
@@ -170,6 +174,7 @@ check("camera pushed", services.cameraEnabled == true)
 check("uniform from NRL league club", services.uniform == "uniform120" or services.uniform == "uniform121", services.uniform)
 check("camera set with base anim", services.model.cameraInfo and services.model.cameraInfo.playerAnimation == "FullBodyIdle")
 check("rotation set", services.updates[1].rotation == 0)
+check("ball in the left hand and shown", services.model.ballJoint == "LeftHand" and services.model.ballVisible == true)
 check("head tracking off", not services.model.cameraInfo.lookAtEnable)
 
 -- update: not loaded -> nothing; loaded -> idle timer then a flourish

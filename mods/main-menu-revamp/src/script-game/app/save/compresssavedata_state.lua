@@ -770,6 +770,33 @@ for index = 1, 10 do
 	})
 end
 
+-- Which hand holds the ball in each animation set: "left", "right" or
+-- "none" (ball hidden while it plays). Keep in step with var_0_menuBallHands
+-- in storm-celebration-viewer (keyed by clip name there), whose Ball row is
+-- for working these out in game.
+local MainMenuBallHands = {
+	FullBodyIdle = "left",
+	FullBodyIdleApproval = "left"
+}
+
+-- Pro Team poses 1-10, checked in game (storm-celebration-viewer's Ball row).
+local MainMenuProTeamPoseHands = {
+	"right",
+	"right",
+	"none",
+	"none",
+	"right",
+	"right",
+	"none",
+	"none",
+	"right",
+	"left"
+}
+
+for index, hand in ipairs(MainMenuProTeamPoseHands) do
+	MainMenuBallHands[string.format("rl1_proteam_screenshot_%02d", index)] = hand
+end
+
 local function mainMenuLogError(message)
 	pcall(function()
 		local file = io.open("mainmenu_debug.txt", "a")
@@ -893,7 +920,27 @@ local function mainMenuPickPlayer(uiServices)
 	end
 end
 
+-- Puts the ball in the hand the animation wants (or hides it). An attach
+-- without a joint falls back to RightHandBallJoint (flushPropAttachments),
+-- so the joint is always named. Flushed on the model's next update.
+local function mainMenuSetBallHand(uiServices, animation)
+	if not MainMenuShow.ball then
+		return
+	end
+
+	local model = uiServices:playerModelGetPlayer(MainMenuConfig.modelIndex)
+	local hand = MainMenuBallHands[animation] or "left"
+
+	if hand == "none" then
+		model:hideProp("ball")
+	else
+		model:attachProp("ball", hand == "right" and native.EGearAttachmentJoint.RightHandBallJoint or native.EGearAttachmentJoint.LeftHandBallJoint)
+		model:showProp("ball")
+	end
+end
+
 local function mainMenuPlay(uiServices, animation)
+	mainMenuSetBallHand(uiServices, animation)
 	uiServices:playerModelUpdate(MainMenuConfig.modelIndex, {
 		idleParams = {
 			playerAnimation = animation,
@@ -941,9 +988,15 @@ local function mainMenuAttachBall(uiServices, player)
 	if not ok then
 		mainMenuLogError("attaching ball: " .. tostring(err))
 		mainMenuDetachBall(uiServices)
+
+		return false
 	end
 
-	return ok
+	-- The ball prop is declared with joint = LeftHandBallJoint, but
+	-- setPlayerModelProps attaches without a joint and flushPropAttachments
+	-- then falls back to RightHandBallJoint, so the hand is set explicitly
+	-- (mainMenuSetBallHand, per animation).
+	return true
 end
 
 local function mainMenuShowPlayer(uiServices)
@@ -980,6 +1033,8 @@ local function mainMenuShowPlayer(uiServices)
 	else
 		mainMenuDetachBall(uiServices)
 	end
+
+	mainMenuSetBallHand(uiServices, MainMenuConfig.baseAnimation)
 
 	-- The camera table doubles as the first animation request.
 	local camera = {}

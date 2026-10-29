@@ -12,7 +12,10 @@ Redesigns the home screen:
   - **Extras**: Practice, Credits, About.
   Finals is gone. Boxes with sub-menus show a chevron, and the sub-menu flies out to the right of the box.
 - **A random NRL player on the right.** Each time the home screen opens, a random player from a random NRL club
-  stands on the right in that club's home kit, always holding a ball.
+  stands on the right in that club's home kit, always holding a ball in the left hand. The ball prop declares
+  `LeftHandBallJoint`, but `setPlayerModelProps` attaches without a joint and `flushPropAttachments` falls back to
+  `RightHandBallJoint`, so the hook names the joint. The hand is per animation (`MainMenuBallHands`: `left` /
+  `right` / `none`, keyed by action set). Work the values out with storm-celebration-viewer's Ball row.
 - **Animations.** The player idles with the ball, and every 7-11 s plays a flourish before going back to the idle:
   the approval gesture or one of the ten Pro Team card poses (`rl1_proteam_screenshot_01`-`10`). Only sets with
   a `Ball` variant are used. `HeroPose` has none, and through it the ball stayed stuck to one hand. The no-ball
