@@ -1,5 +1,5 @@
 {
- "_comment": "RLL4-layout kit textures (resources/old-jerseys) -> RL26 kits; rows with \"custom\" are kits painted in RL26's own layout (resources/custom-kits/<custom>/top|shorts|socks.png, tools/jersey_template.py), guids 61001+. guid is the design guid used for the new uniformTop/Bottom/Socks items (one per kit, same number in all three maps); texture names the new characters/uniforms/textures/m_{top,shorts,socks}_<texture>_col_{1,2} entries.",
+ "_comment": "RLL4-layout kit textures (resources/old-jerseys) -> RL26 kits; rows with \"custom\" are kits painted in RL26's own layout (resources/custom-kits/<custom>/top|shorts|socks.png, tools/jersey_template.py), guids 64001+ (61001-61109 are team-coaches' polos). guid is the design guid used for the new uniformTop/Bottom/Socks items (one per kit, same number in all three maps); texture names the new characters/uniforms/textures/m_{top,shorts,socks}_<texture>_col_{1,2} entries.",
  "clubs": {
   "broncos": 118,
   "bulldogs": 119,
@@ -2282,6 +2282,18 @@
    "club": 142,
    "name": "HOME 2017",
    "texture": "sl_wolves_home_rll4_2017"
+  },
+  {
+   "guid": 64001,
+   "custom": "broncos_wcc_2026",
+   "club": 118,
+   "name": "WCC 2026",
+   "texture": "broncos_wcc_2026",
+   "templates": {
+    "uniformTop": 4,
+    "uniformBottom": 0,
+    "uniformSocks": 0
+   }
   }
  ]
 }

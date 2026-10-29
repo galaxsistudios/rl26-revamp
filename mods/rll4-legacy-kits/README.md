@@ -89,6 +89,12 @@ Drop the RLL4 texture in `resources/old-jerseys/`, add a row to `kits.json` (nex
 club id, a name of at most 24 characters, a unique `texture` slug), then run steps 1-4 above
 (`bake --only <slug>` is enough for step 1).
 
+Git keeps these jerseys as lossless PNGs next to the `.dds` originals. `*.dds` is ignored, and the 78
+PNGs total about 44 MB against 594 MB of DDS. `build_kits.py` reads `<name>.png` when it exists and
+the `src` file otherwise, so `kits.json` can keep naming the `.dds`. After adding a DDS, save a PNG
+copy too (`Image.open(dds).save(png)`), or a fresh checkout can't bake it. The release ships the PNGs
+only.
+
 ## Custom kits (painted on the jersey templates)
 
 Kits painted on the templates in `resources/jersey-templates/` (`tools/jersey_template.py`) are
@@ -97,10 +103,29 @@ already in RL26's layout, so they skip the RLL4 conversion. Put `top.png`, `shor
 `src`:
 
 ```json
-{"guid": 61001, "custom": "<kit-name>", "club": 118, "name": "CUSTOM 2026", "texture": "broncos_custom_2026"}
+{"guid": 64001, "custom": "<kit-name>", "club": 118, "name": "CUSTOM 2026", "texture": "broncos_custom_2026"}
 ```
 
-Use guids from 61001 up for custom kits, so they stay clear of the RLL4 rows. `bake` only resizes
+A row may also have `"templates": {"uniformTop": g, "uniformBottom": g, "uniformSocks": g}`: the
+design items the new items copy (model, UVs, material). It defaults to the Broncos 2026 home items
+(top 105 = `top_round05`, shorts and socks 104). `tools/fanhub_kit_import.py` sets it to the
+exported design's items for kits captured in game (copy-academy-jerseys, LB in a Uniforms list).
+A copied Academy top loses its collar tint layer and its Academy flag, because the captured
+texture already has the collar colours. `bake`'s preview and number-area sample still use the
+default meshes.
+
+`bake` and `install` skip kits that haven't changed. A kit's `bake.json` stamp
+(`_build/rll4-legacy-kits/<texture>/`) hashes its source image and texture fields, and each texture
+entry's `image_sha1` in the add_entries registry records the image it was written from. `--force`
+redoes them; bump `BAKE_VERSION` in build_kits.py after changing how bakes are made. An entry missing
+from the index (after a game update or Steam verify) is always written again.
+
+A row with `"library": true` doesn't take one of the club's kit slots. The game holds at most 20 kits
+per club, so it goes into the generated `KitLibrary` instead, and a player adds it from the club's
+Uniforms list (copy-academy-jerseys' KIT LIBRARY). Captured and painted (`custom`) kits are added to
+a club before the RLL4 ones, so they're never the kits past slot 20.
+
+Use guids from 64001 up for custom kits, so they stay clear of the RLL4 rows. `bake` only resizes
 them to the installed sizes and renders `preview.png` on the RL26 meshes. It doesn't need RLL4 or
 the cached texel map. Every other step (install, texsrc, generate, the bundles) is the same as for
 the other kits, and the installer's `kits` step picks the rows up automatically.

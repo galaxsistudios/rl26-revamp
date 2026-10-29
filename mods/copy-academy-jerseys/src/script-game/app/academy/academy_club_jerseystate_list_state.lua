@@ -40,6 +40,29 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 		end
 	end
 
+	-- copy-academy-jerseys mod: KIT LIBRARY - the club's kits kept outside its
+	-- 20 slots (KitLibrary, see academy_club_jersey_state). Shown even when the
+	-- club is full: a library kit can replace one of its kits
+	if arg_1_3.stateFactoryMap.KitLibrary and not arg_1_3.inCommunity and (var_1_2 or arg_1_5) then
+		local var_1_libOk, var_1_lib = pcall(function()
+			return import("intermediatelua.data.jigglyjointsconfig").KitLibrary
+		end)
+		local var_1_libCount = var_1_libOk and var_1_lib and var_1_lib[arg_1_4.id] and #var_1_lib[arg_1_4.id] or 0
+
+		if var_1_libCount > 0 then
+			table.insert(var_1_0, {
+				displayType = optionmenu_aide.DisplayTypes.Separator
+			})
+			table.insert(var_1_0, {
+				editable = true,
+				label = string.format("KIT LIBRARY (%d)", var_1_libCount),
+				editType = optionmenu_aide.EditTypes.SubMenu,
+				displayType = optionmenu_aide.DisplayTypes.Value,
+				stateFactory = arg_1_3.stateFactoryMap.KitLibrary
+			})
+		end
+	end
+
 	if arg_1_4.uniformCanCreateCount > 0 and (var_1_2 or arg_1_5) then
 		table.insert(var_1_0, {
 			displayType = optionmenu_aide.DisplayTypes.Separator
@@ -80,6 +103,139 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 
 	return var_1_0
 end
+
+-- copy-academy-jerseys mod: LB on a jersey saves its design info - club,
+-- kit, sex and the design items (guid + item name) for the top, shorts and
+-- socks - to Documents\RL26Jersey_<club>_<kit>.json. The kit's pixels come
+-- from a RenderDoc capture of the same screen (tools/renderdoc_kit.py), and
+-- tools/fanhub_kit_import.py turns the pair into a kit. Reading the composited
+-- textures back from Lua (CRenderUtils.textureToDataBuffer) returned zeros or
+-- stale data for every texture, so it was dropped (2026-10-29).
+local function jerseyExportLog(fmt, ...)
+	local ok, msg = pcall(string.format, fmt, ...)
+	local okOpen, file = pcall(io.open, "jerseyexport_debug.txt", "a")
+
+	if okOpen and file then
+		file:write(os.date("%H:%M:%S "), ok and msg or fmt, "\n")
+		file:close()
+	end
+end
+
+local function jerseyExportSafeName(text)
+	text = string.lower(tostring(text or ""))
+	text = string.gsub(text, "[^%w]+", "_")
+	text = string.gsub(text, "^_+", "")
+	text = string.gsub(text, "_+$", "")
+
+	return text ~= "" and text or "jersey"
+end
+
+local function jerseyExportClubName(club)
+	local ok, name = pcall(function()
+		return club.fullName or club.identity.fullName or club.identity.name
+	end)
+
+	return ok and name or "club" .. tostring(club.id)
+end
+
+local function jerseyExportJson(value, indent)
+	indent = indent or ""
+
+	if type(value) == "table" then
+		local keys = {}
+
+		for key in pairs(value) do
+			table.insert(keys, key)
+		end
+
+		if #keys == 0 then
+			return "{}"
+		end
+
+		if #value == #keys then
+			local items = {}
+
+			for _, item in ipairs(value) do
+				table.insert(items, indent .. "  " .. jerseyExportJson(item, indent .. "  "))
+			end
+
+			return "[\n" .. table.concat(items, ",\n") .. "\n" .. indent .. "]"
+		end
+
+		table.sort(keys, function(a, b)
+			return tostring(a) < tostring(b)
+		end)
+
+		local items = {}
+
+		for _, key in ipairs(keys) do
+			table.insert(items, string.format("%s  %q: %s", indent, tostring(key), jerseyExportJson(value[key], indent .. "  ")))
+		end
+
+		return "{\n" .. table.concat(items, ",\n") .. "\n" .. indent .. "}"
+	elseif type(value) == "string" then
+		return (string.gsub(string.format("%q", value), "\\\n", "\\n"))
+	elseif type(value) == "boolean" or type(value) == "number" then
+		return tostring(value)
+	end
+
+	return "null"
+end
+
+local function jerseyExportSave(engine, arg3, uiServices, input, club, uniform)
+	local okHome, home = pcall(os.getenv, "USERPROFILE")
+	local clubName = jerseyExportClubName(club)
+	local path = (okHome and home and home ~= "" and home .. "\\Documents\\" or "") .. "RL26Jersey_" .. jerseyExportSafeName(clubName) .. "_" .. jerseyExportSafeName(uniform.name) .. ".json"
+	local config = uniform.config
+	local info = {
+		club = clubName,
+		clubId = club.id,
+		kit = uniform.name,
+		isNines = uniform.isNines and true or false
+	}
+
+	for _, option in ipairs({ "sex", "uniformTop", "uniformBottom", "uniformSocks", "uniformTop_patternLayer01", "uniformEditable" }) do
+		local ok, value = pcall(config.getOption, config, option)
+
+		info[option] = ok and value or nil
+	end
+
+	-- the design items' names give the importer the models (and so the UV
+	-- layouts) the textures belong to; assetmap is loaded by the jersey editor
+	pcall(function()
+		local map = rawget(_G, "assetmap")
+
+		for _, option in ipairs({ "uniformTop", "uniformBottom", "uniformSocks" }) do
+			local item = info[option] and map.getItemByGuid(map.AssetMapItems[option], info[option])
+
+			info[option .. "Item"] = item and item.name or nil
+		end
+	end)
+
+	local ok, file = pcall(io.open, path, "w")
+	local text
+
+	if ok and file then
+		file:write(jerseyExportJson(info), "\n")
+		file:close()
+
+		text = "Saved the jersey's design info to\n" .. path .. "\nCapture this screen with RenderDoc (F12) for the textures."
+	else
+		text = "Couldn't write " .. path
+	end
+
+	jerseyExportLog("export %s / %s -> %s (top %s %s, bottom %s, socks %s): %s", clubName, tostring(uniform.name), path, tostring(info.uniformTop), tostring(info.uniformTopItem), tostring(info.uniformBottom), tostring(info.uniformSocks), ok and file and "ok" or "failed")
+
+	pcall(function()
+		uiServices:blockingAlert(engine, arg3, {
+			options = "ok",
+			canCancel = true,
+			text = text,
+			input = input
+		})
+	end)
+end
+
 
 local var_0_3 = alert_state.AlertState
 
@@ -185,6 +341,7 @@ end
 
 function AcademyClubJerseyListState.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10)
 	local var_7_0 = assert(arg_7_8.partyMember)
+
 	local var_7_1, var_7_2, var_7_3, var_7_4 = var_0_4.update(arg_7_0, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, var_7_0:getInput())
 	local var_7_5 = arg_7_8.debugHook
 	local var_7_6 = var_7_5 and var_7_5.isArtist
@@ -229,6 +386,23 @@ function AcademyClubJerseyListState.update(arg_7_0, arg_7_1, arg_7_2, arg_7_3, a
 				club = arg_7_0.club,
 				isNines = var_7_11.isNines
 			})
+		end
+
+		-- copy-academy-jerseys mod: save the highlighted jersey's design info
+		-- (any club, FanHub included; artists keep LB for "debug dupe uniform")
+		if not arg_7_0.subState and not var_7_6 and not arg_7_6:getIsBlockingMixinActive() then
+			local var_7_export = arg_7_0:getHighlightedItemInfo()
+
+			if var_7_export and var_7_export.uniform then
+				arg_7_6:addTooltip(arg_7_0.tooltipsWidget, var_0_0.LB, "Export Jersey", 82)
+
+				if arg_7_6:checkForRelease(var_7_0, var_0_0.LB) then
+					arg_7_6:playSound("SelectAlternative")
+					jerseyExportSave(arg_7_2, arg_7_3, arg_7_6, var_7_0:getInput(), arg_7_9.club, var_7_export.uniform)
+
+					return
+				end
+			end
 		end
 
 		local var_7_12 = not native.getCensorAllUGC()

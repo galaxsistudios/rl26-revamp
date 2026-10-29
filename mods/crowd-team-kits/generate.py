@@ -155,7 +155,35 @@ def read_kits(data):
                 guid = struct.unpack_from(dm.UNIFORM_TAG_FMT[top_f[1]], data, rec + lay["config_off"] + top_f[0])[0]
                 kits.append((kit_name, guid))
         clubs.append((a[2], a[3], kits))
-    return clubs
+    # rll4-legacy-kits' library kits aren't in the clubs' kit slots (20 max)
+    # but the match picker offers them, so the club's fans wear them too
+    library = library_kits()
+    return [(cid, name, kits + library.get(cid, [])) for cid, name, kits in clubs]
+
+
+def library_kits():
+    """club id -> [(kit name, uniformTop guid)] from the KitLibrary table that
+    rll4-legacy-kits generates into its jigglyjointsconfig.lua."""
+    path = os.path.join(ROOT, "mods", "rll4-legacy-kits", "src", "script-game", "intermediatelua", "data",
+                        "jigglyjointsconfig.lua")
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8-sig") as f:
+        src = f.read()
+    if "\nKitLibrary = {" not in src:
+        return {}
+    out, club = {}, None
+    for line in src[src.index("\nKitLibrary = {"):].split("\n")[2:]:
+        m = re.match(r"^\t\[(\d+)\] = \{$", line)
+        if m:
+            club = int(m.group(1))
+            continue
+        m = re.search(r'name = "([^"]*)".*\buniformTop = (\d+)', line)
+        if m and club is not None:
+            out.setdefault(club, []).append((m.group(1), int(m.group(2))))
+        elif line == "}":
+            break
+    return out
 
 
 def main():

@@ -37,6 +37,7 @@ Usage (repo root):
 """
 
 import argparse
+import hashlib
 import json
 import os
 import struct
@@ -56,6 +57,15 @@ import pack  # noqa: E402
 
 WORK = os.path.join(REPO, "_build", "rll4-legacy-kits")
 SOURCES = os.path.join(REPO, "resources", "old-jerseys")
+
+
+def _source_path(kit):
+    """A resources/old-jerseys kit's file: the lossless .png next to the .dds
+    when there is one (the PNGs are what git keeps, ~17x smaller), else the
+    "src" file as named."""
+    path = os.path.join(SOURCES, kit["src"])
+    png = os.path.splitext(path)[0] + ".png"
+    return png if os.path.exists(png) else path
 # kits painted in RL26's own layout (tools/jersey_template.py): <name>/top.png, shorts.png, socks.png
 CUSTOM = os.path.join(REPO, "resources", "custom-kits")
 MANIFEST = os.path.join(MOD, "kits.json")
@@ -257,7 +267,7 @@ def source_image(kit, rll4_dir=None):
     ("src") or a texture read from the installed RLL4 ("rll4")."""
     global _RLL4
     if "rll4" not in kit:
-        return Image.open(os.path.join(SOURCES, kit["src"]))
+        return Image.open(_source_path(kit))
     if _RLL4 is None:
         import rll4_source
         _RLL4 = rll4_source.RLL4(rll4_dir)
@@ -362,7 +372,7 @@ def active_kits(manifest=None):
             elif k["texture"] not in _warned:
                 _warned.add(k["texture"])
                 print(f"  warning: skipping {k['texture']} - resources/custom-kits/{k['custom']} is missing")
-        elif os.path.exists(os.path.join(SOURCES, k["src"])) or os.path.isdir(os.path.join(WORK, k["texture"])):
+        elif os.path.exists(_source_path(k)) or os.path.isdir(os.path.join(WORK, k["texture"])):
             out.append(k)
         elif k["texture"] not in _warned:
             _warned.add(k["texture"])
@@ -378,17 +388,54 @@ def load_manifest():
         return json.load(f)
 
 
+# Bump to re-bake every kit after changing how bakes are made (bake_kit,
+# bake_custom, the correspondence); `bake --force` does the same once.
+BAKE_VERSION = 1
+
+
+def _bake_key(kit):
+    """What a kit's bake depends on: its source image and the kits.json fields
+    that pick it (not name/club/guid, which only the later steps use)."""
+    h = hashlib.sha1(f"v{BAKE_VERSION}".encode())
+    h.update(json.dumps({k: v for k, v in kit.items() if k not in ("name", "club", "guid")},
+                        sort_keys=True).encode())
+    if "custom" in kit:
+        for part in PARTS:
+            path = os.path.join(_custom_source(kit), f"{part}.png")
+            h.update(open(path, "rb").read() if os.path.exists(path) else b"-")
+    elif "src" in kit:
+        src = _source_path(kit)
+        h.update(open(src, "rb").read() if os.path.exists(src) else b"-")
+    return h.hexdigest()  # "rll4" rows: the texture name is enough, RLL4 doesn't change
+
+
+def _bake_current(kit, stats):
+    out = os.path.join(WORK, kit["texture"])
+    try:
+        stamp = json.load(open(os.path.join(out, "bake.json")))
+    except (OSError, ValueError):
+        return False
+    return (stamp.get("key") == _bake_key(kit) and kit["texture"] in stats
+            and all(os.path.exists(os.path.join(out, f"{part}.png")) for part in PARTS))
+
+
 def cmd_bake(args):
     import jersey_template as jt
     corr = None  # the RLL4 texel map, only loaded when an RLL4-layout kit is baked
     stats = {}
+    path = os.path.join(WORK, "stats.json")
+    old = json.load(open(path)) if os.path.exists(path) else {}
+    skipped = 0
     for kit in active_kits():
         if args.only and kit["texture"] not in args.only:
             continue
         missing = (not os.path.isdir(_custom_source(kit)) if "custom" in kit
-                   else "rll4" not in kit and not os.path.exists(os.path.join(SOURCES, kit["src"])))
+                   else "rll4" not in kit and not os.path.exists(_source_path(kit)))
         if missing:
             print(f"  {kit['texture']}: source missing, keeping the earlier bake")  # see active_kits()
+            continue
+        if not args.force and _bake_current(kit, old):
+            skipped += 1
             continue
         if "custom" in kit:
             images, st = bake_custom(kit)
@@ -402,10 +449,12 @@ def cmd_bake(args):
         for part, im in images.items():
             im.save(os.path.join(out, f"{part}.png"))
         preview.save(os.path.join(out, "preview.png"))
+        with open(os.path.join(out, "bake.json"), "w") as f:
+            json.dump({"key": _bake_key(kit)}, f)
         stats[kit["texture"]] = st
         print(f"  {kit['texture']}: number area {st['number_area_rgb']}, referee clash {st['clash']}")
-    path = os.path.join(WORK, "stats.json")
-    old = json.load(open(path)) if os.path.exists(path) else {}
+    if skipped:
+        print(f"  {skipped} kits already baked (unchanged; --force re-bakes them)")
     old.update(stats)
     with open(path, "w") as f:
         json.dump(old, f, indent=1)
@@ -419,7 +468,7 @@ def cmd_add_rll4(args):
     game = rll4_source.RLL4(args.rll4)
     manifest = load_manifest()
     have = {k.get("rll4") for k in manifest["kits"]}
-    guid = max(k["guid"] for k in manifest["kits"] if "custom" not in k) + 1  # custom kits use 61001+
+    guid = max(k["guid"] for k in manifest["kits"] if "custom" not in k) + 1  # custom kits use 64001+ (61001-61109: team-coaches polos)
     prefixes = sorted(spec["clubs"], key=len, reverse=True)
     added = skipped = 0
     folder = "characters/uniforms/textures/"
@@ -527,10 +576,31 @@ do
 \t\t\treturn
 \t\tend
 
+\t\tif template.colTexture == nil then
+\t\t\t-- an Academy design (captured kits): its material is made for the
+\t\t\t-- tinted Academy layers and turns a full-colour texture near-black
+\t\t\t-- (WCC 2026 on top_soft02, 2026-10-29), so copy a licensed item on
+\t\t\t-- the same model and sex instead when there is one
+\t\t\tfor _, candidate in ipairs(map.item_setup) do
+\t\t\t\tif candidate.colTexture ~= nil and candidate.name == template.name and candidate.sex == template.sex then
+\t\t\t\t\ttemplate = candidate
+
+\t\t\t\t\tbreak
+\t\t\t\tend
+\t\t\tend
+\t\tend
+
 \t\tlocal item = {}
 
 \t\tfor key, value in pairs(template) do
 \t\t\titem[key] = value
+\t\tend
+
+\t\tif template.colTexture == nil then
+\t\t\t-- an Academy design: the captured texture already has its collar
+\t\t\t-- colours, and the copy isn't one of the Academy's choices
+\t\t\titem.collarLayer = nil
+\t\t\titem.academy = nil
 \t\tend
 
 \t\titem.guid = guid
@@ -564,11 +634,13 @@ do
 LUA_FOOTER = """\t}
 
 \tfor _, kit in ipairs(kits) do
-\t\taddItem("uniformTop", %d, kit[1], "m_top_" .. kit[2] .. "_col", #kit[3] > 0 and {
+\t\tlocal templates = kit[4] or {}
+
+\t\taddItem("uniformTop", templates.top or %d, kit[1], "m_top_" .. kit[2] .. "_col", #kit[3] > 0 and {
 \t\t\trefereeUniformClashColourList = kit[3]
 \t\t} or nil)
-\t\taddItem("uniformBottom", %d, kit[1], "m_shorts_" .. kit[2] .. "_col")
-\t\taddItem("uniformSocks", %d, kit[1], "m_socks_" .. kit[2] .. "_col")
+\t\taddItem("uniformBottom", templates.bottom or %d, kit[1], "m_shorts_" .. kit[2] .. "_col")
+\t\taddItem("uniformSocks", templates.socks or %d, kit[1], "m_socks_" .. kit[2] .. "_col")
 \tend
 end
 """ % (TEMPLATE_GUID["uniformTop"], TEMPLATE_GUID["uniformBottom"], TEMPLATE_GUID["uniformSocks"])
@@ -599,21 +671,31 @@ def cmd_generate(args):
     rows = []
     for kit in active_kits(manifest):
         clash = ", ".join(f'"{c}"' for c in stats[kit["texture"]]["clash"])
-        rows.append(f'\t\t{{ {kit["guid"]}, "{kit["texture"]}", {{ {clash} }} }}, -- {kit["name"]}, club {kit["club"]}')
-    lua = stock + "\n" + LUA_HEADER + "\n".join(rows) + "\n" + LUA_FOOTER
-    os.makedirs(os.path.dirname(lua_path), exist_ok=True)
-    with open(lua_path, "w", encoding="ascii", newline="\n") as f:
-        f.write(lua)
-    print(f"wrote {os.path.relpath(lua_path, REPO)}")
+        # "templates": the design items to copy (model and UVs) for a kit captured
+        # from another design (tools/fanhub_kit_import.py); TEMPLATE_GUID otherwise
+        tpl = kit.get("templates", {})
+        tpl = ", ".join(f"{key} = {tpl[m]}" for key, m in (("top", "uniformTop"), ("bottom", "uniformBottom"),
+                                                          ("socks", "uniformSocks")) if m in tpl)
+        tpl = f", {{ {tpl} }}" if tpl else ""
+        rows.append(f'\t\t{{ {kit["guid"]}, "{kit["texture"]}", {{ {clash} }}{tpl} }}, -- {kit["name"]}, club {kit["club"]}')
 
-    # club kit slots: copy HOME or AWAY, whichever's number colour stands out
-    # more against the new kit's back where the number sits
-    by_club = {}
+    # each kit's slot: copy HOME or AWAY, whichever's number colour stands out
+    # more against the new kit's back where the number sits. Rows marked
+    # "library" don't take one of the club's 20 kit slots (the game holds at
+    # most 20 per club, inline in the club object): they go to KitLibrary,
+    # which the match jersey picker offers after the club's own kits
+    # (copy-academy-jerseys' KIT LIBRARY entry in a club's Uniforms list adds
+    # them to the club, into a free slot or over a kit you pick)
+    by_club, library = {}, {}
     for kit in active_kits(manifest):
         by_club.setdefault(kit["club"], []).append(kit)
     out_dir = os.path.join(MOD, "defaultdata", "defaultdata_clubs")
     os.makedirs(out_dir, exist_ok=True)
     for cid, kits in sorted(by_club.items()):
+        # captured/painted kits first: the game shows only a club's first 20
+        # kits (WCC 2026 as the Broncos' 21st didn't show, 2026-10-29), and
+        # the RLL4 2017 rows are the ones to lose
+        kits = sorted(kits, key=lambda k: "custom" not in k)
         club_name, existing = clubs[cid]
         adds = []
         for kit in kits:
@@ -626,12 +708,48 @@ def cmd_generate(args):
                 # neither kit's numbers would stand out: white on dark, near-black on light
                 rgb = (230, 230, 230) if back < 128 else (20, 20, 28)
                 fields.update({f"numberColour1_{ch}": v for ch, v in zip("rgb", rgb)})
-            adds.append({"name": kit["name"], "copyOf": copy_of, "set": fields})
+            entry = {"name": kit["name"], "copyOf": copy_of, "set": fields}
+            # RLL4 kits (installed RLL4 or resources/old-jerseys) live in the
+            # library unless a row says "library": false; captured/painted
+            # ("custom") kits take a club slot unless it says "library": true
+            if kit.get("library", "custom" not in kit):
+                library.setdefault(cid, []).append(entry)
+            else:
+                adds.append(entry)
         fname = f"{cid:06d}_{club_name.replace(' ', '_')}.json"
-        with open(os.path.join(out_dir, fname), "w") as f:
-            json.dump({"uniforms": {"add": adds}}, f, indent=2)
-            f.write("\n")
-        print(f"  {fname}: {', '.join(a['name'] + ' (' + a['copyOf'] + ')' for a in adds)}")
+        path = os.path.join(out_dir, fname)
+        if adds:
+            with open(path, "w") as f:
+                json.dump({"uniforms": {"add": adds}}, f, indent=2)
+                f.write("\n")
+        elif os.path.exists(path):
+            os.remove(path)
+        print(f"  {fname}: {', '.join(a['name'] + ' (' + a['copyOf'] + ')' for a in adds) or '-'}"
+              + (f"; library: {', '.join(e['name'] for e in library[cid])}" if cid in library else ""))
+
+    lua = stock + "\n" + LUA_HEADER + "\n".join(rows) + "\n" + LUA_FOOTER + _library_lua(library)
+    os.makedirs(os.path.dirname(lua_path), exist_ok=True)
+    with open(lua_path, "w", encoding="ascii", newline="\n") as f:
+        f.write(lua)
+    print(f"wrote {os.path.relpath(lua_path, REPO)} ({sum(map(len, library.values()))} library kits)")
+
+
+def _library_lua(library):
+    """KitLibrary = { [club id] = { { name, copyOf, set = { option = value } } } }:
+    read by copy-academy-jerseys' academy_club_jersey_state.lua through
+    import("intermediatelua.data.jigglyjointsconfig").KitLibrary."""
+    out = ["", "-- rll4-legacy-kits: kits kept out of the clubs' 20 kit slots (\"library\" rows in",
+           "-- kits.json). KIT LIBRARY in a club's Uniforms list adds one to the club: a copy of the",
+           "-- club's copyOf kit with the set options (design guids, number colour).",
+           "KitLibrary = {"]
+    for cid, entries in sorted(library.items()):
+        out.append(f"\t[{cid}] = {{")
+        for e in entries:
+            sets = ", ".join(f"{k} = {v}" for k, v in e["set"].items())
+            out.append(f'\t\t{{ name = "{e["name"]}", copyOf = "{e["copyOf"]}", set = {{ {sets} }} }},')
+        out.append("\t},")
+    out.append("}")
+    return "\n".join(out) + "\n"
 
 
 def _dds_bgra(img):
@@ -647,22 +765,56 @@ def _dds_bgra(img):
 
 
 def cmd_install(args):
+    """Add (or with --replace, update) each kit's _1/_2 texture entries. An
+    entry whose image hasn't changed since it was last written (sha1 kept in
+    the add_entries registry as "image_sha1", entry still in the index, blob
+    the recorded size) is skipped unless --force."""
     import add_entries
     import club_icons
+    data, count, hash_off, _ = pack.read_index(args.blobset)
+    in_index = {h: i for i, h in enumerate(add_entries.load_hashes(data, count, hash_off))}
+    registry = {e["path"]: e for e in (add_entries.load_registry() or {"entries": []})["entries"]}
+    written, skipped = {}, 0
+
+    def unchanged(path, sha):
+        rec = registry.get(path.lower())
+        return (rec is not None and rec.get("image_sha1") == sha
+                and in_index.get(add_entries.path_hash(path)) == rec["entry_index"]
+                and os.path.exists(rec["blob_path"])
+                and os.path.getsize(rec["blob_path"]) == rec["sizes"][0] + rec["sizes"][2])
+
     for kit in active_kits():
         if args.only and kit["texture"] not in args.only:
             continue
         for part in args.parts or PARTS:
-            img = Image.open(os.path.join(args.source or WORK, kit["texture"], f"{part}.png"))
-            for level, im in ((1, img), (2, img.resize((img.width // 2, img.height // 2), Image.LANCZOS))):
+            png = os.path.join(args.source or WORK, kit["texture"], f"{part}.png")
+            png_sha = hashlib.sha1(open(png, "rb").read()).hexdigest()
+            img = None
+            for level in (1, 2):
                 path = f"characters/uniforms/textures/{TEXTURE_PREFIX[part]}{kit['texture']}_col_{level}.texture"
+                sha = f"{png_sha}:{level}"
+                if not args.force and unchanged(path, sha):
+                    skipped += 1
+                    continue
+                img = img or Image.open(png)
+                im = img if level == 1 else img.resize((img.width // 2, img.height // 2), Image.LANCZOS)
                 blob, sizes = club_icons.make_blob(path, _dds_bgra(im))
                 origin = (kit["src"] if "src" in kit else f"custom {kit['custom']}" if "custom" in kit
                           else f"RLL4 {kit['rll4']}")
                 add_entries.add_entry(args.blobset, path, blob, sizes, f"rll4-legacy-kits {origin}",
                                       args.confirm, replace=args.replace)
+                written[path.lower()] = sha
+    if skipped:
+        print(f"  {skipped} texture entries unchanged, not rewritten (--force rewrites them)")
     if not args.confirm:
         print("dry run - pass --confirm to write (close the game first)")
+        return
+    if written:  # add_entry saved its own records; add the image hashes to them
+        reg = add_entries.load_registry()
+        for e in reg["entries"]:
+            if e["path"] in written:
+                e["image_sha1"] = written[e["path"]]
+        add_entries.save_registry(reg)
 
 
 TEXSRC_PATH = "characters/player/global.texsrc"
@@ -735,6 +887,7 @@ def main():
     p = sub.add_parser("bake")
     p.add_argument("--only", nargs="*", help="texture names from kits.json")
     p.add_argument("--remap", action="store_true", help="rebuild the cached texel correspondence")
+    p.add_argument("--force", action="store_true", help="re-bake kits even when their bake is current")
     p.set_defaults(func=cmd_bake)
     p = sub.add_parser("sheet")
     p.add_argument("--out", default=os.path.join(WORK, "sheet.png"))
@@ -753,6 +906,7 @@ def main():
     p.add_argument("--parts", nargs="*", choices=list(PARTS), help="only these parts (default all)")
     p.add_argument("--only", nargs="*", help="texture names from kits.json")
     p.add_argument("--source", help="folder of <texture>/<part>.png to install instead of the bakes (e.g. test grids)")
+    p.add_argument("--force", action="store_true", help="rewrite entries even when their image is unchanged")
     p.add_argument("--confirm", action="store_true")
     p.set_defaults(func=cmd_install)
     args = ap.parse_args()

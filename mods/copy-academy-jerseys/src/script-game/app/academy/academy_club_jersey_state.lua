@@ -422,6 +422,182 @@ function AcademyClubJerseyCopyToClubState.enter(arg_ca_0, arg_ca_1, arg_ca_2, ar
 	arg_ca_0.stateMachine:changeState(JerseyCopyToClubList(), arg_ca_2, arg_ca_3, arg_ca_4, arg_ca_5, arg_ca_6, arg_ca_7, arg_ca_8)
 end
 
+-- copy-academy-jerseys mod: KIT LIBRARY. A club holds at most 20 kits (they
+-- sit inline in the native club object), so rll4-legacy-kits keeps the rest in
+-- KitLibrary (generated into intermediatelua/data/jigglyjointsconfig.lua:
+-- [club id] = { { name, copyOf, set = { option = value } } }). This list adds a
+-- library kit to the club - into a free slot, or over a kit you pick when the
+-- club is full - as a copy of the club's copyOf kit with the entry's options
+-- (design guids, number colour). It's then a normal club kit, so Play Now,
+-- competitions, career and the crowd all see it.
+
+function kitLibraryEntries(club)
+	local ok, library = pcall(function()
+		return import("intermediatelua.data.jigglyjointsconfig").KitLibrary
+	end)
+
+	return ok and library and club and library[club.id] or {}
+end
+
+local var_0_kl_holders = {}
+
+function kitLibraryUniform(club, entry)
+	local key = tostring(club.id) .. ":" .. entry.name
+	local holder = var_0_kl_holders[key]
+
+	if not holder then
+		local base = club:getUniform(1)
+
+		for index = 1, club.uniformCount do
+			local uniform = club:getUniform(index)
+
+			if uniform.name == entry.copyOf then
+				base = uniform
+
+				break
+			end
+		end
+
+		-- a scratch uniform the stock code also creates (lobby_sideinfo)
+		holder = native.CUniformSerialisable()
+
+		holder.uniform:set(base)
+
+		holder.uniform.name = entry.name
+
+		for option, value in pairs(entry.set) do
+			holder.uniform.config:setOption(option, value)
+		end
+
+		var_0_kl_holders[key] = holder
+	end
+
+	return holder.uniform
+end
+
+local function var_0_kl_put(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4)
+	-- arg_kl_0 uiServices, arg_kl_1 clubViewInfo, arg_kl_2 jerseyData,
+	-- arg_kl_3 library entry, arg_kl_4 club kit index to replace (nil = add)
+	local var_kl_0 = arg_kl_1.club
+	local var_kl_1 = kitLibraryUniform(var_kl_0, arg_kl_3)
+	local var_kl_2 = arg_kl_4 and var_kl_0:getUniform(arg_kl_4) or var_kl_0:addNewUniform()
+	local var_kl_3 = arg_kl_4 and var_kl_2.name
+
+	var_kl_2.config:copy(var_kl_1.config)
+
+	var_kl_2.name = arg_kl_3.name
+	arg_kl_2.editUniformIndex = arg_kl_4 or var_kl_0.uniformCount
+
+	arg_kl_0:showNotification("alert", var_kl_3 and string.format("%s replaced %s", arg_kl_3.name, var_kl_3) or string.format("Added %s", arg_kl_3.name))
+	arg_kl_1.setDirty()
+
+	if var_kl_0.sharing then
+		var_kl_0.sharing.hasUnsharedModifications = true
+	end
+end
+
+Class("JerseyKitLibraryList", var_0_ca_list)
+
+function JerseyKitLibraryList.enter(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8)
+	local var_kl_0 = arg_kl_7.club
+	local var_kl_1 = {}
+	local var_kl_2 = {}
+
+	for iter_kl_0 = 1, var_kl_0.uniformCount do
+		var_kl_2[var_kl_0:getUniform(iter_kl_0).name] = true
+	end
+
+	for iter_kl_1, iter_kl_2 in ipairs(kitLibraryEntries(var_kl_0)) do
+		table.insert(var_kl_1, {
+			editable = true,
+			label = iter_kl_2.name .. (var_kl_2[iter_kl_2.name] and "  (in club)" or ""),
+			displayType = optionmenu_aide.DisplayTypes.LabelOnly,
+			editType = optionmenu_aide.EditTypes.SubMenu,
+			libraryEntry = iter_kl_2
+		})
+	end
+
+	if #var_kl_1 == 0 then
+		table.insert(var_kl_1, {
+			editable = false,
+			label = "NO LIBRARY KITS",
+			displayType = optionmenu_aide.DisplayTypes.LabelOnly
+		})
+	else
+		var_0_ca_preview(arg_kl_5, kitLibraryUniform(var_kl_0, var_kl_1[1].libraryEntry).config, true)
+	end
+
+	var_0_ca_base.enter(arg_kl_0, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, var_kl_1, nil, var_0_ca_menuConfig(var_kl_0.fullName, "Kit Library"))
+end
+
+function JerseyKitLibraryList.update(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8, arg_kl_9, arg_kl_10)
+	local var_kl_0 = assert(arg_kl_8.partyMember)
+	local var_kl_1, var_kl_2, var_kl_3, var_kl_4 = var_0_ca_base.update(arg_kl_0, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, var_kl_0:getInput())
+
+	if var_kl_1 then
+		arg_kl_1:changeState(nil, arg_kl_2, arg_kl_3, arg_kl_5, arg_kl_6, arg_kl_8, arg_kl_9, arg_kl_10)
+	elseif var_kl_4 and var_kl_4.libraryEntry then
+		if arg_kl_9.club.uniformCanCreateCount > 0 then
+			var_0_kl_put(arg_kl_6, arg_kl_9, arg_kl_10, var_kl_4.libraryEntry)
+			arg_kl_1:changeState(nil, arg_kl_2, arg_kl_3, arg_kl_5, arg_kl_6, arg_kl_8, arg_kl_9, arg_kl_10)
+		else
+			arg_kl_1:changeState(JerseyKitLibraryReplaceList(), arg_kl_2, arg_kl_3, arg_kl_5, arg_kl_6, arg_kl_8, arg_kl_9, arg_kl_10, var_kl_4.libraryEntry)
+		end
+	elseif var_kl_2 and var_kl_2.libraryEntry then
+		var_0_ca_preview(arg_kl_6, kitLibraryUniform(arg_kl_9.club, var_kl_2.libraryEntry).config)
+	end
+end
+
+-- the club is full: pick the kit the library kit replaces
+Class("JerseyKitLibraryReplaceList", var_0_ca_list)
+
+function JerseyKitLibraryReplaceList.enter(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8, arg_kl_9)
+	local var_kl_0 = arg_kl_7.club
+	local var_kl_1 = {}
+
+	arg_kl_0.libraryEntry = arg_kl_9
+
+	for iter_kl_0 = 1, var_kl_0.uniformCount do
+		local var_kl_2 = var_kl_0:getUniform(iter_kl_0)
+
+		table.insert(var_kl_1, {
+			editable = true,
+			label = var_kl_2:getDisplayName(iter_kl_0),
+			displayType = optionmenu_aide.DisplayTypes.LabelOnly,
+			editType = optionmenu_aide.EditTypes.SubMenu,
+			uniformIndex = iter_kl_0,
+			uniform = var_kl_2
+		})
+	end
+
+	var_0_ca_preview(arg_kl_5, var_kl_1[1].uniform.config, true)
+	var_0_ca_base.enter(arg_kl_0, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, var_kl_1, nil, var_0_ca_menuConfig(arg_kl_9.name, "Club full - replace which kit?"))
+end
+
+function JerseyKitLibraryReplaceList.update(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8, arg_kl_9, arg_kl_10)
+	local var_kl_0 = assert(arg_kl_8.partyMember)
+	local var_kl_1, var_kl_2, var_kl_3, var_kl_4 = var_0_ca_base.update(arg_kl_0, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, var_kl_0:getInput())
+
+	if var_kl_1 then
+		arg_kl_1:changeState(JerseyKitLibraryList(), arg_kl_2, arg_kl_3, arg_kl_5, arg_kl_6, arg_kl_8, arg_kl_9, arg_kl_10)
+	elseif var_kl_4 and var_kl_4.uniformIndex then
+		var_0_kl_put(arg_kl_6, arg_kl_9, arg_kl_10, arg_kl_0.libraryEntry, var_kl_4.uniformIndex)
+		arg_kl_1:changeState(nil, arg_kl_2, arg_kl_3, arg_kl_5, arg_kl_6, arg_kl_8, arg_kl_9, arg_kl_10)
+	elseif var_kl_2 and var_kl_2.uniform then
+		var_0_ca_preview(arg_kl_6, var_kl_2.uniform.config)
+	end
+end
+
+Class("AcademyClubJerseyKitLibraryState", AcademyClubJerseyCopyAcademyState)
+
+function AcademyClubJerseyKitLibraryState.enter(arg_kl_0, arg_kl_1, arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8)
+	arg_kl_5:toggleLockerRoomVisibility(true)
+
+	arg_kl_0.stateMachine = statemachine.StateMachine(type(arg_kl_0))
+
+	arg_kl_0.stateMachine:changeState(JerseyKitLibraryList(), arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8)
+end
+
 Class("AcademyClubJerseyState")
 
 function AcademyClubJerseyState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
@@ -431,7 +607,8 @@ function AcademyClubJerseyState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_
 			Appearance = academy_club_jerseystate_appearance_state.AcademyClubJerseyAppearanceState,
 			CopyLicensed = academy_club_jerseystate_copylicensed_state.AcademyClubJerseyCopyLicensedState,
 			CopyAcademy = AcademyClubJerseyCopyAcademyState,
-			CopyToClub = AcademyClubJerseyCopyToClubState
+			CopyToClub = AcademyClubJerseyCopyToClubState,
+			KitLibrary = AcademyClubJerseyKitLibraryState
 		},
 		inCommunity = arg_1_7.inCommunity
 	}

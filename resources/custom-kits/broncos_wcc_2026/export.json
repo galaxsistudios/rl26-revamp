@@ -1,0 +1,15 @@
+{
+ "club": "Brisbane Broncos 2026",
+ "clubId": 1000,
+ "isNines": false,
+ "kit": "WORLD CLUB CHALLENGE",
+ "sex": 0,
+ "uniformBottom": 0,
+ "uniformEditable": 1,
+ "uniformSocks": 0,
+ "uniformTop": 4,
+ "uniformTop_patternLayer01": 0,
+ "uniformTopItem": "top_soft02",
+ "uniformBottomItem": "shorts01",
+ "uniformSocksItem": "socks01"
+}
