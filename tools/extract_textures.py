@@ -266,22 +266,22 @@ def main():
 
     ce.load_index(args.blobset)
 
-    entries = []
+    todo = []
     if args.entry is not None:
-        entries = [args.entry]
+        todo = [args.entry]
     elif args.from_csv:
         with open(args.from_csv, newline="") as f:
             for row in csv.DictReader(f):
                 if row["kind"] in ("mini_txpk", "txpk"):
-                    entries.append(int(row["entry_index"]))
+                    todo.append(int(row["entry_index"]))
     elif args.start is not None and args.end is not None:
-        entries = list(range(args.start, args.end))
+        todo = list(range(args.start, args.end))
     else:
         ap.error("pass --entry, --from-csv, or --start/--end")
 
     total_written = 0
     errors = 0
-    for idx in entries:
+    for idx in todo:
         try:
             written = extract_entry(args.blobset, idx, args.out)
             total_written += len(written)

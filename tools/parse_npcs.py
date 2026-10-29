@@ -164,7 +164,12 @@ def visual_layout(blob):
     fields = [(h, off) for _p, typ, h, off in recs[:-1] if typ != 0xFDF1 and off < data_len]
     offsets = sorted({off for _h, off in fields} | {data_len})
     nxt = {a: b for a, b in zip(offsets, offsets[1:])}
-    return data_start, {h: (off, min(nxt[off] - off, 4)) for h, off in fields}
+    # The gap to the next offset is only an upper bound. The last field has no
+    # next one, and the bytes after it aren't its own (Jahrome Hughes' blob
+    # ends with u8 headwearColour2_r and then 01 01 d3 ...), so it gets 1 byte:
+    # a bigger value raises in visual_set instead of overwriting them.
+    last = offsets[-2] if len(offsets) > 1 else None
+    return data_start, {h: (off, 1 if off == last else min(nxt[off] - off, 4)) for h, off in fields}
 
 
 def visual_get(blob, name):

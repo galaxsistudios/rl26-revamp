@@ -147,6 +147,10 @@ def replace_added_entry(blobset_path, logical_path, blob_bytes, new_sizes, sourc
     print(f"replace entry {rec['entry_index']}: {logical_path.lower()} from {source_desc}, sizes {new_sizes}")
     if not confirm:
         return rec["entry_index"]
+    # Fail before touching the blob if the index is locked (game running):
+    # a new blob under the old index sizes would break the entry.
+    with open(blobset_path, "r+b"):
+        pass
     tmp = rec["blob_path"] + ".tmp"  # new file, not in place - see pack.replace_file
     with open(tmp, "wb") as f:
         f.write(blob_bytes)
