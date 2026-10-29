@@ -1,0 +1,20 @@
+{
+  "label": "NRL ANZAC Round",
+  "menu_label": "NRL ANZAC Round",
+  "markings": [
+    "NRL_Round_Anzac"
+  ],
+  "special_events": [
+    "AnzacRound"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "stock:anzac/anzacround01",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc"
+  }
+}

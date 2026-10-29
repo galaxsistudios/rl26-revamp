@@ -1,0 +1,11 @@
+{
+  "label": "Women's Rugby League World Cup",
+  "menu_label": "Women's Rugby League World Cup",
+  "markings": [
+    "WorldCupWomens"
+  ],
+  "competitions": [
+    "Tournament_RLWC2026Women"
+  ],
+  "stock_model": "sponsor_field_rlwc_female"
+}

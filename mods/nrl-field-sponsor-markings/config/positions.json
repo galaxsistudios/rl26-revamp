@@ -1,0 +1,28 @@
+{
+  "_doc": [
+    "Where markings can go on the pitch. Rounds (rounds/*.json) put a sponsor in a position by name.",
+    "Metres. x runs along the pitch from halfway (10 m lines at +-10..+-40, try lines +-50, dead-ball lines +-58);",
+    "z runs across it from the middle (touchlines +-34). The main broadcast camera is on the +z touchline, so +z is",
+    "the near side. x/z are the centre of the marking; along = size along the pitch, across = size across it.",
+    "broadcast_stretch: grass logos are painted longer across the pitch than they look, because the camera sees",
+    "that direction foreshortened (stock logos are ~1.38x). Art is drawn to look right AFTER that stretch.",
+    "host (what the game draws it with - one per round unless noted):",
+    "  centre     the round model's centre logo quad (centre = squarish logos, centre_wide = long ones)",
+    "  squares_a  two quads (both halves, mirrored at +-x)",
+    "  squares_b  two more quads (both halves, mirrored at +-x)",
+    "  in_goal    both in-goals, as flat panels across the field (panels_z = panel centres, length across, depth along)",
+    "  layer      an extra model drawn on top - any number per round, one quad each",
+    "A round can override x / z / along / across (or the in-goal panel layout) for a position in its own slot."
+  ],
+  "broadcast_stretch": 1.38,
+  "positions": {
+    "centre": {"host": "centre", "x": 0, "z": 23.1, "along": 12.7, "across": 17.52},
+    "centre_wide": {"host": "centre", "x": 0, "z": 26, "along": 26, "across": 7.9},
+    "centre_inner": {"host": "layer", "x": 0, "z": 10.5, "along": 8, "across": 8.3},
+    "centre_opp": {"host": "layer", "x": 0, "z": -23.1, "along": 12.7, "across": 17.52},
+    "centre_opp_inner": {"host": "layer", "x": 0, "z": -20, "along": 16, "across": 6},
+    "square_a": {"host": "squares_a", "x": 35, "z": -5.5, "along": 8, "across": 11},
+    "square_b": {"host": "squares_b", "x": 15, "z": -5.5, "along": 8, "across": 11},
+    "in_goal": {"host": "in_goal", "panels_z": [-16, 16], "length": 14, "depth": 5.6}
+  }
+}

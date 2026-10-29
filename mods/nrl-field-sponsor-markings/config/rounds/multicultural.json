@@ -1,0 +1,21 @@
+{
+  "_doc": "Multicultural Round has no field-markings value of its own, so it rides on the otherwise unused PlayNRL round.",
+  "label": "NRL Multicultural Round",
+  "menu_label": "NRL Multicultural Round",
+  "markings": [
+    "NRL_Round_PlayNRL"
+  ],
+  "special_events": [
+    "MulticulturalRound"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-centers/nrl-multicultural-round.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc"
+  }
+}

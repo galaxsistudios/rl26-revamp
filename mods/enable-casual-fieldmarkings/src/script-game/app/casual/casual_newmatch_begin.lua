@@ -117,6 +117,14 @@ function beginMatch(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_
 			var_1_2:casualMimicSeason(arg_1_6.compId, native.ETrophy.NRL, false)
 		end
 
+		-- Round picker (nrl-field-sponsor-markings): hand the Play Now pick to
+		-- the grass for this match only - stadiumgrass.lua takes it once - and
+		-- only while the native setting is still the pick's base value.
+		local var_1_FMPick = rawget(_G, "MOD_FIELD_ROUND_PICK")
+		local var_1_FMNow = arg_1_6.matchSettingsSynchroniser and arg_1_6.matchSettingsSynchroniser:getMatchSettings().fieldMarkings
+
+		rawset(_G, "MOD_FIELD_ROUND_ACTIVE", var_1_FMPick and var_1_FMNow == var_1_FMPick.value and var_1_FMPick.round or nil)
+
 		var_1_4.matchSeed = native.Random.FromSystemTime():nextAsSeed()
 		var_1_2.gameMode = native.EGameMode.Casual
 

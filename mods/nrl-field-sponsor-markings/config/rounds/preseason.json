@@ -1,0 +1,20 @@
+{
+  "_doc": [
+    "Witzer Pre-Season Challenge. No field-markings value of its own: it's a round-picker entry in Play Now",
+    "(menu_label, no markings), which runs as a Friday game underneath (picker_base, default NRL_Season_Friday).",
+    "One Witzer square per half (midway between halfway and the try line), Hostplus in the in-goals."
+  ],
+  "label": "NRL Pre-Season Challenge",
+  "menu_label": "NRL Pre-Season Challenge",
+  "slots": {
+    "centre": {
+      "art": "field-centers/pre-season-challenge-logo.png",
+      "margin": 0.02
+    },
+    "square_a": {
+      "sponsor": "witzer",
+      "x": 25
+    },
+    "in_goal": "hostplus"
+  }
+}

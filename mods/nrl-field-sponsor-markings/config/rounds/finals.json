@@ -1,0 +1,18 @@
+{
+  "_doc": "NRL_Finals is what the competition hub sets for finals matches.",
+  "label": "NRL Finals Series",
+  "menu_label": "NRL Finals Series",
+  "markings": [
+    "NRL_Finals"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-centers/nrl-finals-series.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc"
+  }
+}

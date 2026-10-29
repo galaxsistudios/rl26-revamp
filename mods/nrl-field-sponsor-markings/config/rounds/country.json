@@ -1,0 +1,17 @@
+{
+  "label": "NRL Country Round",
+  "menu_label": "NRL Country Round",
+  "markings": [
+    "NRL_Rep_CityVsCountry"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-centers/footy-country-round.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "telstra",
+    "square_b": "kfc",
+    "in_goal": "kfc"
+  }
+}

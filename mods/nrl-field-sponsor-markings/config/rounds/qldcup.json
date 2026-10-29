@@ -1,0 +1,16 @@
+{
+  "_doc": "Queensland Cup: the QRL logo with Hostplus just above it (towards halfway), nothing else. Picked by the competition, or from Play Now's round picker (career, competitions, Play Now's QLD Cup trophy).",
+  "label": "Hostplus Cup (QLD Cup)",
+  "competitions": [
+    "League_QLDCup",
+    "League_QLDCup2026"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/qrl-white-text.png",
+      "margin": 0.02
+    },
+    "centre_inner": "hostplus"
+  },
+  "menu_label": "Hostplus Cup (QLD Cup)"
+}

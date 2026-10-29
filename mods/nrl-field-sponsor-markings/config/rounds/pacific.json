@@ -1,0 +1,25 @@
+{
+  "_doc": "Pacific Championships (the old Anzac Test's successor): Kia then Chemist Warehouse in the middle, Westpac in-goals.",
+  "label": "Pacific Championships",
+  "menu_label": "Pacific Championships",
+  "markings": [
+    "NRL_Rep_AnzacTest"
+  ],
+  "competitions": [
+    "AnzacTest"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/pacific-championships-logo.png",
+      "margin": 0.02
+    },
+    "square_b": "kia",
+    "square_a": {
+      "sponsor": "chemistwarehouse",
+      "along": 10,
+      "across": 8.3,
+      "margin": 0.02
+    },
+    "in_goal": "westpac_panel"
+  }
+}

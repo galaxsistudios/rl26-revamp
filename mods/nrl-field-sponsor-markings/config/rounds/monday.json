@@ -1,0 +1,16 @@
+{
+  "label": "Monday Football",
+  "markings": [
+    "NRL_Season_Monday"
+  ],
+  "slots": {
+    "square_a": "telstra",
+    "square_b": "kfc",
+    "in_goal": "kfc",
+    "centre": "nrl_premiership",
+    "centre_opp": {
+      "art": "field-center-top/kfc_monday_football_2023.svg",
+      "margin": 0.02
+    }
+  }
+}

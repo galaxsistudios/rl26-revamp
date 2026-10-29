@@ -1,0 +1,11 @@
+{
+  "label": "Rugby League World Cup",
+  "menu_label": "Rugby League World Cup",
+  "markings": [
+    "WorldCup"
+  ],
+  "competitions": [
+    "Tournament_RLWC2026Men"
+  ],
+  "stock_model": "sponsor_field_rlwc_male"
+}

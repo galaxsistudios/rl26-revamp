@@ -1,0 +1,100 @@
+{
+  "_doc": [
+    "Reusable art. A round's slot can name one of these, or give the same fields inline (inline fields override a",
+    "named sponsor's: {\"sponsor\": \"kfc\", \"margin\": 0.1}).",
+    "art         path under resources/field-markings/ (.svg .png .jpg .avif), or stock:<model>/<texture> for art",
+    "            that ships in the game (e.g. stock:anzac/anzacround01), or \"stock\" to keep the slot's own texture",
+    "            \"none\" = no art, just the background colour (a plain panel)",
+    "background  [r, g, b] fill behind the art - flat colour panel; omit for a bare logo on the grass",
+    "fit         contain (default: aspect kept, centred) | stretch (fill the slot) | cover (fill, cropping the art)",
+    "margin      gap around the art, as a fraction of the slot's shorter side",
+    "white       true = recolour the art solid white, keeping its shape",
+    "mark        [lo, hi] = the art is a white logo printed on a dark colour: keep only the white mark",
+    "            (alpha ramps from brightness lo to hi)",
+    "invert      true = a cut-out logo (shape with see-through letters) becomes a white shape with black letters",
+    "text        a caption set to the right of the art (e.g. a slogan); font = a .ttf/.otf path from the repo root",
+    "            (default Maison-Neue-Extended-Bold.ttf), text_colour [r, g, b] (default white)",
+    "ends        in_goal only: per-end overrides, {\"neg\": {...}, \"pos\": {...}} for the -x / +x in-goal"
+  ],
+  "telstra": {
+    "art": "field-mid/telstra.png",
+    "fit": "stretch"
+  },
+  "kfc": {
+    "art": "try-zones/kfc-logo-fb.jpg",
+    "background": [
+      228,
+      0,
+      43
+    ],
+    "margin": 0.04
+  },
+  "kia": {
+    "art": "field-mid/kia.jpg",
+    "mark": [
+      60,
+      200
+    ],
+    "background": [
+      5,
+      20,
+      30
+    ],
+    "margin": 0.14
+  },
+  "westpac": {
+    "art": "field-mid/westpac.png",
+    "fit": "stretch"
+  },
+  "nrl_premiership": {
+    "art": "stock"
+  },
+  "ampol": {
+    "art": "field-center-top/ampol-origin.webp",
+    "background": [
+      255,
+      255,
+      255
+    ],
+    "margin": 0.04
+  },
+  "witzer": {
+    "art": "field-mid/witzer.webp",
+    "fit": "stretch"
+  },
+  "hostplus": {
+    "art": "try-zones/hostplus.svg",
+    "background": [
+      0,
+      40,
+      85
+    ],
+    "margin": 0.05
+  },
+  "harveynorman": {
+    "art": "field-mid/harvey-norman.svg",
+    "background": [
+      255,
+      255,
+      255
+    ],
+    "margin": 0.1
+  },
+  "chemistwarehouse": {
+    "art": "field-mid/chemist-warehouse.svg",
+    "margin": 0.04
+  },
+  "westpac_panel": {
+    "art": "field-mid/westpac.png",
+    "mark": [
+      70,
+      220
+    ],
+    "background": [
+      218,
+      23,
+      16
+    ],
+    "margin": 0.14
+  }
+}

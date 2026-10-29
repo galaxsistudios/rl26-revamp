@@ -1,0 +1,28 @@
+{
+  "_doc": [
+    "State of Origin: the Ampol shield on the near side of halfway, a wide flat Ampol panel opposite it,",
+    "Kia and KFC squares, and Ampol in both in-goals. Play Now's own State of Origin option, plus career Origin games."
+  ],
+  "label": "Ampol State of Origin",
+  "markings": [
+    "NRL_Rep_StateOfOrigin"
+  ],
+  "competitions": [
+    "Tournament_StateOfOrigin"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/state-of-origin.webp",
+      "margin": 0.02
+    },
+    "centre_opp": {
+      "sponsor": "ampol",
+      "along": 17,
+      "across": 6.8,
+      "z": -24
+    },
+    "square_a": "kfc",
+    "square_b": "telstra",
+    "in_goal": "ampol"
+  }
+}

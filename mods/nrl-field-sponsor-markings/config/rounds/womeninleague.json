@@ -1,0 +1,20 @@
+{
+  "label": "NRL Women In League Round",
+  "menu_label": "NRL Women In League Round",
+  "markings": [
+    "NRL_Round_WomenInLeague"
+  ],
+  "special_events": [
+    "WomenInLeague"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-centers/nrl-women-in-league-round.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc"
+  }
+}

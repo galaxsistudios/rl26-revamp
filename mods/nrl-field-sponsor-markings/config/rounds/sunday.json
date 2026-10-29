@@ -1,0 +1,16 @@
+{
+  "label": "Sunday Football",
+  "markings": [
+    "NRL_Season_Sunday"
+  ],
+  "slots": {
+    "square_a": "telstra",
+    "square_b": "kfc",
+    "in_goal": "kfc",
+    "centre": "nrl_premiership",
+    "centre_opp": {
+      "art": "field-center-top/sunday-footy.svg",
+      "margin": 0.02
+    }
+  }
+}

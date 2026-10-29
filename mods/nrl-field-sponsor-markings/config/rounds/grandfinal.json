@@ -1,0 +1,37 @@
+{
+  "label": "NRL Grand Final",
+  "markings": [
+    "NRL_GrandFinal",
+    "NRL_GrandFinal_Post2017"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-centers/nrl-grand-final.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc",
+    "centre_opp": {
+      "art": "field-center-top/feelnew-syd-nl.png",
+      "white": true,
+      "background": [
+        0,
+        38,
+        100
+      ],
+      "margin": 0.1,
+      "x": 0,
+      "z": -27.5,
+      "along": 16,
+      "across": 6
+    },
+    "centre_opp_inner": {
+      "art": "field-center-top/telstra-white.png",
+      "text": "wherever we go",
+      "margin": 0.02,
+      "z": -21
+    }
+  }
+}

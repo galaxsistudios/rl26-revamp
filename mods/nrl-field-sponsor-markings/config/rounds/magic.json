@@ -1,0 +1,21 @@
+{
+  "_doc": "No Magic Round field-markings value exists, so Play Now uses the unused Tuesday one.",
+  "label": "NRL Magic Round",
+  "menu_label": "NRL Magic Round",
+  "markings": [
+    "NRL_Season_Tuesday"
+  ],
+  "special_events": [
+    "MagicRound"
+  ],
+  "slots": {
+    "square_a": "telstra",
+    "square_b": "kfc",
+    "in_goal": "kfc",
+    "centre": {
+      "art": "field-centers/nrl-magic-round.avif",
+      "white": true,
+      "margin": 0.02
+    }
+  }
+}

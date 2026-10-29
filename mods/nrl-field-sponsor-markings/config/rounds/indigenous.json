@@ -1,0 +1,20 @@
+{
+  "label": "NRL Indigenous Round",
+  "menu_label": "NRL Indigenous Round",
+  "markings": [
+    "NRL_Round_Indigenous"
+  ],
+  "special_events": [
+    "Indigenous"
+  ],
+  "slots": {
+    "centre_wide": {
+      "art": "field-center-top/nrl-indigenous-round.svg",
+      "white": true,
+      "margin": 0.016
+    },
+    "square_a": "westpac",
+    "square_b": "telstra",
+    "in_goal": "kfc"
+  }
+}

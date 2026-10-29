@@ -32,6 +32,12 @@ VERTEX_STRIDE = 32
 MATERIAL_RE = re.compile(rb"fields/default/[^/\x00]+/sponsor_field_([A-Za-z0-9_]+?)_SS1?\x00")
 
 
+def in_goal_uv(x, z, x_range, z_half):
+    """Where a pitch point lands in an in-goal texture (Model.in_goal_rect):
+    u across the field, v from the try line side to the dead-ball side."""
+    return (z + z_half) / (2 * z_half), (abs(x) - x_range[0]) / (x_range[1] - x_range[0])
+
+
 def decode(stored):
     (frame_len,) = struct.unpack_from("<I", stored, 0)
     if frame_len != len(stored):
@@ -137,6 +143,89 @@ class Model:
         first = self.pos(r[5])
         for v in range(r[5] + 1, r[5] + r[6]):
             struct.pack_into("<3f", self.d, self.vb + VERTEX_STRIDE * v, *first)
+
+    def quad_count(self, material):
+        k = self.mesh_for(material)
+        if not self.quads_ok(k):
+            raise ValueError(f"{material} is not made of plain quads")
+        return self.meshes[k][6] // 4
+
+    def quad_centre_x(self, material, q):
+        r = self.meshes[self.mesh_for(material)]
+        return sum(self.pos(r[5] + 4 * q + i)[0] for i in range(4)) / 4
+
+    def place_quad(self, material, q, rect, flipped):
+        """Lay quad q of a mesh flat over rect = (x0, x1, z0, z1) in this
+        model's own coordinates, showing the whole texture. Each corner goes
+        where its (snapped) UV says: u runs along +x and v=0 is the +z side on
+        a normal model; a _flipped model is the same turned 180 degrees. That
+        is the stock orientation (art reads upright from the main camera) and
+        it keeps every quad's winding. Vertex heights are kept."""
+        r = self.meshes[self.mesh_for(material)]
+        x0, x1, z0, z1 = rect
+        for i in range(4):
+            v = r[5] + 4 * q + i
+            uv_off = self.uv + 4 * v
+            u, w = (float(c) >= 0.5 for c in np.frombuffer(bytes(self.d[uv_off:uv_off + 4]), np.float16))
+            if flipped:
+                x, z = x1 - u * (x1 - x0), z0 + w * (z1 - z0)
+            else:
+                x, z = x0 + u * (x1 - x0), z1 - w * (z1 - z0)
+            y = self.pos(v)[1]
+            struct.pack_into("<3f", self.d, self.vb + VERTEX_STRIDE * v, x, y, z)
+            self.d[uv_off:uv_off + 4] = np.array((u, w), np.float16).tobytes()
+        self.update_bbox(material)
+
+    def in_goal_rect(self, material, x_range, z_half, y=0.0):
+        """Turn a stock in-goal banner strip (6 skewed panels) into one flat
+        rectangle over the whole in-goal on its end: |x| in x_range, z in
+        +-z_half. UV: u across the field (z -z_half..z_half), v from the try
+        line side (0) to the dead-ball side (1) - see in_goal_uv. The first
+        panel's four corners become the rectangle (kept per edge, so its
+        winding holds); every other vertex is parked on one corner with that
+        corner's UV, so leftover triangles are degenerate or lie inside the
+        rectangle showing the same texture. Returns +1 / -1 for the end."""
+        k = self.mesh_for(material)
+        r = self.meshes[k]
+        nverts = sum(m[6] for m in self.meshes)
+        idx = struct.unpack_from("<6H", self.d, self.uv + 4 * nverts + 2 * r[8])
+        panel = sorted(set(idx))
+        if len(panel) != 4:
+            raise ValueError(f"{material}: first two triangles don't form one panel ({idx})")
+        pos = {i: self.pos(r[5] + i) for i in panel}
+        sign = 1 if pos[panel[0]][0] > 0 else -1
+        by_x = sorted(panel, key=lambda i: abs(pos[i][0]))
+        new = {}
+        for pair, ax in ((by_x[:2], x_range[0]), (by_x[2:], x_range[1])):
+            lo, hi = sorted(pair, key=lambda i: pos[i][2])
+            new[lo] = (sign * ax, y, -z_half)
+            new[hi] = (sign * ax, y, z_half)
+
+        def uv_of(p):
+            return np.array(in_goal_uv(p[0], p[2], x_range, z_half), np.float16).tobytes()
+
+        for i in range(r[6]):
+            p = new.get(i, new[panel[0]])
+            struct.pack_into("<3f", self.d, self.vb + VERTEX_STRIDE * (r[5] + i), *p)
+            self.d[self.uv + 4 * (r[5] + i):self.uv + 4 * (r[5] + i) + 4] = uv_of(p)
+        self.update_bbox(material)
+        return sign
+
+    def update_bbox(self, material):
+        k = self.mesh_for(material)
+        r = self.meshes[k]
+        p = np.array([self.pos(v) for v in range(r[5], r[5] + r[6])], np.float32)
+        struct.pack_into("<6f", self.d, self.bboxes + 24 * k, *p.min(axis=0), *p.max(axis=0))
+
+    def swap_model_name(self, base, new):
+        """Same-length swap of the model name inside its material paths, so a
+        clone never shares a material with the model it was cloned from."""
+        if len(base) != len(new):
+            raise ValueError("model name swaps must keep the same length")
+        out, n = re.subn(re.escape(base.encode()), new.encode(), bytes(self.d), flags=re.I)
+        if n == 0:
+            raise ValueError(f"model name {base} not found")
+        self.d = bytearray(out)
 
     def rename_texture(self, old, new):
         old_b = f"fields/textures/sponsors/{old}\x00".encode()

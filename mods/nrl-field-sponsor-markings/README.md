@@ -1,85 +1,103 @@
 # nrl-field-sponsor-markings
 
-Paints real NRL sponsor/round branding on the grass, gives each round its
-own look, and makes the markings actually show up.
+Paints NRL sponsor and round branding on the grass, laid out like a real NRL field. Everything comes from config
+files: one per round, saying which sponsor goes in which spot.
 
-## What was wrong
+Each round has:
 
-- Every NRL sponsor bundle shipped **byte-identical** textures (Kia Tasman car
-  ads, League Stars, NRL Fantasy banners), so Thursday/Friday/Saturday/... all
-  looked the same.
-- The sponsor layer loads with `visible = false` and only the team-shield
-  intro turned it on, so it could stay hidden.
-- ANZAC, Indigenous, Multicultural, Women In League and both World Cups ship
-  sponsor models, but only career special events / competition ids reached
-  them. Picking them as field markings loaded nothing.
+- a **centre logo** on halfway, on the near (camera) side
+- a **day badge** opposite it, for Thursday to Sunday
+- **four flat sponsor squares**, two in each half:
+  - one between the 20 m and 30 m lines (Telstra)
+  - one just off halfway (KFC, or Westpac in the special rounds)
+- **flat sponsor panels** in both in-goals. These replace Big Ant's "card" banners, which had a folded corner and
+  were painted in a fanned perspective.
 
-## What it changes
+## Config
 
-| Part | How it's installed |
+| File | What it holds |
 |---|---|
-| `src/.../rendering/stadium/stadiumgrass.lua`: maps the extra enum values to their models, and makes the sponsor layer visible at load | `build.py full --confirm` (entry 39959) |
-| 18 sponsor TXPK texture bundles (39883–39925, odd entries) | `build_textures.py` then `install.py` |
-| Play Now option list (labels for the new options) | lives in `mods/enable-casual-fieldmarkings`, entry 39959 |
+| [config/positions.json](config/positions.json) | Every spot on the pitch, in metres: centre, `centre_opp`, `square_a`, `square_b`, `in_goal` |
+| [config/sponsors.json](config/sponsors.json) | Reusable art: logo file, background colour, fit, margin, white/mark recolouring |
+| [config/rounds/*.json](config/rounds/) | One per round: which field-markings values or career events pick it, its Play Now label, and what goes in each position |
 
-Sponsor models (the entry before each bundle, patched by `install.py` using
-[models.py](models.py)):
+A round's slot is either a sponsor name (`"square_b": "kfc"`) or an inline spec. An inline spec can override the
+position's size and placement, for example
+`"centre": {"art": "...", "x": 0, "z": 26, "along": 26, "across": 7.9}`. The `_doc` keys in each file explain
+the fields.
 
-- **Day badge moved to halfway.** Stock shows `leagueStars01` as two tilted
-  quads near each 20 m. On the Thursday/Friday/Saturday/Sunday models (and
-  their `_flipped` twins), quad A is now the NRL centre logo quad shifted to
-  the opposite touchline. It's the same size and orientation, so the NRL
-  shield sits on one side of halfway and the day badge on the other. Quad B
-  is collapsed so it disappears.
-- **Unique texture paths.** Every bundle shipped the same texture names.
-  The day badge is renamed `leaguestars{th,fr,sa,su}` and the Westpac square
-  `kiatasmanwp`, in both the model and its bundle. A path-keyed texture
-  cache can then never show one round's art in another.
+Art paths are under `resources/field-markings/`. Two special values:
 
-- **Grand Final.** The stock game has no Grand Final sponsor model, so
-  `NRL_GrandFinal` loaded nothing. It now uses the **women's RLWC** model
-  pair (39902/39904), which is geometrically identical to the men's.
-  - Women's World Cup (option and tournament) now uses the men's model.
-  - The centre quad is widened to 26 × 7.9 m for the wide GF wordmark,
-    recoloured white.
-  - Its own in-goal banners are hidden. `stadiumgrass.lua` draws the
-    **Monday** model as a second sponsor layer for the GF, re-textured to
-    Westpac mid-field squares and KFC in-goal banners, with its League Stars
-    badge hidden. So picking Monday markings now shows just those.
-  - Its centre texture is renamed `nrlgf1`; Monday's squares are
-    `kiatasmanw1` / `kiatasmanwp`.
-- **Full-texture UVs.** Stock quads show only a window of their texture: the
-  RLWC centre maps u 0.16–0.84, and the mid-field squares crop up to 17% top
-  or bottom. Those quads now map the whole texture, so replacement art isn't
-  cut off at the sides.
+- `stock:<model>/<texture>` reuses art that ships with the game, e.g. the ANZAC and Women In League logos.
+- `stock` keeps the slot's own texture (the NRL Telstra Premiership centre logo).
 
-`NRL_Round_PlayNRL` is reused as **NRL Multicultural Round** because that
-round has a model but no enum value of its own.
+### Rounds
 
-Texture slots (sources in `resources/field-markings/`):
+| Round | Picked by |
+|---|---|
+| Thursday / Friday / Saturday / Sunday / Monday | `NRL_Season_<Day>` |
+| ANZAC, Indigenous, Women In League | `NRL_Round_*` + the career special event |
+| Multicultural | `NRL_Round_PlayNRL` + `MulticulturalRound` (no enum value of its own) |
+| Grand Final | `NRL_GrandFinal`, `NRL_GrandFinal_Post2017` |
+| Finals Series | `NRL_Finals` (the competition hub sets this for finals) |
+| Magic Round | `NRL_Season_Tuesday` (unused value) + the `MagicRound` special event |
+| Country Round | `NRL_Rep_CityVsCountry` |
+| State of Origin (Ampol shield, Ampol panel opposite, Kia/KFC squares, Ampol in-goals) | `NRL_Rep_StateOfOrigin` + `Tournament_StateOfOrigin` |
+| Rugby League Las Vegas | `NRL_Season_Wednesday` (unused value); forced at Allegiant by las-vegas-stadium |
+| World Cups | the stock RLWC models, unchanged |
 
-| Slot | On the pitch | Filled with |
-|---|---|---|
-| `leaguestars01` | day badge | Thursday/Friday/Saturday/Sunday logo |
-| `kiatasman01` / `02` | mid-field squares | Telstra + Kia (day rounds) or Westpac (special rounds), recoloured white except Telstra |
-| `wideleft/right_nrlfantasy` | in-goal banners | KFC |
-| `indigenousround01`, `multiculturalround01` | centre | new round logos (Multicultural recoloured white) |
+### Play Now and the round picker
 
-Not used yet, because no shipped model has a slot for them: Finals Series,
-Magic Round, Las Vegas, Country Round. Monday, ANZAC and Women In
-League keep their stock badge/centre art.
+The Play Now Field Markings list is built in `enable-casual-fieldmarkings`:
 
-## Rebuild / install / undo (game closed)
+- **Rounds with a `markings` value** (and a `menu_label`) are listed under that game value.
+- **Rounds with a `menu_label` but no `markings`** go in the **round picker** instead, so they need no game value at all (e.g. Pre-Season Challenge).
+  - Picking one sets the native setting to the round's `picker_base` (default `NRL_Season_Friday`, so the match runs as a Friday game). It also remembers the round in `MOD_FIELD_ROUND_PICK`.
+  - `casual_newmatch_begin` hands it to the grass as `MOD_FIELD_ROUND_ACTIVE`, and `stadiumgrass.lua` takes it once for that match only. Career and competition matches never see it.
+  - Picking any normal option clears the pick.
 
-`build_textures.py` reads the stock bundles, so restore before rebuilding.
+Priority on the grass: forced round (`fieldRoundOverride`, e.g. Allegiant) → the picker → career special event → competition → field-markings value.
+
+Debug: both Lua files append to `fieldmarkings_debug.txt` in the game folder. The menu logs each extra option and whether its value exists; the grass logs the inputs and the chosen round.
+
+## How it's built
+
+[fieldmarkings.py](fieldmarkings.py) turns each round into its own **new** model and texture bundle (appended
+with `add_entries.py`), so every stock sponsor entry stays as shipped.
+
+- **Main model.** Each round's main model is a clone of the stock Thursday model, whose meshes are reused as the
+  hosts (see the docstring):
+  - the centre quad
+  - two `kiaTasman` quads (`square_a`)
+  - the two `leagueStars` quads (`square_b`)
+  - the in-goal strips, each turned into one flat rectangle with the panels painted in
+- **Extra layers.** `layer` positions (`centre_opp`, used for the day badge) are extra models cloned from the men's
+  RLWC model and drawn on top.
+- **Placement.** Quads are laid flat and axis-aligned. Each corner goes where its UV says, so art reads upright
+  from the main camera, and the `_flipped` twin is the same layout turned 180°.
+- **Unique names.** Clones get unique model names (material paths) and texture names. The texture names keep
+  the same length and their order in the bundle.
+
+[stadiumgrass.lua](src/script-game/rendering/stadium/stadiumgrass.lua) and `enable-casual-fieldmarkings`'
+Play Now list carry tables generated from the rounds. They sit between `BEGIN/END generated by fieldmarkings.py`
+markers. Extra layers end up in `grass.fieldmarkings_sponsorsExtraList`, which las-vegas-stadium hides at
+Allegiant.
+
+## Edit / rebuild / install (game closed)
 
 ```powershell
-python mods\nrl-field-sponsor-markings\install.py restore   # undo models + textures
-python mods\nrl-field-sponsor-markings\build_textures.py --texconv <path>\texconv.exe
-python mods\nrl-field-sponsor-markings\install.py install --confirm
+python mods\nrl-field-sponsor-markings\fieldmarkings.py lua          # after editing config/rounds (Lua tables)
+python tools\build.py full --confirm                                  # only if lua changed anything (restore 40053 first)
+python mods\nrl-field-sponsor-markings\fieldmarkings.py build --texconv <path>\texconv.exe
+python mods\nrl-field-sponsor-markings\fieldmarkings.py install --confirm
 ```
 
-`texconv.exe` is from Microsoft DirectXTex releases. `pip install resvg-py`
-is needed for the SVG sources. `install.py` writes the stock main/vram split
-(raw header + chunk-framed payload), not `build_texture.py inject-bundle`'s
-all-in-main layout, which texture_mods.py notes never loads.
+- **`build`** writes `_build/nrl-field-sponsor-markings/`. Its `previews/<round>.png` and `previews/all.png` show
+  each layout top-down with the main camera at the bottom. Logos look stretched across the pitch there, because
+  the broadcast angle squashes that direction (`broadcast_stretch`). The build refuses to run while the generated
+  Lua is stale.
+- **`install`** first restores any stock sponsor entries that the old in-place version of this mod replaced. It
+  then adds or replaces the appended entries.
+
+It needs `texconv.exe` (Microsoft DirectXTex) and `pip install resvg-py`. [art.py](art.py) holds the art loaders and
+BC7 encoder, which las-vegas-stadium shares.

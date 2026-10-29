@@ -1,0 +1,16 @@
+{
+  "label": "Friday Night Football",
+  "markings": [
+    "NRL_Season_Friday"
+  ],
+  "slots": {
+    "square_a": "telstra",
+    "square_b": "kfc",
+    "in_goal": "kfc",
+    "centre": "nrl_premiership",
+    "centre_opp": {
+      "art": "field-center-top/friday-night-footy.svg",
+      "margin": 0.02
+    }
+  }
+}

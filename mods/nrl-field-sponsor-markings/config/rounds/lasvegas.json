@@ -1,0 +1,26 @@
+{
+  "_doc": [
+    "Rugby League Las Vegas. No field-markings value exists, so Play Now uses the unused Wednesday one.",
+    "las-vegas-stadium forces this round at Allegiant Stadium (whatever was picked). No in_goal slot: Allegiant",
+    "paints its own black in-goals with KFC panels, and two decals in the same spot flicker."
+  ],
+  "label": "Rugby League Las Vegas",
+  "menu_label": "Rugby League Las Vegas",
+  "markings": [
+    "NRL_Season_Wednesday"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/nrl-vegas.png",
+      "white": true,
+      "margin": 0.02
+    },
+    "centre_opp": {
+      "art": "field-center-top/jd-sports.webp",
+      "invert": true,
+      "margin": 0.12
+    },
+    "square_a": "telstra",
+    "square_b": "kfc"
+  }
+}

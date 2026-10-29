@@ -1,0 +1,37 @@
+{
+  "_doc": "NRL All Stars: Harvey Norman as the sole middle sponsor (one wide panel per half), plain orange (-x) and dark green (+x) in-goals.",
+  "label": "NRL All Stars",
+  "menu_label": "NRL All Stars",
+  "markings": [
+    "NRL_Rep_AllStarsMatch"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/nrl-all-stars-logo.png",
+      "margin": 0.02
+    },
+    "square_a": {
+      "sponsor": "harveynorman",
+      "x": 25,
+      "along": 12,
+      "across": 4.6
+    },
+    "in_goal": {
+      "art": "none",
+      "background": [
+        255,
+        121,
+        0
+      ],
+      "ends": {
+        "pos": {
+          "background": [
+            0,
+            82,
+            45
+          ]
+        }
+      }
+    }
+  }
+}

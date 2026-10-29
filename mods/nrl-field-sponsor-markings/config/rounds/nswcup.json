@@ -1,0 +1,14 @@
+{
+  "_doc": "NSW Cup: just its own logo. Picked by the competition, or from Play Now's round picker.",
+  "label": "Knock-On Effect NSW Cup",
+  "competitions": [
+    "League_NSWCup"
+  ],
+  "slots": {
+    "centre": {
+      "art": "field-centers/nsw-cup.webp",
+      "margin": 0.02
+    }
+  },
+  "menu_label": "Knock-On Effect NSW Cup"
+}
