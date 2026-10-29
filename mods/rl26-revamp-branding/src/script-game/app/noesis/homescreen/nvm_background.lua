@@ -30,6 +30,8 @@ end).Bindings = {
 		AwayTeamColour = ns.Color,
 		MainColour = ns.Color,
 		LightMode = ns.Bool,
+		ChromaKeyVisible = ns.Bool,
+		ChromaKeyColour = ns.Color,
 		TitleHerbieImage = ns.typeOf(native.CNoesisTextureSource),
 		TitleJesseImage = ns.typeOf(native.CNoesisTextureSource),
 		TitleSmokeImage = ns.typeOf(native.CNoesisTextureSource),
@@ -134,6 +136,17 @@ function NVMBackground.setBackgroundTeamColours(arg_6_0, arg_6_1)
 
 	arg_6_0.allowThrough = false
 	arg_6_0.colours = arg_6_1
+end
+
+-- rl26-revamp-branding: chroma-key backdrop (blue / green screen) over the
+-- whole menu background, for storm-celebration-viewer's thumbnails.
+-- arg_ck_1 = {r, g, b} (0-255), or nil to hide it.
+function NVMBackground.setChromaKey(arg_ck_0, arg_ck_1)
+	if arg_ck_1 then
+		arg_ck_0.ChromaKeyColour = native.NsColor(arg_ck_1[1], arg_ck_1[2], arg_ck_1[3], 255)
+	end
+
+	arg_ck_0.ChromaKeyVisible = arg_ck_1 ~= nil
 end
 
 function NVMBackground.setBackgroundColour(arg_7_0, arg_7_1)

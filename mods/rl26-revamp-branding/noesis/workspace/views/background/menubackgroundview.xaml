@@ -965,6 +965,31 @@
             </Rectangle.Fill>
         </Rectangle>
 
+        <!--rl26-revamp-branding: chroma-key backdrop (blue / green screen) for
+            storm-celebration-viewer's thumbnails. Covers the whole menu background;
+            the 3D player model draws over it. Hidden unless ChromaKeyVisible.-->
+        <Rectangle x:Name="ChromaKeyBackdrop"
+                   Grid.RowSpan="99"
+                   Grid.ColumnSpan="99"
+                   IsHitTestVisible="False">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{Binding ChromaKeyColour}" />
+            </Rectangle.Fill>
+            <Rectangle.Style>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ChromaKeyVisible}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+
         <!--VISUAL STATES-->
 
 

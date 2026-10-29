@@ -69,6 +69,13 @@ meter and event highlights.
 
 With `skip_intro = true` (skip-intro-to-main-menu) the start screen is skipped entirely.
 
+## Chroma-key backdrop
+
+`make_branding.py` also adds a hidden full-screen `ChromaKeyBackdrop` rectangle as the last child of
+`menubackgroundview.xaml`'s RootGrid, plus `ChromaKeyVisible` / `ChromaKeyColour` properties and
+`NVMBackground.setChromaKey({r, g, b} | nil)` in `nvm_background.lua`. storm-celebration-viewer's Backdrop
+option uses it for blue / green screen thumbnails.
+
 ## Rebuild / install
 
 The XAML and DDS are generated, so don't hand-edit them. Rerun the

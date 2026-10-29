@@ -35,6 +35,53 @@ local var_0_celebrations = {
 	{ value = "xavier_coates_celebration", face = "face_storm_37_xavier_coates", label = "Xavier Coates" },
 	{ value = "sua_faalogo_celebration", face = "face_storm_sua_faalogo_01", label = "Sua Fa'alogo" }
 }
+
+-- The main-menu-revamp home screen animations (frontend ui.animset, always loaded). These
+-- are ball clips. female = the women's version of the clip.
+local var_0_menuAnimByClip = {}
+
+-- Which hand holds the ball in each menu clip: "left", "right" or "none" (no ball).
+-- Keep in step with MainMenuBallHands in main-menu-revamp's compresssavedata_state.lua.
+-- The Ball row ("Auto" = this table) is for working out the right value in game.
+-- Checked in game: right hand 1, 2, 5, 6, 9; no ball 3, 4, 7, 8; left hand 10.
+local var_0_menuBallHands = {
+	ui_idle_01_withball = "left",
+	ui_idle_01_approval_withball = "left",
+	p1_pro_team_poses_01 = "right",
+	p1_pro_team_poses_02 = "right",
+	p1_pro_team_poses_03 = "none",
+	p1_pro_team_poses_04 = "none",
+	p1_pro_team_poses_05 = "right",
+	p1_pro_team_poses_06 = "right",
+	p1_pro_team_poses_07 = "none",
+	p1_pro_team_poses_08 = "none",
+	p1_pro_team_poses_09 = "right",
+	p1_pro_team_poses_10 = "left"
+}
+local var_0_ballModes = {
+	{ value = "auto", label = "Auto" },
+	{ value = "left", label = "Left Hand" },
+	{ value = "right", label = "Right Hand" },
+	{ value = "none", label = "None" }
+}
+local var_0_menuAnims = {
+	{ value = "ui_idle_01_withball", female = "ui_idle_01_withball_f", label = "Menu: Idle" },
+	{ value = "ui_idle_01_approval_withball", female = "ui_idle_01_approval_withball_f", label = "Menu: Approval" }
+}
+
+for iter_0_0 = 1, 10 do
+	local var_0_pose = string.format("p1_pro_team_poses_%02d", iter_0_0)
+
+	table.insert(var_0_menuAnims, { value = var_0_pose, female = var_0_pose .. "_f", label = "Menu: Pro Team Pose " .. iter_0_0 })
+end
+
+for iter_0_0, iter_0_1 in ipairs(var_0_menuAnims) do
+	iter_0_1.ball = var_0_menuBallHands[iter_0_1.value] or "left"
+	var_0_menuAnimByClip[iter_0_1.value] = iter_0_1
+
+	table.insert(var_0_celebrations, iter_0_1)
+end
+
 local var_0_faceByClip = {}
 
 for iter_0_0, iter_0_1 in ipairs(var_0_celebrations) do
@@ -46,6 +93,29 @@ local var_0_framings = {
 	{ value = "FullBody_OutsideOfAppearance_Centred", label = "Full Body (Centred)" },
 	{ value = "HeadAndShoulders_OutsideOfAppearance", label = "Head & Shoulders" }
 }
+-- Backdrop for thumbnail captures: a chroma-key colour over the whole menu background
+-- (rl26-revamp-branding's NVMBackground.setChromaKey), or the normal stage.
+local var_0_backdrops = {
+	{ value = "stage", label = "Stage" },
+	{ value = "blue", label = "Blue Screen" },
+	{ value = "green", label = "Green Screen" }
+}
+local var_0_backdropColours = {
+	blue = { 0, 71, 187 },
+	green = { 0, 177, 64 }
+}
+
+local function var_0_debugLog(arg_0_0)
+	pcall(function()
+		local var_0_file = io.open("celebrationviewer_debug.txt", "a")
+
+		if var_0_file then
+			var_0_file:write(os.date("%Y-%m-%d %H:%M:%S ") .. tostring(arg_0_0) .. "\n")
+			var_0_file:close()
+		end
+	end)
+end
+
 local var_0_celebrationBlendFrames = 10
 local var_0_faceBlendFrames = 7
 local var_0_optionMenuState = optionmenu_state.OptionMenuState
@@ -250,6 +320,15 @@ function AcademyPlayerViewCelebrationState.enter(arg_0_0, arg_0_1, arg_0_2, arg_
 	arg_0_0.goBackFactory = arg_0_8
 	arg_0_0.partyMember = VERIFY(arg_0_6.partyMember)
 	arg_0_0.paused = false
+	arg_0_0.engine = arg_0_2
+	arg_0_0.uiHidden = false
+	arg_0_0.appliedBackdrop = "stage"
+
+	local var_0_bgOk, var_0_bg = pcall(function()
+		return arg_0_5.mixins.background.viewModel
+	end)
+
+	arg_0_0.backgroundViewModel = var_0_bgOk and var_0_bg or nil
 
 	local var_0_clip = var_0_celebrations[1].value
 	local var_0_ok, var_0_name = pcall(function()
@@ -267,7 +346,22 @@ function AcademyPlayerViewCelebrationState.enter(arg_0_0, arg_0_1, arg_0_2, arg_
 	arg_0_0.model = arg_0_5:playerModelGetPlayer(1)
 	arg_0_0.clubManager = arg_0_5:getClubManager()
 
+	local var_0_sexOk, var_0_sex = pcall(function()
+		return arg_0_7.player.identity.sex
+	end)
+
+	arg_0_0.isFemale = var_0_sexOk and var_0_sex == native.CSex.Female
+
 	local var_0_model = arg_0_0.model
+	local var_0_ball = var_0_model.props and var_0_model.props.ball
+
+	-- the menu clips add a ball; whatever the hub had is put back on exit
+	arg_0_0.savedBall = var_0_ball and {
+		attached = var_0_ball.attached,
+		joint = var_0_ball.attachmentJoint,
+		visible = var_0_ball.visible
+	}
+	arg_0_0.ballShown = nil
 	local var_0_clubManager = arg_0_0.clubManager
 	local var_0_clubList = var_0_buildClubList(var_0_clubManager)
 	local var_0_club = arg_0_7.club and var_0_clubManager:getClub(arg_0_7.club.id)
@@ -282,6 +376,8 @@ function AcademyPlayerViewCelebrationState.enter(arg_0_0, arg_0_1, arg_0_2, arg_
 
 	arg_0_0.params = {
 		clip = var_0_clip,
+		ball = "auto",
+		backdrop = "stage",
 		face = var_0_autoFace,
 		framing = var_0_framings[1].value,
 		club = var_0_club and var_0_club.id,
@@ -307,8 +403,10 @@ function AcademyPlayerViewCelebrationState.enter(arg_0_0, arg_0_1, arg_0_2, arg_
 
 	local var_0_items = {
 		var_0_valueListItem("Celebration", var_0_celebrations, "clip"),
+		var_0_valueListItem("Ball", var_0_ballModes, "ball"),
 		var_0_valueListItem("Face", var_0_buildFaceList(var_0_model:getAnimationProvider()), "face"),
-		var_0_valueListItem("Framing", var_0_framings, "framing")
+		var_0_valueListItem("Framing", var_0_framings, "framing"),
+		var_0_valueListItem("Backdrop", var_0_backdrops, "backdrop")
 	}
 
 	if #var_0_clubList > 0 then
@@ -334,11 +432,22 @@ function AcademyPlayerViewCelebrationState.enter(arg_0_0, arg_0_1, arg_0_2, arg_
 end
 
 function AcademyPlayerViewCelebrationState.exit(arg_0_0, arg_0_1, arg_0_2, arg_0_3, arg_0_4)
+	arg_0_0:setUiHidden(false)
+	arg_0_0:setBackdrop("stage")
 	var_0_optionMenuState.exit(arg_0_0, arg_0_1, arg_0_2, arg_0_3, arg_0_4)
 
 	if arg_0_0.model then
 		arg_0_0.model:setAnimationUpdateEnabled(true)
 		var_0_setForcedFace(arg_0_0.model, nil)
+
+		local var_0_ball = arg_0_0.model.props and arg_0_0.model.props.ball
+		local var_0_saved = arg_0_0.savedBall
+
+		if var_0_ball and var_0_saved then
+			var_0_ball.attached = var_0_saved.attached
+			var_0_ball.attachmentJoint = var_0_saved.joint
+			var_0_ball.visible = var_0_saved.visible
+		end
 
 		if arg_0_0.jerseyChanged then
 			arg_0_0.model:setUniformConfig(arg_0_0.savedUniform, arg_0_0.savedClubIdentity)
@@ -371,6 +480,139 @@ end
 
 function AcademyPlayerViewCelebrationState.addCustomTooltips(arg_0_0, arg_0_1, arg_0_2, arg_0_3)
 	arg_0_2:addTooltip(arg_0_0.tooltipsWidget, native.InputTypes.X, arg_0_0.paused and "Resume" or "Pause", 17)
+	arg_0_2:addTooltip(arg_0_0.tooltipsWidget, native.InputTypes.Y, "Hide Menu", 18)
+end
+
+function AcademyPlayerViewCelebrationState.setBackdrop(arg_0_0, arg_0_1)
+	if arg_0_0.appliedBackdrop == arg_0_1 then
+		return
+	end
+
+	arg_0_0.appliedBackdrop = arg_0_1
+
+	local var_0_bg = arg_0_0.backgroundViewModel
+
+	if not (var_0_bg and var_0_bg.setChromaKey) then
+		var_0_debugLog("backdrop: no NVMBackground.setChromaKey (rl26-revamp-branding not installed?)")
+
+		return
+	end
+
+	local var_0_ok, var_0_err = pcall(var_0_bg.setChromaKey, var_0_bg, var_0_backdropColours[arg_0_1])
+
+	if not var_0_ok then
+		var_0_debugLog("backdrop: " .. tostring(var_0_err))
+	end
+end
+
+-- Hide menu (Y): the option menu stops updating (so its button prompts go too) and its area
+-- is hidden. The Noesis views on the PRE_SCENE / POST_SCENE / OVERLAY layers (gamertag,
+-- version text, ...) are switched off through CNoesisView.renderingEnabled; that binding
+-- is unproven, so every step is pcall'd and the first attempt is logged to
+-- celebrationviewer_debug.txt. The BACKGROUND layer (backdrop) is left alone.
+function AcademyPlayerViewCelebrationState.setUiHidden(arg_0_0, arg_0_1)
+	if arg_0_0.uiHidden == arg_0_1 then
+		return
+	end
+
+	arg_0_0.uiHidden = arg_0_1
+
+	if arg_0_0.area then
+		local var_0_ok, var_0_err = pcall(arg_0_0.area.setHidden, arg_0_0.area, arg_0_1)
+
+		if not var_0_ok then
+			var_0_debugLog("hide menu: area:setHidden failed: " .. tostring(var_0_err))
+		end
+	end
+
+	if not arg_0_1 then
+		for iter_0_0, iter_0_1 in ipairs(arg_0_0.hiddenViews or {}) do
+			pcall(function()
+				iter_0_1.renderingEnabled = true
+			end)
+		end
+
+		arg_0_0.hiddenViews = nil
+
+		return
+	end
+
+	arg_0_0.hiddenViews = {}
+
+	local var_0_ok, var_0_err = pcall(function()
+		local var_0_manager = arg_0_0.engine:getNoesis():getViewManager()
+		local var_0_layers = native.ENoesisViewManagerLayer
+
+		for iter_0_0, iter_0_1 in ipairs({
+			"PRE_SCENE",
+			"POST_SCENE",
+			"OVERLAY"
+		}) do
+			local var_0_views = var_0_manager:getAllViewsForLayer(var_0_layers[iter_0_1])
+			local var_0_count, var_0_hidden = 0, 0
+
+			if rawtype(var_0_views) == "table" then
+				for iter_0_2, iter_0_3 in pairs(var_0_views) do
+					var_0_count = var_0_count + 1
+
+					local var_0_set = pcall(function()
+						if iter_0_3.renderingEnabled ~= false then
+							iter_0_3.renderingEnabled = false
+
+							table.insert(arg_0_0.hiddenViews, iter_0_3)
+						end
+					end)
+
+					if var_0_set then
+						var_0_hidden = var_0_hidden + 1
+					end
+				end
+			end
+
+			if not arg_0_0.loggedHide then
+				var_0_debugLog(string.format("hide menu: layer %s: %s, %d views, %d hidden", iter_0_1, rawtype(var_0_views), var_0_count, var_0_hidden))
+			end
+		end
+	end)
+
+	if not var_0_ok then
+		var_0_debugLog("hide menu: overlay views: " .. tostring(var_0_err))
+	end
+
+	arg_0_0.loggedHide = true
+end
+
+-- Ball for the menu clips: "left" / "right" hand or "none". An attach without a joint falls
+-- back to RightHandBallJoint (PlayerModel.flushPropAttachments) even though the ball prop
+-- declares LeftHandBallJoint, so the joint is always passed. Attachment and visibility are
+-- flushed every frame.
+local var_0_ballJoints = {
+	left = native.EGearAttachmentJoint.LeftHandBallJoint,
+	right = native.EGearAttachmentJoint.RightHandBallJoint
+}
+
+function AcademyPlayerViewCelebrationState.setBall(arg_0_0, arg_0_1)
+	if arg_0_0.ballShown == arg_0_1 then
+		return
+	end
+
+	local var_0_model = arg_0_0.model
+
+	if not (var_0_model.props and var_0_model.props.ball) then
+		return
+	end
+
+	arg_0_0.ballShown = arg_0_1
+
+	local var_0_joint = var_0_ballJoints[arg_0_1]
+
+	if var_0_joint then
+		var_0_model:attachProp("ball", var_0_joint)
+		var_0_model:showProp("ball")
+	else
+		var_0_model:detachProp("ball")
+		var_0_model:hideProp("ball")
+	end
 end
 
 function AcademyPlayerViewCelebrationState.updateCelebration(arg_0_0)
@@ -383,10 +625,23 @@ function AcademyPlayerViewCelebrationState.updateCelebration(arg_0_0)
 
 	local var_0_clip = arg_0_0.params.clip
 	local var_0_provider = var_0_model:getAnimationProvider()
+	local var_0_menuAnim = var_0_menuAnimByClip[var_0_clip]
+
+	if var_0_menuAnim and arg_0_0.isFemale and var_0_provider and var_0_provider:getAnimationByName(var_0_menuAnim.female) then
+		var_0_clip = var_0_menuAnim.female
+	end
 
 	if not var_0_provider or not var_0_provider:getAnimationByName(var_0_clip) then
 		return
 	end
+
+	local var_0_ballMode = arg_0_0.params.ball
+
+	if var_0_ballMode == "auto" then
+		var_0_ballMode = var_0_menuAnim and var_0_menuAnim.ball or "none"
+	end
+
+	arg_0_0:setBall(var_0_ballMode)
 
 	local var_0_command = var_0_model:getPrimaryBodyCommand()
 	local var_0_restart = not var_0_command or var_0_command.anim ~= var_0_clip or var_0_command:isFinished()
@@ -420,13 +675,29 @@ end
 
 function AcademyPlayerViewCelebrationState.update(arg_0_0, arg_0_1, arg_0_2, arg_0_3, arg_0_4, arg_0_5, arg_0_6, arg_0_7, arg_0_8, arg_0_9)
 	local var_0_partyMember = arg_0_0.partyMember
-	local var_0_finished = var_0_optionMenuState.update(arg_0_0, arg_0_2, arg_0_3, arg_0_4, arg_0_5, arg_0_6, arg_0_7, var_0_partyMember:getInput())
 
-	if var_0_finished then
-		arg_0_1:changeState(arg_0_0.goBackFactory(), arg_0_2, arg_0_3, arg_0_5, arg_0_6, arg_0_8, arg_0_9, arg_0_0.__proto)
+	if arg_0_0.uiHidden then
+		-- menu hidden: only Y / B (show it again) and X (pause) are read
+		if arg_0_6:checkForRelease(var_0_partyMember, native.InputTypes.Y) or arg_0_6:checkForRelease(var_0_partyMember, native.InputTypes.Decline) then
+			arg_0_6:playSound("Select")
+			arg_0_0:setUiHidden(false)
+		end
+	else
+		local var_0_finished = var_0_optionMenuState.update(arg_0_0, arg_0_2, arg_0_3, arg_0_4, arg_0_5, arg_0_6, arg_0_7, var_0_partyMember:getInput())
 
-		return
+		if var_0_finished then
+			arg_0_1:changeState(arg_0_0.goBackFactory(), arg_0_2, arg_0_3, arg_0_5, arg_0_6, arg_0_8, arg_0_9, arg_0_0.__proto)
+
+			return
+		end
+
+		if not arg_0_0.subState and arg_0_6:checkForRelease(var_0_partyMember, native.InputTypes.Y) then
+			arg_0_6:playSound("Select")
+			arg_0_0:setUiHidden(true)
+		end
 	end
+
+	arg_0_0:setBackdrop(arg_0_0.params.backdrop)
 
 	if arg_0_0.params.framing ~= arg_0_0.appliedFraming then
 		var_0_setCamera(arg_0_0.model, arg_0_0.params.framing)
@@ -461,7 +732,7 @@ local var_0_celebrationTile = {
 	rowSize = 1,
 	rowStart = 4,
 	title = "Celebrations",
-	description = "Play a Melbourne Storm promo try celebration on this player, looped.",
+	description = "Play a Melbourne Storm promo try celebration or a main menu animation on this player, looped.",
 	stateFactory = AcademyPlayerViewCelebrationState
 }
 

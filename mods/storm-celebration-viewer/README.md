@@ -7,6 +7,15 @@ you change it or back out. Use it to grab thumbnails.
 
 - **Celebration**: left/right to pick a clip. It defaults to the viewed player's own
   celebration when that player is one of the 15 Storm players (matched on `identity.fullName`, letters only).
+  After the Storm clips come the main menu animations (main-menu-revamp's home screen player):
+  **Menu: Idle**, **Menu: Approval** and **Menu: Pro Team Pose 1-10**. These are the `_withball` /
+  `p1_pro_team_poses_NN` clips from the frontend `ui.animset` (female players get the `_f` versions). While one
+  plays, the ball goes in the hand set in `var_0_menuBallHands` (`left` / `right` / `none`).
+- **Ball**: Auto (that table), Left Hand, Right Hand or None. Use it to work out each menu clip's hand in game,
+  then put the answer in `var_0_menuBallHands` and in main-menu-revamp's `MainMenuBallHands`, which is keyed by
+  action set, e.g. `rl1_proteam_screenshot_03` = `p1_pro_team_poses_03`. The ball prop declares `LeftHandBallJoint`, but an
+  attach without a joint falls back to `RightHandBallJoint` (`PlayerModel.flushPropAttachments`), so the joint
+  is passed explicitly. The hub's ball state is restored on exit.
 - **Face**: "Auto" plays the celebration's own Storm face clip. The rest of the list is every
   face clip named in `emotiongroups.lua` and `emotiongroups_ui.lua` that the menu has loaded
   (except `face_zero` and the test pose), sorted, without the `face_` prefix.
@@ -16,6 +25,14 @@ you change it or back out. Use it to grab thumbnails.
   the player's own uniform and club identity are copied on entry and put back on exit.
 - **Framing**: Full Body, Full Body (Centred), or Head & Shoulders. These are the stock
   `playermodel_camera_aide` presets. The cutscene cameras are not used.
+- **Backdrop**: Stage, Blue Screen (0,71,187) or Green Screen (0,177,64), for keying out thumbnails. It's a
+  full-screen rectangle in the menu background view (rl26-revamp-branding's `NVMBackground.setChromaKey`), and
+  the 3D player draws over it. It goes back to Stage on exit. The player's floor shadow still shows on it.
+- **Y**: hide / show the menu. The option menu stops updating, so its button prompts go too, and its area is
+  hidden. The Noesis views on the PRE_SCENE / POST_SCENE / OVERLAY layers (gamertag, version text) are switched
+  off through `CNoesisView.renderingEnabled`. That binding isn't proven yet: every step is pcall'd and the first
+  attempt is logged to `celebrationviewer_debug.txt` in the game folder. While hidden, Y or B shows the menu
+  again and X still pauses.
 - **X**: pause / resume (freezes the pose). Picking another clip resumes.
 - The stick still rotates the model as usual.
 

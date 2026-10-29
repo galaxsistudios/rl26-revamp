@@ -94,6 +94,49 @@ SIZE_EDITS = [
 ]
 
 
+# Chroma-key backdrop: a solid blue / green rectangle over the whole menu
+# background (the 3D player model draws on top), switched on by
+# storm-celebration-viewer's Backdrop option for thumbnail captures. Off by
+# default; NVMBackground.setChromaKey({r, g, b}) shows it, setChromaKey(nil)
+# hides it.
+CHROMA_KEY_PROPS = "\t\tChromaKeyVisible = ns.Bool,\n\t\tChromaKeyColour = ns.Color,\n"
+CHROMA_KEY_LUA = (
+    "-- rl26-revamp-branding: chroma-key backdrop (blue / green screen) over the\n"
+    "-- whole menu background, for storm-celebration-viewer's thumbnails.\n"
+    "-- arg_ck_1 = {r, g, b} (0-255), or nil to hide it.\n"
+    "function NVMBackground.setChromaKey(arg_ck_0, arg_ck_1)\n"
+    "\tif arg_ck_1 then\n"
+    "\t\targ_ck_0.ChromaKeyColour = native.NsColor(arg_ck_1[1], arg_ck_1[2], arg_ck_1[3], 255)\n"
+    "\tend\n\n"
+    "\targ_ck_0.ChromaKeyVisible = arg_ck_1 ~= nil\n"
+    "end\n\n")
+CHROMA_KEY_XAML = """        <!--rl26-revamp-branding: chroma-key backdrop (blue / green screen) for
+            storm-celebration-viewer's thumbnails. Covers the whole menu background;
+            the 3D player model draws over it. Hidden unless ChromaKeyVisible.-->
+        <Rectangle x:Name="ChromaKeyBackdrop"
+                   Grid.RowSpan="99"
+                   Grid.ColumnSpan="99"
+                   IsHitTestVisible="False">
+            <Rectangle.Fill>
+                <SolidColorBrush Color="{Binding ChromaKeyColour}" />
+            </Rectangle.Fill>
+            <Rectangle.Style>
+                <Style TargetType="Rectangle">
+                    <Setter Property="Visibility"
+                            Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ChromaKeyVisible}"
+                                     Value="True">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+
+"""
+
 # Lua-side copies of the brand green (script bundle 39959, sources from
 # decompiled/src): (file, old, new, expected_count)
 LUA_EDITS = [
@@ -109,10 +152,14 @@ LUA_EDITS = [
     # start screen art: bindable texture properties + their loader (title_screen.py)
     ("app/noesis/homescreen/nvm_background.lua",
      "\t\tLightMode = ns.Bool\n\t}\n}",
-     "\t\tLightMode = ns.Bool,\n" + title_screen.lua_title_art()[0].rstrip(",\n") + "\n\t}\n}", 1),
+     "\t\tLightMode = ns.Bool,\n" + CHROMA_KEY_PROPS + title_screen.lua_title_art()[0].rstrip(",\n") + "\n\t}\n}", 1),
     ("app/noesis/homescreen/nvm_background.lua",
      "function NVMBackground.setVisualKey(",
      title_screen.lua_title_art()[1] + "function NVMBackground.setVisualKey(", 1),
+    # chroma-key backdrop (blue / green screen), see CHROMA_KEY_XAML
+    ("app/noesis/homescreen/nvm_background.lua",
+     "function NVMBackground.setBackgroundColour(",
+     CHROMA_KEY_LUA + "function NVMBackground.setBackgroundColour(", 1),
 ]
 
 
@@ -210,7 +257,14 @@ def build_xaml(extracted):
         files.set(rel, text)
 
     rel = "views/background/menubackgroundview.xaml"
-    files.set(rel, title_screen.apply_xaml(files.get(rel)))
+    text = title_screen.apply_xaml(files.get(rel))
+    # chroma-key backdrop: last child of RootGrid, so it covers everything in the view
+    nl = "\r\n" if "\r\n" in text else "\n"
+    anchor = nl + "        <!--VISUAL STATES-->"
+    if text.count(anchor) != 1:
+        raise SystemExit(f"{rel}: expected one VISUAL STATES comment, found {text.count(anchor)}")
+    text = text.replace(anchor, nl + CHROMA_KEY_XAML.replace("\n", nl).rstrip(nl) + nl + anchor, 1)
+    files.set(rel, text)
 
     white, blue = logo_paths()
     rel = "resources/resourcedictionary.xaml"
