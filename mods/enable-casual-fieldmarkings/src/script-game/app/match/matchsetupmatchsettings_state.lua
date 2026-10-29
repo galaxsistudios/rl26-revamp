@@ -148,6 +148,54 @@ local function var_0_26(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
 	return var_3_0
 end
 
+-- nrl-special-balls: its extra balls ({label, texture, base} in _G.MOD_EXTRA_BALLS) go at
+-- the end of the Ball row. Picking one sets the match ball to `base` and remembers the
+-- texture in _G.MOD_PLAYNOW_BALL (session only), which matchin.setupBall hands to
+-- ballfactory; picking a stock ball clears it.
+local function modAddExtraBalls(arg_0_0)
+	local var_0_0 = rawget(_G, "MOD_EXTRA_BALLS")
+
+	if not var_0_0 then
+		return
+	end
+
+	for iter_0_0, iter_0_1 in ipairs(var_0_0) do
+		table.insert(arg_0_0.valueList, {
+			label = iter_0_1.label,
+			value = iter_0_1.base,
+			modTexture = iter_0_1.texture
+		})
+	end
+
+	local var_0_1 = arg_0_0.getValue
+	local var_0_2 = arg_0_0.setValue
+
+	-- stock getValue finds the first entry with the match's ball, i.e. the stock one
+	function arg_0_0.getValue(arg_1_0, arg_1_1)
+		local var_1_0 = rawget(_G, "MOD_PLAYNOW_BALL")
+
+		if var_1_0 then
+			for iter_1_0, iter_1_1 in ipairs(arg_1_0) do
+				if iter_1_1.modTexture == var_1_0 and iter_1_1.value == arg_1_1:getMatchSettings().ball then
+					return iter_1_0 - 1
+				end
+			end
+		end
+
+		return var_0_1(arg_1_0, arg_1_1)
+	end
+
+	function arg_0_0.setValue(arg_2_0, arg_2_1, arg_2_2)
+		if arg_2_0 ~= -1 then
+			local var_2_0 = arg_2_1[(type(arg_2_0) == "number" and arg_2_0 or arg_2_0:toInt()) + 1]
+
+			rawset(_G, "MOD_PLAYNOW_BALL", var_2_0 and var_2_0.modTexture)
+		end
+
+		return var_0_2(arg_2_0, arg_2_1, arg_2_2)
+	end
+end
+
 local function var_0_27(arg_8_0, arg_8_1, arg_8_2)
 	return {
 		key = arg_8_0,
@@ -951,6 +999,14 @@ function MatchSetupMatchSettingsState.createMenuItems(arg_29_0, arg_29_1, arg_29
 		var_29_30 = var_0_26(native.Localise("Ball"), "ball", var_29_55)
 		var_29_30.location = native.getMiniStack()
 		var_29_30.valueListAllowFail = true
+
+		if not var_29_56 then
+			modAddExtraBalls(var_29_30)
+		else
+			rawset(_G, "MOD_PLAYNOW_BALL", nil)
+		end
+	else
+		rawset(_G, "MOD_PLAYNOW_BALL", nil)
 	end
 
 	if not var_29_3 or not var_29_3.lockedGrassType then
