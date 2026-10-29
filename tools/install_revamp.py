@@ -191,7 +191,10 @@ def _steps():
         ("strings", "corrected stadium names (UI string tables)", always,
          lambda o: [[PY, mod("stadium-name-fixes", "install.py"), "install", "--confirm"]]),
         ("textures", "texture replacements and field sponsor markings", always,
-         lambda o: [[PY, tool("texture_mods.py"), "apply", "--confirm"]]
+         # realistic-pitch-grass's DDS are game-derived (not in git): build them before apply
+         lambda o: ([[PY, mod("realistic-pitch-grass", "make_grass.py"), "--texconv", o["texconv"]]]
+                    if o.get("texconv") else [])
+         + [[PY, tool("texture_mods.py"), "apply", "--confirm"]]
          + ([[PY, mod("nrl-field-sponsor-markings", "build_textures.py"), "--texconv", o["texconv"]],
              [PY, mod("nrl-field-sponsor-markings", "install.py"), "install", "--confirm"]] if o.get("texconv") else [])),
         ("exe", "game exe patches", always,
