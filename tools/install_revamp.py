@@ -23,7 +23,7 @@ Options (saved to revamp_install.json, which tools/games.py reads):
     --r25  / --no-r25     the Rugby 25 Expansion (animations, cutscenes)
     --controller ICONS    detect | auto | xbox | ps4 | ps5 | switch  (button icons)
     --no-skip-intro       keep the boot splash screens
-    --texconv PATH        texconv.exe (DirectXTex) for the field sponsor markings
+    --texconv PATH        texconv.exe (DirectXTex) for the field sponsor markings and line numbers
                           (default: toolchain/texconv/texconv.exe; without one that step is skipped)
     --rl26-dir / --rll4-dir / --r25-dir PATH   game folders, when Steam can't find them
 Unset options keep their saved value (both games default to off).
@@ -147,6 +147,8 @@ def _steps():
     kits = mod("rll4-legacy-kits", "build_kits.py")
     players = mod("rll4-legacy-players", "build.py")
     polos = mod("team-coaches", "build_polos.py")
+    refkits = mod("nrl-referee-2026-kits", "install.py")
+    headgear = mod("headgear-patterns", "install.py")
     crowd = mod("crowd-team-kits", "bake_crowd_jerseys.py")
     flags = mod("crowd-flags", "build_flags.py")
     return [
@@ -167,6 +169,10 @@ def _steps():
          lambda o: [[PY, polos, "bake"], [PY, polos, "install", "--replace", "--confirm"],
                     [PY, mod("wayne-bennett-coach", "install.py"), "build"],
                     [PY, mod("wayne-bennett-coach", "install.py"), "install", "--confirm"]]),
+        ("ref-kits", "2026 NRL referee jerseys", always,
+         lambda o: [[PY, refkits, "install", "--replace", "--confirm"]]),
+        ("headgear", "headgear patterns (Jahrome Hughes lightning)", always,
+         lambda o: [[PY, headgear, "install", "--replace", "--confirm"]]),
         ("branding", "Revamp title screen and About page art", always,
          lambda o: [[PY, mod("rl26-revamp-branding", "title_screen.py"), "--add-art", "--confirm"],
                     [PY, mod("about-rl26-revamped", "make_logos.py"), "install", "--confirm"]]),
@@ -176,7 +182,8 @@ def _steps():
                     [PY, tool("r25_import.py"), "tackleset", "--confirm"],
                     [PY, tool("r25_import.py"), "gen-mod"]]),
         ("texsrc", "register character textures (global.texsrc)", always,
-         lambda o: [[PY, kits, "texsrc", "--confirm"], [PY, polos, "texsrc", "--confirm"]]
+         lambda o: [[PY, kits, "texsrc", "--confirm"], [PY, polos, "texsrc", "--confirm"],
+                    [PY, refkits, "texsrc", "--confirm"], [PY, headgear, "texsrc", "--confirm"]]
          + ([[PY, players, "texsrc", "--confirm"]] if rll4_players(o) else [])),
         ("kit-slots", "club kit slots for the kits that were built", always,
          lambda o: [[PY, kits, "generate", "--clubs",
@@ -190,13 +197,18 @@ def _steps():
         ("scripts", "script bundle (all Lua mods)", always, bundle("scripts")),
         ("strings", "corrected stadium names (UI string tables)", always,
          lambda o: [[PY, mod("stadium-name-fixes", "install.py"), "install", "--confirm"]]),
-        ("textures", "texture replacements and field sponsor markings", always,
+        ("textures", "texture replacements, field sponsor markings, line numbers and special balls", always,
          # realistic-pitch-grass's DDS are game-derived (not in git): build them before apply
          lambda o: ([[PY, mod("realistic-pitch-grass", "make_grass.py"), "--texconv", o["texconv"]]]
                     if o.get("texconv") else [])
          + [[PY, tool("texture_mods.py"), "apply", "--confirm"]]
-         + ([[PY, mod("nrl-field-sponsor-markings", "build_textures.py"), "--texconv", o["texconv"]],
-             [PY, mod("nrl-field-sponsor-markings", "install.py"), "install", "--confirm"]] if o.get("texconv") else [])),
+         + ([[PY, mod("nrl-field-sponsor-markings", "fieldmarkings.py"), "build", "--texconv", o["texconv"]],
+             [PY, mod("nrl-field-sponsor-markings", "fieldmarkings.py"), "install", "--confirm"],
+             [PY, mod("field-numbers-font", "install.py"), "install", "--confirm", "--texconv", o["texconv"]],
+             [PY, mod("las-vegas-stadium", "install.py"), "install", "--confirm", "--texconv", o["texconv"]],
+             [PY, mod("nrl-special-balls", "install.py"), "build", "--texconv", o["texconv"]],
+             [PY, mod("nrl-special-balls", "install.py"), "install", "--replace", "--confirm"]]
+            if o.get("texconv") else [])),
         ("exe", "game exe patches", always,
          lambda o: [[PY, mod("unlock-all-kits", "install.py"), "--apply"],
                     [PY, mod("ai-interchange-rotation", "install.py"), "--apply"],
@@ -489,7 +501,7 @@ def main():
     g.add_argument("--no-rll4-players", dest="rll4_players", action="store_false", help="don't import RLL4 players")
     ap.add_argument("--controller", choices=["detect", "auto", "xbox", "ps4", "ps5", "switch"])
     ap.add_argument("--no-skip-intro", action="store_true")
-    ap.add_argument("--texconv", help="texconv.exe for the field sponsor markings (default: the bundled one)")
+    ap.add_argument("--texconv", help="texconv.exe for the field sponsor markings and line numbers (default: the bundled one)")
     for game in ("rl26", "rll4", "r25"):
         ap.add_argument(f"--{game}-dir", help=f"the {games.GAMES[game]['name']} folder (default: found through Steam)")
     ap.add_argument("--from", dest="start", help="start at this step id")

@@ -13,7 +13,7 @@ What goes in (_dist/RL26-Revamp/):
                Lib/site-packages - players don't install Python
   toolchain/   LuaJIT (compiles the Lua mods), the LuaJIT decompiler
                (turns the player's own script bundle into source for the
-               generators) and texconv (field sponsor markings)
+               generators) and texconv (field sponsor markings, line numbers)
   tools/, mods/   every tracked or new (not git-ignored) file, minus each
                mod.json's "generated" paths and mods that need another game's
                content baked in
@@ -60,8 +60,11 @@ RESOURCES = [
     "resources/smoke.png",
     "resources/new-team-logos/classic-nrl-logos/**", "resources/scorebug_img/**",  # classic club emblems
     "resources/field-markings/**",                                   # sponsor markings
-    "resources/old-jerseys/**",                                      # legacy kits (community DDS)
+    "resources/las-vegas-stadium/**",                                # las-vegas-stadium (Allegiant logo)
+    "resources/field-numbers/fieldmarkings_numbers_col.png",         # field-numbers-font
+    "resources/old-jerseys/*.png",                                   # legacy kits (community jerseys, lossless PNG; * spans subfolders)
     "resources/custom-kits/**",                                      # kits painted on the jersey templates
+    "resources/ref-jerseys/2026/*/top.png",                          # nrl-referee-2026-kits
     "Maison-Neue-Extended-Bold.ttf",                                 # title screen lettering
 ]
 
