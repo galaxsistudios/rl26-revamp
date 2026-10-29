@@ -7,6 +7,88 @@ local var_0_2 = import("intermediatelua.data.jigglyjointsconfig").configs
 
 AssetMapItems = var_0_1.ItemMaps
 
+-- headgear-patterns: extra headgear designs as new helmet items, copies of a
+-- stock item with a new tint mask (textures added by
+-- mods/headgear-patterns/install.py). The helmet and helmet_col maps have no
+-- lookup tables, so appending to item_setup is enough. academy = shown in the
+-- Academy picker.
+-- 102 is on the adidas01 layout, which scanned heads' fitted headgear uses
+-- (e.g. Jahrome Hughes, 211); 103 is the same design on the Madison Air Flo.
+-- BEGIN HeadgearPatterns
+-- patternTint = fixed tint (0-1) for the pattern instead of headwearColour2.
+HeadgearPatterns = {
+	{ guid = 102, template = 1, colTexture = "helmet_adidas01_lightning_col", patternTint = { r = 1, g = 1, b = 1 } },
+	{ guid = 103, template = 100, colTexture = "helmet_madisonAirFlo_lightning_col", patternTint = { r = 1, g = 1, b = 1 } }
+}
+-- END HeadgearPatterns
+
+-- Debug log (game folder), each distinct line once. Set false once confirmed.
+HeadgearPatternsDebug = false
+
+local var_0_hpLogged = {}
+
+function HeadgearPatternsLog(arg_0_0)
+	if not HeadgearPatternsDebug or var_0_hpLogged[arg_0_0] then
+		return
+	end
+
+	var_0_hpLogged[arg_0_0] = true
+
+	pcall(function()
+		local var_0_f = io.open("headgear_patterns_debug.txt", "a")
+
+		if var_0_f then
+			var_0_f:write(os.date("%H:%M:%S "), arg_0_0, "\n")
+			var_0_f:flush()
+			var_0_f:close()
+		end
+	end)
+end
+
+do
+	local var_0_helmets = AssetMapItems.helmet.item_setup
+	local var_0_byGuid = {}
+
+	for iter_0_0, iter_0_1 in ipairs(var_0_helmets) do
+		var_0_byGuid[iter_0_1.guid] = iter_0_1
+	end
+
+	for iter_0_0, iter_0_1 in ipairs(HeadgearPatterns) do
+		local var_0_template = var_0_byGuid[iter_0_1.template]
+
+		if var_0_template and var_0_byGuid[iter_0_1.guid] == nil then
+			local var_0_item = {}
+
+			for iter_0_2, iter_0_3 in pairs(var_0_template) do
+				var_0_item[iter_0_2] = iter_0_3
+			end
+
+			var_0_item.guid = iter_0_1.guid
+			var_0_item.colTexture = iter_0_1.colTexture
+			var_0_item.academy = true
+			var_0_item.patternTint = iter_0_1.patternTint
+
+			table.insert(var_0_helmets, var_0_item)
+
+			var_0_byGuid[iter_0_1.guid] = var_0_item
+
+			-- assetmapitems copied every helmet's colTexture into helmet_col
+			-- when it loaded; helmetColourLayers looks the mask up there by
+			-- name and skips the tint layer when it's missing.
+			local var_0_colMap = AssetMapItems.helmet_col
+
+			table.insert(var_0_colMap.item_setup, {
+				name = iter_0_1.colTexture,
+				blend = var_0_colMap.blend
+			})
+		end
+	end
+
+	HeadgearPatternsLog(string.format("load: %d helmet items, %d helmet_col entries, 102=%s 103=%s, helmet_col lookup=%s",
+		#var_0_helmets, #AssetMapItems.helmet_col.item_setup, tostring(var_0_byGuid[102] ~= nil),
+		tostring(var_0_byGuid[103] ~= nil), tostring(AssetMapItems.helmet_col.item_setup_lookup ~= nil)))
+end
+
 local var_0_3
 local var_0_4 = {}
 local var_0_5 = "rugby"
@@ -112,6 +194,10 @@ local var_0_headgearGuids = {
 	[120] = true,
 	[130] = true
 }
+
+for iter_0_0, iter_0_1 in ipairs(HeadgearPatterns) do
+	var_0_headgearGuids[iter_0_1.guid] = true
+end
 
 local function var_0_headwearKind(arg_1_0)
 	if arg_1_0.headStrapping then
@@ -1732,6 +1818,18 @@ helmetColourLayers = {
 					r = "headStrappingColour2_r"
 				}
 			}
+
+			if var_90_0 and (var_90_0.patternTint or arg_90_0:getOption("head") == 211) then
+				HeadgearPatternsLog(string.format("tints: head=%s helmet=%s col=%s inHelmetCol=%s patternTint=%s",
+					tostring(arg_90_0:getOption("head")), tostring(var_90_0.guid), tostring(var_90_0.colTexture),
+					tostring(getItemByGuidName(AssetMapItems.helmet_col, var_90_0.colTexture) ~= nil),
+					tostring(var_90_0.patternTint ~= nil)))
+			end
+
+			-- headgear-patterns: a fixed colour for the pattern (G) channel
+			if var_90_0.patternTint then
+				var_90_1[2] = var_90_0.patternTint
+			end
 
 			return var_90_0.headStrapping and var_90_2 or var_90_1
 		end
@@ -7246,6 +7344,12 @@ modelSlots = {
 			end
 
 			local var_473_6 = getModelFileNameByItem(var_473_3, AssetMapItems.helmet, arg_473_0, arg_473_1)
+
+			if arg_473_0:getOption("head") == 211 or var_473_0 == 102 or var_473_0 == 103 then
+				HeadgearPatternsLog(string.format("headWear: head=%s helmet=%s item=%s model=%s",
+					tostring(arg_473_0:getOption("head")), tostring(var_473_0),
+					tostring(var_473_4 and var_473_4.colTexture), tostring(var_473_6)))
+			end
 			local var_473_7 = getHeadwearJigglyConfigTable(var_473_4)
 
 			return var_473_6, "", var_473_7, "", ""

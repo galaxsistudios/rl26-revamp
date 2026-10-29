@@ -43,3 +43,5 @@ python tools\build.py full --confirm
   with `python mods\unlock-tier1-editing\generate.py`).
 - Not yet tested in game. Her scanned head texture may have some painted hair at the hairline that
   doesn't match the new style.
+
+The same assetmap.lua also hosts the `HeadgearPatterns` block (extra helmet items 102/103) for [headgear-patterns](../headgear-patterns/README.md).
