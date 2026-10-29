@@ -60,9 +60,17 @@ import extract_m3mp  # noqa: E402
 import motionset  # noqa: E402
 import animset as animset_mod  # noqa: E402
 import tackleset  # noqa: E402
+import games  # noqa: E402
 
 REPO_ROOT = pack.REPO_ROOT
-R25_BLOBSET = r"D:\SteamLibrary\steamapps\common\Rugby 25\data\data-0.blobset.pc"
+def _r25_blobset():
+    """Rugby 25's data-0.blobset.pc via tools/games.py: only when the installer
+    enabled Rugby 25 (revamp_install.json) and it is installed."""
+    import games
+    return os.path.join(games.require("r25"), "data", "data-0.blobset.pc")
+
+
+R25_BLOBSET = None  # resolved on first use (_r25_blobset), so importing this module needs no Rugby 25
 WORK_DIR = os.path.join(REPO_ROOT, "r25")
 R25_EXTRACTED = os.path.join(WORK_DIR, "extracted")
 R25_SCRIPTS = os.path.join(R25_EXTRACTED, "rugby22", "src", "script-game")
@@ -75,7 +83,7 @@ CUTSCENE_DATA_DIR = "intermediatelua/cutscenes/data"
 CARRIER = CUTSCENE_DATA_DIR + "/cs_test_cutscene_data.lua"
 CONFIG = CUTSCENE_DATA_DIR + "/cutscenedata_config.lua"
 
-LUAJIT_EXE = r"D:\galaxsi\projects\games\modding\toolchain\luajit\bin\luajit.exe"
+LUAJIT_EXE = games.toolchain("luajit", "bin", "luajit.exe")
 DUMPER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "r25_dump.lua")
 
 LUA_BUNDLE = "mempacks/lua.mempack.retail"
@@ -755,7 +763,7 @@ _R25_TACKLE_CLIPS = {}
 def r25_tackle_clips(source="tackle"):
     """Clip names in Rugby 25's tackle animset (cached)."""
     if source not in _R25_TACKLE_CLIPS:
-        idx = Index(R25_BLOBSET)
+        idx = Index(_r25_blobset())
         a = animset_mod.AnimSet(idx.decoded_blob(idx.find(animset_path(source))))
         _R25_TACKLE_CLIPS[source] = {a.clip_name(c) for c in a.clips}
     return _R25_TACKLE_CLIPS[source]
@@ -1517,7 +1525,7 @@ end
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--blobset", default=pack.BLOBSET_PATH, help="RL26 data-0.blobset.pc")
-    ap.add_argument("--r25", default=R25_BLOBSET, help="Rugby 25 data-0.blobset.pc")
+    ap.add_argument("--r25", default=None, help="Rugby 25 data-0.blobset.pc (default: found via tools/games.py)")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("setup", help="extract R25's lua bundle").set_defaults(func=cmd_setup)
@@ -1554,6 +1562,8 @@ def main():
     p.set_defaults(func=cmd_gen_mod)
 
     args = ap.parse_args()
+    if getattr(args, "r25", "") is None:
+        args.r25 = _r25_blobset()
     args.func(args)
 
 

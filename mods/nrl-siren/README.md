@@ -58,6 +58,6 @@ python tools\add_sound_bank.py add --name siren_nrl --audio resources\new-sfx\si
 Bank first (above), then the script mod, entry 39959:
 
 ```powershell
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```

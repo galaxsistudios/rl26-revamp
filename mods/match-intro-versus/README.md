@@ -56,12 +56,12 @@ cuts stay stock. The fonts come from nrl-broadcast-scoreboard. Without it the te
 default font.
 
 ```powershell
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 
-python tools\pack.py restore --entry 57662
-python tools\extract_m3mp.py --entry 57662 --out <tmp>
-python tools\build.py full --list manifests\57662.xml --extracted <tmp> --out _build\entry_57662.m3mp --confirm
+python tools\pack.py restore --entry xamls
+python tools\extract_m3mp.py --entry xamls --out <tmp>
+python tools\build.py full --list manifests\xamls.xml --extracted <tmp> --out _build\xamls.m3mp --confirm
 ```
 
 ## Which intros

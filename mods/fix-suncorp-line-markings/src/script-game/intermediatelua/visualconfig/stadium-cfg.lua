@@ -4344,7 +4344,7 @@ Stadiums = {
 		countryEnum = native.ECountry.Francce
 	},
 	hillDickinsonStadium = {
-		commentary = "allianzstadium",
+		commentary = "",
 		grassType = "grass_lush_col",
 		ModelCfg = {
 			basePath = "stadiums/hillDickinsonStadium/",
@@ -4387,5 +4387,56 @@ Stadiums = {
 		dynamicenv_lighting = default_dynamicenv_lighting,
 		locationEnum = native.ECities.Sydney,
 		countryEnum = native.ECountry.Australia
+	},
+	christchurch_teKahaStadium = {
+		dawnDark = 3,
+		fieldFlipped = true,
+		isIndoors = true,
+		commentary = "",
+		sponsorType = "nrl",
+		duskDark = 3,
+		grassType = "grass_lush_col",
+		ModelCfg = {
+			basePath = "stadiums/christchurch_teKahaStadium/",
+			models = standardModels,
+			additionalModels = standardAdditionalModels,
+			sponsorHoardingModels = {
+				warriors = "sponsors_warriors",
+				rlwcFemale = "sponsors_rlwc_female",
+				rlwcMale = "sponsors_rlwc_male",
+				standard = "sponsors_standard"
+			}
+		},
+		cutsceneOffset = {
+			home = {
+				rot = 0,
+				pos = {
+					0,
+					0
+				}
+			},
+			away = {
+				rot = 0,
+				pos = {
+					0,
+					0
+				}
+			}
+		},
+		northOffset = default_north_offset,
+		fogParams = outdoor_fog_params,
+		PostFxID = standardFxID,
+		GrassConfigID = standardGrassID,
+		GrassDimensions = {
+			minZ = -38,
+			maxX = 63,
+			maxZ = 38,
+			minX = -63,
+			fadeRadius = 1
+		},
+		AppendConfig = standardAppendConfig,
+		dynamicenv_lighting = default_dynamicenv_lighting,
+		locationEnum = native.ECities.Christchurch,
+		countryEnum = native.ECountry.NewZealand
 	}
 }

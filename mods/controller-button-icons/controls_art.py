@@ -24,8 +24,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(os.path.dirname(HERE))
 FONT = os.path.join(REPO_ROOT, "extracted", "noesis", "workspace", "fonts", "texgyreheroscondensed-bold.ttf")
 
-CONTROLLER_ENTRY = 102575   # ui/textures/controller.pc.dds        960x580
-LINES_ENTRY = 102581        # ui/textures/controller_lines.pc.dds  1920x1160
+import sys
+sys.path.insert(0, os.path.join(REPO_ROOT, "tools"))
+import entries  # noqa: E402
+
+CONTROLLER_ENTRY = entries.index_of("controller-art")  # ui/textures/controller.pc.dds  960x580 (1.0.5887: 102575)
+LINES_ENTRY = entries.index_of("controller-lines")  # controller_lines.pc.dds  1920x1160 (1.0.5887: 102581)
 
 # Badge boxes in the stock lines texture (found from its alpha), -> PS badge.
 BADGES = {

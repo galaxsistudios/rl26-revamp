@@ -23,8 +23,8 @@ club into its 2026 club and hides the 2025 one:
   the 2026 clubs and shown; the women's Challenge Cup and the 1895 Cup (no
   2026 version) are pointed at the 2026 clubs.
 
-    python tools\\extract_m3mp.py --entry 39957 --out <tmp>\\39957   # STOCK entries
-    python tools\\extract_m3mp.py --entry 39954 --out <tmp>\\39954
+    python tools\\extract_m3mp.py --entry licenseddata --out <tmp>\\39957   # STOCK entries
+    python tools\\extract_m3mp.py --entry gamedata --out <tmp>\\39954
     python mods\\merge-2025-clubs\\generate.py --clubs <tmp>\\39957\\defaultdata\\defaultdata_clubs ^
         --leagues <tmp>\\39954\\defaultdata\\defaultdata_leagues
 """

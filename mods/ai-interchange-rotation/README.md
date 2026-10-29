@@ -42,7 +42,7 @@ players tire, instead of on a fixed clock:
 | `install.py` | patches `rugbyleague1.exe` (7 bytes at 2 sites) |
 
 ```powershell
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 python mods\ai-interchange-rotation\install.py --apply
 ```

@@ -21,8 +21,8 @@ save-game format, but it is the shipped default data those systems seed
 from, and it's just as readable/editable as any other M3MP bundle.
 
 Usage:
-    python extract_m3mp.py --entry 39954 --out extracted_defaultdata
-    python extract_m3mp.py --entry 39954 --list          # just print paths
+    python extract_m3mp.py --entry gamedata --out extracted_defaultdata
+    python extract_m3mp.py --entry gamedata --list          # just print paths
 """
 
 import argparse
@@ -35,6 +35,7 @@ import zstandard
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402
+import entries  # noqa: E402
 import classify_entries as ce  # noqa: E402
 
 M3MP_MAGIC = 1347236685
@@ -74,7 +75,8 @@ def decode_m3mp(raw):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--blobset", default=pack.BLOBSET_PATH)
-    ap.add_argument("--entry", type=int, required=True)
+    ap.add_argument("--entry", type=entries.arg, required=True,
+                    help="name (scripts, gamedata, licenseddata, xamls, fonts...), path, 0xhash, v5887:N or index")
     ap.add_argument("--out", default=None)
     ap.add_argument("--list", action="store_true", help="just print contained paths, don't extract")
     args = ap.parse_args()

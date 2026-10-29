@@ -12,14 +12,11 @@
       },
       {
         "name": "HOME 2017",
-        "copyOf": "HOME RLWC",
+        "copyOf": "AWAY RLWC",
         "set": {
           "uniformTop": 60120,
           "uniformBottom": 60120,
-          "uniformSocks": 60120,
-          "numberColour1_r": 20,
-          "numberColour1_g": 20,
-          "numberColour1_b": 28
+          "uniformSocks": 60120
         }
       }
     ]

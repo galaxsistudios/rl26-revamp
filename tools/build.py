@@ -55,15 +55,17 @@ import zstandard
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402  (reuse status/backup/install/restore - not re-derive it)
+import entries  # noqa: E402
 import data_mods  # noqa: E402  (per-record overrides for defaultdata_players/_clubs/_leagues)
+import games  # noqa: E402  (mods that need another game, see mod.json)
 
 MODS_DIR = os.path.join(REPO_ROOT, "mods")
 EXTRACTED_DIR = os.path.join(REPO_ROOT, "extracted")
 M3MP_LIST_XML = os.path.join(REPO_ROOT, "M3MP_List.xml")
 BUILD_DIR = os.path.join(REPO_ROOT, "_build")
-DEFAULT_BUNDLE_OUT = os.path.join(BUILD_DIR, "entry_39959.m3mp")
+DEFAULT_BUNDLE_OUT = os.path.join(BUILD_DIR, "scripts.m3mp")
 
-LUAJIT_EXE = r"D:\galaxsi\projects\games\modding\toolchain\luajit\bin\luajit.exe"
+LUAJIT_EXE = games.toolchain("luajit", "bin", "luajit.exe")
 LUAJIT_CWD = os.path.dirname(LUAJIT_EXE)  # bcsave needs cwd = its own dir (jit/ submodule lookup)
 
 CHUNK_SIZE = 32768
@@ -93,6 +95,12 @@ def scan_mod_overrides(mods_dir):
     for mod_name in sorted(os.listdir(mods_dir)):
         mod_path = os.path.join(mods_dir, mod_name)
         if not os.path.isdir(mod_path):
+            continue
+        # mods built from another game (mod.json "requires", tools/games.py)
+        # only go in when the installer enabled that game and it's installed
+        ok, missing = games.mod_enabled(mod_path)
+        if not ok:
+            print(f"  skipped mod {mod_name}: needs {', '.join(missing)} (tools/games.py)")
             continue
         for dirpath, dirnames, filenames in os.walk(mod_path):
             if os.path.normcase(os.path.abspath(dirpath)) in skip_dirs:
@@ -160,7 +168,11 @@ def compile_if_source(abs_path, bundle_path, compiled_cache_dir, verbose=True):
 def read_m3mp_list(list_xml_path):
     tree = ET.parse(list_xml_path)
     root = tree.getroot()
-    index = int(root.attrib["Index"])
+    if "Hash" in root.attrib:
+        # Index shifts when an update adds files; the hash (= path) doesn't
+        index = entries.index_of(root.attrib["Hash"])
+    else:
+        index = int(root.attrib["Index"])
     is_compressed = root.attrib.get("IsCompressed", "false")
     paths = [e.attrib["FilePath"] for e in root.find("Entries")]
     return index, is_compressed, paths

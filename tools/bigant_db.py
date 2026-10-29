@@ -116,7 +116,7 @@ def _read_fields(r, table):
 
 def _sized_blob(r):
     """A u32-size-prefixed BC ED 34 12 blob at the read position, or None."""
-    if r.d[r.p + 4:r.p + 8] != BLOB_MAGIC:
+    if r.d[r.p + 4:r.p + 8] not in (BLOB_MAGIC, BLOB_MAGIC[::-1]):  # RLL4 visuals are big-endian
         return None
     size = r.u32()
     r.p += size

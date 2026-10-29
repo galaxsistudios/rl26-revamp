@@ -77,4 +77,4 @@ mode (`sweep` / `closedown` / `formation`), target and position. Turn it off for
 - Kicks: stock behaviour (collect / respond).
 - Inside 15 m: in the line at the ball.
 
-Entry 39959: `python tools\pack.py restore --entry 39959` then `python tools\build.py full --confirm` (game closed).
+Entry 39959: `python tools\pack.py restore --entry scripts` then `python tools\build.py full --confirm` (game closed).

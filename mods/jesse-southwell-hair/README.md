@@ -28,10 +28,10 @@ Two parts:
 ## Install (game closed)
 
 ```powershell
-python tools\pack.py restore --entry 39957
-python tools\extract_m3mp.py --entry 39957 --out <tmp>\39957
-python tools\build.py full --list manifests\39957.xml --extracted <tmp>\39957 --out _build\entry_39957.m3mp --confirm
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry licenseddata
+python tools\extract_m3mp.py --entry licenseddata --out <tmp>\39957
+python tools\build.py full --list manifests\licenseddata.xml --extracted <tmp>\39957 --out _build\licenseddata.m3mp --confirm
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

@@ -12,7 +12,7 @@ bunker. The flow:
    the stock no-try would (play-the-ball, tap, penalty...). For a knock-on, the knock-on is called
    with the decision.
 
-Script mod, entry 39959: `python tools\pack.py restore --entry 39959`, then
+Script mod, entry 39959: `python tools\pack.py restore --entry scripts`, then
 `python tools\build.py full --confirm` (game closed). The step 4 stinger needs replay-team-stinger
 (its `screenwipe.lua`/`logotransition_hud.lua` have the outro). Without it, step 4 is a stock
 crossfade.

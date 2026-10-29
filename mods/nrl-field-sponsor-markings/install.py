@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "tools"))
 import classify_entries as ce  # noqa: E402
 import extract_textures as et  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 import texture_mods  # noqa: E402
 
 sys.path.insert(0, MOD_DIR)
@@ -50,8 +51,12 @@ BUILD_DIR = os.path.join(REPO_ROOT, "_build", "nrl-field-sponsor-markings")
 #   full_uv:    meshes whose UVs are stretched to the whole texture - stock
 #               quads only show a window of it, cropping our art's edges.
 #   collapse:   meshes hidden by collapsing them to a point.
-_DAY = {"th": (39918, 39920), "fr": (39886, 39888), "sa": (39914, 39916), "su": (39910, 39912)}
-_WESTPAC = (39882, 39884, 39890, 39892, 39898, 39900, 39922, 39924)
+# Entry numbers below are 1.0.5887 positions, mapped to the live index by hash
+# (entries.legacy) - a game update moves them (1.0.5933: +94).
+_L = entries.legacy
+_DAY = {"th": (_L(39918), _L(39920)), "fr": (_L(39886), _L(39888)), "sa": (_L(39914), _L(39916)),
+        "su": (_L(39910), _L(39912))}
+_WESTPAC = tuple(_L(n) for n in (39882, 39884, 39890, 39892, 39898, 39900, 39922, 39924))
 _MID = ["kiaTasman01", "kiaTasman02"]
 MODEL_PATCHES = {}
 for _tag, _entries in _DAY.items():
@@ -70,11 +75,11 @@ for _e in _WESTPAC:
 # and the stock centre position (z 19-27) painted over them. Its in-goal
 # banners are hidden: the Monday model below is drawn as a second layer for
 # the GF (stadiumgrass.lua) and supplies Westpac mid-field + KFC in-goal.
-for _e in (39902, 39904):
+for _e in (_L(39902), _L(39904)):
     MODEL_PATCHES[_e] = {"resize": ("rlwc01", 26.0, 7.9, 26.0), "full_uv": ["rlwc01"],
                          "collapse": ["wideLeft_RLWC26", "wideRight_RLWC26"],
                          "renames": {"sponsor_field_rlwc01_col": "sponsor_field_nrlgf1_col"}}
-for _e in (39894, 39896):
+for _e in (_L(39894), _L(39896)):
     MODEL_PATCHES[_e] = {"full_uv": _MID, "collapse": ["leagueStars01"],
                          "renames": {"sponsor_field_kiatasman01_col": "sponsor_field_kiatasmanw1_col",
                                      "sponsor_field_kiatasman02_col": "sponsor_field_kiatasmanwp_col"}}
@@ -92,7 +97,7 @@ def all_entries():
 
 # Every sponsor model/TXPK entry this mod can touch - restore/status use this
 # so they work even when _build/ is gone.
-SPONSOR_ENTRIES = range(39882, 39926)
+SPONSOR_ENTRIES = [_L(n) for n in range(39882, 39926)]
 
 
 def build_model(blobset, entry):

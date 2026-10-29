@@ -107,7 +107,7 @@ function InjuryCameoRuleState.updateSolid(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 		ASSERT(var_4_13 ~= nil)
 
 		local var_4_14 = arg_4_5:getComponent("matchInData")
-		local var_4_15 = arg_4_3.primaryPartyMemberSettings.automaticInterchanges or var_4_14:isBeAProMode()
+		local var_4_15 = arg_4_3.primaryPartyMemberSettings.automaticInterchanges and not var_4_14.onlineMultiplayer or var_4_14:isBeAProMode()
 
 		if var_4_13 and not var_4_15 then
 			local var_4_16 = var_4_14.matchType.maxSubstitutionCount

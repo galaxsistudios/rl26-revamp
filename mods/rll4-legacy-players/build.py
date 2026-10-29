@@ -75,6 +75,7 @@ import bigant_mesh as bm  # noqa: E402
 import build_kits as bk  # noqa: E402  (rasteriser, bilinear sampling, DDS writer)
 import classify_entries as ce  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 import parse_npcs as pn  # noqa: E402
 import rll4_source  # noqa: E402
 
@@ -161,7 +162,7 @@ class RL26:
         return extract_m3mp.decode_m3mp(raw)[1][name]
 
     def players(self):
-        return bigant_db.load(self.bundle_file("defaultdata/defaultdata_players", 39957))
+        return bigant_db.load(self.bundle_file("defaultdata/defaultdata_players", entries.index_of("licenseddata")))
 
     def head_model(self, name):
         base = f"characters/heads/models/{name}/{name}"
@@ -1096,8 +1097,8 @@ def cmd_generate(args):
             f.write("\n")
         tex = f'"{hair_info["col"]}", "{hair_info["dir"]}"' if hair_info.get("hair") and "col" in hair_info else "nil, nil"
         rows.append(f'\t\t{{ {p["id"]}, "{done[str(p["id"])]["name"]}", {tex} }}, -- {p["name"]}')
-    stock = open(STOCK_LUA, encoding="utf-8-sig").read().rstrip("\n")
     lua_path = os.path.join(MOD, "src", "script-game", *LUA_REL.split("/"))
+    stock = bk._stock_lua(STOCK_LUA, lua_path, LUA_BLOCK.strip().splitlines()[0])
     os.makedirs(os.path.dirname(lua_path), exist_ok=True)
     with open(lua_path, "w", encoding="ascii", newline="\n") as f:
         f.write(stock + "\n" + LUA_BLOCK % "\n".join(rows))

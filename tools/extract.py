@@ -100,7 +100,7 @@ M3MP pack (the decoded payload of entry 39959):
 
 Usage:
     python extract.py --list                       # just print the index/entry info
-    python extract.py --entry 39959 --out <dir>     # extract entry 39959's M3MP contents
+    python extract.py --entry scripts --out <dir>     # extract entry 39959's M3MP contents
 """
 
 import argparse
@@ -109,7 +109,11 @@ import lzma
 import os
 import sys
 
-BLOBSET_PATH = r"D:\SteamLibrary\steamapps\common\Rugby League\data\data-0.blobset.pc"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import games  # noqa: E402  (finds the RL26 install)
+import entries  # noqa: E402
+
+BLOBSET_PATH = games.rl26_path("data", "data-0.blobset.pc")
 DEFAULT_OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "extracted")
 
 CHUNK_SIZE = 32768
@@ -327,7 +331,8 @@ def extract_entry(blobset_path, entry_index, out_dir, verbose=True):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--blobset", default=BLOBSET_PATH, help="path to data-0.blobset.pc")
-    ap.add_argument("--entry", type=int, default=39959, help="0-based entry index to extract (default 39959)")
+    ap.add_argument("--entry", type=entries.arg, default="scripts",
+                    help="entry to extract: name/path/0xhash/v5887:N/index (default: scripts)")
     ap.add_argument("--out", default=DEFAULT_OUT, help="output directory")
     ap.add_argument("--list", action="store_true", help="only print index/entry info, don't extract")
     args = ap.parse_args()

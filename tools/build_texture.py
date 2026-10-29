@@ -43,6 +43,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402
+import entries  # noqa: E402
 import classify_entries as ce  # noqa: E402
 import extract_textures as et  # noqa: E402
 import texture_mods  # noqa: E402
@@ -158,7 +159,7 @@ def main():
 
     p_inject = sub.add_parser("inject", help="rebuild one Mini_TXPK entry from an edited .dds and install it")
     p_inject.add_argument("--blobset", default=pack.BLOBSET_PATH)
-    p_inject.add_argument("--entry", type=int, required=True)
+    p_inject.add_argument("--entry", type=entries.arg, required=True)
     p_inject.add_argument("--dds", required=True, help="the edited .dds file")
     p_inject.add_argument("--meta", default=None, help="sidecar .meta.json from extract_textures.py (default: <dds>.meta.json)")
     p_inject.add_argument("--out", default=None, help="where to write the rebuilt blob before install (default: _build/entry_N.miniTxpk.bin)")
@@ -167,7 +168,7 @@ def main():
 
     p_bundle = sub.add_parser("inject-bundle", help="rebuild a TXPK bundle entry, swapping in any edited members found under --dir")
     p_bundle.add_argument("--blobset", default=pack.BLOBSET_PATH)
-    p_bundle.add_argument("--entry", type=int, required=True)
+    p_bundle.add_argument("--entry", type=entries.arg, required=True)
     p_bundle.add_argument("--dir", required=True, help="directory previously produced by extract_textures.py --entry N --out DIR")
     p_bundle.add_argument("--out", default=None)
     p_bundle.add_argument("--confirm", action="store_true")

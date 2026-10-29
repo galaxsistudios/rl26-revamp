@@ -48,11 +48,11 @@ python mods\crowd-flags\build_flags.py model --confirm               # appends t
 python mods\crowd-flags\build_flags.py teams --confirm               # appends/replaces the team flags + writes the club table
 python mods\crowd-team-kits\bake_crowd_jerseys.py register --confirm # crowd texture table (39871)
 python mods\crowd-flags\build_flags.py bank --confirm                # patches entry 39122 (30 MB)
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm                                 # script bundle with the archetypes
 ```
 
-Undo: `pack.py restore --entry 39122` (animation), `--entry 39959` (scripts). The appended model and
+Undo: `pack.py restore --entry crowd-anim-bank` (animation), `--entry scripts` (scripts). The appended model and
 textures are tracked in `_backup/added_entries.json` and harmless while unused. If you remove them, also
 rerun `register` so the table drops the flags.
 

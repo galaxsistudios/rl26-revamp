@@ -39,5 +39,5 @@ Debug: `DefenceTacticDebugLog` in `nvm_tactics.lua` logs every label change to
 | `noesis/workspace/views/hud/rugby/pagameplayhudcontrol.xaml` (label) | 57662 |
 
 Install both entries (scripts with `python tools\build.py full --confirm`, XAML with
-`build.py full --list manifests\57662.xml --extracted <stock 57662> ...`, see INSTRUCTIONS.md). With
+`build.py full --list manifests\xamls.xml --extracted <stock 57662> ...`, see INSTRUCTIONS.md). With
 only the XAML installed the label never shows (its bindings have nothing to read).

@@ -68,11 +68,12 @@ import classify_entries as ce  # noqa: E402
 import club_icons  # noqa: E402
 import extract_textures as et  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 import texture_mods  # noqa: E402
 
 WORK = os.path.join(ROOT, "_build", "crowd-flags")
-TEMPLATE_MODEL = 39167          # crowd/characters/models/prop_camera02.model
-BANK_ENTRY = 39122              # crowd animation bank
+TEMPLATE_MODEL = entries.index_of("crowd-flag-template")  # prop_camera02.model (1.0.5887: 39167)
+BANK_ENTRY = entries.index_of("crowd-anim-bank")         # crowd animation bank (1.0.5887: 39122)
 MODEL_PATH = "crowd/characters/models/prop_flagSmall.model"
 TEXTURE_DIR = "crowd/characters/textures"
 STOCK_512_COL = "crowd_scarf01_default01_col"   # header donor for 512x512 DXT1 + mips
@@ -346,7 +347,7 @@ def check_flag_joints_unused():
     ce.load_index(pack.BLOBSET_PATH)
     data, count, hash_off, _ = pack.read_index(pack.BLOBSET_PATH)
     bad = []
-    for e in range(39123, 39168):
+    for e in (entries.legacy(n) for n in range(39123, 39168)):  # stock crowd models (1.0.5887 numbers)
         raw = ce.read_blob_full(pack.BLOBSET_PATH, e)[0]
         if raw is None or struct.unpack_from("<I", raw, 0)[0] != 0xFEDCBA02:
             continue
@@ -402,7 +403,8 @@ def cmd_preview(args):
     W, H = 220, 300
     img = Image.new("RGB", (W * 2 * len(frames), H), "white")
     d = ImageDraw.Draw(img)
-    body = [(39149, (120, 120, 220)), (39147, (120, 180, 120)), (39142, (230, 170, 130)), (39160, (220, 120, 120))]
+    body = [(entries.legacy(n), col) for n, col in  # 1.0.5887 numbers
+            [(39149, (120, 120, 220)), (39147, (120, 180, 120)), (39142, (230, 170, 130)), (39160, (220, 120, 120))]]
     for k, f in enumerate(frames):
         layers = [(model_lod0_points(e_, rows, f), col) for e_, col in body]
         flag = skin(verts, rows, f)

@@ -35,7 +35,9 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "tools"))
 sys.path.insert(0, HERE)
 import controls_art  # noqa: E402
 
-ATLAS_ENTRY = 102661                       # ui/textures/extrasymbols_gamepad.pc.dds
+import entries  # noqa: E402
+
+ATLAS_ENTRY = entries.index_of("extrasymbols-gamepad")  # 1.0.5887: 102661
 PS5_XAML = os.path.join(REPO_ROOT, "extracted", "noesis", "workspace", "resources", "tooltipicons", "ps5.xaml")
 OUT_DIR = os.path.join(REPO_ROOT, "_build", "controller-button-icons")
 CELL = 64

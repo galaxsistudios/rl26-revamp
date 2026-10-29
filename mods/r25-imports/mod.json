@@ -1,0 +1,6 @@
+{
+ "_comment": "The Rugby 25 Expansion: built on the player's machine from their own Rugby 25 (installer option) by tools/r25_import.py. 'generated' files hold converted Rugby 25 data and must never go into a release package; imports.json (the list of what to import) is the tool's input. See tools/games.py.",
+ "requires": ["r25"],
+ "releaseChannel": "r25-expansion",
+ "generated": ["src"]
+}

@@ -75,11 +75,11 @@ The XAML and DDS are generated, so don't hand-edit them. Rerun the
 generator instead (it needs `pip install potracer`):
 
 ```powershell
-python tools\pack.py restore --entry 57662
-python tools\extract_m3mp.py --entry 57662 --out <tmp>
+python tools\pack.py restore --entry xamls
+python tools\extract_m3mp.py --entry xamls --out <tmp>
 python mods\rl26-revamp-branding\make_branding.py --extracted <tmp>
-python tools\build.py full --list manifests\57662.xml --extracted <tmp> --out _build\entry_57662.m3mp --confirm
-python tools\pack.py restore --entry 39959
+python tools\build.py full --list manifests\xamls.xml --extracted <tmp> --out _build\xamls.m3mp --confirm
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 python tools\texture_mods.py apply --mod rl26-revamp-branding --confirm
 python mods\rl26-revamp-branding\title_screen.py --add-art --confirm
@@ -88,5 +88,5 @@ python mods\rl26-revamp-branding\title_screen.py --add-art --confirm
 make_branding.py can also run from the stock blob backup instead of a fresh extraction: decode
 `_backup/entry_57662.blob.bak` with `extract_m3mp.decode_m3mp`.
 
-To uninstall, run `pack.py restore --entry 57399` (the title textures go with `add_entries.py remove-all`), move this folder out of
+To uninstall, run `pack.py restore --entry v5887:57399` (the title textures go with `add_entries.py remove-all`), move this folder out of
 `mods\`, then rebuild 57662.

@@ -78,7 +78,7 @@ python mods\crowd-team-kits\generate.py
 Script bundle, entry 39959 (game closed):
 
 ```powershell
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 
@@ -102,7 +102,7 @@ gaps are smeared. [bake_crowd_jerseys.py](bake_crowd_jerseys.py) makes them with
   `{FNV-1a32(lowercase name), width, height, format}` records (format 1 = DXT1). The crowd loader
   (`rugbyleague1.exe` 0xbad380) looks every crowd texture up there by hash and dereferences null on a miss.
   That is the `0xC0000409` match-load abort, the same crash whether the file is missing or just
-  unregistered. It is installed through `pack.py`, so `pack.py restore --entry 39871` undoes it.
+  unregistered. It is installed through `pack.py`, so `pack.py restore --entry crowd-textureinfo` undoes it.
   `generate.py` only uses textures that are in both the index and this table.
 
 ```powershell
@@ -111,7 +111,7 @@ python mods\crowd-team-kits\bake_crowd_jerseys.py bake                # dry run 
 python mods\crowd-team-kits\bake_crowd_jerseys.py bake --confirm      # game closed
 python mods\crowd-team-kits\bake_crowd_jerseys.py register --confirm  # game closed
 python mods\crowd-team-kits\generate.py
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

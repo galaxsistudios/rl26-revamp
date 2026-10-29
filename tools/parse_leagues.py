@@ -55,8 +55,8 @@ import os
 import re
 import struct
 
-DEFAULT_PATH = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\extracted\defaultdata\defaultdata_leagues"
-DEFAULT_EXPORT_DIR = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\decompiled\defaultdata\defaultdata_leagues"
+DEFAULT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "extracted", "defaultdata", "defaultdata_leagues")
+DEFAULT_EXPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "decompiled", "defaultdata", "defaultdata_leagues")
 
 
 def _try_str(data, pos):

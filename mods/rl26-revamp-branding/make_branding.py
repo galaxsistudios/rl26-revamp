@@ -12,7 +12,7 @@ Noesis XAML bundle (entry 57662).
     screen wipes) -> blue.
   - The new logo is ~2.8:1 instead of ~6.3:1, so every place that sized the
     old logo by width alone gets an explicit height.
-  - textures/57399_rll_logo.dds: the screen-wipe centre logo bitmap
+  - textures/322eabdb8b82c1bf_rll_logo.dds (entry hash): the screen-wipe centre logo bitmap
     (3784x600, logo centred, uncompressed premultiplied BGRA).
   - Lua copies of the green (script bundle 39959, from decompiled/src):
     uicolours.rlgreencol (menu background stripes) and the native skin
@@ -23,7 +23,7 @@ Noesis XAML bundle (entry 57662).
 build.py skips *.py, so this script lives alongside the mod files.
 
 Usage (from the repo root; needs `pip install potracer`):
-    python tools\\extract_m3mp.py --entry 57662 --out <tmp>
+    python tools\\extract_m3mp.py --entry xamls --out <tmp>
     python mods\\rl26-revamp-branding\\make_branding.py --extracted <tmp>
 """
 
@@ -47,7 +47,7 @@ import title_screen  # noqa: E402
 LOGO = os.path.join(ROOT, "resources", "rl26-revamp", "rl26-revamped-logo.png")
 # any shipped-style uncompressed BGRA DDS works as the header template
 DDS_HEADER_TEMPLATE = os.path.join(ROOT, "mods", "nrl-broadcast-scoreboard", "textures",
-                                   "101054_hud_score_nrl_broncos.dds")
+                                   "31e185be65e0bcf5_hud_score_nrl_broncos.dds")
 WIPE_LOGO_SIZE = (3784, 600)
 
 BLUE = "1E6FD9"       # the "26" in the revamp logo
@@ -257,7 +257,7 @@ def build_wipe_texture():
     img = Image.frombytes("RGBA", canvas.size, canvas.tobytes())
     with open(DDS_HEADER_TEMPLATE, "rb") as fh:
         header = fh.read(128)
-    out = os.path.join(MOD_DIR, "textures", "57399_rll_logo.dds")
+    out = os.path.join(MOD_DIR, "textures", "322eabdb8b82c1bf_rll_logo.dds")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "wb") as fh:
         fh.write(club_icons.make_dds(img, header))
@@ -266,7 +266,7 @@ def build_wipe_texture():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--extracted", required=True, help="fresh extract_m3mp.py --entry 57662 output dir")
+    ap.add_argument("--extracted", required=True, help="fresh extract_m3mp.py --entry xamls output dir")
     args = ap.parse_args()
     build_xaml(args.extracted)
     build_lua()

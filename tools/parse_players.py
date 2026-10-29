@@ -75,7 +75,7 @@ import os
 import re
 import struct
 
-DEFAULT_PATH = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\extracted\defaultdata\defaultdata_players"
+DEFAULT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "extracted", "defaultdata", "defaultdata_players")
 
 # Confirmed field order for the identity+attribute+skill prefix of a player
 # record (see module docstring). "ethnicity" and "sex" are included for
@@ -276,7 +276,7 @@ def load_players(path=DEFAULT_PATH):
     return data, players
 
 
-DEFAULT_EXPORT_DIR = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\decompiled\defaultdata\defaultdata_players"
+DEFAULT_EXPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "decompiled", "defaultdata", "defaultdata_players")
 
 
 def export_json(players, out_dir):

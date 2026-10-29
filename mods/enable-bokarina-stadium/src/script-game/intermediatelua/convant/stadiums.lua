@@ -89,7 +89,8 @@
 	"glenwillSportsStadium",
 	"industreeGroupStadium",
 	"stadeErnestWallon",
-	"hillDickinsonStadium"
+	"hillDickinsonStadium",
+	"christchurch_teKahaStadium"
 }
 NRLIntroUnsafeStadiums = {
 	"parramattaStadium",
@@ -146,7 +147,8 @@ NRLIntroUnsafeStadiums = {
 	"glenwillSportsStadium",
 	"industreeGroupStadium",
 	"stadeErnestWallon",
-	"hillDickinsonStadium"
+	"hillDickinsonStadium",
+	"christchurch_teKahaStadium"
 }
 StadiumUIOrderPrecert = StadiumUIOrder
 StadiumUIOrderPublicFacing = StadiumUIOrder
@@ -207,8 +209,9 @@ ValidForRandomMap = {
 	headingleyRugbyStadium = true,
 	hillDickinsonStadium = true,
 	aucklandRugbyStadium = true,
-	creator = false,
+	christchurch_teKahaStadium = true,
 	doncasterStadium = true,
+	creator = false,
 	perpignanStadium = true,
 	wembleyStadium = true,
 	robinaStadium = true,
@@ -525,6 +528,9 @@ StadiumAssetsToBuild = {
 		var_0_0
 	},
 	hillDickinsonStadium = {
+		var_0_0
+	},
+	christchurch_teKahaStadium = {
 		var_0_0
 	},
 	creator = {

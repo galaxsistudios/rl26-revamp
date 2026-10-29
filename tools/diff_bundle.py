@@ -28,10 +28,13 @@ import sys
 
 import zstandard
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import games  # noqa: E402
+
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIFF_OUT_DIR = os.path.join(REPO_ROOT, "_build", "bundle_diff")
 
-DECOMPILER_EXE = r"D:\galaxsi\projects\games\modding\toolchain\decompiler\luajit-decompiler-v2.exe"
+DECOMPILER_EXE = games.toolchain("decompiler", "luajit-decompiler-v2.exe")
 DECOMPILER_OUTPUT_DIR = os.path.join(os.path.dirname(DECOMPILER_EXE), "output")
 BYTECODE_MAGIC = b"\x1bLJ"
 M3MP_MAGIC = 1347236685

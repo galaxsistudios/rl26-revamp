@@ -56,7 +56,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import atlas  # noqa: E402
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DEFAULT_EXE = r"D:\SteamLibrary\steamapps\common\Rugby League\rugbyleague1.exe"
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "tools"))
+import games  # noqa: E402  (finds the RL26 install)
+
+DEFAULT_EXE = games.rl26_path("rugbyleague1.exe")
 BACKUP_DIR = os.path.join(REPO_ROOT, "_backup")
 SETTINGS = os.path.join(BACKUP_DIR, "controller-button-icons.json")  # not under mods/ - build.py would treat it as a bundle file
 

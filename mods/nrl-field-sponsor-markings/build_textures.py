@@ -50,6 +50,7 @@ sys.path.insert(0, os.path.join(REPO_ROOT, "tools"))
 import classify_entries as ce  # noqa: E402
 import extract_textures as et  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 
 RES = os.path.join(REPO_ROOT, "resources", "field-markings")
 OUT = os.path.join(REPO_ROOT, "_build", "nrl-field-sponsor-markings")
@@ -151,7 +152,7 @@ def build_art():
     kia = white_mark_from_background(load_art("field-mid/kia.jpg"), 60, 200)
     westpac = white_mark_from_background(load_art("field-mid/westpac.png"), 70, 220)
     kfc = load_art("try-zones/kfc-logo-fb.jpg")
-    indigenous = crop_alpha(load_art("field-centers/nrl-indigenous-round.svg"))
+    indigenous = crop_alpha(load_art("field-center-top/nrl-indigenous-round.svg"))
     multicultural = whiten(crop_alpha(load_art("field-centers/nrl-multicultural-round.svg")))
 
     nrl_common = {
@@ -169,22 +170,22 @@ def build_art():
     # (label, [entries]) -> slot compositors. Each label is one model + its
     # _flipped twin; both bundles get identical textures.
     return [
-        ("anzac", [39883, 39885], with_westpac),
-        ("fridayNightFootball", [39887, 39889], day_set("friday-night-footy")),
-        ("indigenous", [39891, 39893],
+        ("anzac", [entries.legacy(39883), entries.legacy(39885)], with_westpac),
+        ("fridayNightFootball", [entries.legacy(39887), entries.legacy(39889)], day_set("friday-night-footy")),
+        ("indigenous", [entries.legacy(39891), entries.legacy(39893)],
          dict(with_westpac, indigenousround01=centred(indigenous, 12))),
         # Monday's badge is hidden (install.py); it doubles as the Grand
         # Final's mid-field/in-goal layer, so both squares are Westpac.
-        ("mondayFootball", [39895, 39897], dict(with_westpac, kiatasman01=centred(westpac, 48))),
-        ("multicultural", [39899, 39901],
+        ("mondayFootball", [entries.legacy(39895), entries.legacy(39897)], dict(with_westpac, kiatasman01=centred(westpac, 48))),
+        ("multicultural", [entries.legacy(39899), entries.legacy(39901)],
          dict(with_westpac, multiculturalround01=centred(multicultural, 12))),
-        ("sundayFootball", [39911, 39913], day_set("sunday-footy")),
-        ("superSaturday", [39915, 39917], day_set("saturday-footy")),
-        ("thursdayNightFootball", [39919, 39921], day_set("thursday-night-footy")),
-        ("womenInLeague", [39923, 39925], with_westpac),
+        ("sundayFootball", [entries.legacy(39911), entries.legacy(39913)], day_set("sunday-footy")),
+        ("superSaturday", [entries.legacy(39915), entries.legacy(39917)], day_set("saturday-footy")),
+        ("thursdayNightFootball", [entries.legacy(39919), entries.legacy(39921)], day_set("thursday-night-footy")),
+        ("womenInLeague", [entries.legacy(39923), entries.legacy(39925)], with_westpac),
         # The women's RLWC pair, repurposed for the Grand Final centre (see
         # install.py MODEL_PATCHES / stadiumgrass.lua); its banners are hidden.
-        ("grandFinal", [39903, 39905], {
+        ("grandFinal", [entries.legacy(39903), entries.legacy(39905)], {
             "rlwc01": stretched(grand_final, 16),
         }),
     ]

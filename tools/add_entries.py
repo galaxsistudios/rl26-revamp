@@ -108,7 +108,12 @@ def write_index(blobset_path, hashes, sizes):
     tmp = blobset_path + ".tmp"
     with open(tmp, "wb") as f:
         f.write(out)
-    os.replace(tmp, blobset_path)
+    try:
+        os.replace(tmp, blobset_path)
+    except PermissionError:
+        os.remove(tmp)
+        raise SystemExit("can't write the game's index - Rugby League 26 (or something else) has it open. "
+                         "The index is unchanged; close the game and rerun.")
 
 
 # --------------------------------------------------------------------------

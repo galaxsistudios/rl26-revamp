@@ -69,5 +69,5 @@ Install both entries (game closed), each from a stock extraction:
 
 ```powershell
 python tools\build.py full --confirm
-python tools\build.py full --list manifests\57662.xml --extracted <stock 57662> --out _build\entry_57662.m3mp --confirm
+python tools\build.py full --list manifests\xamls.xml --extracted <stock 57662> --out _build\xamls.m3mp --confirm
 ```

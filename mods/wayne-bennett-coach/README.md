@@ -32,9 +32,9 @@ tier-1 head slot, so nothing is appended and no Lua or `global.texsrc` change is
 python mods\wayne-bennett-coach\install.py build
 python mods\wayne-bennett-coach\install.py install --confirm   # 17 entries, pack.py backups
 # then rebuild 39954 from a STOCK extraction (it's shared with unhide-coaches / leagues mods):
-python tools\pack.py restore --entry 39954
-python tools\extract_m3mp.py --entry 39954 --out <tmp>
-python tools\build.py full --list manifests\39954.xml --extracted <tmp> --out _build\entry_39954.m3mp --confirm
+python tools\pack.py restore --entry gamedata
+python tools\extract_m3mp.py --entry gamedata --out <tmp>
+python tools\build.py full --list manifests\gamedata.xml --extracted <tmp> --out _build\gamedata.m3mp --confirm
 ```
 
 Undo: `install.py restore`, then rebuild 39954 without this mod.

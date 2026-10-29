@@ -58,10 +58,10 @@ python mods\rll4-legacy-players\build.py generate    # player JSONs + visuals + 
 python mods\rll4-legacy-players\build.py install --confirm   # 177 x 12 appended entries
 python mods\rll4-legacy-players\build.py texsrc --confirm    # AFTER rll4-legacy-kits' texsrc (which rebuilds 31558 from stock)
 # then rebuild 39959 and 39957 (39957 from a STOCK extraction, it's shared with the kit/club mods):
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
-python tools\pack.py restore --entry 39957
-python tools\build.py full --list manifests\39957.xml --extracted <stock 39957> --out _build\entry_39957.m3mp --confirm
+python tools\pack.py restore --entry licenseddata
+python tools\build.py full --list manifests\licenseddata.xml --extracted <stock 39957> --out _build\licenseddata.m3mp --confirm
 ```
 
 Undo: remove this folder's generated `defaultdata` and `src`, rebuild 39959 and 39957, re-run the

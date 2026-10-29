@@ -1,7 +1,7 @@
 # unhide-coaches
 
 Unhides the 72 coaches and referees that ship flagged as hidden in `defaultdata/defaultdata_npcs`
-(entry **39954**, built with `manifests/39954.xml`).
+(entry **39954**, built with `manifests/gamedata.xml`).
 
 - Coaches and referees share one NPC database. Each record has an `npcType`
   (`native.CNpcType`, from the exe: Referee=0, Coach=1, Hidden=2). Stock data has no
@@ -18,9 +18,9 @@ Build from a fresh extraction of the stock entry (restore 39954 first if it's in
 the leagues mod shares this entry):
 
 ```powershell
-python tools\pack.py restore --entry 39954
-python tools\extract_m3mp.py --entry 39954 --out <tmp>
-python tools\build.py full --list manifests\39954.xml --extracted <tmp> --out _build\entry_39954.m3mp --confirm
+python tools\pack.py restore --entry gamedata
+python tools\extract_m3mp.py --entry gamedata --out <tmp>
+python tools\build.py full --list manifests\gamedata.xml --extracted <tmp> --out _build\gamedata.m3mp --confirm
 ```
 
 Default clubs have no coach linked (`coachId` only exists for Academy clubs), so unhiding doesn't

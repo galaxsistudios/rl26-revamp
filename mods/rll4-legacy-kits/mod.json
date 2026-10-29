@@ -1,0 +1,7 @@
+{
+ "_comment": "Core mod (RL26 only) with an optional RLL4 part: kits.json rows with \"rll4\" are read from the player's own Rugby League Live 4 and only built, generated and installed when the installer enabled RLL4 (build_kits.py checks tools/games.py). src/ and defaultdata/ are generated per machine because they list whichever kits were built. Baking the resources/old-jerseys kits needs the texel map in _build/rll4-legacy-kits/correspondence.npz, built from RLL4's kit mesh.",
+ "requires": [],
+ "optional": ["rll4"],
+ "releaseChannel": "core",
+ "generated": ["src", "defaultdata"]
+}

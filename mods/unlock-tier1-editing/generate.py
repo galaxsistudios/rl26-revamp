@@ -24,12 +24,13 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 import extract_m3mp  # noqa: E402
+import entries  # noqa: E402
 import parse_npcs as pn  # noqa: E402
 import parse_players as pp  # noqa: E402
 
 MOD = os.path.join(ROOT, "mods", "unlock-tier1-editing")
 OUT_DIR = os.path.join(MOD, "defaultdata", "defaultdata_players")
-STOCK_BLOB = os.path.join(ROOT, "_backup", "entry_39957.blob.bak")
+STOCK_BLOB = os.path.join(ROOT, "_backup", f"entry_{entries.index_of('licenseddata')}.blob.bak")
 ITEMS = os.path.join(ROOT, "decompiled", "src", "script-game", "design", "characters", "assetmapitems.lua")
 ASSETMAP = os.path.join(ROOT, "mods", "jesse-southwell-hair", "src", "script-game", "design", "characters", "assetmap.lua")
 

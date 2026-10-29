@@ -85,7 +85,7 @@ so the mod has no data files.
 
 ```powershell
 python mods\unlock-tier1-editing\generate.py   # only if the data or tier-1 heads change
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

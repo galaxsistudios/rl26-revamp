@@ -33,8 +33,8 @@ import json
 import os
 import struct
 
-DEFAULT_PATH = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\extracted\defaultdata\defaultdata_npcs"
-DEFAULT_EXPORT_DIR = r"D:\galaxsi\projects\games\modding\rugby-league-26-modding\decompiled\defaultdata\defaultdata_npcs"
+DEFAULT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "extracted", "defaultdata", "defaultdata_npcs")
+DEFAULT_EXPORT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "decompiled", "defaultdata", "defaultdata_npcs")
 
 NPC_TYPES = {0: "Referee", 1: "Coach", 2: "Hidden"}
 

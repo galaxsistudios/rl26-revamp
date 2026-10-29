@@ -71,9 +71,12 @@ import sys
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BACKUP_DIR = os.path.join(REPO_ROOT, "_backup")
 
-BLOBSET_PATH = r"D:\SteamLibrary\steamapps\common\Rugby League\data\data-0.blobset.pc"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import games  # noqa: E402  (finds the RL26 install)
+
+BLOBSET_PATH = games.rl26_path("data", "data-0.blobset.pc")
 MAGIC_V4 = 1112493122
-DEFAULT_ENTRY = 39959  # the script (m3mp) bundle - see M3MP_List.xml's Index attr
+DEFAULT_ENTRY = "scripts"  # the script (m3mp) bundle - resolved by name via entries.py
 
 
 # --------------------------------------------------------------------------
@@ -346,30 +349,35 @@ def cmd_restore(args):
           f"{meta['folder']}/{meta['file_hash']} both reverted to pristine.")
 
 
+def _entry_arg(text):
+    import entries  # imports pack itself
+    return entries.arg(text)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p_status = sub.add_parser("status", help="report an entry's current index record + blob path")
     p_status.add_argument("--blobset", default=BLOBSET_PATH)
-    p_status.add_argument("--entry", type=int, default=DEFAULT_ENTRY)
+    p_status.add_argument("--entry", type=_entry_arg, default=DEFAULT_ENTRY)
     p_status.set_defaults(func=cmd_status)
 
     p_backup = sub.add_parser("backup", help="back up an entry's blob + the whole index, without changing anything")
     p_backup.add_argument("--blobset", default=BLOBSET_PATH)
-    p_backup.add_argument("--entry", type=int, default=DEFAULT_ENTRY)
+    p_backup.add_argument("--entry", type=_entry_arg, default=DEFAULT_ENTRY)
     p_backup.set_defaults(func=cmd_backup)
 
     p_install = sub.add_parser("install", help="back up, then replace an entry's blob with a rebuilt *.m3mp and update its index record")
     p_install.add_argument("--blobset", default=BLOBSET_PATH)
-    p_install.add_argument("--entry", type=int, default=DEFAULT_ENTRY)
+    p_install.add_argument("--entry", type=_entry_arg, default=DEFAULT_ENTRY)
     p_install.add_argument("--bundle", required=True, help="path to the rebuilt *.m3mp (from Blobset Tools' M3MP Creator)")
     p_install.add_argument("--confirm", action="store_true", help="required to actually write")
     p_install.set_defaults(func=cmd_install)
 
     p_restore = sub.add_parser("restore", help="undo install: revert the index and blob from this tool's own backup")
     p_restore.add_argument("--blobset", default=BLOBSET_PATH)
-    p_restore.add_argument("--entry", type=int, default=DEFAULT_ENTRY)
+    p_restore.add_argument("--entry", type=_entry_arg, default=DEFAULT_ENTRY)
     p_restore.set_defaults(func=cmd_restore)
 
     args = ap.parse_args()

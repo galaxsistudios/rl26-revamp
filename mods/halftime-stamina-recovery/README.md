@@ -43,7 +43,7 @@ Same match, before and after the change:
 | `src/script-game/attributes/attributes/stamina_listener.lua` | entry 39959 (scripts); only `onTimePeriodExpiredEvent` changed |
 
 ```powershell
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

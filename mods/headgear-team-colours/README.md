@@ -15,7 +15,7 @@ This mod recolours his headgear for the club he's playing for in each match:
 The colours come from the club's primary and secondary colours, so this also works for custom
 clubs and transfers. The white edging and black straps (colours 3 and 4) keep his own colours.
 
-Script mod, entry 39959: `python tools\pack.py restore --entry 39959`, then
+Script mod, entry 39959: `python tools\pack.py restore --entry scripts`, then
 `python tools\build.py full --confirm` (game closed).
 
 ## How it works

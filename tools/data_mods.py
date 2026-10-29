@@ -125,13 +125,14 @@ def scan_data_mod_overrides(mods_dir):
     same field. Fine for now, same as Lua mods' "last mod_name wins isn't
     even checked" non-problem since scan_mod_overrides DOES check that one
     - a future improvement could add the same conflict check here.)"""
+    import games
     found = {}
     if not os.path.isdir(mods_dir):
         return found
     for mod_name in sorted(os.listdir(mods_dir)):
         mod_path = os.path.join(mods_dir, mod_name)
-        if not os.path.isdir(mod_path):
-            continue
+        if not os.path.isdir(mod_path) or not games.mod_enabled(mod_path)[0]:
+            continue  # mods needing a game that isn't enabled (tools/games.py)
         for bundle_path in DATA_BUNDLES:
             bundle_dir = os.path.join(mod_path, *bundle_path.split("/"))
             if not os.path.isdir(bundle_dir):

@@ -40,8 +40,11 @@ RESOURCES = os.path.join(ROOT, "resources", "rl26-revamp")
 REVAMP_LOGO = os.path.join(RESOURCES, "rl26-revamped-logo.png")
 GALAXSI_SVG = os.path.join(RESOURCES, "gs-logo-light-long.svg")
 DDS_HEADER_TEMPLATE = os.path.join(ROOT, "mods", "nrl-broadcast-scoreboard", "textures",
-                                   "101054_hud_score_nrl_broncos.dds")
-DEFAULT_BLOBSET = r"D:\SteamLibrary\steamapps\common\Rugby League\data\data-0.blobset.pc"
+                                   "31e185be65e0bcf5_hud_score_nrl_broncos.dds")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "tools"))
+import games  # noqa: E402  (finds the RL26 install)
+
+DEFAULT_BLOBSET = games.rl26_path("data", "data-0.blobset.pc")
 CREDITS_DIR = "noesis/workspace/images/textures/credits/"
 CREDITS_XAML = os.path.join("views", "credits", "credits.xaml")
 VIEW_OUT = os.path.join(MOD_DIR, "noesis", "workspace", "views", "testscreens", "dynastycardtest.xaml")

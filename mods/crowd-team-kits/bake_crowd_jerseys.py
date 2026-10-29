@@ -61,10 +61,12 @@ import club_icons  # noqa: E402
 import extract_textures as et  # noqa: E402
 import generate  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 
 MAP_PATH = os.path.join(HERE, "crowd_tshirt_map.npz")
 WORK = os.path.join(ROOT, "_build", "crowd-team-kits")
-ENTRY_INDEX = os.path.join(ROOT, "manifests", "entry_index.csv")
+ENTRY_INDEX = os.path.join(ROOT, "manifests", "entry_index_1.0.5887.csv")  # only its texture paths are used
+STOCK_JERSEYS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stock_crowd_jerseys.txt")  # fallback
 CROWD_SIZE = 1024             # crowd jersey textures are 1024x1024
 PLAYER_SIZE = (1024, 512)     # player _2 textures (2048x1024), box-downsampled to this
 COARSE_CROWD, COARSE_PLAYER = (256, 256), (512, 256)
@@ -72,7 +74,7 @@ PCA_COARSE, PCA_FINE = 32, 48
 SEARCH_RADIUS = 5             # full-res search window around the coarse match, in player texels
 MASK_ERROR = 12               # mean abs error (0-255) below which a texel counts as on the mesh
 HOLDOUT = 20
-TEXTURE_TABLE_ENTRY = 39871   # crowd texture info table, see crowd_texture_table()
+TEXTURE_TABLE_ENTRY = entries.index_of("crowd-textureinfo")  # crowd texture info table (1.0.5887: 39871)
 TEXTURE_TABLE_VERSION = 8
 
 
@@ -111,9 +113,12 @@ class Index:
 
 def load_pairs(index):
     """Every shipped men's crowd jersey with its player texture."""
-    with open(ENTRY_INDEX, newline="") as f:
-        names = sorted({m.group(1) for row in csv.reader(f) if len(row) > 4
-                        for m in [re.match(r"crowd/characters/textures/(m_top_\w+_col)\.pc\.dds$", row[4])] if m})
+    if os.path.exists(ENTRY_INDEX):
+        with open(ENTRY_INDEX, newline="") as f:
+            names = sorted({m.group(1) for row in csv.reader(f) if len(row) > 4
+                            for m in [re.match(r"crowd/characters/textures/(m_top_\w+_col)\.pc\.dds$", row[4])] if m})
+    else:
+        names = [n.strip() for n in open(STOCK_JERSEYS) if n.strip() and not n.startswith("#")]
     names = [n for n in names if index.entry(crowd_path(n)) is not None and index.entry(player_path(n)) is not None]
     print(f"loading {len(names)} crowd/player jersey pairs...")
     crowd = np.stack([np.asarray(index.image(crowd_path(n))) for n in names])

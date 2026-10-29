@@ -85,7 +85,12 @@ def _steam_libraries():
 
 
 def find_install(explicit=None):
-    """Folder holding data-0.blobset.pc, or SystemExit with what was tried."""
+    """Folder holding data-0.blobset.pc, or SystemExit with what was tried.
+    Without an explicit folder this goes through tools/games.py, so RLL4 is
+    only read when the installer enabled it (revamp_install.json)."""
+    if not explicit:
+        import games
+        return games.require("rll4")
     tried = []
     for cand in [explicit, os.environ.get("RLL4_DIR")] + [
             os.path.join(lib, "steamapps", "common", FOLDER) for lib in _steam_libraries()]:

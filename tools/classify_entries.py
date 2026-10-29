@@ -52,7 +52,7 @@ Blobset_Tools.TXPK_Viewer.TXPX_DecompressZSTD byte for byte.
 
 Usage:
     python classify_entries.py --start 0 --end 103400 --out manifest.csv
-    python classify_entries.py --entry 39959              # just one entry
+    python classify_entries.py --entry scripts              # just one entry
 """
 
 import argparse
@@ -66,6 +66,7 @@ import zstandard
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402  (reuse read_index/entry_hash/entry_sizes/blob_path)
+import entries  # noqa: E402
 
 ZSTD_MAGIC = 0xFD2FB528
 
@@ -203,7 +204,7 @@ def main():
     ap.add_argument("--blobset", default=pack.BLOBSET_PATH)
     ap.add_argument("--start", type=int, default=0)
     ap.add_argument("--end", type=int, default=None, help="exclusive (default: FilesCount)")
-    ap.add_argument("--entry", type=int, default=None, help="classify just this one entry, print, and exit")
+    ap.add_argument("--entry", type=entries.arg, default=None, help="classify just this one entry, print, and exit")
     ap.add_argument("--out", default=None, help="write a CSV manifest here")
     ap.add_argument("--progress-every", type=int, default=2000)
     args = ap.parse_args()

@@ -209,8 +209,8 @@ unhide-coaches, wayne-bennett-coach and the league mods):
 
 ```powershell
 python mods\team-coaches\make_coach_records.py --npcs <stock 39954>\defaultdata\defaultdata_npcs
-python tools\pack.py restore --entry 39954
-python tools\build.py full --list manifests\39954.xml --extracted <stock 39954> --out _build\entry_39954.m3mp --confirm
+python tools\pack.py restore --entry gamedata
+python tools\build.py full --list manifests\gamedata.xml --extracted <stock 39954> --out _build\gamedata.m3mp --confirm
 ```
 
 Then the scripts and polos:
@@ -220,14 +220,14 @@ python mods\team-coaches\build_polos.py bake        # _build\team-coaches\*.png 
 python mods\team-coaches\build_polos.py generate    # Lua overrides from decompiled\ + palette.json
 python mods\team-coaches\build_polos.py install --confirm
 python mods\team-coaches\build_polos.py texsrc --confirm   # AFTER rll4-legacy-kits' texsrc
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 
 `texsrc` appends to the live table, so rll4-legacy-kits' records are kept. rll4's own `texsrc`
 rebuilds the table from stock, so rerun this one after it.
 
-Undo: remove this folder, rebuild 39959, `pack.py restore --entry 31558` (then rerun rll4's
+Undo: remove this folder, rebuild 39959, `pack.py restore --entry global-texsrc` (then rerun rll4's
 `texsrc`), and `add_entries.py remove-all` (that removes every appended entry; re-add the other
 mods' entries afterwards).
 

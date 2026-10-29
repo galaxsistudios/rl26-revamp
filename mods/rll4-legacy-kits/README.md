@@ -46,7 +46,7 @@ python mods\rll4-legacy-kits\build_kits.py bake
 python mods\rll4-legacy-kits\build_kits.py sheet            # _build\rll4-legacy-kits\sheet.png
 
 # 2. regenerate the Lua + club overrides (needs a STOCK clubs file)
-python tools\extract_m3mp.py --entry 39957 --out <tmp>\39957   # or decode _backup\entry_39957.blob.bak
+python tools\extract_m3mp.py --entry licenseddata --out <tmp>\39957   # or decode _backup\entry_39957.blob.bak
 python mods\rll4-legacy-kits\build_kits.py generate --clubs <tmp>\39957\defaultdata\defaultdata_clubs
 
 # 3. append the textures (6 per kit) (--replace re-writes ones added before)
@@ -56,13 +56,13 @@ python mods\rll4-legacy-kits\build_kits.py install --confirm
 python mods\rll4-legacy-kits\build_kits.py texsrc --confirm
 
 # 4. rebuild the script and clubs bundles
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
-python tools\pack.py restore --entry 39957
-python tools\build.py full --list manifests\39957.xml --extracted <tmp>\39957 --out _build\entry_39957.m3mp --confirm
+python tools\pack.py restore --entry licenseddata
+python tools\build.py full --list manifests\licenseddata.xml --extracted <tmp>\39957 --out _build\licenseddata.m3mp --confirm
 ```
 
-Undo: remove this folder, `pack.py restore --entry 31558`, rebuild 39959 and 39957, and `add_entries.py remove-all` (that also
+Undo: remove this folder, `pack.py restore --entry global-texsrc`, rebuild 39959 and 39957, and `add_entries.py remove-all` (that also
 removes every other appended entry, so re-add the other mods' entries afterwards).
 
 ## Kits from the installed RLL4
@@ -88,6 +88,23 @@ Featherstone has no current-season club in RL26, so its kits go on "Featherstone
 Drop the RLL4 texture in `resources/old-jerseys/`, add a row to `kits.json` (next free guid,
 club id, a name of at most 24 characters, a unique `texture` slug), then run steps 1-4 above
 (`bake --only <slug>` is enough for step 1).
+
+## Custom kits (painted on the jersey templates)
+
+Kits painted on the templates in `resources/jersey-templates/` (`tools/jersey_template.py`) are
+already in RL26's layout, so they skip the RLL4 conversion. Put `top.png`, `shorts.png` and
+`socks.png` in `resources/custom-kits/<kit-name>/`, then add a row with `custom` in place of
+`src`:
+
+```json
+{"guid": 61001, "custom": "<kit-name>", "club": 118, "name": "CUSTOM 2026", "texture": "broncos_custom_2026"}
+```
+
+Use guids from 61001 up for custom kits, so they stay clear of the RLL4 rows. `bake` only resizes
+them to the installed sizes and renders `preview.png` on the RL26 meshes. It doesn't need RLL4 or
+the cached texel map. Every other step (install, texsrc, generate, the bundles) is the same as for
+the other kits, and the installer's `kits` step picks the rows up automatically.
+`tools/package_revamp.py` ships `resources/custom-kits/` with the release.
 
 ## Known gaps
 

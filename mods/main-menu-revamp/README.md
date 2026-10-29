@@ -123,7 +123,7 @@ Needs script bundle **39959** and Noesis bundle **57662**.
 Regenerate the XAML after a game update (restore 57662 first if a modded build is installed):
 
 ```powershell
-python tools\extract_m3mp.py --entry 57662 --out <tmp>\57662
+python tools\extract_m3mp.py --entry xamls --out <tmp>\57662
 python mods\main-menu-revamp\make_xaml.py --stock <tmp>\57662\noesis\workspace
 ```
 
@@ -133,8 +133,8 @@ Close the game first.
 
 ```powershell
 python tools\build.py full --confirm
-python tools\extract_m3mp.py --entry 57662 --out <tmp>\57662
-python tools\build.py full --list manifests\57662.xml --extracted <tmp>\57662 --out _build\entry_57662.m3mp --confirm
+python tools\extract_m3mp.py --entry xamls --out <tmp>\57662
+python tools\build.py full --list manifests\xamls.xml --extracted <tmp>\57662 --out _build\xamls.m3mp --confirm
 ```
 
 ## Status

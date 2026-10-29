@@ -1,5 +1,5 @@
 {
- "_comment": "RLL4-layout kit textures (resources/old-jerseys) -> RL26 kits. guid is the design guid used for the new uniformTop/Bottom/Socks items (one per kit, same number in all three maps); texture names the new characters/uniforms/textures/m_{top,shorts,socks}_<texture>_col_{1,2} entries.",
+ "_comment": "RLL4-layout kit textures (resources/old-jerseys) -> RL26 kits; rows with \"custom\" are kits painted in RL26's own layout (resources/custom-kits/<custom>/top|shorts|socks.png, tools/jersey_template.py), guids 61001+. guid is the design guid used for the new uniformTop/Bottom/Socks items (one per kit, same number in all three maps); texture names the new characters/uniforms/textures/m_{top,shorts,socks}_<texture>_col_{1,2} entries.",
  "clubs": {
   "broncos": 118,
   "bulldogs": 119,

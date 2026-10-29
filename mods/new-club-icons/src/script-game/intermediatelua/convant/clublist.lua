@@ -259,7 +259,13 @@ local var_0_17 = {
 	"easter_9",
 	"easter_10",
 	"easter_10",
-	"HMStretch_Shard"
+	"HMStretch_Shard",
+	"S10_emblem",
+	"anzac_1",
+	"anzac_2",
+	"anzac_3",
+	"anzac_4",
+	"anzac_5"
 }
 local var_0_18 = {
 	"light_red",

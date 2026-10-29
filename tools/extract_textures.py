@@ -66,6 +66,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402
+import entries  # noqa: E402
 import classify_entries as ce  # noqa: E402
 
 TXPK_MAGIC = 1415073867
@@ -257,7 +258,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--blobset", default=pack.BLOBSET_PATH)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--entry", type=int, default=None)
+    ap.add_argument("--entry", type=entries.arg, default=None)
     ap.add_argument("--start", type=int, default=None)
     ap.add_argument("--end", type=int, default=None)
     ap.add_argument("--from-csv", default=None, help="a manifest CSV from classify_entries.py; only kind in (mini_txpk, txpk) rows are extracted")

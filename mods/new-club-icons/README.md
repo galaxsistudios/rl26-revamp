@@ -34,7 +34,7 @@ reuses its club's colour set. Install (game closed):
 python mods\new-club-icons\classic_logos.py scorebug      # regenerate resources\scorebug_img\nrl_*_classic_*.png
 python mods\new-club-icons\classic_logos.py preview       # resources\new-team-logos\previews\classic_sheet.png
 python mods\new-club-icons\classic_logos.py add --confirm # 24 x 15 appended textures (--replace to re-render)
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 
@@ -49,7 +49,7 @@ python tools\club_icons.py add --icon nrl_newteam --image logo.svg --hud-score-i
 1. Add `"nrl_newteam"` to `ModClubIcons` in `clublist.lua`.
 2. Add `nrl_newteam = "<colour set>"` to `ClubIconColourSetMap` and `Club_nrl_newteam = "Name"` to
    `ModClubIconLabels` in `icons.lua`.
-3. Rebuild 39959: `pack.py restore --entry 39959`, then `build.py full --confirm`.
+3. Rebuild 39959: `pack.py restore --entry scripts`, then `build.py full --confirm`.
 
 Use `--replace` to re-render an emblem that was added before (in place, no rebuild needed).
 

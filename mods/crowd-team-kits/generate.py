@@ -40,10 +40,11 @@ import data_mods as dm  # noqa: E402
 import add_entries as ae  # noqa: E402
 import extract_m3mp as em  # noqa: E402
 import pack  # noqa: E402
+import entries  # noqa: E402
 import parse_club_jersey as pcj  # noqa: E402
 import parse_clubs as pc  # noqa: E402
 
-CLUBS_ENTRY = 39957
+CLUBS_ENTRY = entries.index_of("licenseddata")  # defaultdata_clubs (1.0.5887: 39957)
 ASSETMAP_ITEMS = os.path.join(ROOT, "decompiled", "src", "script-game", "design", "characters", "assetmapitems.lua")
 STADIUMS = os.path.join(ROOT, "decompiled", "src", "script-game", "intermediatelua", "convant", "stadiums.lua")
 TARGET = os.path.join(HERE, "src", "script-game", "intermediatelua", "crowd", "crowd_item_config.lua")

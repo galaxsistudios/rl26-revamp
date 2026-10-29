@@ -78,19 +78,19 @@ on its built-in list.
 
 ```powershell
 # 0. regenerate the overrides (only needed if the generator changes) - from STOCK data
-python tools\extract_m3mp.py --entry 39957 --out <tmp>\39957
-python tools\extract_m3mp.py --entry 39954 --out <tmp>\39954
+python tools\extract_m3mp.py --entry licenseddata --out <tmp>\39957
+python tools\extract_m3mp.py --entry gamedata --out <tmp>\39954
 python mods\merge-2025-clubs\generate.py --clubs <tmp>\39957\defaultdata\defaultdata_clubs --leagues <tmp>\39954\defaultdata\defaultdata_leagues
 
 # 1. clubs (39957) and leagues (39954), from stock extractions
-python tools\pack.py restore --entry 39957
-python tools\build.py full --list manifests\39957.xml --extracted <tmp>\39957 --out _build\entry_39957.m3mp --confirm
-python tools\pack.py restore --entry 39954
-python tools\build.py full --list manifests\39954.xml --extracted <tmp>\39954 --out _build\entry_39954.m3mp --confirm
+python tools\pack.py restore --entry licenseddata
+python tools\build.py full --list manifests\licenseddata.xml --extracted <tmp>\39957 --out _build\licenseddata.m3mp --confirm
+python tools\pack.py restore --entry gamedata
+python tools\build.py full --list manifests\gamedata.xml --extracted <tmp>\39954 --out _build\gamedata.m3mp --confirm
 
 # 2. crowd-team-kits reads the installed clubs, so regenerate it, then the scripts (39959)
 python mods\crowd-team-kits\generate.py
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

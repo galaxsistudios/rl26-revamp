@@ -1,0 +1,6 @@
+{
+ "_comment": "Built on the player's machine from their own Rugby League Live 4 (installer option). Everything listed in 'generated' holds RLL4 data and must never go into a release package. See tools/games.py.",
+ "requires": ["rll4", "rll4-players"],
+ "releaseChannel": "rll4-addon",
+ "generated": ["players.json", "defaultdata", "src"]
+}

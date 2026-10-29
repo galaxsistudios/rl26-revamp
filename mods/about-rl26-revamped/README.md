@@ -68,10 +68,10 @@ Needs script bundle **39959**, Noesis bundle **57662** and two new texture entri
 python tools\build.py full --confirm
 
 # Noesis bundle: build from a fresh extraction of stock 57662
-python tools\pack.py restore --entry 57662
-python tools\extract_m3mp.py --entry 57662 --out <tmp>\57662
+python tools\pack.py restore --entry xamls
+python tools\extract_m3mp.py --entry xamls --out <tmp>\57662
 python mods\about-rl26-revamped\make_logos.py watermark --extracted <tmp>\57662   # only if the logo changed
-python tools\build.py full --list manifests\57662.xml --extracted <tmp>\57662 --out _build\entry_57662.m3mp --confirm
+python tools\build.py full --list manifests\xamls.xml --extracted <tmp>\57662 --out _build\xamls.m3mp --confirm
 
 # logos: new entries (needs pip install resvg-py potracer); rerun to update them in place
 python mods\about-rl26-revamped\make_logos.py install --confirm

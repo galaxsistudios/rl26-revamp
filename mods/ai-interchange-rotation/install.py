@@ -53,7 +53,10 @@ import shutil
 import sys
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DEFAULT_EXE = r"D:\SteamLibrary\steamapps\common\Rugby League\rugbyleague1.exe"
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "tools"))
+import games  # noqa: E402  (finds the RL26 install)
+
+DEFAULT_EXE = games.rl26_path("rugbyleague1.exe")
 BACKUP_DIR = os.path.join(REPO_ROOT, "_backup")
 
 
@@ -75,9 +78,13 @@ class Site:
 
 SITES = [
     # cmp byte [rdi+9],0 / mov [rsp+50h],rdx / je skip_merge / movsxd rcx,[rsi+28h] / lea rbx,[rsi+38h]
+    # je -> jo: never taken after a cmp with 0 (no overflow), so the merge always
+    # runs. Only the opcode changes - the rel32 differs per build (1.0.5887:
+    # 1a 01 00 00, 1.0.5933: 21 01 00 00), so it stays a wildcard and restore
+    # needs nothing but this byte.
     Site("merge Lua interchanges for AI sides",
-         "80 7f 09 00 48 89 54 24 50", "0f 84 1a 01 00 00", "90 90 90 90 90 90",
-         "48 63 4e 28 48 8d 5e 38"),
+         "80 7f 09 00 48 89 54 24 50", "0f 84", "0f 80",
+         "?? ?? 00 00 48 63 4e 28 48 8d 5e 38"),
     # mov r11d,[rdx+rcx+18h] / cmp r11d,6 / jle next_player / comiss xmm6,xmm11
     Site("skip timed AI interchanges",
          "44 8b 5c 0a 18 41 83 fb 06", "7e", "eb",

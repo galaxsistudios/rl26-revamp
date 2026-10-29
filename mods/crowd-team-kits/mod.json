@@ -1,0 +1,6 @@
+{
+ "_comment": "Core mod (RL26 only). The kit table between the GENERATED markers in crowd_item_config.lua lists whichever crowd jerseys are installed on this machine (including ones baked from RLL4 kits when RLL4 is enabled), so the installer reruns bake_crowd_jerseys.py bake/register and generate.py after the kit mods. 'generatedBlocks' files ship with that table emptied (tools/package_revamp.py); the rest of the file is hand-written.",
+ "requires": [],
+ "releaseChannel": "core",
+ "generatedBlocks": ["src/script-game/intermediatelua/crowd/crowd_item_config.lua"]
+}

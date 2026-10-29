@@ -56,6 +56,8 @@ import pack  # noqa: E402
 
 WORK = os.path.join(REPO, "_build", "rll4-legacy-kits")
 SOURCES = os.path.join(REPO, "resources", "old-jerseys")
+# kits painted in RL26's own layout (tools/jersey_template.py): <name>/top.png, shorts.png, socks.png
+CUSTOM = os.path.join(REPO, "resources", "custom-kits")
 MANIFEST = os.path.join(MOD, "kits.json")
 CACHE = os.path.join(WORK, "correspondence.npz")
 
@@ -285,6 +287,32 @@ def bake_kit(src_img, corr):
     return images, stats
 
 
+def _custom_source(kit):
+    return os.path.join(CUSTOM, kit["custom"])
+
+
+def bake_custom(kit):
+    """A kit painted on the jersey templates: already in RL26's layouts, so
+    the bake is only a resize to the installed sizes, plus the same stats as
+    bake_kit from the RL26 top mesh."""
+    import jersey_template as jt
+    images = jt.load_kit(_custom_source(kit))
+    top = jt.Mesh("top")
+    src = np.asarray(images["top"], np.float32)
+    H, W = src.shape[:2]
+
+    def sample(tris):
+        c = top.px[tris].mean(1)
+        return src[c[:, 1].astype(int).clip(0, H - 1), c[:, 0].astype(int).clip(0, W - 1)]
+    x, y = top.centre[:, 0], top.centre[:, 1]
+    number = ~top.inside & (top.normal[:, 2] < -0.6) & (np.abs(x) < 0.09) & (y > 1.18) & (y < 1.40)  # back faces -z
+    colours = src[np.asarray(top.mask(~top.inside)) > 0]
+    dist = {n: np.linalg.norm(colours - np.array(rgb), axis=1) for n, rgb in REF_COLOURS.items()}
+    stats = {"number_area_rgb": [int(c) for c in np.median(sample(number), 0)],
+             "clash": [n for n, d in dist.items() if (d < 70).mean() > 0.12]}
+    return images, stats
+
+
 def _preview(images, corr, size=260):
     """Front / back / side renders of the baked kit on the RL26 meshes."""
     rows = []
@@ -314,23 +342,66 @@ def _preview(images, corr, size=260):
     return Image.fromarray(np.concatenate(rows, 0))
 
 
+def active_kits(manifest=None):
+    """The kits this machine builds: every resources/old-jerseys kit, plus the
+    rows read from Rugby League Live 4 only when the installer enabled RLL4
+    and it is installed (tools/games.py, revamp_install.json). A resources
+    kit whose source image is missing (and was never baked here) is left out
+    with a warning rather than failing the whole install."""
+    import games
+    kits = (manifest or load_manifest())["kits"]
+    rll4 = games.enabled("rll4")
+    out = []
+    for k in kits:
+        if "rll4" in k:
+            if rll4:
+                out.append(k)
+        elif "custom" in k:
+            if os.path.isdir(_custom_source(k)) or os.path.isdir(os.path.join(WORK, k["texture"])):
+                out.append(k)
+            elif k["texture"] not in _warned:
+                _warned.add(k["texture"])
+                print(f"  warning: skipping {k['texture']} - resources/custom-kits/{k['custom']} is missing")
+        elif os.path.exists(os.path.join(SOURCES, k["src"])) or os.path.isdir(os.path.join(WORK, k["texture"])):
+            out.append(k)
+        elif k["texture"] not in _warned:
+            _warned.add(k["texture"])
+            print(f"  warning: skipping {k['texture']} - resources/old-jerseys/{k['src']} is missing")
+    return out
+
+
+_warned = set()
+
+
 def load_manifest():
     with open(MANIFEST) as f:
         return json.load(f)
 
 
 def cmd_bake(args):
-    corr = load_correspondence()
+    import jersey_template as jt
+    corr = None  # the RLL4 texel map, only loaded when an RLL4-layout kit is baked
     stats = {}
-    for kit in load_manifest()["kits"]:
+    for kit in active_kits():
         if args.only and kit["texture"] not in args.only:
             continue
-        images, st = bake_kit(source_image(kit, args.rll4), corr)
+        missing = (not os.path.isdir(_custom_source(kit)) if "custom" in kit
+                   else "rll4" not in kit and not os.path.exists(os.path.join(SOURCES, kit["src"])))
+        if missing:
+            print(f"  {kit['texture']}: source missing, keeping the earlier bake")  # see active_kits()
+            continue
+        if "custom" in kit:
+            images, st = bake_custom(kit)
+            preview = jt.render(images)
+        else:
+            corr = corr or load_correspondence()
+            images, st = bake_kit(source_image(kit, args.rll4), corr)
+            preview = _preview(images, corr)
         out = os.path.join(WORK, kit["texture"])
         os.makedirs(out, exist_ok=True)
         for part, im in images.items():
             im.save(os.path.join(out, f"{part}.png"))
-        _preview(images, corr).save(os.path.join(out, "preview.png"))
+        preview.save(os.path.join(out, "preview.png"))
         stats[kit["texture"]] = st
         print(f"  {kit['texture']}: number area {st['number_area_rgb']}, referee clash {st['clash']}")
     path = os.path.join(WORK, "stats.json")
@@ -348,7 +419,7 @@ def cmd_add_rll4(args):
     game = rll4_source.RLL4(args.rll4)
     manifest = load_manifest()
     have = {k.get("rll4") for k in manifest["kits"]}
-    guid = max(k["guid"] for k in manifest["kits"]) + 1
+    guid = max(k["guid"] for k in manifest["kits"] if "custom" not in k) + 1  # custom kits use 61001+
     prefixes = sorted(spec["clubs"], key=len, reverse=True)
     added = skipped = 0
     folder = "characters/uniforms/textures/"
@@ -384,7 +455,7 @@ def cmd_add_rll4(args):
 
 def cmd_sheet(args):
     from PIL import ImageDraw
-    kits = load_manifest()["kits"]
+    kits = active_kits()
     tiles = []
     for kit in kits:
         im = Image.open(os.path.join(WORK, kit["texture"], "preview.png"))
@@ -503,20 +574,33 @@ end
 """ % (TEMPLATE_GUID["uniformTop"], TEMPLATE_GUID["uniformBottom"], TEMPLATE_GUID["uniformSocks"])
 
 
+def _stock_lua(decompiled_path, generated_path, marker):
+    """The stock file a generated override starts from: the decompiled copy
+    when there is one (developer machines), else the stock part of the
+    committed generated file - everything before its generated block - so the
+    installer can regenerate on a player's machine, which has no decompiled/."""
+    if os.path.exists(decompiled_path):
+        return open(decompiled_path, encoding="utf-8-sig").read().rstrip("\n")
+    text = open(generated_path, encoding="utf-8-sig").read()
+    if marker not in text:
+        raise SystemExit(f"{generated_path} has no generated block ({marker!r}) to regenerate from")
+    return text[:text.index(marker)].rstrip("\n")
+
+
 def cmd_generate(args):
     manifest = load_manifest()
     stats = json.load(open(os.path.join(WORK, "stats.json")))
     clubs = _club_kits(args.clubs)
 
     # Lua: stock jigglyjointsconfig + the registration block
-    stock = open(os.path.join(REPO, "decompiled", "src", "script-game", "intermediatelua", "data",
-                              "jigglyjointsconfig.lua"), encoding="utf-8-sig").read().rstrip("\n")
+    lua_path = os.path.join(MOD, "src", "script-game", "intermediatelua", "data", "jigglyjointsconfig.lua")
+    stock = _stock_lua(os.path.join(REPO, "decompiled", "src", "script-game", "intermediatelua", "data",
+                                    "jigglyjointsconfig.lua"), lua_path, LUA_HEADER.strip().splitlines()[0])
     rows = []
-    for kit in manifest["kits"]:
+    for kit in active_kits(manifest):
         clash = ", ".join(f'"{c}"' for c in stats[kit["texture"]]["clash"])
         rows.append(f'\t\t{{ {kit["guid"]}, "{kit["texture"]}", {{ {clash} }} }}, -- {kit["name"]}, club {kit["club"]}')
     lua = stock + "\n" + LUA_HEADER + "\n".join(rows) + "\n" + LUA_FOOTER
-    lua_path = os.path.join(MOD, "src", "script-game", "intermediatelua", "data", "jigglyjointsconfig.lua")
     os.makedirs(os.path.dirname(lua_path), exist_ok=True)
     with open(lua_path, "w", encoding="ascii", newline="\n") as f:
         f.write(lua)
@@ -525,7 +609,7 @@ def cmd_generate(args):
     # club kit slots: copy HOME or AWAY, whichever's number colour stands out
     # more against the new kit's back where the number sits
     by_club = {}
-    for kit in manifest["kits"]:
+    for kit in active_kits(manifest):
         by_club.setdefault(kit["club"], []).append(kit)
     out_dir = os.path.join(MOD, "defaultdata", "defaultdata_clubs")
     os.makedirs(out_dir, exist_ok=True)
@@ -565,7 +649,7 @@ def _dds_bgra(img):
 def cmd_install(args):
     import add_entries
     import club_icons
-    for kit in load_manifest()["kits"]:
+    for kit in active_kits():
         if args.only and kit["texture"] not in args.only:
             continue
         for part in args.parts or PARTS:
@@ -573,7 +657,8 @@ def cmd_install(args):
             for level, im in ((1, img), (2, img.resize((img.width // 2, img.height // 2), Image.LANCZOS))):
                 path = f"characters/uniforms/textures/{TEXTURE_PREFIX[part]}{kit['texture']}_col_{level}.texture"
                 blob, sizes = club_icons.make_blob(path, _dds_bgra(im))
-                origin = kit["src"] if "src" in kit else f"RLL4 {kit['rll4']}"
+                origin = (kit["src"] if "src" in kit else f"custom {kit['custom']}" if "custom" in kit
+                          else f"RLL4 {kit['rll4']}")
                 add_entries.add_entry(args.blobset, path, blob, sizes, f"rll4-legacy-kits {origin}",
                                       args.confirm, replace=args.replace)
     if not args.confirm:
@@ -611,7 +696,7 @@ def cmd_texsrc(args):
     known = set(struct.unpack_from(f"<{stock_count * 8}I", raw, 4)[0::8])
 
     records = []
-    for kit in load_manifest()["kits"]:
+    for kit in active_kits():
         for part, (*_, (w, h)) in PARTS.items():
             for level in (1, 2):
                 name = f"characters/uniforms/textures/{TEXTURE_PREFIX[part]}{kit['texture']}_col_{level}"

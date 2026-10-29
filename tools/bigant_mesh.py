@@ -53,8 +53,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import classify_entries as ce  # noqa: E402
 import pack  # noqa: E402
 
-RLL4_ROOT = r"D:\SteamLibrary\steamapps\common\Rugby League Live 4"
-RLL4_TOOLS = r"D:\galaxsi\projects\games\rugby-league-live-4\tools"
 
 # Model folders by asset-map basePath (see the docstring for the naming).
 RL26_KIND = {"top": "characters/tops", "shorts": "characters/bottoms", "socks": "characters/socks"}
@@ -97,20 +95,15 @@ def load_rl26(kind, name, blobset=pack.BLOBSET_PATH):
 
 
 def load_rll4():
-    """RLL4's combined kit mesh: (P, N, I, UV)."""
-    sys.path.insert(0, RLL4_TOOLS)
-    import extract as rx  # the RLL4 project's blobset reader
-    _, _, _, entries = rx.read_blobset_index(os.path.join(RLL4_ROOT, "data-0.blobset.pc"))
+    """RLL4's combined kit mesh: (P, N, I, UV), from the installed RLL4
+    (tools/rll4_source.py; needs RLL4 enabled in revamp_install.json)."""
+    import rll4_source
+    bs = rll4_source.Blobset(rll4_source.find_install())
     index, isize, vsize, nv, ni = RLL4_UNIFORM
-    e = entries[index]
+    e = bs.entries[index]
     if (e.desc_size, e.data_size) != (isize, vsize):
         raise SystemExit(f"RLL4 entry {index} isn't the kit mesh (sizes {e.desc_size}/{e.data_size})")
-    vol = os.path.join(RLL4_ROOT, f"data-{e.volume}.blobset.pc")
-    ib = rx.decode_outer_part(vol, e)
-
-    class _Data:  # decode_outer_part reads the description triple; point it at the data part
-        desc_offset, desc_stored, desc_size = e.data_offset, e.data_stored, e.data_size
-    vb = rx.decode_outer_part(vol, _Data)
+    ib, vb = bs.desc(index), bs.data(index)
     I = np.frombuffer(ib, np.uint16, ni).reshape(-1, 3).astype(np.int64)
     V = np.frombuffer(vb, np.float32, 12 * nv).reshape(nv, 12)
     UV = np.frombuffer(vb, np.uint8, 8 * nv, 53 * nv).reshape(nv, 8)[:, :4].copy().view(np.float16)

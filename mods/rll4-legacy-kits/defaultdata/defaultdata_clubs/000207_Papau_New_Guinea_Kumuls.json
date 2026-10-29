@@ -3,14 +3,11 @@
     "add": [
       {
         "name": "HOME 2017",
-        "copyOf": "HOME RLWC",
+        "copyOf": "AWAY RLWC",
         "set": {
           "uniformTop": 60125,
           "uniformBottom": 60125,
-          "uniformSocks": 60125,
-          "numberColour1_r": 230,
-          "numberColour1_g": 230,
-          "numberColour1_b": 230
+          "uniformSocks": 60125
         }
       }
     ]

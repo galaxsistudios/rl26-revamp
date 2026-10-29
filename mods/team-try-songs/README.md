@@ -62,7 +62,7 @@ Stock bunker tries still have no music.
 3. Add the icon to `TrySongs` at the top of the Lua file, then rebuild 39959:
 
    ```powershell
-   python tools\pack.py restore --entry 39959
+   python tools\pack.py restore --entry scripts
    python tools\build.py full --confirm
    ```
 

@@ -156,7 +156,7 @@ python tools\r25_import.py import --confirm       # convert + append the animset
 python tools\r25_import.py motionset --confirm    # merge their clips into RL26's motion set (entry 91)
 python tools\r25_import.py tackleset --confirm    # add the R25 tackles to RL26's tackle database (entry 9)
 python tools\r25_import.py gen-mod                # regenerate this mod's Lua
-python tools\pack.py restore --entry 39959
+python tools\pack.py restore --entry scripts
 python tools\build.py full --confirm
 ```
 

@@ -789,7 +789,9 @@ end
 -- replay froze the game once (cause not found yet). CoachesInReplays = false
 -- keeps them out (replays then just hide them). While it's true, the replay
 -- entry points log any error with its stack before re-raising it.
-CoachesInReplays = true
+-- Off since 2026-10-29: on 1.0.5933 the video-referee replay crashed natively
+-- in animation playback (bad pointer in the anim RNG) with the coaches recorded.
+CoachesInReplays = false
 -- per-method replay error logging (wraps replay update every frame). On again
 -- 2026-10-26: automatic replays freeze at the transition with the coaches
 -- recorded (the pause-menu replay works)

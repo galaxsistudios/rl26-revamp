@@ -5,10 +5,13 @@ entries: one DDS per blobset entry), mirroring data_mods.py's per-record
 JSON convention but for binary texture content, which has no meaningful
 "diff" - a replacement mod file simply *is* the new .dds content.
 
-Convention: mods/<mod-name>/textures/<entry_index>_<label>.dds, e.g.
-    mods/enable-cowboys-northern-lights-kit/textures/036616_top_col1.dds
-The leading digits (anything before the first "_") are the target blobset
-entry index - the <label> is purely for human readability and never parsed.
+Convention: mods/<mod-name>/textures/<entry hash>_<label>.dds, e.g.
+    mods/enable-cowboys-northern-lights-kit/textures/af665d7541ce5bce_top_col1.dds
+The leading 16 hex digits are the target entry's index hash (FNV-1a 64 of its
+logical path, see entries.py) - NOT its position, which moves whenever a game
+update adds files. The <label> is purely for human readability and never
+parsed. `python texture_mods.py hash-name --entry v5887:36616` prints the
+prefix for an entry.
 
 Unlike the M3MP script bundle (entry 39959, handled by build.py), each
 texture is its OWN independent blobset entry with its own backup/install/
@@ -37,6 +40,7 @@ import zstandard
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402
+import entries  # noqa: E402
 import classify_entries as ce  # noqa: E402
 import extract_textures as et  # noqa: E402
 
@@ -44,13 +48,13 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODS_DIR = os.path.join(REPO_ROOT, "mods")
 TEXTURE_MOD_SUBDIR = "textures"
 
-_LEADING_DIGITS = re.compile(r"^(\d+)_")
+_LEADING_HASH = re.compile(r"^([0-9a-fA-F]{16})_")
 
 
 def scan_texture_mod_overrides(mods_dir=MODS_DIR):
     """Return {entry_index: (abs_dds_path, mod_name)} for every
-    mods/<mod-name>/textures/<entry_index>_<label>.dds file found. Raises if
-    two mods target the same entry."""
+    mods/<mod-name>/textures/<entry hash>_<label>.dds file found, resolved to
+    the live index. Raises if two mods target the same entry."""
     overrides = {}
     if not os.path.isdir(mods_dir):
         return overrides
@@ -61,10 +65,10 @@ def scan_texture_mod_overrides(mods_dir=MODS_DIR):
         for fn in sorted(os.listdir(tex_dir)):
             if not fn.lower().endswith(".dds"):
                 continue
-            m = _LEADING_DIGITS.match(fn)
+            m = _LEADING_HASH.match(fn)
             if not m:
-                raise ValueError(f"{os.path.join(tex_dir, fn)}: filename must start with '<entry_index>_'")
-            entry_index = int(m.group(1))
+                raise ValueError(f"{os.path.join(tex_dir, fn)}: filename must start with '<16-hex entry hash>_'")
+            entry_index = entries.index_of(int(m.group(1), 16))
             if entry_index in overrides and overrides[entry_index][1] != mod_name:
                 raise ValueError(
                     f"entry {entry_index} is claimed by both mods/{overrides[entry_index][1]}/ "
@@ -175,6 +179,11 @@ def cmd_apply(args):
         print("No texture mods found.")
         return
     for entry_index, (dds_path, mod_name) in sorted(overrides.items()):
+        if args.confirm and os.path.exists(pack.backup_meta_path(entry_index)):
+            # already installed (a rerun): back to stock first - the rebuild reads the stock blob
+            pack.do_restore(args.blobset, entry_index)
+            ce.load_index(args.blobset)  # its cached size table still has the modded record
+            print(f"entry {entry_index}: restored the earlier install")
         new_blob, sizes, raw_path = build_texture_blob(args.blobset, entry_index, dds_path)
         main_c, main_u, vram_c, vram_u = sizes
         out_path = os.path.join(pack.REPO_ROOT, "_build", f"entry_{entry_index}.miniTxpk.bin")
@@ -206,6 +215,10 @@ def main():
     p_apply.add_argument("--mod", default=None, help="only apply textures from mods/<MOD>/ (others may already be installed)")
     p_apply.add_argument("--confirm", action="store_true", help="required to actually install (otherwise dry run)")
     p_apply.set_defaults(func=cmd_apply)
+
+    p_name = sub.add_parser("hash-name", help="print the <hash>_ filename prefix for an entry")
+    p_name.add_argument("--entry", type=entries.arg, required=True, help="name/path/0xhash/v5887:N/index")
+    p_name.set_defaults(func=lambda a: print(f"{entries.hash_at(a.entry)}_"))
 
     args = ap.parse_args()
     args.func(args)

@@ -13,3 +13,4 @@ __pycache__/
 
 # Game-derived binary assets (extracted/edited retail textures)
 *.dds
+revamp_install.json

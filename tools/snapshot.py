@@ -48,6 +48,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pack  # noqa: E402
+import entries  # noqa: E402
 
 REPO_ROOT = pack.REPO_ROOT
 SNAP_ROOT = os.path.join(REPO_ROOT, "_snapshots")
@@ -264,74 +265,91 @@ def cmd_check(args):
     for rel in bad[:10]:
         print(f"    {rel}")
 
-    # 3. index
+    # 3. index - matched by HASH (= logical path), so an update that inserts
+    # files (the index is sorted by path) shows as moves, not as changes
     stock, scount, shash, ssize = pack.read_index(os.path.join(snap, "stock_index.pc"))
     raw, rcount, rhash, rsize = pack.read_index(os.path.join(snap, "game", INDEX_REL))
     live, lcount, lhash, lsize = pack.read_index(os.path.join(GAME_DIR, INDEX_REL))
     print(f"\n[index] stock entries {scount}, appended {rcount - scount} (snapshot)  ->  live index has {lcount}")
-    shifted, changed, still_modded = [], [], []
-    for i in range(min(scount, lcount)):
-        sh, ss = record(stock, shash, ssize, i)
-        lh, ls = record(live, lhash, lsize, i)
-        if sh != lh:
-            shifted.append(i)
-        elif ss != ls:
-            if i in modded_then and record(raw, rhash, rsize, i) == (lh, ls):
-                still_modded.append(i)
-            else:
-                changed.append(i)
-    if lcount < scount:
-        print(f"  ! live index has FEWER entries than stock ({scount - lcount} removed by the update)")
-    elif lcount == scount and rcount > scount:
-        print(f"  appended entries dropped from the index ({rcount - scount}) - re-add them before installing mods "
-              f"(see memory/reapply-mods-procedure)")
-    elif lcount > scount:
-        if lcount == rcount and live[lhash + scount * 8: lhash + lcount * 8] == raw[rhash + scount * 8: rhash + rcount * 8]:
-            print("  appended entries still present")
-        else:
-            print(f"  ! index grew differently from the snapshot ({lcount} vs {rcount}) - the update may have added "
-                  f"its own entries; appended-entry positions need checking")
-    if shifted:
-        print(f"  ! {len(shifted)} entries now hold a DIFFERENT file (index shifted) - manifests/ and every "
-              f"hard-coded entry number need re-checking. first: {shifted[:15]}")
-    else:
-        print("  no entry changed position (manifests/ entry numbers still valid)")
-    if still_modded:
-        print(f"  {len(still_modded)} entries still hold our mods (run Steam 'Verify integrity' for a clean compare)")
-
-    # 4. blob content changes with the same index record (e.g. 39959 repacked to the same size)
+    old_at = {record(stock, shash, ssize, i)[0]: i for i in range(scount)}
+    ours = {record(raw, rhash, rsize, i)[0] for i in range(scount, rcount)}
+    live_at = {record(live, lhash, lsize, j)[0]: j for j in range(lcount)}
+    remap, moved, removed, changed, still_modded = {}, 0, [], [], []
     data_dir = os.path.join(GAME_DIR, "data")
-    for i in range(min(scount, lcount)):
-        if i in changed or i in shifted or i in still_modded:
+    for h, i in old_at.items():
+        j = live_at.get(h)
+        if j is None:
+            removed.append(i)
             continue
-        folder, fh = pack.entry_hash(live, lhash, i)
-        rel = f"data/{folder}/{fh}"
+        remap[i] = j
+        moved += i != j
+        ss, ls = record(stock, shash, ssize, i)[1], record(live, lhash, lsize, j)[1]
+        folder, fh = pack.entry_hash(live, lhash, j)
+        live_blob = os.path.join(data_dir, folder, fh)
         if i in modded_then:
+            if record(raw, rhash, rsize, i)[1] == ls and ss != ls:
+                still_modded.append(i)
+                continue
             # snapshot holds our modded blob; the stock one is in backup/
             bak = os.path.join(snap, "backup", f"entry_{i}.blob.bak")
-            live_blob = os.path.join(data_dir, folder, fh)
-            if os.path.exists(bak) and os.path.exists(live_blob) and (
-                    os.path.getsize(bak) != os.path.getsize(live_blob) or md5(bak) != md5(live_blob)):
+            if ss != ls or (os.path.exists(bak) and os.path.exists(live_blob) and (
+                    os.path.getsize(bak) != os.path.getsize(live_blob) or md5(bak) != md5(live_blob))):
                 changed.append(i)
-        elif rel in listing:
-            try:
-                st = os.stat(os.path.join(data_dir, folder, fh))
-            except FileNotFoundError:
-                continue
-            size, mtime = listing[rel]
-            if st.st_size != size or st.st_mtime_ns != mtime:
-                changed.append(i)
+        elif ss != ls:
+            changed.append(i)
+        else:
+            entry = listing.get(f"data/{folder}/{fh}")
+            if entry and os.path.exists(live_blob):
+                st = os.stat(live_blob)
+                if st.st_size != entry[0] or st.st_mtime_ns != entry[1]:
+                    changed.append(i)
+    added = sorted(j for h, j in live_at.items() if h not in old_at and h not in ours)
+    ours_left = sorted(j for h, j in live_at.items() if h in ours and h not in old_at)
     changed.sort()
-    ours = [i for i in changed if i in modded_then]
-    print(f"\n[entries changed by the update] {len(changed)}")
-    print(f"  ones we mod ({len(ours)}): {ours if ours else 'none'}")
+    print(f"  update added {len(added)} entries, removed {len(removed)}; {moved} existing entries MOVED position")
+    if added:
+        print(f"    new entries at: {added[:30]}{' ...' if len(added) > 30 else ''}")
+    if removed:
+        print(f"    removed (old numbers): {sorted(removed)[:30]}")
+    if moved:
+        print("  ! entry numbers shifted - manifests/, pack.py --entry numbers and every hard-coded entry")
+        print("    number in tools/mods need remapping (old -> new table written below)")
+    else:
+        print("  no entry changed position (manifests/ entry numbers still valid)")
+    if rcount > scount:
+        print(f"  our appended entries: {len(ours_left)} of {rcount - scount} still in the index"
+              + ("" if ours_left else " - re-add them before installing mods (reapply procedure)"))
+    if still_modded:
+        print(f"  {len(still_modded)} entries still hold our mods (run Steam 'Verify integrity' for a clean compare)")
+    if moved or removed:
+        out = os.path.join(REPO_ROOT, "_build", f"entry_remap_{info['buildid']}_to_{build}.json")
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        with open(out, "w") as f:
+            json.dump({"from_build": info["buildid"], "to_build": build, "added": added,
+                       "removed": sorted(removed), "remap": {str(k): v for k, v in sorted(remap.items())}}, f)
+        print(f"  remap table: {out}")
+    if modded_then:
+        print("\n[entries we mod: old -> new number]")
+        line = []
+        for i in sorted(modded_then):
+            tag = " CHANGED" if i in changed else (" REMOVED" if i in removed else "")
+            line.append(f"{i}->{remap.get(i, '-')}{tag}")
+        for k in range(0, len(line), 6):
+            print("  " + "  ".join(line[k:k + 6]))
+
+    # 4. content changes
+    ours_changed = [i for i in changed if i in modded_then]
+    print(f"\n[entries changed by the update] {len(changed)}  (old numbers; new = remap)")
+    print(f"  ones we mod ({len(ours_changed)}): {[f'{i}->{remap[i]}' for i in ours_changed] or 'none'}")
     other = [i for i in changed if i not in modded_then]
     if other:
-        print(f"  others: {other[:40]}{' ...' if len(other) > 40 else ''}")
-    if 39959 in changed:
-        old = os.path.join(snap, "backup", "entry_39959.blob.bak")
-        folder, fh = pack.entry_hash(live, lhash, 39959)
-        print("  scripts (39959) changed - see which of our overridden Lua files the devs touched:")
+        print(f"  others: {[f'{i}->{remap[i]}' for i in other[:40]]}{' ...' if len(other) > 40 else ''}")
+    old_scripts = old_at.get(struct.pack("<Q", entries.hash_of("scripts")))
+    if old_scripts in changed:
+        old = os.path.join(snap, "backup", f"entry_{old_scripts}.blob.bak")
+        folder, fh = pack.entry_hash(live, lhash, remap[old_scripts])
+        print(f"  scripts ({old_scripts} -> {remap[old_scripts]}) changed - see which of our overridden Lua "
+              f"files the devs touched:")
         print(f'    python tools\\diff_bundle.py "{old}" "{os.path.join(data_dir, folder, fh)}" --decompile --out _build\\update_diff')
 
     # 5. loose files (exe, dlls, version.txt, ...)
