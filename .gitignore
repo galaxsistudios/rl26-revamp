@@ -6,6 +6,13 @@
 !/tools/
 !/.gitmodules
 !/rl26-revamped-stats
+# kits captured or painted for rll4-legacy-kits (top/shorts/socks.png, preview,
+# export.json): small, and the only copy of each capture; and the community
+# RLL4-layout jerseys as lossless PNG (the .dds originals stay local, *.dds below)
+!/resources/
+/resources/*
+!/resources/custom-kits/
+!/resources/old-jerseys/
 
 # Python caches
 __pycache__/
@@ -14,3 +21,4 @@ __pycache__/
 # Game-derived binary assets (extracted/edited retail textures)
 *.dds
 revamp_install.json
+_captures/
