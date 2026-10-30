@@ -146,7 +146,10 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 	local var_2_FieldRounds = {
 		allstars = {
 			model = "sponsor_field_rv_allstars",
-			layers = {}
+			layers = {
+				{ name = "sponsor_field_rv_allstars_in_goal_fill_neg", solid = true },
+				{ name = "sponsor_field_rv_allstars_in_goal_fill_pos", solid = true }
+			}
 		},
 		anzac = {
 			model = "sponsor_field_rv_anzac",
@@ -163,14 +166,14 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 		friday = {
 			model = "sponsor_field_rv_friday",
 			layers = {
-				"sponsor_field_rv_friday_centre_opp"
+				{ name = "sponsor_field_rv_friday_centre_opp", solid = false }
 			}
 		},
 		grandfinal = {
 			model = "sponsor_field_rv_grandfinal",
 			layers = {
-				"sponsor_field_rv_grandfinal_centre_opp",
-				"sponsor_field_rv_grandfinal_centre_opp_inner"
+				{ name = "sponsor_field_rv_grandfinal_centre_opp", solid = false },
+				{ name = "sponsor_field_rv_grandfinal_centre_opp_inner", solid = false }
 			}
 		},
 		indigenous = {
@@ -180,7 +183,7 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 		lasvegas = {
 			model = "sponsor_field_rv_lasvegas",
 			layers = {
-				"sponsor_field_rv_lasvegas_centre_opp"
+				{ name = "sponsor_field_rv_lasvegas_centre_opp", solid = false }
 			}
 		},
 		magic = {
@@ -190,7 +193,7 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 		monday = {
 			model = "sponsor_field_rv_monday",
 			layers = {
-				"sponsor_field_rv_monday_centre_opp"
+				{ name = "sponsor_field_rv_monday_centre_opp", solid = false }
 			}
 		},
 		multicultural = {
@@ -212,31 +215,31 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 		qldcup = {
 			model = "sponsor_field_rv_qldcup",
 			layers = {
-				"sponsor_field_rv_qldcup_centre_inner"
+				{ name = "sponsor_field_rv_qldcup_centre_inner", solid = false }
 			}
 		},
 		saturday = {
 			model = "sponsor_field_rv_saturday",
 			layers = {
-				"sponsor_field_rv_saturday_centre_opp"
+				{ name = "sponsor_field_rv_saturday_centre_opp", solid = false }
 			}
 		},
 		stateoforigin = {
 			model = "sponsor_field_rv_stateoforigin",
 			layers = {
-				"sponsor_field_rv_stateoforigin_centre_opp"
+				{ name = "sponsor_field_rv_stateoforigin_centre_opp", solid = false }
 			}
 		},
 		sunday = {
 			model = "sponsor_field_rv_sunday",
 			layers = {
-				"sponsor_field_rv_sunday_centre_opp"
+				{ name = "sponsor_field_rv_sunday_centre_opp", solid = false }
 			}
 		},
 		thursday = {
 			model = "sponsor_field_rv_thursday",
 			layers = {
-				"sponsor_field_rv_thursday_centre_opp"
+				{ name = "sponsor_field_rv_thursday_centre_opp", solid = false }
 			}
 		},
 		womeninleague = {
@@ -346,18 +349,35 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 	local var_2_24
 	local var_2_25
 	-- Extra layers (e.g. the day badge opposite the centre logo) draw on top
-	-- of the round's model, in the same sponsor passes.
+	-- of the round's model, in the same sponsor passes. A "solid" layer (e.g.
+	-- a whole in-goal recoloured) gets a solid-white detail map instead of the
+	-- grass-noise one, which only lets sponsor decals cover 20-80%, and is
+	-- drawn twice (~96% coverage) - as las-vegas-stadium's black in-goals.
 	local var_2_SponsorExtras = {}
+	local var_2_SolidExtras = {}
+	local var_2_SolidDetail
 
 	if var_2_FieldRound then
 		var_2_24 = var_2_FieldLoad(var_2_FieldRound.model)
 		arg_2_0.fieldmarkings_sponsors = var_2_24
 
-		for iter_2_FL, iter_2_FLName in ipairs(var_2_FieldRound.layers) do
-			table.insert(var_2_SponsorExtras, var_2_FieldLoad(iter_2_FLName))
+		for iter_2_FL, iter_2_FLLayer in ipairs(var_2_FieldRound.layers) do
+			for iter_2_FLCopy = 1, iter_2_FLLayer.solid and 2 or 1 do
+				local var_2_FLModel = var_2_FieldLoad(iter_2_FLLayer.name)
+
+				table.insert(var_2_SponsorExtras, var_2_FLModel)
+
+				if iter_2_FLLayer.solid then
+					var_2_SolidExtras[var_2_FLModel] = true
+				end
+			end
 		end
 
 		var_2_25 = var_2_3:load("fields/textures/sponsors/sponsor_alphaDetail_col.texture")
+
+		if next(var_2_SolidExtras) then
+			var_2_SolidDetail = var_2_3:load("fields/textures/sponsors/sponsor_alphadetail_rvsolid_col.texture")
+		end
 	end
 
 	arg_2_0.fieldmarkings_sponsorsExtraList = var_2_SponsorExtras
@@ -483,8 +503,10 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 
 		if var_2_25 then
 			for iter_5_FL, iter_5_FLModel in ipairs(var_2_SponsorExtras) do
+				local var_5_FLDetail = var_2_SolidExtras[iter_5_FLModel] and var_2_SolidDetail or var_2_25
+
 				iter_5_FLModel:setShaderValues(function(arg_5_0, arg_5_1)
-					arg_5_0:setTexture("detail_map", var_2_25)
+					arg_5_0:setTexture("detail_map", var_5_FLDetail)
 				end)
 			end
 		end
@@ -510,7 +532,8 @@ function StadiumGrass.loadFrom(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_
 		grass_plane_alpha_col = var_2_52
 	}
 	arg_2_0.fieldSponsorTextures = {
-		fieldSponsorDetailTexture = var_2_25
+		fieldSponsorDetailTexture = var_2_25,
+		fieldSponsorSolidTexture = var_2_SolidDetail
 	}
 	arg_2_0.stadiumModel = arg_2_8
 	arg_2_0.gpuDevice = var_2_0

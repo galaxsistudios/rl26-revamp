@@ -11,7 +11,8 @@
     "  squares_a  two quads (both halves, mirrored at +-x)",
     "  squares_b  two more quads (both halves, mirrored at +-x)",
     "  in_goal    both in-goals, as flat panels across the field (panels_z = panel centres, length across, depth along)",
-    "  layer      an extra model drawn on top - any number per round, one quad each",
+    "  layer      an extra model drawn on top - any number per round, one quad each. solid: true = opaque",
+    "             (solid detail map, drawn twice) e.g. in_goal_fill_neg/pos recolour a whole in-goal (-x / +x end)",
     "A round can override x / z / along / across (or the in-goal panel layout) for a position in its own slot."
   ],
   "broadcast_stretch": 1.38,
@@ -23,6 +24,8 @@
     "centre_opp_inner": {"host": "layer", "x": 0, "z": -20, "along": 16, "across": 6},
     "square_a": {"host": "squares_a", "x": 35, "z": -5.5, "along": 8, "across": 11},
     "square_b": {"host": "squares_b", "x": 15, "z": -5.5, "along": 8, "across": 11},
-    "in_goal": {"host": "in_goal", "panels_z": [-16, 16], "length": 14, "depth": 5.6}
+    "in_goal": {"host": "in_goal", "panels_z": [-16, 16], "length": 14, "depth": 5.6},
+    "in_goal_fill_neg": {"host": "layer", "solid": true, "x": -54.05, "z": 0, "along": 7.76, "across": 67.86},
+    "in_goal_fill_pos": {"host": "layer", "solid": true, "x": 54.05, "z": 0, "along": 7.76, "across": 67.86}
   }
 }

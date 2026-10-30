@@ -1,5 +1,5 @@
 {
-  "_doc": "NRL All Stars: Harvey Norman as the sole middle sponsor (one wide panel per half), plain orange (-x) and dark green (+x) in-goals.",
+  "_doc": "NRL All Stars: Harvey Norman as the sole middle sponsor (one panel per half); each in-goal recoloured whole - orange (-x end) and dark green (+x end), no sponsors.",
   "label": "NRL All Stars",
   "menu_label": "NRL All Stars",
   "markings": [
@@ -13,25 +13,24 @@
     "square_a": {
       "sponsor": "harveynorman",
       "x": 25,
-      "along": 12,
-      "across": 4.6
+      "along": 9,
+      "across": 8.2
     },
-    "in_goal": {
+    "in_goal_fill_neg": {
       "art": "none",
       "background": [
         255,
         121,
         0
-      ],
-      "ends": {
-        "pos": {
-          "background": [
-            0,
-            82,
-            45
-          ]
-        }
-      }
+      ]
+    },
+    "in_goal_fill_pos": {
+      "art": "none",
+      "background": [
+        0,
+        82,
+        45
+      ]
     }
   }
 }

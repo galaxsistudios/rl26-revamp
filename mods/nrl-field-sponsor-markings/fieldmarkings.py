@@ -109,6 +109,7 @@ IN_GOAL_Z = 33.93
 # old in-place install used those).
 CODES = "abcdefghijklmnopqrtuxyz"
 SPONSOR_DIR = "fields/textures/sponsors/"
+SOLID_DETAIL_PATH = "fields/textures/sponsors/sponsor_alphadetail_rvsolid_col.texture"
 
 
 # ---- config -----------------------------------------------------------------
@@ -492,6 +493,19 @@ def preview_round(r, items):
 
 # ---- commands -----------------------------------------------------------------
 
+def solid_detail_texture():
+    """16x16 solid white BGRA texture: the detail map for "solid" layers
+    (stadiumgrass.lua). The stock one is grass noise that keeps sponsor
+    decals 20-80% see-through."""
+    import club_icons
+    img = Image.new("RGBA", (16, 16), (255, 255, 255, 255))
+    header = bytearray(128)
+    struct.pack_into("<4s7I", header, 0, b"DDS ", 124, 0x100F, 16, 16, 16 * 4, 1, 0)
+    struct.pack_into("<2I4s5I", header, 76, 32, 0x41, b"\0\0\0\0", 32, 0xFF0000, 0xFF00, 0xFF, 0xFF000000)
+    struct.pack_into("<I", header, 108, 0x1000)
+    return club_icons.make_blob(SOLID_DETAIL_PATH, bytes(header) + img.tobytes("raw", "BGRA"))
+
+
 def cmd_build(args):
     cfg = load_config()
     stale = lua_stale(cfg)
@@ -541,6 +555,11 @@ def cmd_build(args):
             img.save(os.path.join(BUILD_DIR, "previews", f"{r['id']}.png"))
             sheet.append(img)
             print(f"  built {r['id']}: {model_name(r)} + {len(layers_of(r))} layer(s)")
+    blob, sizes = solid_detail_texture()
+    with open(os.path.join(BUILD_DIR, "solid_detail.texture.bin"), "wb") as f:
+        f.write(blob)
+    manifest.append({"path": SOLID_DETAIL_PATH, "file": "solid_detail.texture.bin", "sizes": list(sizes),
+                     "desc": "nrl-field-sponsor-markings solid detail map"})
     with open(os.path.join(BUILD_DIR, "manifest.json"), "w") as f:
         json.dump(manifest, f, indent=1)
     w, h = sheet[0].size
@@ -601,12 +620,13 @@ def stadiumgrass_block(cfg):
     rounds = cfg["rounds"]
     for i, r in enumerate(rounds):
         model = r["stock_model"] if "stock_model" in r else model_name(r)
-        layers = [model_name(r, p) for p in layers_of(r)]
+        layers = [(model_name(r, p), bool(cfg["positions"][p].get("solid"))) for p in layers_of(r)]
         out.append(f"{t}\t{r['id']} = {{")
         out.append(f"{t}\t\tmodel = {lua_str(model)},")
         if layers:
             out.append(f"{t}\t\tlayers = {{")
-            out += [f"{t}\t\t\t{lua_str(n)}" + ("," if j < len(layers) - 1 else "") for j, n in enumerate(layers)]
+            out += [f"{t}\t\t\t{{ name = {lua_str(n)}, solid = {'true' if solid else 'false'} }}"
+                    + ("," if j < len(layers) - 1 else "") for j, (n, solid) in enumerate(layers)]
             out.append(f"{t}\t\t}}")
         else:
             out.append(f"{t}\t\tlayers = {{}}")
