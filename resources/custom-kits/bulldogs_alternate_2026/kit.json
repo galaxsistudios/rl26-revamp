@@ -1,0 +1,37 @@
+{
+ "title": "Bulldogs Alternate 2026",
+ "notes": "Black alternate from 3 photos. O'Neills manufacturer.",
+ "install": {
+  "guid": 64006,
+  "club": 119,
+  "name": "ALTERNATE",
+  "texture": "bulldogs_alternate_2026",
+  "templates": {"uniformTop": 145, "uniformBottom": 143, "uniformSocks": 143}
+ },
+ "canvas": {"top": [4096, 2048], "shorts": [4096, 4096], "socks": [2048, 2048]},
+ "colours": {
+  "main": [20, 20, 22],
+  "blue": [28, 60, 196],
+  "white": [240, 240, 240],
+  "stock_blue": [33, 53, 145],
+  "stock_grey": [190, 190, 190]
+ },
+ "sponsors": [
+  {"name": "Laundy Hotels", "source": {"file": "logos/laundy_hotels.png"}, "colour": "white",
+   "place": [{"at": [1635, 1035], "width": 640}]},
+  {"name": "Future Form", "source": {"stock": "m_top_bulldogs_nrl_home_26_col_1", "box": [1565, 490, 1735, 605]},
+   "place": [{"pos": [1573, 484]}]},
+  {"name": "O'Neills", "source": {"stock": "m_shorts_bulldogs_nrl_home_26_col_1", "box": [1400, 2850, 1700, 3070]},
+   "place": [{"at": [1322, 392], "width": 150, "angle": 28}, {"at": [1966, 392], "width": 150, "angle": -28}]},
+  {"name": "NRL", "rule": "nrl", "at": [1418, 632], "shield_height": 118},
+  {"name": "Bulldogs crest", "rule": "crest", "source": {"file": "logos/bulldogs_crest_2026.png"},
+   "outline": {"px": 6, "colour": "white"}, "place": [{"at": [1872, 632], "height": 120}]},
+  {"name": "Product tag", "source": {"stock": "m_top_bulldogs_nrl_home_26_col_1", "box": [1216, 1636, 1381, 1732], "raw": true}},
+  {"name": "KFC", "source": {"stock": "m_top_bulldogs_nrl_home_26_col_1", "box": [300, 395, 785, 565], "lo": 60, "hi": 180}},
+  {"name": "Supporting Disabilities Australia", "source": {"stock": "m_top_bulldogs_nrl_away_26_col_1", "box": [215, 1195, 880, 1540]}},
+  {"name": "CB monogram", "source": {"python": "cb_monogram"}, "colour": "white",
+   "place": [{"at": [543, 268], "height": 62}]},
+  {"name": "Wattyl (right sleeve)", "source": {"stock": "m_top_bulldogs_nrl_home_26_col_1", "box": [2555, 440, 2975, 620]}},
+  {"name": "Wattyl (left sleeve)", "source": {"stock": "m_top_bulldogs_nrl_home_26_col_1", "box": [3390, 430, 3805, 615]}}
+ ]
+}

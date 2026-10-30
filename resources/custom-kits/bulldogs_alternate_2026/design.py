@@ -1,43 +1,25 @@
-#!/usr/bin/env python3
 """
-design.py - Bulldogs 2026 alternate (black) kit, painted procedurally in RL26's
-kit layout (see resources/jersey-templates/README.md), then the sponsors laid
-on top.
+design.py - Bulldogs 2026 alternate (black) kit: the painted layers. Sponsors,
+the NRL logo and the crest are in kit.json; build with
+    python tools/kit_studio.py build bulldogs_alternate_2026
 
-Base design: black body; a blue chevron yoke on the front made of V stripes
-that are cut off at an angle towards the armpits; blue cuffs
-on the sleeves. Black shorts and
-socks with blue hoops, recoloured from the stock 2026 home ones.
+Base design: black body; a blue chevron yoke on the front made of V stripes,
+cut off at an angle towards the armpits and flat across the bottom; plain
+black sleeves with blue cuffs. Black shorts and socks with blue hoops,
+recoloured from the stock 2026 home ones.
 
-Sponsors:
-  logos/laundy_hotels.png        laundy.com.au (laundy-logo-black.png)
-  logos/bulldogs_crest_2026.png  Wikipedia File:Canterbury-Bankstown_Bulldogs_logo_2026.svg
-  ../logos/nrl_telstra_premiership.png  NRL Telstra Premiership logo (kit_design.nrl_patch)
-  KFC, Wattyl, O'Neills, Future Form, Supporting Disabilities Australia and
-  the official product tag are keyed out of the stock Bulldogs 2026 textures
-  (same artwork and placement the game uses) and recoloured white.
-
-Usage (repo root):
-    python resources/custom-kits/bulldogs_alternate_2026/design.py
-    python tools/jersey_template.py preview resources/custom-kits/bulldogs_alternate_2026
+Logo sources (kit.json): logos/laundy_hotels.png (laundy.com.au,
+laundy-logo-black.png); logos/bulldogs_crest_2026.png (Wikipedia File:
+Canterbury-Bankstown_Bulldogs_logo_2026.svg, also the CB monogram); KFC,
+Wattyl, O'Neills, Future Form, Supporting Disabilities Australia and the
+product tag are keyed out of the stock Bulldogs 2026 textures.
 """
-
-import os
-import sys
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 from scipy import ndimage
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-sys.path.insert(0, os.path.join(ROOT, "tools"))
-from kit_design import key, outline, place, place_nrl_patch, recolour, solid, stock  # noqa: E402
-
-BLACK = (20, 20, 22)
-BLUE = (28, 60, 196)
-WHITE = (240, 240, 240)
-STOCK_BLUE, STOCK_GREY = (33, 53, 145), (190, 190, 190)
+import kit_design as kd
 
 # Front chevron: v = (y - NECK_Y) + SLOPE * |x - CX| (UV px). Bands (v0, v1)
 # that are blue; everything else in the yoke is black. Measured down the
@@ -54,18 +36,17 @@ FLAT_Y = 786
 # the outer ends of the stripes are cut on a diagonal near the bottom:
 # |dx| < CUT_W - CUT_SLOPE * (y - CUT_Y)  (wide to the panel edge higher up)
 CUT_W, CUT_Y, CUT_SLOPE = 520, 692, 0.85
-CUFF_Y = 727
 
 
-# --------------------------------------------------------------------------
-# top
+def solid_layer(mask, colour):
+    out = np.zeros(mask.shape + (4,), np.uint8)
+    out[mask] = tuple(colour) + (255,)
+    return out
 
 
-def top():
-    W, H = 4096, 2048
-    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
-    img = np.empty((H, W, 3), np.float32)
-    img[:] = BLACK
+def top(kit):
+    y, x = kit.grid("top")
+    W, H = kit.size("top")
 
     # front yoke (front panel = 1100..2270), the shoulders are already on it
     front = (x > 1090) & (x < 2280) & (y > 190)
@@ -75,85 +56,44 @@ def top():
     bands = np.zeros_like(front)
     for v0, v1 in BLUE_BANDS:
         bands |= (v >= v0) & (v < v1)
-    img[front & bands & cut] = BLUE
-
-    # sleeves: plain black with blue cuffs (the cuff lining reuses texels
-    # below the cuff too)
-    sleeves = x > 2290
-    img[sleeves & (y >= CUFF_Y)] = BLUE
 
     # collar black, with a thin blue edge where it meets the neckline
-    img[(x > 1110) & (x < 2160) & (y < 205)] = BLACK
-    img[(x > 1110) & (x < 2160) & (y > 180) & (y < 205)] = BLUE
+    strip = (x > 1110) & (x < 2160)
+    collar = solid_layer(strip & (y < 205), kit.colour("main"))
+    collar[strip & (y > 180) & (y < 205)] = kit.colour("blue") + (255,)
 
-    canvas = Image.fromarray(img.astype(np.uint8)).convert("RGBA")
-    logos(canvas)
-    return canvas.convert("RGB")
-
-
-def logos(c):
-    home = stock("m_top_bulldogs_nrl_home_26_col_1")
-    away = stock("m_top_bulldogs_nrl_away_26_col_1")
-    shorts = stock("m_shorts_bulldogs_nrl_home_26_col_1")
-
-    # front
-    laundy = Image.open(os.path.join(HERE, "logos", "laundy_hotels.png")).convert("RGBA")
-    laundy = solid(laundy.getchannel("A").crop(laundy.getchannel("A").getbbox()), WHITE)
-    place(c, laundy, (CX - 10, 1035), width=640)
-
-    place(c, solid(key(home, (1565, 490, 1735, 605)), WHITE), at=(1565 + 8, 490 - 6))  # Future Form.
-
-    oneills = solid(key(shorts, (1400, 2850, 1700, 3070)), WHITE)
-    place(c, oneills, (1322, 392), width=150, angle=28)
-    place(c, oneills, (1966, 392), width=150, angle=-28)
-
-    crest = Image.open(os.path.join(HERE, "logos", "bulldogs_crest_2026.png")).convert("RGBA")
-    crest = crest.crop(crest.getchannel("A").getbbox())
-    crest = crest.resize((round(120 * crest.width / crest.height), 120), Image.LANCZOS)  # ~ the NRL badge height
-    place(c, outline(crest, 6, WHITE), (1872, 634))
-
-    place_nrl_patch(c, (1418, 632), 118, BLACK, WHITE)  # on a flat black patch over the yoke
-
-    c.alpha_composite(home.crop((1216, 1636, 1381, 1732)).convert("RGBA"), (1216, 1636))  # product tag
-
-    # back
-    place(c, solid(key(home, (300, 395, 785, 565), lo=60, hi=180), WHITE), at=(300, 395))  # KFC
-    place(c, solid(key(away, (215, 1195, 880, 1540)), WHITE), at=(215, 1195))  # SDA
-    cb = Image.open(os.path.join(HERE, "logos", "bulldogs_crest_2026.png")).convert("RGBA")
-    s = cb.width / 1200
-    cb = cb.crop((round(520 * s), round(1010 * s), round(665 * s), round(1170 * s)))
-    lum = np.asarray(cb.convert("L"), np.float32) * (np.asarray(cb.getchannel("A")) / 255)
-    cb = solid(Image.fromarray(np.clip((lum - 120) * 3, 0, 255).astype(np.uint8)), WHITE)
-    place(c, cb, (543, 268), height=62)  # CB monogram under the collar
-
-    # sleeves
-    place(c, solid(key(home, (2555, 440, 2975, 620)), WHITE), at=(2555, 440))
-    place(c, solid(key(home, (3390, 430, 3805, 615)), WHITE), at=(3390, 430))
+    return [
+        ("Base", solid_layer(np.ones((H, W), bool), kit.colour("main"))),
+        ("Chest chevrons", solid_layer(front & bands & cut, kit.colour("blue"))),
+        # sleeves are plain black; blue cuffs (the cuff lining reuses texels below the cuff too)
+        ("Cuffs", solid_layer((x > 2290) & (y >= kd.CUFF_Y), kit.colour("blue"))),
+        ("Collar", collar),
+    ]
 
 
-# --------------------------------------------------------------------------
-# shorts / socks: stock home recoloured (blue -> black, light grey -> blue)
-
-
-def shorts():
-    im = stock("m_shorts_bulldogs_nrl_home_26_col_1")
+def shorts(kit):
+    """Stock home shorts recoloured: blue -> black, light grey -> white."""
+    im = kit.stock("m_shorts_bulldogs_nrl_home_26_col_1")
     a = np.asarray(im, np.float32)
     # sponsors keep their light grey (white on black); only the ground goes black
     logo = a.min(2) > 120
     logo = ndimage.binary_dilation(logo, iterations=2) & (a.min(2) > 70)
-    return recolour(im, STOCK_BLUE, STOCK_GREY, BLACK, WHITE, keep=logo)
+    return [("Shorts (stock 2026 home, recoloured)",
+             kd.recolour(im, kit.colour("stock_blue"), kit.colour("stock_grey"),
+                         kit.colour("main"), kit.colour("white"), keep=logo))]
 
 
-def socks():
-    return recolour(stock("m_socks_bulldogs_nrl_home_26_col_1"), STOCK_BLUE, STOCK_GREY, BLACK, BLUE)
+def socks(kit):
+    """Stock home socks recoloured: blue -> black, grey hoops -> blue."""
+    return [("Socks (stock 2026 home, recoloured)",
+             kd.recolour(kit.stock("m_socks_bulldogs_nrl_home_26_col_1"), kit.colour("stock_blue"),
+                         kit.colour("stock_grey"), kit.colour("main"), kit.colour("blue")))]
 
 
-def main():
-    jobs = {"top": top, "shorts": shorts, "socks": socks}
-    for part in sys.argv[1:] or jobs:
-        jobs[part]().save(os.path.join(HERE, f"{part}.png"))
-        print("wrote", part)
-
-
-if __name__ == "__main__":
-    main()
+def cb_monogram(kit):
+    """The CB monogram from the 2026 crest's collar tag."""
+    cb = Image.open(kit.file("logos/bulldogs_crest_2026.png")).convert("RGBA")
+    s = cb.width / 1200
+    cb = cb.crop((round(520 * s), round(1010 * s), round(665 * s), round(1170 * s)))
+    lum = np.asarray(cb.convert("L"), np.float32) * (np.asarray(cb.getchannel("A")) / 255)
+    return kd.solid(Image.fromarray(np.clip((lum - 120) * 3, 0, 255).astype(np.uint8)), (255, 255, 255))

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-kit_design.py - helpers for kits designed in code (resources/custom-kits/<kit>/design.py):
+kit_design.py - helpers for kits designed in code (resources/custom-kits/<kit>/design.py,
+built by kit_studio.py):
 the base design is painted with numpy masks in the kit's UV layout (see
 resources/jersey-templates/README.md), then the sponsors are laid on top.
 
@@ -151,12 +152,12 @@ NRL_LOGO = os.path.join(ROOT, "resources", "custom-kits", "logos", "nrl_telstra_
 NRL_SHIELD_H = 284  # the shield's rows in NRL_LOGO; the wordmark sits below
 
 
-def nrl_patch(shield_h, ground, colour=(240, 240, 240), pad=18, text_pad=7):
-    """The NRL Telstra Premiership logo (shield + wordmark) in colour on a flat
-    patch of ground (the jersey's main colour) that hugs it, so the pattern
-    underneath stops at the patch. shield_h = the shield's height in px.
-    Returns (image, shield centre in the image)."""
-    logo = Image.open(NRL_LOGO).getchannel("A")
+def nrl_parts(shield_h, ground, colour=(240, 240, 240), pad=18, text_pad=7, logo=NRL_LOGO):
+    """The NRL Telstra Premiership logo (shield + wordmark) in colour, and the
+    flat patch of ground (the jersey's main colour) that hugs it, so the
+    pattern underneath stops at the patch. shield_h = the shield's height in
+    px. Returns (patch, logo, shield centre), both images the same size."""
+    logo = Image.open(logo).getchannel("A")
     s = shield_h / NRL_SHIELD_H
     logo = logo.resize((round(logo.width * s), round(logo.height * s)), Image.LANCZOS)
     big = Image.new("L", (logo.width + 4 * pad, logo.height + 4 * pad))
@@ -169,9 +170,15 @@ def nrl_patch(shield_h, ground, colour=(240, 240, 240), pad=18, text_pad=7):
     shield[split:] = False
     text[:split] = False
     patch = ndimage.binary_fill_holes(_hug(shield, pad) | _hug(text, text_pad))
-    out = solid(Image.fromarray((patch * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1)), ground)
-    out.alpha_composite(solid(big, colour))
-    return out, (big.width / 2, 2 * pad + shield_h / 2)
+    patch = solid(Image.fromarray((patch * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1)), ground)
+    return patch, solid(big, colour), (big.width / 2, 2 * pad + shield_h / 2)
+
+
+def nrl_patch(shield_h, ground, colour=(240, 240, 240), pad=18, text_pad=7):
+    """nrl_parts() flattened: (image, shield centre in the image)."""
+    patch, logo, centre = nrl_parts(shield_h, ground, colour, pad, text_pad)
+    patch.alpha_composite(logo)
+    return patch, centre
 
 
 def place_nrl_patch(canvas, shield_centre, shield_h, ground, colour=(240, 240, 240)):

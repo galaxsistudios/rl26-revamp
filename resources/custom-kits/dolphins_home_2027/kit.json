@@ -1,0 +1,47 @@
+{
+ "title": "Dolphins Home 2027",
+ "notes": "Oxen manufacturer. From 3 photos of the shirt + a close-up of the echo pattern. The Betr back sponsor is left off on purpose.",
+ "install": {
+  "guid": 64005,
+  "club": 134,
+  "name": "HOME 2027",
+  "texture": "dolphins_home_2027",
+  "templates": {"uniformTop": 7020, "uniformBottom": 7020, "uniformSocks": 7020},
+  "numberFrom": 185
+ },
+ "models": {"top": "top_flat01_short_Male"},
+ "canvas": {"top": [4096, 2048], "shorts": [2048, 2048], "socks": [1024, 1024]},
+ "colours": {
+  "main": [212, 24, 30],
+  "dark": [150, 12, 22],
+  "sleeve": [188, 18, 26],
+  "cuff": [164, 14, 22],
+  "gold": [222, 194, 140],
+  "stitch": [240, 96, 64],
+  "white": [244, 244, 244],
+  "tag": [28, 28, 30]
+ },
+ "sponsors": [
+  {"name": "Budget Direct", "source": {"file": "logos/budget_direct.png"},
+   "card": {"size": [650, 330], "radius": 42, "colour": "white"},
+   "place": [{"at": [1645, 1060], "width": 560, "offset": [0, 4]}]},
+  {"name": "WAHL", "source": {"stock": "m_top_dolphins_nrl_home_26_col_1", "box": [1548, 552, 1738, 619], "lo": 60, "hi": 200},
+   "place": [{"at": [1645, 560], "width": 220}]},
+  {"name": "NRL", "rule": "nrl", "at": [1420, 676], "shield_height": 132},
+  {"name": "Dolphins crest", "rule": "crest", "source": {"stock": "m_top_dolphins_nrl_home_26_col_1", "box": [1768, 592, 1952, 737]},
+   "place": [{"at": [1905, 676], "height": 140}]},
+  {"name": "Oxen", "source": {"python": "oxen_stacked"},
+   "place": [{"at": [1290, 448], "width": 186, "angle": 8}, {"at": [2000, 448], "width": 186, "angle": -8}]},
+  {"name": "Product tag", "source": {"python": "product_tag"}, "place": [{"pos": [1214, 1634]}]},
+  {"name": "Anglo American", "source": {"stock": "m_top_dolphins_nrl_home_26_col_1", "box": [236, 1086, 834, 1258]},
+   "place": [{"at": [535, 1200], "width": 640}]},
+  {"name": "PHINS UP", "source": {"stock": "m_top_dolphins_nrl_home_26_col_1", "box": [400, 368, 702, 430], "lo": 40, "hi": 180, "channel": 1},
+   "colour": "main", "place": [{"at": [543, 262], "width": 210}]},
+  {"name": "Budget Direct (right sleeve)", "source": {"python": "white_patch", "args": [[2536, 395, 2949, 612]]},
+   "place": [{"pos": [2536, 395]}]},
+  {"name": "Budget Direct (left sleeve)", "source": {"python": "white_patch", "args": [[3422, 395, 3836, 612]]},
+   "place": [{"pos": [3422, 395]}]},
+  {"name": "Oxen", "part": "shorts", "source": {"python": "oxen_stacked"},
+   "place": [{"at": [822, 1470], "width": 84}]}
+ ]
+}

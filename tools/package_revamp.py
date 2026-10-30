@@ -77,6 +77,8 @@ TOOLCHAIN = [
 ]
 
 SKIP_NAMES = {"__pycache__", ".pytest_cache"}
+# kit_studio build state (layer signatures); kit.psd ships so the kits can be edited
+SKIP_RESOURCE_FILES = {".studio.json"}
 
 
 def tracked_files(*roots):
@@ -139,7 +141,11 @@ def resource_files():
             out.append(base)
             continue
         for dirpath, _dirs, names in os.walk(root):
+            if SKIP_NAMES & set(dirpath.replace("\\", "/").split("/")):
+                continue
             for n in names:
+                if n in SKIP_RESOURCE_FILES:
+                    continue
                 rel = os.path.relpath(os.path.join(dirpath, n), REPO).replace("\\", "/")
                 if fnmatch.fnmatch(rel, pattern.replace("/**", "/*")) or pattern.endswith("/**"):
                     out.append(rel)

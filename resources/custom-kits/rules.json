@@ -1,0 +1,24 @@
+{
+ "_doc": "House rules for kits built with tools/kit_studio.py (see RULES.md). Change a value here and rebuild: every kit follows it, unless its kit.json overrides that value for one sponsor.",
+ "colours": {
+  "white": [240, 240, 240],
+  "black": [20, 20, 22]
+ },
+ "nrl": {
+  "logo": "@/logos/nrl_telstra_premiership.png",
+  "colour": "white",
+  "patch_colour": "main",
+  "shield_height": 124,
+  "patch_pad_shield": 18,
+  "patch_pad_text": 7,
+  "max_from_front_centre": 250
+ },
+ "crest": {
+  "height_vs_nrl_shield": 1.0,
+  "align_shield_centre": true
+ },
+ "sponsors": {
+  "default_colour": "white",
+  "patch_pad": 14
+ }
+}

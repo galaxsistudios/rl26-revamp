@@ -1,0 +1,21 @@
+{
+ "title": "Club Kit 2027",
+ "notes": "Where the design came from (photos, links) and anything left off on purpose.",
+ "install": {
+  "club": 0,
+  "name": "HOME 2027",
+  "texture": "club_kit_2027"
+ },
+ "canvas": {"top": [4096, 2048], "shorts": [2048, 2048], "socks": [1024, 1024]},
+ "colours": {
+  "main": [20, 20, 22],
+  "second": [28, 60, 196],
+  "white": [240, 240, 240]
+ },
+ "sponsors": [
+  {"name": "NRL", "rule": "nrl", "at": [1420, 640]},
+  {"name": "Club crest", "rule": "crest", "source": {"file": "logos/crest.png"}},
+  {"name": "Front sponsor", "source": {"file": "logos/front_sponsor.png"}, "colour": "white",
+   "place": [{"at": [1645, 1040], "width": 620}]}
+ ]
+}

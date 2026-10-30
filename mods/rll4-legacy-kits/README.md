@@ -114,6 +114,11 @@ A copied Academy top loses its collar tint layer and its Academy flag, because t
 texture already has the collar colours. `bake`'s preview and number-area sample still use the
 default meshes.
 
+Kits designed in code (photos -> layers + real sponsor logos + an editable `kit.psd`) are made with
+[tools/kit_studio.py](../../tools/kit_studio.py), which keeps their row here in step with the kit's
+`kit.json` (`kit_studio.py install <kit>`). See
+[resources/custom-kits/RULES.md](../../resources/custom-kits/RULES.md).
+
 `"numberFrom": g` takes the number and name placement (`numberOffset`, `nameOffset`) from top item
 `g` instead of the top template. Use it when a kit borrows another team's model but should keep
 its club's number layout, e.g. the Dolphins HOME 2027 on England's `top_flat01` (7020) with
