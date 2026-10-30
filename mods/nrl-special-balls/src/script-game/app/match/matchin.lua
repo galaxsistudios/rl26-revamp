@@ -720,6 +720,177 @@ local function var_0_28(arg_19_0, arg_19_1)
 	native.Metrics.addMetricData(metrics_config.MatchStart, var_19_0)
 end
 
+-- official-jersey-editing: the words for kits with Chest text on (jesse-southwell-hair's
+-- assetmap draws them): grand finals (a career/competition grand final fixture, or the
+-- grand final field markings) on every jersey, milestone games (100, 150, 200, ...
+-- lifetime appearances) on that player's. Every other match clears them. Writes
+-- occasion_text_debug.txt in the game folder while OCCASION_TEXT_DEBUG is on.
+OCCASION_TEXT_DEBUG = true
+
+local function var_0_ojeLog(arg_0_0)
+	if not OCCASION_TEXT_DEBUG then
+		return
+	end
+
+	pcall(function()
+		local var_0_0 = io.open("occasion_text_debug.txt", "a")
+
+		if var_0_0 then
+			var_0_0:write(os.date("%H:%M:%S ") .. arg_0_0 .. "\n")
+			var_0_0:close()
+		end
+	end)
+end
+
+local function var_0_ojeEnumName(arg_0_0, arg_0_1)
+	local var_0_0, var_0_1 = pcall(function()
+		for iter_0_0, iter_0_1 in pairs(arg_0_0) do
+			if type(iter_0_0) == "string" and iter_0_1 == arg_0_1 then
+				return iter_0_0
+			end
+		end
+	end)
+
+	if var_0_0 and var_0_1 then
+		return var_0_1
+	end
+
+	return string.match(tostring(arg_0_1), "([%w_]+)$")
+end
+
+local function var_0_ojeEnum(arg_0_0, arg_0_1)
+	local var_0_0, var_0_1 = pcall(function()
+		return arg_0_0[arg_0_1]
+	end)
+
+	return var_0_0 and var_0_1 or nil
+end
+
+local var_0_ojeGrandFinalTitles = {
+	{ "League_NRL", "NRL TELSTRA PREMIERSHIP GRAND FINAL" },
+	{ "League_NRLW", "NRLW TELSTRA PREMIERSHIP GRAND FINAL" },
+	{ "League_SuperLeague", "BETFRED SUPER LEAGUE GRAND FINAL" },
+	{ "League_WSL", "BETFRED WOMEN'S SUPER LEAGUE GRAND FINAL" },
+	{ "League_QLDCup", "HOSTPLUS CUP GRAND FINAL" }
+}
+
+local function var_0_ojeGrandFinalTitle(arg_0_0)
+	local var_0_0 = arg_0_0.stateOfTheSeason
+	local var_0_1 = arg_0_0.matchType and arg_0_0.matchType.fieldMarkings
+	local var_0_2 = native.MatchSettingsFieldMarkings
+	local var_0_3 = var_0_0 and (var_0_0.isGrandFinal or var_0_0.specialEvent ~= nil and var_0_0.specialEvent == var_0_ojeEnum(native.CareerFixtureSpecialEvent, "GrandFinal"))
+	local var_0_4 = var_0_1 ~= nil and (var_0_1 == var_0_ojeEnum(var_0_2, "NRL_GrandFinal") or var_0_1 == var_0_ojeEnum(var_0_2, "SuperLeague_GrandFinal"))
+
+	var_0_ojeLog("grand final: fixture=" .. tostring(var_0_3) .. " markings=" .. tostring(var_0_4) .. " competition=" .. tostring(var_0_0 and var_0_0.competitionId))
+
+	if not var_0_3 and not var_0_4 then
+		return nil
+	end
+
+	local var_0_5 = var_0_0 and var_0_0.competitionId
+
+	for iter_0_0, iter_0_1 in ipairs(var_0_ojeGrandFinalTitles) do
+		if var_0_5 ~= nil and var_0_5 == var_0_ojeEnum(native.CareerCompetitionIdEnum, iter_0_1[1]) then
+			return iter_0_1[2]
+		end
+	end
+
+	if var_0_1 ~= nil and var_0_1 == var_0_ojeEnum(var_0_2, "SuperLeague_GrandFinal") then
+		return "BETFRED SUPER LEAGUE GRAND FINAL"
+	elseif var_0_1 ~= nil and var_0_1 == var_0_ojeEnum(var_0_2, "NRL_GrandFinal") then
+		return "NRL TELSTRA PREMIERSHIP GRAND FINAL"
+	end
+
+	return "GRAND FINAL"
+end
+
+local function var_0_ojeClubName(arg_0_0)
+	local var_0_0, var_0_1 = pcall(function()
+		local var_0_2 = arg_0_0.matchClub
+
+		return var_0_2.nickname ~= nil and var_0_2.nickname ~= "" and var_0_2.nickname or var_0_2.fullName
+	end)
+
+	return var_0_0 and var_0_1 and string.upper(var_0_1) or nil
+end
+
+local var_0_ojeCityNames = {
+	BarrowInFurness = "BARROW-IN-FURNESS",
+	NewcastleUponTyne = "NEWCASTLE",
+	StHelens = "ST HELENS"
+}
+
+local function var_0_ojeCity(arg_0_0)
+	local var_0_0, var_0_1 = pcall(function()
+		local var_0_2 = arg_0_0.groundInfo
+		local var_0_3 = var_0_ojeEnumName(native.EStadiums, var_0_2.groundInfo.stadium) or var_0_2.ground
+		local var_0_4 = var_0_ojeEnumName(native.ECities, stadiumconfig.getLocationEnum(var_0_3))
+
+		return var_0_4 and (var_0_ojeCityNames[var_0_4] or string.upper((string.gsub(var_0_4, "(%l)(%u)", "%1 %2"))))
+	end)
+
+	return var_0_0 and var_0_1 or nil
+end
+
+local function var_0_ojeSetupOccasionText(arg_0_0)
+	local var_0_0 = assetmap.formatOccasionDate and assetmap.formatOccasionDate()
+	local var_0_1 = var_0_ojeCity(arg_0_0)
+	local var_0_2 = var_0_ojeClubName(arg_0_0.homeTeamConfig)
+	local var_0_3 = var_0_ojeClubName(arg_0_0.awayTeamConfig)
+	local var_0_4 = var_0_2 and var_0_3 and var_0_2 .. " V " .. var_0_3 or ""
+	local var_0_5 = var_0_0 and var_0_1 and var_0_0 .. ", " .. var_0_1 or var_0_0 or var_0_1 or ""
+	local var_0_6 = var_0_ojeGrandFinalTitle(arg_0_0)
+	local var_0_7 = {}
+	local var_0_8 = false
+
+	for iter_0_0, iter_0_1 in ipairs({ arg_0_0.homeTeamConfig, arg_0_0.awayTeamConfig }) do
+		local var_0_9, var_0_10 = pcall(function()
+			local var_0_11 = iter_0_1.matchClub
+			local var_0_12 = arg_0_0.matchType.categorisedMatchType
+
+			for iter_0_2, iter_0_3 in var_0_11.lineup:iterPlayers() do
+				local var_0_13 = var_0_11:getPlayer(iter_0_3)
+				local var_0_14 = native.CPlayerCareerStats()
+
+				var_0_13:getLifetimeStats(var_0_14, var_0_12, false)
+
+				local var_0_15 = (var_0_14:getOption("matchesPlayed") or 0) + 1
+
+				if var_0_15 >= 100 and var_0_15 % 50 == 0 then
+					local var_0_16 = var_0_13.identity:getOption("shirtName")
+
+					if type(var_0_16) == "string" and var_0_16 ~= "" then
+						var_0_7[string.upper(var_0_16)] = {
+							string.upper(var_0_13.fullName or var_0_16) .. " - " .. var_0_15 .. " GAMES",
+							var_0_4,
+							var_0_5
+						}
+						var_0_8 = true
+
+						var_0_ojeLog("milestone: " .. tostring(var_0_13.fullName) .. " (" .. var_0_16 .. ") " .. var_0_15)
+					end
+				end
+			end
+		end)
+
+		if not var_0_9 then
+			var_0_ojeLog("milestones failed: " .. tostring(var_0_10))
+		end
+	end
+
+	local var_0_17 = var_0_6 and {
+		var_0_6,
+		var_0_4,
+		var_0_5
+	} or nil
+
+	rawset(_G, "MOD_OCCASION_TEXT", (var_0_17 or var_0_8) and {
+		lines = var_0_17,
+		players = var_0_7
+	} or nil)
+	var_0_ojeLog("text: " .. (var_0_17 and table.concat(var_0_17, " / ") or "none") .. " | city=" .. tostring(var_0_1) .. " teams=" .. var_0_4)
+end
+
 function finalise(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
 	resolveGround(arg_20_0, arg_20_1, arg_20_3, arg_20_1.homeTeamConfig.matchClub)
 	var_0_23(arg_20_1, arg_20_3, arg_20_4)
@@ -727,6 +898,14 @@ function finalise(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, ar
 	var_0_27(arg_20_1, arg_20_2, arg_20_3)
 	var_0_24(arg_20_1, arg_20_6, arg_20_7)
 	var_0_28(arg_20_1, arg_20_5)
+
+	-- official-jersey-editing: this match's chest text (or none)
+	local var_20_ok, var_20_error = pcall(var_0_ojeSetupOccasionText, arg_20_1)
+
+	if not var_20_ok then
+		rawset(_G, "MOD_OCCASION_TEXT", nil)
+		var_0_ojeLog("setup failed: " .. tostring(var_20_error))
+	end
 end
 
 function processLobbySideInfo(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)

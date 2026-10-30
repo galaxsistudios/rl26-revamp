@@ -1,4 +1,5 @@
 import("app.academy.academy_club_jerseystate_list_defaults")
+import("app.academy.academy_club_jerseystate_appearancestate_edit_groups")
 import("app.academy.academy_helper")
 import("app.alert.alert_state")
 import("base.ui.optionmenu.optionmenu_aide")
@@ -26,10 +27,13 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 			local var_1_5 = var_1_3:isUniformAssociatedWithClub(var_1_4.name, arg_1_4.id)
 			local var_1_6 = var_1_4.config:getOption("uniformEditable") == 1 and true or false
 			local var_1_7 = not var_1_5 and arg_1_5 and var_1_6
+			-- official-jersey-editing (when installed): official kits and licensed copies open
+			-- in a restricted editor (Manufacturer cut and numbers only)
+			local var_1_official = arg_1_5 and academy_club_jerseystate_appearancestate_edit_groups.OfficialKitEditing and (var_1_5 or not var_1_6)
 
 			table.insert(var_1_0, {
 				label = var_1_4:getDisplayName(iter_1_0),
-				editable = var_1_2 or var_1_7 or var_1_copy and true,
+				editable = var_1_2 or var_1_7 or var_1_official or var_1_copy and true,
 				editType = optionmenu_aide.EditTypes.SubMenu,
 				onDisc = var_1_5,
 				displayType = optionmenu_aide.DisplayTypes.Value,
