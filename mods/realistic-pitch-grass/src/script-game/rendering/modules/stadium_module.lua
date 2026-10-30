@@ -5,6 +5,9 @@ import("rendering.props.propfactory")
 import("rendering.stadium.stadiumfactory")
 import("intermediatelua.convant.stadiumcreator")
 import("script-config.game.stadiums.stadiumtemplates")
+-- suncorp-roof-lights hosts its code here (a stock file the game never
+-- imports); with that mod off it is stock and has no roof light functions.
+import("rendering.util.shaderglobalbinding")
 
 local var_0_0 = load("intermediatelua.visualconfig.stadium-cfg")
 local var_0_1 = load("intermediatelua.props.list")
@@ -152,6 +155,12 @@ function StadiumModule.load(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5
 
 	arg_3_0.model:addToJoin(var_3_1)
 
+	-- suncorp-roof-lights: pick the roof light colours for this match (the
+	-- lighting, loaded after the stadium, uses them)
+	if shaderglobalbinding.setRoofLightsMatch then
+		pcall(shaderglobalbinding.setRoofLightsMatch, var_3_3, arg_3_6)
+	end
+
 	local var_3_GrassCfg = var_3_4
 	local var_3_GrassType = var_0_GroundGrass[var_3_3]
 
@@ -285,6 +294,11 @@ function StadiumModule.dispose(arg_6_0, arg_6_1)
 	arg_6_0.postTextures:dispose()
 
 	arg_6_0.postTextures = nil
+
+	-- suncorp-roof-lights: glows and roof lights back to stock
+	if shaderglobalbinding.clearRoofLights then
+		pcall(shaderglobalbinding.clearRoofLights)
+	end
 
 	if arg_6_0.levelInstance then
 		arg_6_0.levelInstance:unload()

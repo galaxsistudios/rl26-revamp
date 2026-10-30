@@ -1,0 +1,5 @@
+{
+ "_comment": "Core mod (RL26 only). install.py edits Suncorp's stadium model and appends the colour-slot texture the Lua loads (installer 'textures' step); the hook lives in realistic-pitch-grass's stadium_module.lua.",
+ "requires": [],
+ "releaseChannel": "core"
+}

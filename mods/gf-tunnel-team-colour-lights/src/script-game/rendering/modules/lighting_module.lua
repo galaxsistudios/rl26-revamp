@@ -1,6 +1,9 @@
 import("core.foundation.func")
 import("core.foundation.tablex")
 import("intermediatelua.lighting.clut")
+-- suncorp-roof-lights hosts its code here (a stock file the game never
+-- imports); with that mod off it is stock and has no roof light functions.
+import("rendering.util.shaderglobalbinding")
 
 local var_0_0 = load("intermediatelua.visualconfig.stadium-cfg")
 local var_0_1 = load("intermediatelua.lighting.list")
@@ -175,6 +178,11 @@ local function var_0_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 			end)
 		end
 
+		-- suncorp-roof-lights: team colours on Suncorp's red roof lights
+		if shaderglobalbinding.recolourRoofLights then
+			pcall(shaderglobalbinding.recolourRoofLights, iter_2_1, var_2_1.lighting2)
+		end
+
 		arg_2_0:import(var_2_1.lighting2, arg_2_2, var_2_0, arg_2_3, arg_2_4)
 		_G.unloadPackage(var_2_0)
 	end
@@ -310,4 +318,9 @@ end
 
 function LightingModule.update(arg_12_0, arg_12_1)
 	VERIFY(arg_12_0.currentLightingScene):update(arg_12_1)
+
+	-- suncorp-roof-lights: floodlight glow crossfade
+	if shaderglobalbinding.tickRoofLights then
+		pcall(shaderglobalbinding.tickRoofLights)
+	end
 end
