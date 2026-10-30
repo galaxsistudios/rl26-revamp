@@ -1,0 +1,7 @@
+{
+  "_doc": "Competition board. sponsorTypes = the stadium-cfg.lua sponsorType values whose grounds use this board for home clubs without a team board. sponsors = ids in config/sponsors/sponsors.json, in order.",
+  "type": "competition",
+  "name": "NRL",
+  "sponsorTypes": ["nrl"],
+  "sponsors": ["telstra", "kfc", "drinkwise", "kayo"]
+}

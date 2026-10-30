@@ -1,0 +1,14 @@
+{
+  "_doc": "Team board. clubs = club full names (any match, case-insensitive) that get this board when they are the home side. competition = the competition board whose rows follow the team's. identity = the club row that leads the board: badge + wordmark (recoloured to colours[1]) on colours[0] (primary, secondary - from the game's club data); \"repeat\", \"margin\", \"wordmark_height\" tune it, \"manual\": true keeps a hand-made club.png. sponsors = ids in config/sponsors/sponsors.json, in order: the club's top four non-gambling partners from its official partners page (2026-10-30).",
+  "type": "team",
+  "name": "Melbourne Storm",
+  "clubs": ["Melbourne Storm", "Melbourne Storm 2025", "GF Melbourne Storm"],
+  "competition": "nrl",
+  "sponsors": ["redzed", "budget-direct", "grilld", "big-ant"],
+  "identity": {
+    "badge": "res:nrl-site-logos/nrl/storm/badge.svg",
+    "wordmark": "res:nrl-site-logos/nrl/storm/text.svg",
+    "focus": {"eye": [0.84, 0.45], "span": 0.22, "nudge": [140, 0]},
+    "colours": [[120, 42, 144], [251, 188, 30]]
+  }
+}

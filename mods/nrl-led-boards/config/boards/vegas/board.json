@@ -1,0 +1,12 @@
+{
+  "_doc": "Event board: replaces the team/competition board when the match is this kind of game. priority = order events are checked (lowest first). match = any one of these makes it this event: specialEvent (career fixture event names), competition (CareerCompetitionIdEnum names), fieldMarkings (MatchSettingsFieldMarkings names, the Play Now / match setting), ground (stadium keys), isFinal (the season's finals flag). sponsorTypes, when given, also requires the ground's sponsorType to be one of them (keeps Super League finals off the NRL board). sponsors = ids in config/sponsors/sponsors.json, in order; the default board's sponsors (Revamp, Galaxsi) follow.",
+  "type": "event",
+  "name": "Rugby League Las Vegas",
+  "priority": 5,
+  "match": {
+    "specialEvent": ["Vegas"],
+    "fieldMarkings": ["NRL_Season_Wednesday"],
+    "ground": ["lasVegasStadium"]
+  },
+  "sponsors": ["nrl-las-vegas", "allegiant-stadium", "jd-sports", "telstra", "kfc"]
+}

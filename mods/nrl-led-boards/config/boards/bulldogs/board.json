@@ -1,0 +1,13 @@
+{
+  "_doc": "Team board. clubs = club full names (any match, case-insensitive) that get this board when they are the home side. competition = the competition board whose rows follow the team's. identity = the club row that leads the board: badge + wordmark (recoloured to colours[1]) on colours[0] (primary, secondary - from the game's club data); \"repeat\", \"margin\", \"wordmark_height\" tune it, \"manual\": true keeps a hand-made club.png. sponsors = ids in config/sponsors/sponsors.json, in order: the club's top four non-gambling partners from its official partners page (2026-10-30).",
+  "type": "team",
+  "name": "Canterbury-Bankstown Bulldogs",
+  "clubs": ["Canterbury-Bankstown Bulldogs", "Canterbury-Bankstown Bulldogs 2025"],
+  "competition": "nrl",
+  "sponsors": ["laundy-hotels", "oneills", "future-form", "wattyl"],
+  "identity": {
+    "badge": "res:nrl-site-logos/nrl/bulldogs/badge.svg",
+    "wordmark": "res:nrl-site-logos/nrl/bulldogs/text.svg",
+    "colours": [[0, 74, 153], [255, 255, 255]]
+  }
+}

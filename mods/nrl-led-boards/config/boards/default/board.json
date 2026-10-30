@@ -1,0 +1,24 @@
+{
+  "_doc": [
+    "The default board: the mod's own sponsors (added to EVERY board), the timing and the row order. It is also",
+    "the board for home clubs with no team board at grounds with no competition board (fallback competition +",
+    "these rows).",
+    "timing       persistTime = seconds each row stays up, transitionTime = seconds of the wipe/fade between rows",
+    "order        how a board's rows are stacked: club (a team board's identity row), team, competition, mod (= the sponsors below)",
+    "competition  the competition board used when a team board names none, and for this default board",
+    "",
+    "sponsors     the rows, in order, as ids in config/sponsors/sponsors.json. Every sponsor exists once there:",
+    "             config/sponsors/<id>.png is its finished row, 2048x128 (16:1, the size of every stock LED row),",
+    "             exactly as it shows on the LED. Edit it by hand (then mark the entry \"manual\": true), or change",
+    "             its recipe in sponsors.json and run `install.py rows <id>`.",
+    "On most grounds a panel is wider per row than 16:1 (about 12:1), so art shows a little narrower than",
+    "drawn - the stock rows look the same."
+  ],
+  "timing": {
+    "persistTime": 5,
+    "transitionTime": 0.5
+  },
+  "order": ["club", "team", "competition", "mod"],
+  "competition": "nrl",
+  "sponsors": ["rl26-revamp", "galaxsi-studios"]
+}

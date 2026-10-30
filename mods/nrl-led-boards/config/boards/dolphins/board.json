@@ -1,0 +1,14 @@
+{
+  "_doc": "Team board. clubs = club full names (any match, case-insensitive) that get this board when they are the home side. competition = the competition board whose rows follow the team's. identity = the club row that leads the board: badge + wordmark (recoloured to colours[1]) on colours[0] (primary, secondary - from the game's club data); \"repeat\", \"margin\", \"wordmark_height\" tune it, \"manual\": true keeps a hand-made club.png. sponsors = ids in config/sponsors/sponsors.json, in order: the club's top four non-gambling partners from its official partners page (2026-10-30).",
+  "type": "team",
+  "name": "Dolphins",
+  "clubs": ["Dolphins", "Dolphins 2025"],
+  "competition": "nrl",
+  "sponsors": ["budget-direct", "anglo-american", "ausbuild", "xxxx"],
+  "identity": {
+    "badge": "res:nrl-site-logos/nrl/dolphins/badge.svg",
+    "wordmark": "res:nrl-site-logos/nrl/dolphins/text.svg",
+    "focus": {"eye": [0.13, 0.29], "span": 0.42, "nudge": [-110, 0]},
+    "colours": [[224, 18, 26], [255, 255, 255]]
+  }
+}

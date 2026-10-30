@@ -1,0 +1,11 @@
+{
+  "_doc": "Event board: replaces the team/competition board when the match is this kind of game. priority = order events are checked (lowest first). match = any one of these makes it this event: specialEvent (career fixture event names), competition (CareerCompetitionIdEnum names), fieldMarkings (MatchSettingsFieldMarkings names, the Play Now / match setting), ground (stadium keys), isFinal (the season's finals flag). sponsorTypes, when given, also requires the ground's sponsorType to be one of them (keeps Super League finals off the NRL board). sponsors = ids in config/sponsors/sponsors.json, in order; the default board's sponsors (Revamp, Galaxsi) follow.",
+  "type": "event",
+  "name": "Ampol State of Origin",
+  "priority": 3,
+  "match": {
+    "competition": ["Tournament_StateOfOrigin"],
+    "fieldMarkings": ["NRL_Rep_StateOfOrigin"]
+  },
+  "sponsors": ["state-of-origin", "westpac", "accor", "ampol", "harvey-norman", "telstra", "kfc"]
+}

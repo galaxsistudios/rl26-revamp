@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""
+dump_led_boards.py - export every stadium's sponsor hoarding textures (the
+LED/LCD ribbons and the static printed boards) as upright PNGs, for seeing
+what each team's boards carry.
+
+Each ground lists its hoarding variants in stadium-cfg.lua's
+sponsorHoardingModels ({variant = model}); stadiumconfig.getStadiumModelFilenames
+picks one per match (magic round / cup / home team / sponsorType / standard).
+A variant's textures are the TXPK "<basePath><model>_t1.texpack". Members are
+read from the SHIPPED entry (pack.py's backup when a mod replaced it), and are
+stored V-flipped, so they are flipped back here.
+
+Output (default resources/LED Boards):
+    lcd/<texture>.png      LED ribbons (stacks of 16:1 rows)
+    static/<texture>.png   printed boards
+    index.md               ground -> variant -> textures
+A texture name shipped with different pixels at different grounds gets one
+file per version, suffixed with the first ground that uses it.
+
+    python tools/dump_led_boards.py [--out DIR]
+"""
+
+import argparse
+import collections
+import hashlib
+import io
+import json
+import os
+import re
+import struct
+import sys
+
+from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import pack  # noqa: E402
+import entries  # noqa: E402
+import classify_entries as ce  # noqa: E402
+import extract_textures as et  # noqa: E402
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STADIUM_CFG = os.path.join(REPO, "decompiled", "src", "script-game", "intermediatelua", "visualconfig", "stadium-cfg.lua")
+SKIP = ("sponsor_mat", "sponsor_nrm", "sponsors_mat", "sponsors_nrm", "ledbulb_col", "sponsor_white_col", "/lightmaps/")
+GENERIC_VARIANTS = {"nrl", "standard", "superLeague", "superLeagueWomens", "championTrophy", "challengeCup",
+                    "rlwcMale", "rlwcFemale"}
+
+
+def hoarding_variants():
+    """[(ground, variant, texpack path)] in stadium-cfg.lua order."""
+    src = open(STADIUM_CFG, encoding="utf-8-sig").read()
+    out = []
+    for m in re.finditer(r'basePath = "stadiums/([^"/]+)/".*?sponsorHoardingModels = \{([^}]*)\}', src, re.S):
+        for variant, model in re.findall(r'(\w+) = "([^"]+)"', m.group(2)):
+            out.append((m.group(1), variant, f"stadiums/{m.group(1)}/{model}_t1.texpack"))
+    return out
+
+
+def stock_txpk(entry):
+    """[(member path, dds bytes)] of the shipped TXPK entry."""
+    meta_path = pack.backup_meta_path(entry)
+    if os.path.exists(meta_path):
+        meta = json.load(open(meta_path))
+        stored = open(meta["blob_backup"], "rb").read()
+        main_c, main_u, vram_c, vram_u = (meta[k] for k in ("main_compressed_size", "main_uncompressed_size",
+                                                             "vram_compressed_size", "vram_uncompressed_size"))
+    else:
+        *_, bpath = ce.read_blob_full(pack.BLOBSET_PATH, entry)
+        stored = open(bpath, "rb").read()
+        main_c, main_u, vram_c, vram_u = pack.entry_sizes(ce._INDEX_DATA, ce._SIZE_TABLE_OFF, entry)
+    if main_c == main_u and vram_c == vram_u:
+        raw = stored
+    elif main_c == main_u or vram_c == vram_u:
+        raw = stored[:main_u] + ce.decode_outer_zstd_frames(stored[main_u:])
+    else:
+        raw = ce.decode_outer_zstd_frames(stored)
+    return [(p[:-4], dds) for p, dds in et.parse_txpk(raw, main_u)]
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--out", default=os.path.join(REPO, "resources", "LED Boards"))
+    args = ap.parse_args()
+    ce.load_index(pack.BLOBSET_PATH)
+
+    files = {}                                   # (name, digest) -> output file name
+    versions = collections.defaultdict(list)     # name -> [digest]
+    usage = collections.defaultdict(list)        # ground -> [(variant, [files])]
+    for ground, variant, texpack in hoarding_variants():
+        try:
+            members = stock_txpk(entries.index_of(texpack))
+        except KeyError:
+            print(f"  missing {texpack}")
+            continue
+        used = []
+        for path, dds in members:
+            if any(s in path for s in SKIP):
+                continue
+            name = path.rsplit("/", 1)[1]
+            digest = hashlib.sha1(dds).hexdigest()
+            key = (name, digest)
+            if key not in files:
+                versions[name].append(digest)
+                kind = "lcd" if "/lcd/" in path else "static"
+                stem = name if len(versions[name]) == 1 else f"{name}__{ground}"
+                files[key] = f"{kind}/{stem}.png"
+                dest = os.path.join(args.out, *files[key].split("/"))
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                Image.open(io.BytesIO(dds)).transpose(Image.FLIP_TOP_BOTTOM).save(dest)
+            used.append(files[key])
+        usage[ground].append((variant, sorted(used)))
+
+    lines = ["# Stadium sponsor hoardings", "",
+             "Generated by tools/dump_led_boards.py from the shipped textures, flipped upright.",
+             "`lcd/` = LED ribbons (field-level ring + stand fascia), `static/` = printed boards.",
+             "Variant = key in stadium-cfg.lua sponsorHoardingModels (home team nickname, nrl, standard, magicRound_<team>, ...).",
+             "A team with no row here gets its ground's sponsorType variant (usually the shared NRL boards).", "",
+             "## LED by team", "", "| Team | Ground | Variant | LED texture |", "|---|---|---|---|"]
+    by_team = []
+    for ground, variants in usage.items():
+        for variant, used in variants:
+            team = variant.replace("magicRound_", "")
+            if team in GENERIC_VARIANTS:
+                continue
+            for f in used:
+                if f.startswith("lcd/"):
+                    by_team.append((team, ground, variant, f))
+    for team, ground, variant, f in sorted(by_team):
+        lines.append(f"| {team} | {ground} | {variant} | [{os.path.basename(f)[:-4]}]({f}) |")
+    lines += ["", "# By ground", ""]
+    for ground in sorted(usage):
+        lines.append(f"## {ground}")
+        for variant, used in usage[ground]:
+            lines.append(f"- **{variant}**: " + (", ".join(f"[{os.path.basename(f)[:-4]}]({f.replace(' ', '%20')})" for f in used) or "-"))
+        lines.append("")
+    with open(os.path.join(args.out, "index.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    lcd = sum(1 for f in files.values() if f.startswith("lcd/"))
+    print(f"{len(files)} textures ({lcd} LED, {len(files) - lcd} static) from {len(usage)} grounds -> {args.out}")
+
+
+if __name__ == "__main__":
+    main()

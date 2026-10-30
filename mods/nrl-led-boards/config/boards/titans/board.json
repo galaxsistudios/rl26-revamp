@@ -1,0 +1,14 @@
+{
+  "_doc": "Team board. clubs = club full names (any match, case-insensitive) that get this board when they are the home side. competition = the competition board whose rows follow the team's. identity = the club row that leads the board: badge + wordmark (recoloured to colours[1]) on colours[0] (primary, secondary - from the game's club data); \"repeat\", \"margin\", \"wordmark_height\" tune it, \"manual\": true keeps a hand-made club.png. sponsors = ids in config/sponsors/sponsors.json, in order: the club's top four non-gambling partners from its official partners page (2026-10-30).",
+  "type": "team",
+  "name": "Gold Coast Titans",
+  "clubs": ["Gold Coast Titans", "Gold Coast Titans 2025"],
+  "competition": "nrl",
+  "sponsors": ["avs-security", "chempro", "corpsure", "dynasty"],
+  "identity": {
+    "badge": "res:nrl-site-logos/nrl/titans/badge-basic24.svg",
+    "wordmark": "res:nrl-site-logos/nrl/titans/text.svg",
+    "focus": {"eye": [0.51, 0.42], "span": 0.28},
+    "colours": [[0, 169, 231], [255, 186, 48]]
+  }
+}

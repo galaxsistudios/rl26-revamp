@@ -1,0 +1,6 @@
+{
+ "_comment": "Core mod (RL26 only). The board table between the GENERATED markers in stadiumconfig.lua lists the LED board textures installed on this machine (install.py lua, from the live index), so the installer builds and installs the boards and regenerates the table before the script bundle. 'generatedBlocks' files ship with that table emptied (tools/package_revamp.py).",
+ "requires": [],
+ "releaseChannel": "core",
+ "generatedBlocks": ["src/script-game/rendering/stadium/stadiumconfig.lua"]
+}
