@@ -99,6 +99,18 @@ local function var_0_ojeSetCut(arg_value, arg_1, arg_viewInfo)
 	assetmap.setUniformTopTemplateIndex(arg_viewInfo.getCurrentConfig(), arg_value)
 end
 
+-- official-jersey-editing: Manufacturer and Font rows show the item's own id (its
+-- guid), not its place in the list: the guids have gaps (number fonts 1-6, 10-12, ...)
+local function var_0_ojeIdLabel(arg_1, arg_viewInfo, arg_info)
+	if not arg_viewInfo.getCurrentConfig then
+		return ""
+	end
+
+	return string.format("#%d", arg_viewInfo.getCurrentConfig():getOption(arg_info.optionName))
+end
+
+-- an official kit's cut: the id of the stock top it comes from (the kit's own top for
+-- its own cut)
 local function var_0_ojeCutLabel(arg_1, arg_viewInfo, arg_info)
 	if not arg_viewInfo.getCurrentConfig then
 		return ""
@@ -106,14 +118,9 @@ local function var_0_ojeCutLabel(arg_1, arg_viewInfo, arg_info)
 
 	local var_cfg = arg_viewInfo.getCurrentConfig()
 	local var_value = assetmap.getUniformTopTemplateIndex(var_cfg)
+	local var_template = var_value > 0 and assetmap.UniformTopTemplates[var_value]
 
-	for iter_position, iter_item in ipairs((var_0_ojeCutList(var_cfg, arg_info, arg_1))) do
-		if iter_item.guid == var_value then
-			return string.format("#%d", iter_position)
-		end
-	end
-
-	return "#1"
+	return string.format("#%d", var_template and var_template.guid or var_cfg:getOption("uniformTop"))
 end
 
 local var_0_25 = trueFn
@@ -122,6 +129,7 @@ local var_0_27 = {
 	var_0_9(native.Localise("Manufacturer"), "uniformTop", {
 		optionMap = "uniformTop",
 		filterFn = var_0_ojeTopFilter,
+		getAdditionalLabelFn = var_0_ojeIdLabel,
 		setValue = var_0_ojeSetTop,
 		editLeftRightSpeedUp = true
 	}),
@@ -151,7 +159,8 @@ tablex.iconcatInto(var_0_27, var_0_28)
 local var_0_29 = {
 	var_0_10(native.Localise("Team_Uniform_NumberEnabled"), "hasNumber"),
 	var_0_9(native.Localise("Team_Uniform_Font"), "numberFont", {
-		optionMap = "numberFont"
+		optionMap = "numberFont",
+		getAdditionalLabelFn = var_0_ojeIdLabel
 	}),
 	var_0_10(native.Localise("Team_Uniform_ShowLeadingZero"), "showLeadingZero"),
 	var_0_12(native.Localise("Team_Uniform_NumberColour"), "numberColour1_r", "numberColour1_g", "numberColour1_b"),
@@ -292,7 +301,8 @@ end
 local var_0_ojeName = {
 	var_0_10("Show name", "hasPlayerName"),
 	var_0_9(native.Localise("Font"), "playerNameFont", {
-		optionMap = "nameFont"
+		optionMap = "nameFont",
+		getAdditionalLabelFn = var_0_ojeIdLabel
 	}),
 	var_0_12("Name colour", "nameColour1_r", "nameColour1_g", "nameColour1_b"),
 	var_0_8("Name keyline weight", {

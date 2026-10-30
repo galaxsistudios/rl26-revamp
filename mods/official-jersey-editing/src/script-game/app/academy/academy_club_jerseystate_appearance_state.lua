@@ -64,6 +64,10 @@ function AcademyClubJerseyAppearanceState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1
 		arg_1_5:queueRefresh()
 	end
 
+	-- official-jersey-editing: the model was built before the sample chest text was set,
+	-- so redraw it now to show the text (kits with Chest text on)
+	pcall(var_1_1.refreshVisual)
+
 	function var_1_1.getCurrentConfig()
 		return var_1_7
 	end
@@ -117,6 +121,8 @@ function AcademyClubJerseyAppearanceState.exit(arg_7_0, arg_7_1, arg_7_2, arg_7_
 	var_7_0.officialUniformEdit = nil
 
 	rawset(_G, "MOD_OCCASION_TEXT_PREVIEW", nil)
+	-- and redraw without it for the kit list
+	pcall(arg_7_4.queueRefresh, arg_7_4)
 
 	local var_7_3 = arg_7_5.partyMember
 

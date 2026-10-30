@@ -40,6 +40,7 @@ function AcademyClubJerseyAppearanceEditState.enter(arg_2_0, arg_2_1, arg_2_2, a
 	end
 
 	arg_2_0.GroupList = var_2_2
+	arg_2_0.ojeFrames = 0
 
 	var_0_6.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
@@ -58,6 +59,15 @@ function AcademyClubJerseyAppearanceEditState.enter(arg_2_0, arg_2_1, arg_2_2, a
 end
 
 function AcademyClubJerseyAppearanceEditState.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
+	-- official-jersey-editing: redraw the model a few frames in (and again a second in)
+	-- so the sample chest text shows on a kit with it on: a redraw asked for while the
+	-- editor's model is still loading can be missed
+	arg_3_0.ojeFrames = (arg_3_0.ojeFrames or 0) + 1
+
+	if (arg_3_0.ojeFrames == 3 or arg_3_0.ojeFrames == 60) and arg_3_9.refreshVisual then
+		pcall(arg_3_9.refreshVisual)
+	end
+
 	-- official-jersey-editing: name / chest text placement rows (sticks, like a logo)
 	local var_3_ojeTextPlacement = academy_club_jerseystate_appearancestate_edit_groups.updateTextPlacement
 
