@@ -194,14 +194,23 @@ def _steps():
          lambda o: [[PY, crowd, "bake", "--confirm"], [PY, flags, "model", "--confirm"],
                     [PY, flags, "teams", "--confirm"], [PY, crowd, "register", "--confirm"],
                     [PY, flags, "bank", "--confirm"], [PY, mod("crowd-team-kits", "generate.py")]]),
+        # before scripts: `lua` writes the club -> board table from the installed textures
+        ("led-boards", "home-team LED sponsor boards", always,
+         lambda o: ([[PY, mod("nrl-led-boards", "install.py"), "build", "--texconv", o["texconv"]],
+                     [PY, mod("nrl-led-boards", "install.py"), "install", "--replace", "--confirm"]]
+                    if o.get("texconv") else [])
+         + [[PY, mod("nrl-led-boards", "install.py"), "lua"]]),
         ("scripts", "script bundle (all Lua mods)", always, bundle("scripts")),
         ("strings", "corrected stadium names (UI string tables)", always,
          lambda o: [[PY, mod("stadium-name-fixes", "install.py"), "install", "--confirm"]]),
         ("textures", "texture replacements, field sponsor markings, line numbers and special balls", always,
-         # realistic-pitch-grass's DDS are game-derived (not in git): build them before apply
-         lambda o: ([[PY, mod("realistic-pitch-grass", "make_grass.py"), "--texconv", o["texconv"]]]
+         # realistic-pitch-grass's and menu-grass-floor's DDS are game-derived (not in git): build them before apply
+         lambda o: ([[PY, mod("realistic-pitch-grass", "make_grass.py"), "--texconv", o["texconv"]],
+                     [PY, mod("menu-grass-floor", "make_floor.py"), "--texconv", o["texconv"]]]
                     if o.get("texconv") else [])
-         + [[PY, tool("texture_mods.py"), "apply", "--confirm"]]
+         + [[PY, tool("texture_mods.py"), "apply", "--confirm"],
+            # competition logos preloaded for the team loading screen's background logo
+            [PY, mod("loading-screen-secondary-arrows", "install.py"), "install", "--confirm"]]
          + ([[PY, mod("nrl-field-sponsor-markings", "fieldmarkings.py"), "build", "--texconv", o["texconv"]],
              [PY, mod("nrl-field-sponsor-markings", "fieldmarkings.py"), "install", "--confirm"],
              [PY, mod("field-numbers-font", "install.py"), "install", "--confirm", "--texconv", o["texconv"]],
@@ -212,6 +221,7 @@ def _steps():
         ("exe", "game exe patches", always,
          lambda o: [[PY, mod("unlock-all-kits", "install.py"), "--apply"],
                     [PY, mod("ai-interchange-rotation", "install.py"), "--apply"],
+                    [PY, mod("hd-nrl-club-logos", "install.py"), "--apply"],
                     [PY, mod("controller-button-icons", "install.py"), "--icons", o.get("controller", "detect"), "--apply"]]
          + ([[PY, mod("skip-intro-to-main-menu", "install.py"), "--apply"]] if o.get("skip_intro", True) else [])),
     ]
@@ -405,7 +415,8 @@ def restore_saves(name, confirm):
     log(f"saves restored from {pick}")
 
 
-EXE_PATCHERS = ["skip-intro-to-main-menu", "controller-button-icons", "ai-interchange-rotation", "unlock-all-kits"]
+EXE_PATCHERS = ["skip-intro-to-main-menu", "controller-button-icons", "ai-interchange-rotation", "hd-nrl-club-logos",
+                "unlock-all-kits"]
 
 
 def uninstall(confirm):

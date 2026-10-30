@@ -65,6 +65,8 @@ RESOURCES = [
     "resources/old-jerseys/*.png",                                   # legacy kits (community jerseys, lossless PNG; * spans subfolders)
     "resources/custom-kits/**",                                      # kits painted on the jersey templates
     "resources/ref-jerseys/2026/*/top.png",                          # nrl-referee-2026-kits
+    "resources/balls/nsw_cup/**", "resources/balls/nrlw_ball/**",    # nrl-special-balls logos
+    "resources/balls/ashes/**",                                      # (+ Josefin Sans, OFL)
     "Maison-Neue-Extended-Bold.ttf",                                 # title screen lettering
 ]
 

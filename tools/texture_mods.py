@@ -6,7 +6,7 @@ JSON convention but for binary texture content, which has no meaningful
 "diff" - a replacement mod file simply *is* the new .dds content.
 
 Convention: mods/<mod-name>/textures/<entry hash>_<label>.dds, e.g.
-    mods/enable-cowboys-northern-lights-kit/textures/af665d7541ce5bce_top_col1.dds
+    mods/realistic-pitch-grass/textures/7e287bb34d7c364a_broadcast.dds
 The leading 16 hex digits are the target entry's index hash (FNV-1a 64 of its
 logical path, see entries.py) - NOT its position, which moves whenever a game
 update adds files. The <label> is purely for human readability and never

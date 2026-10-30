@@ -108,10 +108,14 @@ def scan_mod_overrides(mods_dir):
                 continue
             if "__pycache__" in dirnames:
                 dirnames.remove("__pycache__")
-            # mods/<mod>/config/ holds a generator's config tree (e.g.
-            # nrl-field-sponsor-markings' rounds), never bundle files.
-            if dirpath == mod_path and "config" in dirnames:
-                dirnames.remove("config")
+            # mods/<mod>/config/, art/ and previews/ hold a generator's config,
+            # source images and preview sheets (e.g. nrl-field-sponsor-markings'
+            # rounds, goalpost-pads' artwork, hd-nrl-club-logos' previews),
+            # never bundle files.
+            if dirpath == mod_path:
+                for skip in ("config", "art", "previews"):
+                    if skip in dirnames:
+                        dirnames.remove(skip)
             for fn in filenames:
                 # README.md documents a mod; *.py is a program-style mod's
                 # installer (e.g. mods/unlock-all-kits/install.py). Any file
