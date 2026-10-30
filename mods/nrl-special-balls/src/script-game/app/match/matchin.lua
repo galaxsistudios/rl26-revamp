@@ -239,9 +239,32 @@ end
 -- install.py). ballfactory.lua loads one in place of the stock texture of `base`.
 -- MOD_EXTRA_BALLS is listed in Play Now's Ball row (enable-casual-fieldmarkings).
 modSpecialEventBalls = {
-	[native.CareerFixtureSpecialEvent.MagicRound] = "ball_nrl_magicround_col",
-	[native.CareerFixtureSpecialEvent.GrandFinal] = "ball_nrl_grandfinal_col"
+	[native.CareerCompetitionIdEnum.League_NRL] = {
+		[native.CareerFixtureSpecialEvent.MagicRound] = "ball_nrl_magicround_col",
+		[native.CareerFixtureSpecialEvent.GrandFinal] = "ball_nrl_grandfinal_col"
+	},
+	[native.CareerCompetitionIdEnum.League_NRLW] = {
+		[native.CareerFixtureSpecialEvent.GrandFinal] = "ball_nrlw_grandfinal_col"
+	}
 }
+
+-- Competitions with no stock ball of their own (the stock ball_nswcup_col is a blank
+-- placeholder that no MatchSettingsBall maps to). Looked up by name, so a competition
+-- missing from the enum is skipped instead of breaking the file.
+modCompetitionBalls = {}
+
+for iter_0_0, iter_0_1 in pairs({
+	League_NSWCup = "ball_nswcup_hyundai_col",
+	Tournament_Ashes = "ball_ashes_col"
+}) do
+	local var_0_0, var_0_1 = pcall(function()
+		return native.CareerCompetitionIdEnum[iter_0_0]
+	end)
+
+	if var_0_0 and var_0_1 ~= nil then
+		modCompetitionBalls[var_0_1] = iter_0_1
+	end
+end
 
 rawset(_G, "MOD_EXTRA_BALLS", {
 	{
@@ -250,8 +273,23 @@ rawset(_G, "MOD_EXTRA_BALLS", {
 		base = native.MatchSettingsBall.nrl
 	},
 	{
+		label = "NSW Cup",
+		texture = "ball_nswcup_hyundai_col",
+		base = native.MatchSettingsBall.nrl
+	},
+	{
 		label = "NRL Grand Final",
 		texture = "ball_nrl_grandfinal_col",
+		base = native.MatchSettingsBall.nrl
+	},
+	{
+		label = "NRLW Grand Final",
+		texture = "ball_nrlw_grandfinal_col",
+		base = native.MatchSettingsBall.nrlw
+	},
+	{
+		label = "Ashes",
+		texture = "ball_ashes_col",
 		base = native.MatchSettingsBall.nrl
 	},
 	{
@@ -290,13 +328,14 @@ function setupBall(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	arg_5_1.matchType.ball = var_5_2 and arg_5_1.matchType.ball or var_5_0[var_5_3] or var_5_1[var_5_4] or arg_5_1.matchType.ball
 
 	-- nrl-special-balls: Play Now uses the Ball row's pick (_G.MOD_PLAYNOW_BALL, a texture
-	-- name from MOD_EXTRA_BALLS), career NRL fixtures the special event's ball.
+	-- name from MOD_EXTRA_BALLS), career NRL/NRLW fixtures the special event's ball, and
+	-- competitions in modCompetitionBalls their own.
 	local var_5_5
 
 	if var_5_2 then
 		var_5_5 = rawget(_G, "MOD_PLAYNOW_BALL")
-	elseif var_5_4 == native.CareerCompetitionIdEnum.League_NRL then
-		var_5_5 = modSpecialEventBalls[var_5_3]
+	else
+		var_5_5 = modSpecialEventBalls[var_5_4] and modSpecialEventBalls[var_5_4][var_5_3] or modCompetitionBalls[var_5_4]
 	end
 
 	rawset(_G, "MOD_SPECIAL_BALL", var_5_5 and {
@@ -898,6 +937,13 @@ function finalise(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, ar
 	var_0_27(arg_20_1, arg_20_2, arg_20_3)
 	var_0_24(arg_20_1, arg_20_6, arg_20_7)
 	var_0_28(arg_20_1, arg_20_5)
+
+	-- loading-screen-secondary-arrows: the competition is known now, so tell the loading screen
+	local var_20_hook = rawget(_G, "MOD_LOADING_COMPETITION_HOOK")
+
+	if var_20_hook then
+		pcall(var_20_hook, arg_20_1, getTimeOfDayFromHour)
+	end
 
 	-- official-jersey-editing: this match's chest text (or none)
 	local var_20_ok, var_20_error = pcall(var_0_ojeSetupOccasionText, arg_20_1)
