@@ -1,0 +1,15 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HOME 2027",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64005,
+          "uniformBottom": 64005,
+          "uniformSocks": 64005
+        }
+      }
+    ]
+  }
+}

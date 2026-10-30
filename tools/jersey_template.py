@@ -368,10 +368,13 @@ def main():
     p.add_argument("folder")
     p.add_argument("--out")
     p.add_argument("--size", type=int, default=420)
+    p.add_argument("--top-model", help="jersey model to preview on, e.g. top_flat01_short_Male (default top_round05)")
     ap.add_argument("--out", default="resources/jersey-templates")
     args = ap.parse_args()
 
     if args.cmd == "preview":
+        if args.top_model:
+            PARTS["top"] = (PARTS["top"][0], args.top_model) + PARTS["top"][2:]
         out = args.out or os.path.join(args.folder, "preview.png")
         render(load_kit(args.folder), args.size).save(out)
         print("wrote", out)

@@ -21,6 +21,9 @@
         "copyOf": "ANZAC ROUND",
         "fromClub": 3
       }
+    ],
+    "hide": [
+      "NORTHERN LIGHTS"
     ]
   }
 }

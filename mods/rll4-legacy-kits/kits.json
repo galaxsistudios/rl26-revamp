@@ -2294,6 +2294,70 @@
     "uniformBottom": 0,
     "uniformSocks": 0
    }
+  },
+  {
+   "guid": 64002,
+   "custom": "cowboys_home_2026",
+   "club": 120,
+   "name": "HOME",
+   "texture": "cowboys_home_2026",
+   "templates": {
+    "uniformTop": 280,
+    "uniformBottom": 280,
+    "uniformSocks": 280
+   },
+   "renameExisting": "HOME 2025"
+  },
+  {
+   "guid": 64003,
+   "custom": "cowboys_away_2026",
+   "club": 120,
+   "name": "AWAY",
+   "texture": "cowboys_away_2026",
+   "templates": {
+    "uniformTop": 281,
+    "uniformBottom": 281,
+    "uniformSocks": 281
+   },
+   "renameExisting": "AWAY 2025"
+  },
+  {
+   "guid": 64004,
+   "custom": "cowboys_alternate_2026",
+   "club": 120,
+   "name": "ALTERNATE",
+   "texture": "cowboys_alternate_2026",
+   "templates": {
+    "uniformTop": 282,
+    "uniformBottom": 280,
+    "uniformSocks": 280
+   },
+   "index": 2
+  },
+  {
+   "guid": 64005,
+   "custom": "dolphins_home_2027",
+   "club": 134,
+   "name": "HOME 2027",
+   "texture": "dolphins_home_2027",
+   "templates": {
+    "uniformTop": 7020,
+    "uniformBottom": 7020,
+    "uniformSocks": 7020
+   },
+   "numberFrom": 185
+  },
+  {
+   "guid": 64006,
+   "custom": "bulldogs_alternate_2026",
+   "club": 119,
+   "name": "ALTERNATE",
+   "texture": "bulldogs_alternate_2026",
+   "templates": {
+    "uniformTop": 145,
+    "uniformBottom": 143,
+    "uniformSocks": 143
+   }
   }
  ]
 }

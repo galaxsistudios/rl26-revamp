@@ -561,6 +561,11 @@ do
 		{ 60322, "sl_wolves_away_rll4_2017", {  } }, -- AWAY 2017, club 142
 		{ 60323, "sl_wolves_home_rll4_2017", { "Yellow" } }, -- HOME 2017, club 142
 		{ 64001, "broncos_wcc_2026", {  }, { top = 4, bottom = 0, socks = 0 } }, -- WCC 2026, club 118
+		{ 64002, "cowboys_home_2026", {  }, { top = 280, bottom = 280, socks = 280 } }, -- HOME, club 120
+		{ 64003, "cowboys_away_2026", {  }, { top = 281, bottom = 281, socks = 281 } }, -- AWAY, club 120
+		{ 64004, "cowboys_alternate_2026", {  }, { top = 282, bottom = 280, socks = 280 } }, -- ALTERNATE, club 120
+		{ 64005, "dolphins_home_2027", { "Red" }, { top = 7020, bottom = 7020, socks = 7020, number = 185 } }, -- HOME 2027, club 134
+		{ 64006, "bulldogs_alternate_2026", {  }, { top = 145, bottom = 143, socks = 143 } }, -- ALTERNATE, club 119
 	}
 
 	for _, kit in ipairs(kits) do
@@ -569,6 +574,18 @@ do
 		addItem("uniformTop", templates.top or 105, kit[1], "m_top_" .. kit[2] .. "_col", #kit[3] > 0 and {
 			refereeUniformClashColourList = kit[3]
 		} or nil)
+
+		if templates.number then
+			-- number/name placement from another top item (numberFrom)
+			local tops = ItemMaps.uniformTop.item_setup_lookup
+			local item, source = tops[kit[1]], tops[templates.number]
+
+			if item ~= nil and source ~= nil then
+				item.numberOffset = source.numberOffset
+				item.nameOffset = source.nameOffset
+			end
+		end
+
 		addItem("uniformBottom", templates.bottom or 104, kit[1], "m_shorts_" .. kit[2] .. "_col")
 		addItem("uniformSocks", templates.socks or 104, kit[1], "m_socks_" .. kit[2] .. "_col")
 	end

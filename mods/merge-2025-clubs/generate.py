@@ -73,6 +73,9 @@ LEAGUE_ORDER = [
 LEAGUE_NAMES = {7: ("NRL REPRESENTATIVE", "NRL REP"), 14: ("NRLW REPRESENTATIVE", "NRLW REP")}
 # shown leagues lose their season year ("NATIONAL RUGBY LEAGUE 2026" -> "... LEAGUE")
 SEASON_SUFFIX = re.compile(r"\s*(?:20)?2[56]$")
+# 2026 clubs' own kits to hide: the Cowboys' NORTHERN LIGHTS is the 2025
+# jersey (top 284), which the merge already adds as NORTHERN LIGHTS 2025
+HIDE_KITS = {120: ["NORTHERN LIGHTS"]}
 DESIGN_FIELDS = ("uniformTop", "uniformBottom", "uniformSocks")
 SEASON_KIT = re.compile(r"^(HOME|AWAY|HERITAGE) (26|2026)$")
 
@@ -122,7 +125,10 @@ def men_spec(old_id, new_id, blobs):
         if hidden(kit):
             add["hidden"] = True
         adds.append(add)
-    return {"uniforms": {"add": adds}} if adds else None
+    spec = {"add": adds} if adds else {}
+    if new_id in HIDE_KITS:
+        spec["hide"] = HIDE_KITS[new_id]
+    return {"uniforms": spec} if spec else None
 
 
 def women_spec(old_id, blobs):

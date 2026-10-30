@@ -639,6 +639,18 @@ LUA_FOOTER = """\t}
 \t\taddItem("uniformTop", templates.top or %d, kit[1], "m_top_" .. kit[2] .. "_col", #kit[3] > 0 and {
 \t\t\trefereeUniformClashColourList = kit[3]
 \t\t} or nil)
+
+\t\tif templates.number then
+\t\t\t-- number/name placement from another top item (numberFrom)
+\t\t\tlocal tops = ItemMaps.uniformTop.item_setup_lookup
+\t\t\tlocal item, source = tops[kit[1]], tops[templates.number]
+
+\t\t\tif item ~= nil and source ~= nil then
+\t\t\t\titem.numberOffset = source.numberOffset
+\t\t\t\titem.nameOffset = source.nameOffset
+\t\t\tend
+\t\tend
+
 \t\taddItem("uniformBottom", templates.bottom or %d, kit[1], "m_shorts_" .. kit[2] .. "_col")
 \t\taddItem("uniformSocks", templates.socks or %d, kit[1], "m_socks_" .. kit[2] .. "_col")
 \tend
@@ -676,6 +688,11 @@ def cmd_generate(args):
         tpl = kit.get("templates", {})
         tpl = ", ".join(f"{key} = {tpl[m]}" for key, m in (("top", "uniformTop"), ("bottom", "uniformBottom"),
                                                           ("socks", "uniformSocks")) if m in tpl)
+        # "numberFrom": a top item whose number/name placement the kit uses
+        # instead of its template's (e.g. a club kit on England's top_flat01
+        # keeping the club's number layout)
+        if "numberFrom" in kit:
+            tpl = (tpl + ", " if tpl else "") + f"number = {kit['numberFrom']}"
         tpl = f", {{ {tpl} }}" if tpl else ""
         rows.append(f'\t\t{{ {kit["guid"]}, "{kit["texture"]}", {{ {clash} }}{tpl} }}, -- {kit["name"]}, club {kit["club"]}')
 
@@ -697,8 +714,18 @@ def cmd_generate(args):
         # the RLL4 2017 rows are the ones to lose
         kits = sorted(kits, key=lambda k: "custom" not in k)
         club_name, existing = clubs[cid]
-        adds = []
+        adds, renames = [], {}
         for kit in kits:
+            if "renameExisting" in kit:
+                # the new kit takes over a stock kit's name, place and number
+                # styling (e.g. the Cowboys' 2026 HOME); the stock one is kept
+                # under the new name. Renames run before adds (kit_blob.apply_spec)
+                renames[kit["name"]] = kit["renameExisting"]
+                adds.append({"name": kit["name"], "copyOf": kit["renameExisting"],
+                             "index": list(existing).index(kit["name"]),
+                             "set": {"uniformTop": kit["guid"], "uniformBottom": kit["guid"],
+                                     "uniformSocks": kit["guid"]}})
+                continue
             back = _luma(stats[kit["texture"]]["number_area_rgb"])
             # the World Cup sides only have "HOME RLWC"
             options = [n for n in ("HOME", "AWAY") if n in existing] or list(existing)
@@ -709,6 +736,8 @@ def cmd_generate(args):
                 rgb = (230, 230, 230) if back < 128 else (20, 20, 28)
                 fields.update({f"numberColour1_{ch}": v for ch, v in zip("rgb", rgb)})
             entry = {"name": kit["name"], "copyOf": copy_of, "set": fields}
+            if "index" in kit:
+                entry["index"] = kit["index"]
             # RLL4 kits (installed RLL4 or resources/old-jerseys) live in the
             # library unless a row says "library": false; captured/painted
             # ("custom") kits take a club slot unless it says "library": true
@@ -719,8 +748,11 @@ def cmd_generate(args):
         fname = f"{cid:06d}_{club_name.replace(' ', '_')}.json"
         path = os.path.join(out_dir, fname)
         if adds:
+            # inserts in list order, so each lands at its index
+            adds.sort(key=lambda a: a.get("index", len(existing) + len(adds)))
+            spec = {"rename": renames, "add": adds} if renames else {"add": adds}
             with open(path, "w") as f:
-                json.dump({"uniforms": {"add": adds}}, f, indent=2)
+                json.dump({"uniforms": spec}, f, indent=2)
                 f.write("\n")
         elif os.path.exists(path):
             os.remove(path)

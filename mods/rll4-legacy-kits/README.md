@@ -114,6 +114,11 @@ A copied Academy top loses its collar tint layer and its Academy flag, because t
 texture already has the collar colours. `bake`'s preview and number-area sample still use the
 default meshes.
 
+`"numberFrom": g` takes the number and name placement (`numberOffset`, `nameOffset`) from top item
+`g` instead of the top template. Use it when a kit borrows another team's model but should keep
+its club's number layout, e.g. the Dolphins HOME 2027 on England's `top_flat01` (7020) with
+`"numberFrom": 185` (Dolphins 2026 home).
+
 `bake` and `install` skip kits that haven't changed. A kit's `bake.json` stamp
 (`_build/rll4-legacy-kits/<texture>/`) hashes its source image and texture fields, and each texture
 entry's `image_sha1` in the add_entries registry records the image it was written from. `--force`

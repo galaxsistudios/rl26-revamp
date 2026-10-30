@@ -1,0 +1,40 @@
+{
+  "uniforms": {
+    "rename": {
+      "HOME": "HOME 2025",
+      "AWAY": "AWAY 2025"
+    },
+    "add": [
+      {
+        "name": "HOME",
+        "copyOf": "HOME 2025",
+        "index": 0,
+        "set": {
+          "uniformTop": 64002,
+          "uniformBottom": 64002,
+          "uniformSocks": 64002
+        }
+      },
+      {
+        "name": "AWAY",
+        "copyOf": "AWAY 2025",
+        "index": 1,
+        "set": {
+          "uniformTop": 64003,
+          "uniformBottom": 64003,
+          "uniformSocks": 64003
+        }
+      },
+      {
+        "name": "ALTERNATE",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64004,
+          "uniformBottom": 64004,
+          "uniformSocks": 64004
+        },
+        "index": 2
+      }
+    ]
+  }
+}

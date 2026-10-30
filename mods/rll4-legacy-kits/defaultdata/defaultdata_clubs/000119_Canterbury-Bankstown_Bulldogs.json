@@ -1,0 +1,15 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "ALTERNATE",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64006,
+          "uniformBottom": 64006,
+          "uniformSocks": 64006
+        }
+      }
+    ]
+  }
+}

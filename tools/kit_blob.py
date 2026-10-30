@@ -322,6 +322,8 @@ def apply_spec(blob, spec, club_blob, fill, label="", verbose=True):
               renamed, inserted at index (default: the end), with isHidden
               set (default false) and `set` applied to its config
         "order": [names]    move these kits to the front, in this order
+        "hide": [names]     set isHidden on these kits (clubs whose schema
+                            stores it)
     The per-category defaults follow names (see KitList.remap_defaults).
     club_blob(id) returns a club's stock kit blob. Returns the new blob."""
     kits = KitList(club_blob(spec["from"]) if "from" in spec else blob)
@@ -353,6 +355,10 @@ def apply_spec(blob, spec, club_blob, fill, label="", verbose=True):
         kits.kits = front + [k for k in kits.kits if not any(k is f for f in front)]
         if verbose:
             print(f"    {label} order: {kits.names()}")
+    for name in spec.get("hide", []):
+        kits.set_hidden(kits.get(name), True)
+    if spec.get("hide") and verbose:
+        print(f"    {label} hidden: {spec['hide']}")
     return kits.to_bytes()
 
 
