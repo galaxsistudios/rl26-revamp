@@ -71,3 +71,14 @@ sets a new rule, add it here (and to rules.json if it is a value).
     kit, run `kit_studio.py status <kit>`. If a layer you're about to regenerate was edited in the
     PSD, carry that edit into kit.json or design.py first (e.g. copy a moved logo's new position),
     or ask the user.
+
+## Indigenous, ANZAC and other artwork kits
+
+16. **Never generate the design of an Indigenous, ANZAC or similar artwork/commemorative kit**, not even
+    by code. Those designs are artworks by real artists. Use the images the user supplies, placed onto
+    the jersey template as they are (a `{"file": ...}` design layer, warped or cropped to the panels),
+    and paint nothing over the artwork except what the rules below allow.
+17. The sponsors, NRL patch and crest still go on top as normal layers when the ones in the supplied
+    images are unclear or blurry. Where a blurry logo shows through underneath, soften (blur) the
+    artwork under it, only inside that sponsor's area, so the clean logo doesn't sit on a ghost of the
+    old one. Ask the user before covering anything else.
