@@ -3,6 +3,7 @@ import("base.ui.util.preload_aide")
 import("app.academy.academy_club_jerseystate_appearancestate_enter_state")
 import("intermediatelua.convant.uitextures")
 import("design.characters.assetmap")
+import("app.frontend.partymember_aide")
 
 local var_0_0 = {
 	uitextures.MorphBoth.texture,
@@ -39,6 +40,9 @@ function AcademyClubJerseyAppearanceState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1
 	local var_1_4 = var_1_2:getUniform(var_1_3).config
 
 	var_1_1.officialUniformEdit = var_0_ojeIsOfficialUniform(arg_1_2, var_1_2, var_1_2:getUniform(var_1_3))
+	arg_1_0.ojeOfficial = var_1_1.officialUniformEdit
+	arg_1_0.ojeUniformIndex = var_1_3
+	arg_1_0.ojeUniverse = arg_1_2
 
 	-- official-jersey-editing: sample chest text while editing (kits with Chest text on)
 	local var_1_ojeClub = "HOME"
@@ -108,6 +112,12 @@ function AcademyClubJerseyAppearanceState.exit(arg_7_0, arg_7_1, arg_7_2, arg_7_
 
 	if not arg_7_0.unmodifiedVisual:matches(var_7_1, false) then
 		var_7_0.club.sharing.hasUnsharedModifications = true
+
+		-- official-jersey-editing: the game restores official kits from the disc data
+		-- on load, so keep the edit ourselves too (partymember_aide re-applies it)
+		if arg_7_0.ojeOfficial and partymember_aide.saveOfficialKitEdits then
+			partymember_aide.saveOfficialKitEdits(arg_7_0.ojeUniverse or arg_7_1, var_7_0.club, var_7_0.club:getUniform(arg_7_0.ojeUniformIndex))
+		end
 	end
 
 	arg_7_4:toggleLockerRoomVisibility(false)

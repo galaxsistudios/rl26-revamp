@@ -41,6 +41,12 @@ function AcademyClubJerseyAppearanceEditState.enter(arg_2_0, arg_2_1, arg_2_2, a
 
 	arg_2_0.GroupList = var_2_2
 	arg_2_0.ojeFrames = 0
+	arg_2_0.ojeGroup = nil
+	arg_2_0.ojeOpen = nil
+
+	if academy_club_jerseystate_appearancestate_edit_groups.logTextOptions then
+		academy_club_jerseystate_appearancestate_edit_groups.logTextOptions(var_2_0, "editor opened")
+	end
 
 	var_0_6.enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
 
@@ -62,9 +68,23 @@ function AcademyClubJerseyAppearanceEditState.update(arg_3_0, arg_3_1, arg_3_2, 
 	-- official-jersey-editing: redraw the model a few frames in (and again a second in)
 	-- so the sample chest text shows on a kit with it on: a redraw asked for while the
 	-- editor's model is still loading can be missed
+	-- (and again on moving to another menu, e.g. Chest text)
 	arg_3_0.ojeFrames = (arg_3_0.ojeFrames or 0) + 1
 
-	if (arg_3_0.ojeFrames == 3 or arg_3_0.ojeFrames == 60) and arg_3_9.refreshVisual then
+	local var_3_ojeMenu = arg_3_0.tabUIState and arg_3_0.tabUIState.iconMenu
+	local var_3_ojeGroup = var_3_ojeMenu and var_3_ojeMenu.activeItemIndex
+	local var_3_ojeOpen = arg_3_0.tabUIState and arg_3_0.tabUIState.secondLevelState or false
+
+	if var_3_ojeGroup ~= arg_3_0.ojeGroup or var_3_ojeOpen ~= arg_3_0.ojeOpen then
+		if arg_3_0.ojeGroup ~= nil and arg_3_0.ojeFrames > 3 then
+			arg_3_0.ojeFrames = 1
+		end
+
+		arg_3_0.ojeGroup = var_3_ojeGroup
+		arg_3_0.ojeOpen = var_3_ojeOpen
+	end
+
+	if (arg_3_0.ojeFrames == 3 or arg_3_0.ojeFrames == 30 or arg_3_0.ojeFrames == 60) and arg_3_9.refreshVisual then
 		pcall(arg_3_9.refreshVisual)
 	end
 

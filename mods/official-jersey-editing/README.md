@@ -49,6 +49,23 @@ The stock Rugby League tops share one UV layout (see `memory/character-mesh-form
 a design can be worn on another cut. Collars and seams that the design paints may not line up
 exactly with another cut's geometry.
 
+## Keeping edits to official kits
+
+The game restores an official club's own kits (the ones its on-disc data has) from the disc
+when the profile loads, so edits to them were lost on a restart even though leaving the club
+saves it (`saveCustomLicensed`). Stock never let these kits be edited, so nothing kept them.
+
+So the jersey editor also keeps them itself: leaving an edited official kit writes the options
+that differ from the disc kit (every `options.team` option, compared with
+`universe:getClubDatabaseOnDisc():getClub(id)`'s kit of the same name) to `official_kit_edits.lua` in the game
+folder, keyed `"<club id>|<kit name>"`. `partymember_aide.setupAcademyData` puts them back
+after `runOnAllMixins("setAcademyData")` (on a copy of the club, then `saveCustomLicensed`).
+Not earlier: until setAcademyData the club manager has no custom-licensed store, and a club
+lookup then crashes natively (null dict at exe 0xa8d1d9), which pcall can't catch.
+Changing a kit back to its disc look removes its entry. Delete the file to drop every edit.
+The log (`occasion_text_debug.txt`) says how many options each club had and how many the load
+had reverted ("N restored").
+
 ## Name on the back
 
 Both official and player-made jerseys get a **Name** group on the Jersey tab (stock only had these
@@ -85,13 +102,15 @@ called) `updateDecalPreviewMode`. A failure leaves the mode and is logged to
 `occasion_text_debug.txt`.
 
 Storage: **new team options** (`AppendJerseyTextOptions` in jesse-southwell-hair's assetmap.lua,
-added after the decals, the same way the stock decal options are added): `modNameX/Y/Scale` and
-`modChestX/Y/Scale` (0-1 sliders), `modChestText` (guid, 0/1), `modChestColour1_*`,
-`modChestKeylineColour1_*` and `modChestKeylineWeight`. A placement slider of 0 means the stock
-placement, which is also what a kit saved without these options reads. Otherwise x/y =
-(v - 0.5) × 2 × range and size = min × (max / min)^v. The editor keeps values at 0.01 or above
-so a saved byte never rounds back to 0. Untested: whether the club save keeps the new options
-(the save writes a hash-keyed schema, so it should).
+added after the decals, the same way the stock decal options are added): `modNamePosX/Y/Scale`
+and `modChestPosX/Y/Scale` (2-byte guids holding v × 10000), `modChestText` (guid, 0/1),
+`modChestColour1_*`, `modChestKeylineColour1_*` and `modChestKeylineWeight`. The placement
+was first kept in 0-1 slider options (`modNameX/Y/Scale`, `modChestX/Y/Scale`, still
+registered so old configs load), but those came back reset after a save while the on/off guid
+kept its value, so it moved to guids. A placement of 0 means the stock placement, which is
+also what a kit saved without these options reads. Otherwise x/y = (v - 0.5) × 2 × range and
+size = min × (max / min)^v; the editor keeps v at 0.001 or above. Opening the editor logs the
+stored values to `occasion_text_debug.txt` ("editor opened: ...").
 
 ## Chest text (special matches)
 
@@ -179,6 +198,8 @@ confirmed.
 - `chest_colours.py`: black/white chest text per designed top.
 - `src/script-game/app/frontend/frontend_state.lua`: clears the match's chest text when the
   front end starts again.
+- `src/script-game/app/frontend/partymember_aide.lua`: `saveOfficialKitEdits` /
+  `applyOfficialKitEdits` (see Keeping edits to official kits).
 
 `python mods/official-jersey-editing/generate.py` rewrites the template block. The list is
 append-only: kits store row indices, so existing rows keep their place.

@@ -385,29 +385,34 @@ end
 -- official-jersey-editing: placement of the name on the back and the chest text,
 -- moved and sized with the sticks in the Academy jersey editor (like a logo). Kept in
 -- new team options (AppendJerseyTextOptions, added after the decals). Each placement
--- is three 0-1 sliders; 0 = the stock placement, which is also what kits saved
--- without these options read. Otherwise x/y = (v - 0.5) * 2 * range (UV, + = right /
--- up) and scale = minScale * (maxScale / minScale) ^ v.
+-- is three values v in 0-1, kept as whole numbers (v * JerseyTextPlacementSteps) in
+-- 2-byte guid options: slider options didn't survive a save (the on/off guid did).
+-- 0 = the stock placement, which is also what kits saved without these options read.
+-- Otherwise x/y = (v - 0.5) * 2 * range (UV, + = right / up) and
+-- scale = minScale * (maxScale / minScale) ^ v.
 JerseyTextPlacements = {
 	name = {
-		x = "modNameX",
-		y = "modNameY",
-		scale = "modNameScale",
+		x = "modNamePosX",
+		y = "modNamePosY",
+		scale = "modNamePosScale",
 		rangeX = 0.3,
 		rangeY = 0.45,
 		minScale = 0.4,
 		maxScale = 3
 	},
 	chest = {
-		x = "modChestX",
-		y = "modChestY",
-		scale = "modChestScale",
+		x = "modChestPosX",
+		y = "modChestPosY",
+		scale = "modChestPosScale",
 		rangeX = 0.15,
 		rangeY = 0.35,
 		minScale = 0.5,
 		maxScale = 5
 	}
 }
+JerseyTextPlacementSteps = 10000
+-- the first (slider) placement options: still registered so configs holding them load
+JerseyTextPlacementOldSliders = { "modNameX", "modNameY", "modNameScale", "modChestX", "modChestY", "modChestScale" }
 
 -- chest text: on/off (guid, 1 = on, the default) and its own colours; always drawn in
 -- RL Font, which official-jersey-editing's rl_font.py puts in the UniformArvoBold slot
@@ -850,10 +855,18 @@ function AppendJerseyTextOptions(arg_options)
 	for _, iter_placement in pairs(JerseyTextPlacements) do
 		for _, iter_key in ipairs({ "x", "y", "scale" }) do
 			arg_options[iter_placement[iter_key]] = {
+				byteSize = 2,
 				default = 0,
-				type = "slider"
+				type = "guid"
 			}
 		end
+	end
+
+	for _, iter_option in ipairs(JerseyTextPlacementOldSliders) do
+		arg_options[iter_option] = {
+			default = 0,
+			type = "slider"
+		}
 	end
 
 	-- on by default: every kit shows it in special matches
@@ -889,6 +902,15 @@ local function var_0_ojeSlider(arg_cfg, arg_option)
 	return var_ok and type(var_value) == "number" and var_value or 0
 end
 
+-- a placement value, 0-1 (0 = stock)
+local function var_0_ojePlacementValue(arg_cfg, arg_option)
+	return math.min(1, var_0_ojeSlider(arg_cfg, arg_option) / JerseyTextPlacementSteps)
+end
+
+local function var_0_ojePlacementSet(arg_cfg, arg_option, arg_value)
+	arg_cfg:setOption(arg_option, math.floor(arg_value * JerseyTextPlacementSteps + 0.5))
+end
+
 local function var_0_ojeNeutralScale(arg_placement)
 	return math.log(1 / arg_placement.minScale) / math.log(arg_placement.maxScale / arg_placement.minScale)
 end
@@ -896,20 +918,20 @@ end
 -- the sliders as edited: 0 (stock) reads as the centre / 100%
 function getJerseyTextSliders(arg_cfg, arg_which)
 	local var_placement = JerseyTextPlacements[arg_which]
-	local var_x = var_0_ojeSlider(arg_cfg, var_placement.x)
-	local var_y = var_0_ojeSlider(arg_cfg, var_placement.y)
-	local var_scale = var_0_ojeSlider(arg_cfg, var_placement.scale)
+	local var_x = var_0_ojePlacementValue(arg_cfg, var_placement.x)
+	local var_y = var_0_ojePlacementValue(arg_cfg, var_placement.y)
+	local var_scale = var_0_ojePlacementValue(arg_cfg, var_placement.scale)
 
 	return var_x > 0 and var_x or 0.5, var_y > 0 and var_y or 0.5, var_scale > 0 and var_scale or var_0_ojeNeutralScale(var_placement)
 end
 
--- kept off 0 (a byte rounding to 0 would snap back to stock)
+-- kept off 0 (0 is stock)
 function setJerseyTextSliders(arg_cfg, arg_which, arg_x, arg_y, arg_scale)
 	local var_placement = JerseyTextPlacements[arg_which]
 
-	arg_cfg:setOption(var_placement.x, math.max(0.01, math.min(1, arg_x)))
-	arg_cfg:setOption(var_placement.y, math.max(0.01, math.min(1, arg_y)))
-	arg_cfg:setOption(var_placement.scale, math.max(0.01, math.min(1, arg_scale)))
+	var_0_ojePlacementSet(arg_cfg, var_placement.x, math.max(0.001, math.min(1, arg_x)))
+	var_0_ojePlacementSet(arg_cfg, var_placement.y, math.max(0.001, math.min(1, arg_y)))
+	var_0_ojePlacementSet(arg_cfg, var_placement.scale, math.max(0.001, math.min(1, arg_scale)))
 end
 
 function resetJerseyTextPlacement(arg_cfg, arg_which)
@@ -923,9 +945,9 @@ end
 -- offset x (+ = right on the texture), offset y (+ = up), scale
 function getJerseyTextPlacement(arg_cfg, arg_which)
 	local var_placement = JerseyTextPlacements[arg_which]
-	local var_x = var_0_ojeSlider(arg_cfg, var_placement.x)
-	local var_y = var_0_ojeSlider(arg_cfg, var_placement.y)
-	local var_scale = var_0_ojeSlider(arg_cfg, var_placement.scale)
+	local var_x = var_0_ojePlacementValue(arg_cfg, var_placement.x)
+	local var_y = var_0_ojePlacementValue(arg_cfg, var_placement.y)
+	local var_scale = var_0_ojePlacementValue(arg_cfg, var_placement.scale)
 	local var_dx = var_x > 0 and (var_x - 0.5) * 2 * var_placement.rangeX or 0
 	local var_dy = var_y > 0 and (var_y - 0.5) * 2 * var_placement.rangeY or 0
 	local var_s = var_scale > 0 and var_placement.minScale * (var_placement.maxScale / var_placement.minScale) ^ var_scale or 1

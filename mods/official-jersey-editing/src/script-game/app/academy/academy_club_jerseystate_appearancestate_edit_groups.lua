@@ -278,6 +278,25 @@ local function var_0_ojeUpdatePlacement(arg_universe, arg_uiServices, arg_viewIn
 	arg_viewInfo.refreshVisual()
 end
 
+-- logs the stored placement / chest options (to check they come back from a save)
+function logTextOptions(arg_cfg, arg_where)
+	pcall(function()
+		local var_values = {}
+
+		for _, iter_placement in pairs(assetmap.JerseyTextPlacements) do
+			for _, iter_key in ipairs({ "x", "y", "scale" }) do
+				table.insert(var_values, iter_placement[iter_key] .. "=" .. tostring(arg_cfg:getOption(iter_placement[iter_key])))
+			end
+		end
+
+		for _, iter_option in ipairs({ assetmap.OccasionTextOption, assetmap.OccasionTextColourAuto, assetmap.OccasionTextColour .. "_r" }) do
+			table.insert(var_values, iter_option .. "=" .. tostring(arg_cfg:getOption(iter_option)))
+		end
+
+		var_0_ojeLog(tostring(arg_where) .. ": " .. table.concat(var_values, " "))
+	end)
+end
+
 -- true while a placement row has the sticks; leaves the mode (and logs) on a failure
 -- rather than locking the editor
 function updateTextPlacement(arg_universe, arg_uiServices, arg_viewInfo)
