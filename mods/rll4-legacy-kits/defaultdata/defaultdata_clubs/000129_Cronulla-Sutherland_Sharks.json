@@ -1,0 +1,39 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "HERITAGE 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64030,
+          "uniformBottom": 64030,
+          "uniformSocks": 64030,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      },
+      {
+        "name": "WOMEN IN LEAGUE 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64031,
+          "uniformBottom": 64031,
+          "uniformSocks": 64031
+        }
+      },
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64033,
+          "uniformBottom": 64033,
+          "uniformSocks": 64033,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      }
+    ]
+  }
+}

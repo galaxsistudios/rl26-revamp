@@ -1,0 +1,566 @@
+{
+ "title": "Sharks Heritage 2026",
+ "notes": "Sky blue heritage kit with black and white side panels and a white polo collar, from the user's product shots (resources/missing-jerseys/2026/sharks-heritage; SALE badges erased, the badge side's outline mirrored). Painted by code from the wrapped photos (kit_photo.flat, mirrored left/right); sponsors are the stock 2026 home logos where the photo has them. RL26's round-neck shirt has no polo collar, so the collar is the photo's colours on the neckline. Shorts and socks: stock 2025 home.",
+ "install": {
+  "club": 129,
+  "name": "HERITAGE 2026",
+  "texture": "sharks_heritage_2026",
+  "templates": {
+   "uniformTop": 386,
+   "uniformBottom": 160,
+   "uniformSocks": 160
+  },
+  "guid": 64030,
+  "numberFrom": 164
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   22,
+   178,
+   224
+  ],
+  "white": [
+   240,
+   240,
+   244
+  ],
+  "black": [
+   30,
+   32,
+   37
+  ],
+  "aramex": [
+   226,
+   60,
+   40
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1400,
+    650
+   ],
+   "shield_height": 110
+  },
+  {
+   "name": "Sharks crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1759,
+     595,
+     1926,
+     737
+    ],
+    "raw": true,
+    "clear": [
+     129,
+     180,
+     208
+    ]
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1894,
+      686
+     ],
+     "width": 170
+    }
+   ]
+  },
+  {
+   "name": "pilot",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1573,
+     549,
+     1714,
+     624
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 150,
+    "hi": 215
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1645,
+      655
+     ],
+     "width": 190
+    }
+   ]
+  },
+  {
+   "name": "Aramex",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1260,
+     901,
+     2007,
+     1044
+    ],
+    "dark": true,
+    "channel": 1,
+    "lo": 80,
+    "hi": 180
+   },
+   "colour": "aramex",
+   "card": {
+    "size": [
+     760,
+     140
+    ],
+    "colour": "white"
+   },
+   "place": [
+    {
+     "at": [
+      1645,
+      870
+     ],
+     "width": 680
+    }
+   ]
+  },
+  {
+   "name": "Classic (right)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1198,
+     287,
+     1372,
+     365
+    ]
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Classic (left)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1905,
+     287,
+     2079,
+     365
+    ]
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1211,
+     1631,
+     1386,
+     1736
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Up Up Cronulla",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     467,
+     256,
+     618,
+     307
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      535,
+      405
+     ],
+     "width": 300
+    }
+   ]
+  },
+  {
+   "name": "Zambrero",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     195,
+     348,
+     901,
+     481
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "black",
+   "card": {
+    "size": [
+     900,
+     150
+    ],
+    "colour": "white"
+   },
+   "place": [
+    {
+     "at": [
+      535,
+      512
+     ],
+     "width": 800
+    }
+   ]
+  },
+  {
+   "name": "Reozone",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     250,
+     1167,
+     823,
+     1345
+    ],
+    "raw": true
+   },
+   "place": [
+    {
+     "at": [
+      535,
+      1140
+     ],
+     "width": 760
+    }
+   ]
+  },
+  {
+   "name": "Ace Cutters (right sleeve)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     2570,
+     348,
+     2908,
+     614
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Ace Cutters (left sleeve)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     3461,
+     348,
+     3799,
+     614
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "white"
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "erase": [
+     [
+      0,
+      0,
+      470,
+      470,
+      [
+       242,
+       76,
+       38
+      ]
+     ]
+    ],
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      423.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      322.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      170.0,
+      400.0
+     ],
+     [
+      -0.235,
+      1.262,
+      173.0,
+      430.0
+     ],
+     [
+      -0.1675,
+      1.305,
+      300.0,
+      447.0
+     ],
+     [
+      -0.15,
+      1.1,
+      299.7,
+      730.9
+     ],
+     [
+      -0.162,
+      0.963,
+      302.0,
+      945.0
+     ],
+     [
+      -0.05,
+      1.472,
+      457.3,
+      122.2
+     ],
+     [
+      -0.085,
+      1.505,
+      426.1,
+      83.2
+     ],
+     [
+      0.068,
+      1.53,
+      579.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      680.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      832.0,
+      400.0
+     ],
+     [
+      0.235,
+      1.262,
+      829.0,
+      430.0
+     ],
+     [
+      0.1675,
+      1.305,
+      702.0,
+      447.0
+     ],
+     [
+      0.15,
+      1.1,
+      702.3,
+      730.9
+     ],
+     [
+      0.162,
+      0.963,
+      700.0,
+      945.0
+     ],
+     [
+      0.05,
+      1.472,
+      544.7,
+      122.2
+     ],
+     [
+      0.085,
+      1.505,
+      575.9,
+      83.2
+     ],
+     [
+      0,
+      0.931,
+      501.0,
+      954.0
+     ],
+     [
+      0,
+      1.462,
+      501.0,
+      122.2
+     ]
+    ],
+    "trust": "right"
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "erase": [
+     [
+      0,
+      0,
+      345,
+      345,
+      [
+       242,
+       76,
+       38
+      ]
+     ]
+    ],
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      463.5,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      362.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      208.0,
+      402.0
+     ],
+     [
+      -0.227,
+      1.265,
+      217.0,
+      435.0
+     ],
+     [
+      -0.173,
+      1.307,
+      338.0,
+      449.0
+     ],
+     [
+      -0.143,
+      1.1,
+      338.0,
+      732.3
+     ],
+     [
+      -0.161,
+      0.972,
+      341.0,
+      946.0
+     ],
+     [
+      0.078,
+      1.525,
+      577.5,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      678.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      832.0,
+      402.0
+     ],
+     [
+      0.227,
+      1.265,
+      823.0,
+      435.0
+     ],
+     [
+      0.173,
+      1.307,
+      702.0,
+      449.0
+     ],
+     [
+      0.143,
+      1.1,
+      702.0,
+      732.3
+     ],
+     [
+      0.161,
+      0.972,
+      699.0,
+      946.0
+     ],
+     [
+      0,
+      0.937,
+      520.5,
+      953.0
+     ],
+     [
+      0,
+      1.547,
+      520.5,
+      45.0
+     ]
+    ],
+    "trust": "right"
+   }
+  }
+ },
+ "models": {
+  "top": "top_flat02_short_Male"
+ }
+}

@@ -1,0 +1,482 @@
+{
+ "title": "Sharks Women in League 2026",
+ "notes": "Charcoal Women in League kit with light blue collar and cuffs and pink logos, from the user's product shots (resources/missing-jerseys/2026/sharks-wil). Painted by code from the wrapped photos (kit_photo.flat); sponsors are the stock 2026 home logos in pink, at the stock positions. The photo's Aramex is a stylised wordmark; the stock one is used. Shorts and socks: stock 2025 home.",
+ "install": {
+  "club": 129,
+  "name": "WOMEN IN LEAGUE 2026",
+  "texture": "sharks_wil_2026",
+  "templates": {
+   "uniformTop": 164,
+   "uniformBottom": 160,
+   "uniformSocks": 160
+  },
+  "guid": 64031,
+  "numberScale": 0.88
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   44,
+   44,
+   52
+  ],
+  "lightblue": [
+   178,
+   222,
+   240
+  ],
+  "pink": [
+   234,
+   60,
+   147
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1443,
+    641
+   ],
+   "shield_height": 118,
+   "colour": "pink"
+  },
+  {
+   "name": "Sharks crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1759,
+     595,
+     1926,
+     737
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 150,
+    "hi": 215
+   },
+   "colour": "pink",
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1842,
+      666
+     ],
+     "width": 167
+    }
+   ]
+  },
+  {
+   "name": "pilot",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1573,
+     549,
+     1714,
+     624
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 150,
+    "hi": 215
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Aramex",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1262,
+     915,
+     2005,
+     1040
+    ],
+    "dark": true,
+    "channel": 1,
+    "lo": 80,
+    "hi": 180
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Classic (right)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1198,
+     287,
+     1372,
+     365
+    ]
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Classic (left)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1905,
+     287,
+     2079,
+     365
+    ]
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     1211,
+     1631,
+     1386,
+     1736
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Up Up Cronulla",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     467,
+     256,
+     618,
+     307
+    ]
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Zambrero",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     200,
+     360,
+     895,
+     468
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "pink",
+   "place": [
+    {
+     "pos": [
+      200,
+      405
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Reozone",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     268,
+     1205,
+     805,
+     1305
+    ],
+    "channel": 1,
+    "lo": 45,
+    "hi": 160
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Ace Cutters (right sleeve)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     2570,
+     348,
+     2908,
+     614
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "pink"
+  },
+  {
+   "name": "Ace Cutters (left sleeve)",
+   "source": {
+    "stock": "m_top_sharks_nrl_home_26_col_1",
+    "box": [
+     3461,
+     348,
+     3799,
+     614
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 80,
+    "hi": 170
+   },
+   "colour": "pink"
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      394.5,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      219.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      156.0,
+      313.0
+     ],
+     [
+      -0.235,
+      1.262,
+      183.0,
+      415.0
+     ],
+     [
+      -0.1675,
+      1.305,
+      301.4,
+      426.0
+     ],
+     [
+      -0.15,
+      1.1,
+      287.4,
+      714.4
+     ],
+     [
+      -0.162,
+      0.963,
+      280.0,
+      932.0
+     ],
+     [
+      -0.05,
+      1.472,
+      440.5,
+      148.5
+     ],
+     [
+      -0.085,
+      1.505,
+      398.7,
+      96.2
+     ],
+     [
+      0.068,
+      1.53,
+      603.5,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      784.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      828.0,
+      217.0
+     ],
+     [
+      0.235,
+      1.262,
+      803.0,
+      418.0
+     ],
+     [
+      0.1675,
+      1.305,
+      698.3,
+      431.0
+     ],
+     [
+      0.15,
+      1.1,
+      711.6,
+      719.4
+     ],
+     [
+      0.162,
+      0.963,
+      718.0,
+      937.0
+     ],
+     [
+      0.05,
+      1.472,
+      557.5,
+      148.5
+     ],
+     [
+      0.085,
+      1.505,
+      599.3,
+      96.2
+     ],
+     [
+      0,
+      0.931,
+      499.0,
+      953.0
+     ],
+     [
+      0,
+      1.462,
+      499.0,
+      148.5
+     ]
+    ]
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      390.5,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      217.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      150.0,
+      352.0
+     ],
+     [
+      -0.227,
+      1.265,
+      162.0,
+      413.0
+     ],
+     [
+      -0.173,
+      1.307,
+      297.9,
+      429.0
+     ],
+     [
+      -0.143,
+      1.1,
+      286.4,
+      721.4
+     ],
+     [
+      -0.161,
+      0.972,
+      281.0,
+      942.0
+     ],
+     [
+      0.078,
+      1.525,
+      607.5,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      784.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      843.0,
+      315.0
+     ],
+     [
+      0.227,
+      1.265,
+      845.0,
+      409.0
+     ],
+     [
+      0.173,
+      1.307,
+      699.1,
+      434.0
+     ],
+     [
+      0.143,
+      1.1,
+      710.6,
+      720.7
+     ],
+     [
+      0.161,
+      0.972,
+      718.0,
+      937.0
+     ],
+     [
+      0,
+      0.937,
+      499.0,
+      954.0
+     ],
+     [
+      0,
+      1.547,
+      499.0,
+      46.0
+     ]
+    ]
+   }
+  }
+ }
+}

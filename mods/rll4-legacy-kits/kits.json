@@ -2514,6 +2514,20 @@
    "texture": "seaeagles_rll4_home_2022"
   },
   {
+   "guid": 60346,
+   "src": "2022/sharks-away-22.dds",
+   "club": 129,
+   "name": "AWAY 2022",
+   "texture": "sharks_rll4_away_2022"
+  },
+  {
+   "guid": 60347,
+   "src": "2022/sharks-home-22.dds",
+   "club": 129,
+   "name": "HOME 2022",
+   "texture": "sharks_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2801,6 +2815,20 @@
    "texture": "seaeagles_rll4_nines_2020"
   },
   {
+   "guid": 60406,
+   "src": "2023/sharks-home-23.dds",
+   "club": 129,
+   "name": "HOME 2023",
+   "texture": "sharks_rll4_home_2023"
+  },
+  {
+   "guid": 60408,
+   "src": "2023/sharks-nines-20.dds",
+   "club": 129,
+   "name": "NINES 2020",
+   "texture": "sharks_rll4_nines_2020"
+  },
+  {
    "guid": 60427,
    "src": "2023/rabbitohs-special-23.dds",
    "club": 125,
@@ -2992,6 +3020,32 @@
    }
   },
   {
+   "guid": 64030,
+   "custom": "sharks_heritage_2026",
+   "club": 129,
+   "name": "HERITAGE 2026",
+   "texture": "sharks_heritage_2026",
+   "templates": {
+    "uniformTop": 386,
+    "uniformBottom": 160,
+    "uniformSocks": 160
+   },
+   "numberFrom": 164
+  },
+  {
+   "guid": 64031,
+   "custom": "sharks_wil_2026",
+   "club": 129,
+   "name": "WOMEN IN LEAGUE 2026",
+   "texture": "sharks_wil_2026",
+   "templates": {
+    "uniformTop": 164,
+    "uniformBottom": 160,
+    "uniformSocks": 160
+   },
+   "numberScale": 0.88
+  },
+  {
    "guid": 64032,
    "custom": "roosters_heritage_2026",
    "club": 127,
@@ -3003,6 +3057,18 @@
     "uniformSocks": 382
    },
    "numberFrom": 384
+  },
+  {
+   "guid": 64033,
+   "custom": "sharks_indigenous_2026",
+   "club": 129,
+   "name": "INDIGENOUS 2026",
+   "texture": "sharks_indigenous_2026",
+   "templates": {
+    "uniformTop": 164,
+    "uniformBottom": 160,
+    "uniformSocks": 160
+   }
   },
   {
    "guid": 64034,
