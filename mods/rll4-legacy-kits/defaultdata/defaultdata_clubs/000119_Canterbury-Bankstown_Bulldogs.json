@@ -9,6 +9,15 @@
           "uniformBottom": 64006,
           "uniformSocks": 64006
         }
+      },
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64009,
+          "uniformBottom": 64009,
+          "uniformSocks": 64009
+        }
       }
     ]
   }
