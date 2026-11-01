@@ -42,3 +42,12 @@ has no profile field, so it is remembered only until the game is closed.
   referees (Kasey Badger, Belinda Sharpe, unhidden by `unhide-coaches`), fewer than the 3 officials
   a match needs. A female referee is pre-picked when one exists, and the touch judges default to
   male (stock `matchin.setupReferees` always rolls male officials).
+
+## Crowd Settings (play-now-crowd-settings)
+
+The same file also adds a **Crowd Settings** button after Match Officials, using the same in-place page
+swap. The page holds Attendance plus a Fans row for each team, in 5% steps; the two Fans rows always add
+up to 100%. The page is rebuilt each time it opens, so the Fans rows carry the teams currently picked. The
+values go to `_G.modPlayNowCrowd` and to `playnow_attendance` / `playnow_home_fans` in `rl26_revamp.ini`.
+Applying them to the match (seats, home/away split, sound) is mods/play-now-crowd-settings and
+crowd-team-kits' `crowd_rugby.lua`; see that README.

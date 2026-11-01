@@ -32,6 +32,22 @@ local function var_0_16(arg_2_0, ...)
 	end
 end
 
+-- play-now-crowd-settings (when installed): Play Now's Crowd Settings (attendance %,
+-- home fans %), read through its soundlistener_crowd.lua. Nil outside Play Now or
+-- without that mod.
+-- the scene's padding dword (+0x1c, after 6 LOD ratios and a byte) its exe patch reads
+local MOD_CROWD_SIDE_SLOT = 7
+
+local function modPlayNowCrowd(matchInData)
+	local ok, settings = pcall(function()
+		local reader = import("simlisteners.sound.listeners.soundlistener_crowd").modPlayNowCrowdSettings
+
+		return reader and reader(matchInData)
+	end)
+
+	return ok and settings or nil
+end
+
 local function var_0_17(arg_3_0)
 	return (VERIFY(loadTemp("intermediatelua.crowd.crowd_item_config")))
 end
@@ -75,6 +91,22 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	local var_4_25 = realisticcolour.make(var_4_21)
 	local var_4_26 = native.CCrowdScene(var_4_3, var_4_0, var_4_1, var_4_2, var_4_6, var_4_7)
 
+	-- play-now-crowd-settings: each seat's side comes from a random value in [-1, 1]
+	-- against a threshold (stock 0: about half each). Its exe patch reads the threshold
+	-- from the scene's padding dword, written here through setLODRatio (unchecked index):
+	-- home share H -> 1 - 2H. Padding isn't initialised, so it's written for every match
+	-- (0 = stock outside Play Now). Without the patch nothing reads it.
+	local modCrowd = modPlayNowCrowd(arg_4_3)
+	local modThreshold = modCrowd and math.max(-1, math.min(1, 1 - 2 * modCrowd.homeFans / 100)) or 0
+	local modOk, modErr = pcall(function()
+		var_4_26:setLODRatio(MOD_CROWD_SIDE_SLOT, modThreshold)
+	end)
+	local modLogFn = rawget(_G, "crowdTeamKitsLog")
+
+	if modLogFn and (modCrowd or not modOk) then
+		modLogFn("play now crowd: attendance %s%%, home fans %s%%, side threshold %.2f%s", modCrowd and modCrowd.attendance or "-", modCrowd and modCrowd.homeFans or "-", modThreshold, modOk and "" or " (failed: " .. tostring(modErr) .. ")")
+	end
+
 	var_4_26:init(arg_4_1, arg_4_2, "crowd/anims.dat", var_4_5, "", arg_4_4.matchSeed, var_4_12, var_4_13, var_4_22, var_4_23, var_4_24, var_4_25)
 
 	return var_4_26
@@ -91,6 +123,14 @@ Class("Crowd", function(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, ar
 		arg_5_0.crowdScene:setWantCrowdPercentage(var_5_1)
 	elseif arg_5_6.gameMode == native.EGameMode.Practice then
 		arg_5_0.crowdScene:setWantCrowdPercentage(0)
+	end
+
+	-- play-now-crowd-settings: Play Now attendance (0 = an empty ground; its sound
+	-- listener is silent then too)
+	local modCrowd = modPlayNowCrowd(arg_5_6)
+
+	if modCrowd then
+		arg_5_0.crowdScene:setWantCrowdPercentage(modCrowd.attendance)
 	end
 
 	arg_5_0.TAGS_HOME = {

@@ -401,6 +401,206 @@ local function modCreateOfficialsButton(state)
 	}
 end
 
+-- play-now-crowd-settings: a "Crowd Settings" page next to Match Officials - Attendance,
+-- <home team> Fans and <away team> Fans (the two fan rows always add up to 100%). The
+-- values are the session's _G.modPlayNowCrowd { attendance, homeFans } and are saved as
+-- playnow_attendance / playnow_home_fans in rl26_revamp.ini; that mod's sound listener
+-- and crowd-team-kits' crowd_rugby.lua apply them to Play Now matches.
+local MOD_CROWD_HEADING = "Crowd Settings"
+local MOD_CROWD_FILE = "rl26_revamp.ini"
+local MOD_CROWD_STEP = 5
+local MOD_CROWD_DEFAULTS = {
+	attendance = 70,
+	homeFans = 80
+}
+local MOD_CROWD_KEYS = {
+	attendance = "playnow_attendance",
+	homeFans = "playnow_home_fans"
+}
+
+local function modCrowdSettings()
+	local settings = rawget(_G, "modPlayNowCrowd")
+
+	if type(settings) == "table" then
+		return settings
+	end
+
+	settings = {
+		attendance = MOD_CROWD_DEFAULTS.attendance,
+		homeFans = MOD_CROWD_DEFAULTS.homeFans
+	}
+
+	pcall(function()
+		local file = io.open(MOD_CROWD_FILE, "r")
+
+		if file then
+			for line in file:lines() do
+				local key, value = line:match("^%s*([%w_]+)%s*=%s*(%d+)")
+
+				for field, name in pairs(MOD_CROWD_KEYS) do
+					if key == name then
+						settings[field] = math.min(100, tonumber(value))
+					end
+				end
+			end
+
+			file:close()
+		end
+	end)
+
+	rawset(_G, "modPlayNowCrowd", settings)
+
+	return settings
+end
+
+-- rewrites the two keys in rl26_revamp.ini, keeping the file's other lines
+local function modSaveCrowdSettings(settings)
+	local ok, err = pcall(function()
+		local lines, found = {}, {}
+		local file = io.open(MOD_CROWD_FILE, "r")
+
+		if file then
+			for line in file:lines() do
+				local key = line:match("^%s*([%w_]+)%s*=")
+
+				for field, name in pairs(MOD_CROWD_KEYS) do
+					if key == name then
+						line = string.format("%s = %d", name, settings[field])
+						found[field] = true
+					end
+				end
+
+				table.insert(lines, line)
+			end
+
+			file:close()
+		end
+
+		if not found.attendance or not found.homeFans then
+			table.insert(lines, "")
+			table.insert(lines, "; Play Now crowd (Match Settings > Crowd Settings): attendance % and home team fans %")
+			table.insert(lines, "; (the away team gets the rest). 0 attendance = an empty, silent ground.")
+
+			for _, field in ipairs({ "attendance", "homeFans" }) do
+				if not found[field] then
+					table.insert(lines, string.format("%s = %d", MOD_CROWD_KEYS[field], settings[field]))
+				end
+			end
+		end
+
+		file = assert(io.open(MOD_CROWD_FILE, "w"))
+
+		file:write(table.concat(lines, "\n"), "\n")
+		file:close()
+	end)
+
+	if not ok then
+		modLog("crowd settings not saved: %s", tostring(err))
+	end
+end
+
+local function modPercentValueList()
+	local list = {}
+
+	for percent = 0, 100, MOD_CROWD_STEP do
+		table.insert(list, {
+			value = percent,
+			label = string.format("%d%%", percent)
+		})
+	end
+
+	return list
+end
+
+local function modClubName(matchData, side, fallback)
+	local ok, name = pcall(function()
+		local club = matchData.matchSettingsSynchroniser:getSideInfo(side):getMatchClub()
+
+		return club and club.fullName
+	end)
+
+	return ok and name and tostring(name) ~= "" and tostring(name) or fallback
+end
+
+local function modCreatePercentItem(items, key, label, getPercent, setPercent)
+	local valueList = modPercentValueList()
+
+	return {
+		key = key,
+		label = label,
+		editable = true,
+		editType = optionmenu_aide.EditTypes.ValueList,
+		displayType = optionmenu_aide.DisplayTypes.ValueList,
+		tooltip = native.InputTypes.LJoyLeftRight,
+		tooltipText = native.Localise("Select"),
+		valueList = valueList,
+		getValue = function(list)
+			return modValueListIndex(list, getPercent())
+		end,
+		setValue = function(index, list)
+			local entry = list[modToIndex(index) + 1]
+
+			if entry and entry.value ~= getPercent() then
+				setPercent(entry.value)
+			end
+		end
+	}
+end
+
+-- rows: 1 attendance, 2 home fans, 3 away fans (modShowSlotValue updates a row by index)
+local function modCreateCrowdItems(matchData)
+	local settings = modCrowdSettings()
+	local items = {}
+
+	local function changed(field, value)
+		settings[field] = value
+
+		modShowSlotValue(items, 2, settings.homeFans)
+		modShowSlotValue(items, 3, 100 - settings.homeFans)
+		modSaveCrowdSettings(settings)
+		modLog("crowd settings: attendance %d%%, home fans %d%%", settings.attendance, settings.homeFans)
+	end
+
+	items[1] = modCreatePercentItem(items, "CrowdAttendance", "Attendance", function()
+		return settings.attendance
+	end, function(value)
+		changed("attendance", value)
+	end)
+	items[2] = modCreatePercentItem(items, "CrowdHomeFans", modClubName(matchData, "home", "Home Team") .. " Fans", function()
+		return settings.homeFans
+	end, function(value)
+		changed("homeFans", value)
+	end)
+	items[3] = modCreatePercentItem(items, "CrowdAwayFans", modClubName(matchData, "away", "Away Team") .. " Fans", function()
+		return 100 - settings.homeFans
+	end, function(value)
+		changed("homeFans", 100 - value)
+	end)
+
+	return items
+end
+
+local function modCreateCrowdButton(state)
+	return {
+		key = "CrowdSettings",
+		label = MOD_CROWD_HEADING,
+		editable = true,
+		selectSelectsItem = true,
+		editType = optionmenu_aide.EditTypes.Button,
+		displayType = optionmenu_aide.DisplayTypes.Button,
+		tooltip = native.InputTypes.Accept,
+		tooltipText = native.Localise("Select"),
+		-- runs inside the button's Noesis command, so the view swap waits for the next update
+		execute = function()
+			modLog("crowd settings button pressed")
+
+			state.modPendingPage = "crowd"
+
+			return true
+		end
+	}
+end
+
 -- matchsetupmatchsettings_state.lua is already overridden by enable-casual-fieldmarkings,
 -- so the button and page are added by wrapping its class methods here instead. Its own
 -- referee rows use a display type the Noesis menu can't render and are locked in public
@@ -450,6 +650,10 @@ function modSettingsState.modWrappedCreateMenuItems(arg_0_0, arg_0_1, arg_0_2, a
 	end
 
 	table.insert(menuItems, position, modCreateOfficialsButton(arg_0_0))
+	-- play-now-crowd-settings: Crowd Settings right after Match Officials
+	table.insert(menuItems, position + 1, modCreateCrowdButton(arg_0_0))
+
+	arg_0_0.modMatchData = arg_0_6
 
 	modLog("settings menu built: %d rows, officials button at %d, %d officials rows", #menuItems, position, #arg_0_0.modOfficialsItems)
 
@@ -478,11 +682,17 @@ function modSettingsState.modWrappedUpdate(arg_1_0, arg_1_1, arg_1_2, arg_1_3, a
 		if page == "officials" and arg_1_0.modOfficialsItems then
 			ok, err = pcall(modShowPage, arg_1_0, synchroniser, arg_1_0.modOfficialsItems, MOD_PAGE_HEADING)
 			arg_1_0.modPage = ok and page or nil
+		elseif page == "crowd" then
+			-- built when shown, so the fan rows carry the teams picked now
+			ok, err = pcall(function()
+				modShowPage(arg_1_0, synchroniser, modCreateCrowdItems(arg_1_0.modMatchData or arg_1_9), MOD_CROWD_HEADING)
+			end)
+			arg_1_0.modPage = ok and page or nil
 		end
 
 		if not arg_1_0.modPage then
 			if err then
-				modLog("officials page failed: %s", tostring(err))
+				modLog("%s page failed: %s", page, tostring(err))
 			end
 
 			ok, err = pcall(modShowPage, arg_1_0, synchroniser, arg_1_0.menuItems, native.Localise("MatchSettings"))

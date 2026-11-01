@@ -78,6 +78,14 @@ Wembley (the 1-in-4,080 floor). Real attendance is usually lower. Each match loa
 crowd's actual potential attendance to `crowdteamkits_debug.txt` in the game folder, for recalibrating
 `MALE_FAN_SHARE` or the target.
 
+## Play Now crowd settings
+
+`crowd_rugby.lua` also applies play-now-crowd-settings' Crowd Settings in Play Now matches. The
+attendance goes through `setWantCrowdPercentage`. The home/away split goes through the crowd scene's
+padding dword, written with `setLODRatio(7, ...)` for every match (0 outside Play Now); that mod's exe
+patch makes the side compare read it. The settings are read through that mod's `soundlistener_crowd.lua`
+(`modPlayNowCrowdSettings`); without the mod nothing changes.
+
 ## Regenerating
 
 `generate.py` writes the kit table between the `GENERATED` markers. It reads the **installed**
