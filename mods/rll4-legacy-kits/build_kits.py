@@ -40,6 +40,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import struct
 import sys
 
@@ -57,6 +58,10 @@ import pack  # noqa: E402
 
 WORK = os.path.join(REPO, "_build", "rll4-legacy-kits")
 SOURCES = os.path.join(REPO, "resources", "old-jerseys")
+# finished kits from resources/ in RL26's own format: <texture>/m_{top,shorts,socks}_<texture>_col_{1,2}.dds
+# (the exact bytes install writes) + kit.json (bake key, stats) + preview.png. Kept so an unchanged kit is
+# never baked again, even after _build is wiped. Git-ignored (*.dds, ~65 MB a kit).
+READY = os.path.join(REPO, "resources", "rl26-kits")
 
 
 def _source_path(kit):
@@ -367,12 +372,12 @@ def active_kits(manifest=None):
             if rll4:
                 out.append(k)
         elif "custom" in k:
-            if os.path.isdir(_custom_source(k)) or os.path.isdir(os.path.join(WORK, k["texture"])):
+            if os.path.isdir(_custom_source(k)) or _baked_somewhere(k):
                 out.append(k)
             elif k["texture"] not in _warned:
                 _warned.add(k["texture"])
                 print(f"  warning: skipping {k['texture']} - resources/custom-kits/{k['custom']} is missing")
-        elif os.path.exists(_source_path(k)) or os.path.isdir(os.path.join(WORK, k["texture"])):
+        elif os.path.exists(_source_path(k)) or _baked_somewhere(k):
             out.append(k)
         elif k["texture"] not in _warned:
             _warned.add(k["texture"])
@@ -381,6 +386,10 @@ def active_kits(manifest=None):
 
 
 _warned = set()
+
+
+def _baked_somewhere(kit):
+    return any(os.path.isdir(os.path.join(d, kit["texture"])) for d in (READY, WORK))
 
 
 def load_manifest():
@@ -419,6 +428,53 @@ def _bake_current(kit, stats):
             and all(os.path.exists(os.path.join(out, f"{part}.png")) for part in PARTS))
 
 
+def _ready_name(kit, part, level):
+    return f"{TEXTURE_PREFIX[part]}{kit['texture']}_col_{level}"
+
+
+def _ready_files(kit):
+    """{(part, level): path} of a kit's finished DDS files in resources/rl26-kits."""
+    out = os.path.join(READY, kit["texture"])
+    return {(part, level): os.path.join(out, _ready_name(kit, part, level) + ".dds")
+            for part in PARTS for level in (1, 2)}
+
+
+def _uses_ready(kit):
+    """Kits from resources/ keep finished textures there; RLL4's own kits are
+    read from the user's install, so they stay in _build only."""
+    return "rll4" not in kit
+
+
+def _ready_stamp(kit):
+    """The kit.json of a finished kit whose bake key is current, else None."""
+    try:
+        stamp = json.load(open(os.path.join(READY, kit["texture"], "kit.json")))
+    except (OSError, ValueError):
+        return None
+    if stamp.get("key") != _bake_key(kit) or not all(map(os.path.exists, _ready_files(kit).values())):
+        return None
+    return stamp
+
+
+def write_ready(kit, images, stats, preview):
+    """Save a baked kit to resources/rl26-kits as the DDS files install writes."""
+    out = os.path.join(READY, kit["texture"])
+    os.makedirs(out, exist_ok=True)
+    for (part, level), path in _ready_files(kit).items():
+        im = images[part]
+        if level == 2:
+            im = im.resize((im.width // 2, im.height // 2), Image.LANCZOS)
+        with open(path, "wb") as f:
+            f.write(_dds_bgra(im))
+    preview.save(os.path.join(out, "preview.png"))
+    # the sha1 of each part's PNG in _build, which install recorded for entries written from PNGs
+    png = {part: os.path.join(WORK, kit["texture"], f"{part}.png") for part in PARTS}
+    png_sha = {part: hashlib.sha1(open(path, "rb").read()).hexdigest() for part, path in png.items()
+               if os.path.exists(path)}
+    with open(os.path.join(out, "kit.json"), "w") as f:
+        json.dump({"key": _bake_key(kit), "stats": stats, "png_sha1": png_sha}, f, indent=1)
+
+
 def cmd_bake(args):
     import jersey_template as jt
     corr = None  # the RLL4 texel map, only loaded when an RLL4-layout kit is baked
@@ -433,8 +489,25 @@ def cmd_bake(args):
                    else "rll4" not in kit and not os.path.exists(_source_path(kit)))
         if missing:
             print(f"  {kit['texture']}: source missing, keeping the earlier bake")  # see active_kits()
+            try:
+                stats[kit["texture"]] = json.load(open(os.path.join(READY, kit["texture"], "kit.json")))["stats"]
+            except (OSError, ValueError, KeyError):
+                pass
             continue
-        if not args.force and _bake_current(kit, old):
+        if not args.force and _uses_ready(kit):
+            stamp = _ready_stamp(kit)
+            if stamp:
+                stats[kit["texture"]] = stamp["stats"]
+                skipped += 1
+                continue
+            if _bake_current(kit, old):  # baked before resources/rl26-kits existed: save that bake
+                out = os.path.join(WORK, kit["texture"])
+                write_ready(kit, {part: Image.open(os.path.join(out, f"{part}.png")) for part in PARTS},
+                            old[kit["texture"]], Image.open(os.path.join(out, "preview.png")))
+                print(f"  {kit['texture']}: saved to resources/rl26-kits")
+                skipped += 1
+                continue
+        elif not args.force and _bake_current(kit, old):
             skipped += 1
             continue
         if "custom" in kit:
@@ -451,10 +524,12 @@ def cmd_bake(args):
         preview.save(os.path.join(out, "preview.png"))
         with open(os.path.join(out, "bake.json"), "w") as f:
             json.dump({"key": _bake_key(kit)}, f)
+        if _uses_ready(kit):
+            write_ready(kit, images, st, preview)
         stats[kit["texture"]] = st
         print(f"  {kit['texture']}: number area {st['number_area_rgb']}, referee clash {st['clash']}")
     if skipped:
-        print(f"  {skipped} kits already baked (unchanged; --force re-bakes them)")
+        print(f"  {skipped} kits already baked (unchanged, in resources/rl26-kits or _build; --force re-bakes them)")
     old.update(stats)
     with open(path, "w") as f:
         json.dump(old, f, indent=1)
@@ -507,7 +582,8 @@ def cmd_sheet(args):
     kits = active_kits()
     tiles = []
     for kit in kits:
-        im = Image.open(os.path.join(WORK, kit["texture"], "preview.png"))
+        ready = os.path.join(READY, kit["texture"], "preview.png")
+        im = Image.open(ready if os.path.exists(ready) else os.path.join(WORK, kit["texture"], "preview.png"))
         im = im.resize((im.width // 2, im.height // 2))
         ImageDraw.Draw(im).text((4, 2), f"{kit['texture']}", fill=(255, 255, 0))
         tiles.append(im)
@@ -651,6 +727,42 @@ LUA_FOOTER = """\t}
 \t\t\tend
 \t\tend
 
+\t\tif templates.numberOffset then
+\t\t\t-- this kit's own number placement (numberOffset), over the template's
+\t\t\tlocal item = ItemMaps.uniformTop.item_setup_lookup[kit[1]]
+
+\t\t\tif item ~= nil then
+\t\t\t\tlocal offset = {}
+
+\t\t\t\tfor key, value in pairs(item.numberOffset or {}) do
+\t\t\t\t\toffset[key] = value
+\t\t\t\tend
+
+\t\t\t\tfor key, value in pairs(templates.numberOffset) do
+\t\t\t\t\toffset[key] = value
+\t\t\t\tend
+
+\t\t\t\titem.numberOffset = offset
+\t\t\tend
+\t\tend
+
+\t\tif templates.numberScale then
+\t\t\t-- a smaller number (under a big back sponsor): a copy, since the
+\t\t\t-- offset table may be shared with the item it came from
+\t\t\tlocal item = ItemMaps.uniformTop.item_setup_lookup[kit[1]]
+
+\t\t\tif item ~= nil and item.numberOffset ~= nil then
+\t\t\t\tlocal offset = {}
+
+\t\t\t\tfor key, value in pairs(item.numberOffset) do
+\t\t\t\t\toffset[key] = value
+\t\t\t\tend
+
+\t\t\t\toffset.scale = (offset.scale or 0.37) * templates.numberScale
+\t\t\t\titem.numberOffset = offset
+\t\t\tend
+\t\tend
+
 \t\taddItem("uniformBottom", templates.bottom or %d, kit[1], "m_shorts_" .. kit[2] .. "_col")
 \t\taddItem("uniformSocks", templates.socks or %d, kit[1], "m_socks_" .. kit[2] .. "_col")
 \tend
@@ -693,6 +805,14 @@ def cmd_generate(args):
         # keeping the club's number layout)
         if "numberFrom" in kit:
             tpl = (tpl + ", " if tpl else "") + f"number = {kit['numberFrom']}"
+        # "numberOffset": {"offsetY", "scale", "aspect"} overrides for this kit
+        # alone (e.g. the number below a high back sponsor)
+        if "numberOffset" in kit:
+            fields = ", ".join(f"{k} = {v}" for k, v in sorted(kit["numberOffset"].items()))
+            tpl = (tpl + ", " if tpl else "") + f"numberOffset = {{ {fields} }}"
+        # "numberScale": a factor on the number's size (a big or low back sponsor)
+        if "numberScale" in kit:
+            tpl = (tpl + ", " if tpl else "") + f"numberScale = {kit['numberScale']}"
         tpl = f", {{ {tpl} }}" if tpl else ""
         rows.append(f'\t\t{{ {kit["guid"]}, "{kit["texture"]}", {{ {clash} }}{tpl} }}, -- {kit["name"]}, club {kit["club"]}')
 
@@ -738,10 +858,13 @@ def cmd_generate(args):
             entry = {"name": kit["name"], "copyOf": copy_of, "set": fields}
             if "index" in kit:
                 entry["index"] = kit["index"]
-            # RLL4 kits (installed RLL4 or resources/old-jerseys) live in the
-            # library unless a row says "library": false; captured/painted
-            # ("custom") kits take a club slot unless it says "library": true
-            if kit.get("library", "custom" not in kit):
+            # project rule: kits from before LIBRARY_BEFORE go to the library,
+            # current ones (2025-2027) take a club slot; "library" on a row
+            # overrides. A kit with no year keeps the old split (RLL4 rows to
+            # the library, captured/painted "custom" kits to a slot)
+            year = kit_year(kit)
+            default = year < LIBRARY_BEFORE if year else "custom" not in kit
+            if kit.get("library", default):
                 library.setdefault(cid, []).append(entry)
             else:
                 adds.append(entry)
@@ -764,6 +887,21 @@ def cmd_generate(args):
     with open(lua_path, "w", encoding="ascii", newline="\n") as f:
         f.write(lua)
     print(f"wrote {os.path.relpath(lua_path, REPO)} ({sum(map(len, library.values()))} library kits)")
+
+
+# kits older than this season go to the KitLibrary, the rest into the club's
+# own kit list (the user's rule, 2026-10-31)
+LIBRARY_BEFORE = 2025
+
+
+def kit_year(kit):
+    """The season a kit row is from: a 20xx in its name, else in its custom
+    folder or texture name (e.g. "cowboys_home_2026"); None if there is none."""
+    for text in (kit.get("name", ""), kit.get("custom", ""), kit.get("texture", "")):
+        m = re.search(r"(?<!\d)(20\d\d)(?!\d)", text)
+        if m:
+            return int(m.group(1))
+    return None
 
 
 def _library_lua(library):
@@ -818,19 +956,28 @@ def cmd_install(args):
     for kit in active_kits():
         if args.only and kit["texture"] not in args.only:
             continue
+        stamp = _ready_stamp(kit) if not args.source and _uses_ready(kit) else None
+        ready = _ready_files(kit) if stamp else None
         for part in args.parts or PARTS:
             png = os.path.join(args.source or WORK, kit["texture"], f"{part}.png")
-            png_sha = hashlib.sha1(open(png, "rb").read()).hexdigest()
+            png_sha = None if ready else hashlib.sha1(open(png, "rb").read()).hexdigest()
             img = None
             for level in (1, 2):
-                path = f"characters/uniforms/textures/{TEXTURE_PREFIX[part]}{kit['texture']}_col_{level}.texture"
-                sha = f"{png_sha}:{level}"
+                path = f"characters/uniforms/textures/{_ready_name(kit, part, level)}.texture"
+                if ready:  # finished DDS: written as is
+                    dds = open(ready[part, level], "rb").read()
+                    old = stamp.get("png_sha1", {}).get(part)  # same image as an entry written from the PNG
+                    sha = f"{old}:{level}" if old else "dds:" + hashlib.sha1(dds).hexdigest()
+                else:
+                    dds, sha = None, f"{png_sha}:{level}"
                 if not args.force and unchanged(path, sha):
                     skipped += 1
                     continue
-                img = img or Image.open(png)
-                im = img if level == 1 else img.resize((img.width // 2, img.height // 2), Image.LANCZOS)
-                blob, sizes = club_icons.make_blob(path, _dds_bgra(im))
+                if dds is None:
+                    img = img or Image.open(png)
+                    im = img if level == 1 else img.resize((img.width // 2, img.height // 2), Image.LANCZOS)
+                    dds = _dds_bgra(im)
+                blob, sizes = club_icons.make_blob(path, dds)
                 origin = (kit["src"] if "src" in kit else f"custom {kit['custom']}" if "custom" in kit
                           else f"RLL4 {kit['rll4']}")
                 add_entries.add_entry(args.blobset, path, blob, sizes, f"rll4-legacy-kits {origin}",

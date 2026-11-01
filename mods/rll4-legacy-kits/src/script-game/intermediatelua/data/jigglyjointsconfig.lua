@@ -586,6 +586,42 @@ do
 			end
 		end
 
+		if templates.numberOffset then
+			-- this kit's own number placement (numberOffset), over the template's
+			local item = ItemMaps.uniformTop.item_setup_lookup[kit[1]]
+
+			if item ~= nil then
+				local offset = {}
+
+				for key, value in pairs(item.numberOffset or {}) do
+					offset[key] = value
+				end
+
+				for key, value in pairs(templates.numberOffset) do
+					offset[key] = value
+				end
+
+				item.numberOffset = offset
+			end
+		end
+
+		if templates.numberScale then
+			-- a smaller number (under a big back sponsor): a copy, since the
+			-- offset table may be shared with the item it came from
+			local item = ItemMaps.uniformTop.item_setup_lookup[kit[1]]
+
+			if item ~= nil and item.numberOffset ~= nil then
+				local offset = {}
+
+				for key, value in pairs(item.numberOffset) do
+					offset[key] = value
+				end
+
+				offset.scale = (offset.scale or 0.37) * templates.numberScale
+				item.numberOffset = offset
+			end
+		end
+
 		addItem("uniformBottom", templates.bottom or 104, kit[1], "m_shorts_" .. kit[2] .. "_col")
 		addItem("uniformSocks", templates.socks or 104, kit[1], "m_socks_" .. kit[2] .. "_col")
 	end

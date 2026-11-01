@@ -30,6 +30,10 @@ PSD edits (3-way merge, per layer, against the hashes in .studio.json):
     the source of truth); otherwise straight from the code's layers
   - --reset throws the PSD edits away (after a backup)
 
+Artwork kits (Indigenous, ANZAC...: RULES.md 16-17): design.py wraps the
+supplied photos on with kit_photo.layer(); a sponsor's "soften" adds a
+"<name> soften" layer under it that wipes the blurry photo logo there.
+
 Usage (repo root):
     python tools/kit_studio.py new <kit> --club 134 --kit-name "HOME 2027" [--like <kit>]
     python tools/kit_studio.py build <kit> [--reset] [--no-preview]
@@ -152,6 +156,11 @@ class Kit:
         self._sponsors = None
 
     # -- config
+    def save_cfg(self):
+        with open(os.path.join(self.dir, "kit.json"), "w", encoding="utf-8", newline="\n") as f:
+            json.dump(self.cfg, f, indent=1)
+            f.write("\n")
+
     def colour(self, c):
         """A palette name ('main', 'white'...), [r, g, b] or None."""
         if c is None or isinstance(c, (list, tuple)):
@@ -221,7 +230,10 @@ class Kit:
         out = []
         for name, image in fn(self):
             out.append(Layer(part, DESIGN, name, as_rgba(image, size)))
+        design = composite(out, size) if any(s.soften is not None for s in self.sponsors(part)) else None
         for s in self.sponsors(part):
+            if s.soften is not None:
+                out.append(Layer(part, SPONSORS, f"{s.name} soften", soften_under(self, design, s)))
             if s.patch is not None:
                 out.append(Layer(part, SPONSORS, f"{s.name} patch", s.patch))
             out.append(Layer(part, SPONSORS, s.name, s.image))
@@ -240,8 +252,9 @@ class Kit:
 
 
 class Sponsor:
-    def __init__(self, part, name, image, patch=None):
+    def __init__(self, part, name, image, patch=None, soften=None):
         self.part, self.name, self.image, self.patch = part, name, image, patch
+        self.soften = soften  # {"px", "pad"}: soften the design under it (artwork kits)
 
 
 def load_source(kit, spec, colour):
@@ -257,7 +270,44 @@ def load_source(kit, spec, colour):
         img = kit.stock(src["stock"])
         box = tuple(src["box"])
         if src.get("raw"):  # copied as is (e.g. a stock product tag)
-            return img.crop(box).convert("RGBA")
+            im = img.crop(box).convert("RGBA")
+            if src.get("shape"):  # just the logo's own shape, the stock ground around it dropped
+                from scipy import ndimage
+                a = np.asarray(im, np.float32)
+                rgb = a[..., :3]
+                if src["shape"] == "card":  # a light card and what is on it
+                    edge = (rgb.min(-1) > 150) & (rgb.max(-1) - rgb.min(-1) < 35)
+                else:  # "outline": a badge inside a dark outline (e.g. MG's octagon)
+                    edge = rgb.max(-1) < 70
+                m = ndimage.binary_fill_holes(ndimage.binary_closing(edge, iterations=3))
+                lab, n = ndimage.label(m)
+                if n:  # the logo's pieces (e.g. "pepper" and "money"), not specks of the stock ground
+                    sizes = ndimage.sum(m, lab, range(1, n + 1))
+                    m = np.isin(lab, np.flatnonzero(sizes >= sizes.max() * 0.05) + 1)
+                a[..., 3] = ndimage.gaussian_filter(m.astype(np.float32), 0.7) * 255
+                im = Image.fromarray(a.astype(np.uint8), "RGBA")
+            if src.get("clear"):  # minus a ground colour (the stock shirt or card around the logo)
+                a = np.asarray(im, np.float32)
+                d = np.abs(a[..., :3] - np.array(src["clear"], np.float32)).max(-1)
+                alpha = np.clip((d - 30) * 6, 0, 255)
+                if src.get("clear_edge"):  # only the ground around it: the same colour inside
+                    from scipy import ndimage  # the logo (black letters on a card) stays
+                    lab, _ = ndimage.label(d <= 60)
+                    edge = np.unique(np.r_[lab[0], lab[-1], lab[:, 0], lab[:, -1]])
+                    ground = ndimage.binary_dilation(np.isin(lab, edge[edge > 0]), iterations=1)
+                    alpha = np.where(ground, alpha, 255)
+                a[..., 3] = alpha
+                im = Image.fromarray(a.astype(np.uint8), "RGBA")
+            if src.get("map"):  # [[from rgb], [to rgb], tol]: e.g. the stock's grey-white letters to white
+                a = np.asarray(im, np.float32).copy()
+                f, t, tol = src["map"]
+                hit = np.abs(a[..., :3] - np.array(f, np.float32)).max(-1) <= tol
+                a[hit, :3] = t
+                im = Image.fromarray(a.astype(np.uint8), "RGBA")
+            return im
+        if src.get("dark"):  # a dark logo on a light card: key the negative
+            from PIL import ImageOps
+            img = ImageOps.invert(img)
         alpha = kd.key(img, box, lo=src.get("lo", 45), hi=src.get("hi", 185), channel=src.get("channel"))
         return kd.solid(alpha, colour or kit.colour(kit.rules["sponsors"]["default_colour"]))
     if "python" in src:
@@ -339,7 +389,7 @@ def resolve_sponsors(kit):
                 for p in places:
                     p.setdefault("height", round(shield_h * crest["height_vs_nrl_shield"]))
                     p.setdefault("at", [2 * kd.FRONT_CX - nx, ny])
-                    if crest.get("align_shield_centre", True):
+                    if spec.get("align_shield_centre", crest.get("align_shield_centre", True)):
                         p["at"] = [p["at"][0], ny]
             card = spec.get("card")
             hug = spec.get("patch")
@@ -376,9 +426,80 @@ def resolve_sponsors(kit):
                     stamp(layer, im, centre=(centre[0] + off[0], centre[1] + off[1]))
                 else:
                     stamp(layer, im, pos=(pos[0] + off[0], pos[1] + off[1]))
-        resolved[i] = Sponsor(part, spec["name"], layer, patch_layer)
+        soften = spec.get("soften")
+        if soften is True:
+            soften = {}
+        resolved[i] = Sponsor(part, spec["name"], layer, patch_layer, soften)
     out = [resolved[i] for i in range(len(specs))]
     return out
+
+
+def soften_under(kit, design, sponsor):
+    """The design under a sponsor with its small detail (the blurry logo the
+    photo had there) wiped out: grey opening + closing, then a blur, inside
+    the sponsor's shape grown by pad px, feathered. For artwork kits
+    (RULES.md 17), so the clean logo doesn't sit on a ghost of the old one.
+    "fill": <colour> lays that flat colour instead, for an old patch bigger
+    than the blur can wipe (plain ground only: ask before covering artwork).
+    "inpaint": true refills only the old logo's pixels (the masks, grown a
+    little) from the design around them, leaving the rest of the artwork as
+    it is (sleeve logos the wrap smeared, RULES.md 17b).
+    "mask" adds where the old logo really is, when it is bigger than or offset
+    from the clean one (e.g. a sleeve logo smeared by the wrap): {"python": fn,
+    "args": [...]} (a design.py function returning a bool array) or {"box":
+    [x0, y0, x1, y1], "near": [r, g, b], "tol": 70, "grow": 6} (the old logo's
+    colour inside the box); one or a list."""
+    from scipy import ndimage
+    k = sponsor.soften.get("px", 41)
+    pad = sponsor.soften.get("pad", 14)
+    m = np.asarray(sponsor.image.getchannel("A")) > 0
+    if sponsor.patch is not None:
+        m |= np.asarray(sponsor.patch.getchannel("A")) > 0
+    masks = sponsor.soften.get("mask", [])
+    for src in masks if isinstance(masks, list) else [masks]:
+        if "python" in src:  # design.py fn -> bool array: where the old logo is
+            m |= np.asarray(getattr(kit.design, src["python"])(kit, *src.get("args", [])), bool)
+        else:  # {"box": [x0, y0, x1, y1], "near": [r, g, b], "tol", "grow"}: the old logo's
+            # own pixels (its colour, within tol) inside the box; no "near" = the whole box
+            x0, y0, x1, y1 = src["box"]
+            hit = np.zeros(m.shape, bool)
+            if "near" in src:
+                d = np.asarray(design.convert("RGB"), np.float32)[y0:y1, x0:x1]
+                hit[y0:y1, x0:x1] = np.abs(d - np.array(src["near"], np.float32)).max(-1) <= src.get("tol", 70)
+                hit = ndimage.binary_dilation(hit, iterations=src.get("grow", 6))
+                hit[:y0], hit[y1:], hit[:, :x0], hit[:, x1:] = False, False, False, False
+            else:
+                hit[y0:y1, x0:x1] = True
+            m |= hit
+    out = np.zeros(m.shape + (4,), np.uint8)
+    ys, xs = np.nonzero(m)
+    if not len(ys):
+        return Image.fromarray(out, "RGBA")
+    H, W = m.shape
+    g = pad + 2 * k
+    t, b = max(0, ys.min() - g), min(H, ys.max() + 1 + g)
+    l, r = max(0, xs.min() - g), min(W, xs.max() + 1 + g)
+    src = np.asarray(design.convert("RGB"), np.float32)[t:b, l:r]
+    sm = np.empty_like(src)
+    for c in range(3):
+        ch = ndimage.grey_closing(ndimage.grey_opening(src[..., c], size=(k, k)), size=(k, k))
+        sm[..., c] = ndimage.gaussian_filter(ch, k / 4)
+    grown = ndimage.binary_dilation(m[t:b, l:r], iterations=pad)
+    alpha = ndimage.gaussian_filter(grown.astype(np.float32), max(1.0, pad / 3)) * 255
+    if "fill" in sponsor.soften:
+        sm[:] = kit.colour(sponsor.soften["fill"])
+    if sponsor.soften.get("inpaint"):  # only the old logo's own pixels, refilled from the
+        # design around them (pull-push), the artwork around them untouched
+        import kit_photo
+        win = np.asarray(design.convert("RGB"), np.float32)[t:b, l:r]
+        hole = ndimage.binary_dilation(m[t:b, l:r], iterations=max(2, pad // 4))
+        known = ~hole
+        out[t:b, l:r, :3] = kit_photo._pull_push(win * known[..., None], known.astype(np.float32)).clip(0, 255)
+        out[t:b, l:r, 3] = np.where(hole, 255, 0)
+        return Image.fromarray(out, "RGBA")
+    out[t:b, l:r, :3] = sm.clip(0, 255)
+    out[t:b, l:r, 3] = alpha.clip(0, 255)
+    return Image.fromarray(out, "RGBA")
 
 
 # --------------------------------------------------------------------------
@@ -532,13 +653,13 @@ def export_from_psd(kit, psd):
         part = parts.get(board.name)
         if part is None:
             continue
-        im = board.composite(layer_filter=keep, color=0.0, alpha=1.0)
+        # transparent, then flattened on black like the code's own export (the
+        # artboard's white background would light up the UV seams)
+        im = board.composite(layer_filter=keep, color=0.0, alpha=0.0).convert("RGBA")
         l, t, r, b = rects[part]
-        if im.size != (r - l, b - t):
-            full = Image.new("RGBA", (r - l, b - t), (0, 0, 0, 255))
-            full.alpha_composite(im.convert("RGBA"), (board.left - l, board.top - t))
-            im = full
-        out[part] = im.convert("RGB")
+        full = Image.new("RGBA", (r - l, b - t), (0, 0, 0, 255))
+        full.alpha_composite(im, (board.left - l, board.top - t) if im.size != (r - l, b - t) else (0, 0))
+        out[part] = full.convert("RGB")
     missing = [p for p in PARTS if p not in out]
     if missing:
         raise SystemExit(f"{kit.name}: the PSD has no {', '.join(TITLES[p] for p in missing)} artboard")
@@ -803,7 +924,7 @@ def install(names):
                 f.write("\n")
         else:
             inst.pop("guid", None)
-        for k in ("templates", "numberFrom", "library"):
+        for k in ("templates", "numberFrom", "numberOffset", "numberScale", "library"):
             row.pop(k, None)
         row.update(inst)
         print(f"kits.json row: {json.dumps(row)}")

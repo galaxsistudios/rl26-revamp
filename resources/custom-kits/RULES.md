@@ -59,6 +59,11 @@ sets a new rule, add it here (and to rules.json if it is a value).
 12. Measure from the photos. Count stripes and their spacing, and note where shapes end. For example,
     the Bulldogs alternate's chevron yoke ends in a flat line, never a point. Put the measurements in
     comments next to the constants.
+12a. Product shots can do the measuring: `kit_photo.flat` wraps the photos onto the shirt and gives
+    every texel the nearest of the kit's colours, so the painted shapes are the photo's own, flat and
+    clean (options level bands/hoops, mirror left/right, or copy the back to the front when only the
+    back photo is clean). It is still code painting with the kit's palette, never the photo itself, and
+    the sponsors stay their own layers on top. Use it only for plain designs (rule 16 still applies).
 13. A kit installed on another club's template (`install.templates`) keeps its own club's number
     layout with `install.numberFrom` (the Dolphins on England's `top_flat01`, numbers from 185).
 
@@ -76,9 +81,53 @@ sets a new rule, add it here (and to rules.json if it is a value).
 
 16. **Never generate the design of an Indigenous, ANZAC or similar artwork/commemorative kit**, not even
     by code. Those designs are artworks by real artists. Use the images the user supplies, placed onto
-    the jersey template as they are (a `{"file": ...}` design layer, warped or cropped to the panels),
-    and paint nothing over the artwork except what the rules below allow.
+    the jersey template as they are, and paint nothing over the artwork except what the rules below
+    allow. [tools/kit_photo.py](../../tools/kit_photo.py) wraps front/back product photos onto the
+    model (kit.json `photos` landmarks); `dolphins_indigenous_2026` is the example.
+    The line is printed artwork (Indigenous art, ANZAC imagery, illustrations). A commemorative or
+    anniversary kit that is a plain throwback (colour blocks, stripes, trims and sponsors, e.g. the
+    Panthers 2026 60th anniversary brown and white) isn't artwork: paint it by code like any other kit.
 17. The sponsors, NRL patch and crest still go on top as normal layers when the ones in the supplied
     images are unclear or blurry. Where a blurry logo shows through underneath, soften (blur) the
     artwork under it, only inside that sponsor's area, so the clean logo doesn't sit on a ghost of the
-    old one. Ask the user before covering anything else.
+    old one. Ask the user before covering anything else. In kit.json this is the sponsor's
+    `"soften": {"px", "pad"}`; `"fill": "main"` lays a flat colour instead, only on plain ground
+    (e.g. an old sleeve patch bigger than the blur can wipe). Keep each replacement where the photo
+    had it, even if that breaks a placement rule (the NRL edge warning, the crest alignment:
+    `"align_shield_centre": false`).
+17a. Reference photos for these kits must be **product shots of the jersey alone**: flat or on an
+    invisible mannequin, on white or transparent, front and back. No player wearing it, no
+    background, no hanger or props: anything around the shirt gets wrapped onto the texture. Player
+    or event photos are only for checking details, never the wrap.
+17b. **Sponsors, crests and badges may always be replaced by clean HD logos** on these kits (user,
+    2026-11-01): fixing a logo's look or placement is fine, drawing the design is not. Always do it for
+    sleeve sponsors: the product shots see the sleeve's outer side edge-on, so the wrap smears whatever
+    is printed there. A sleeve sponsor sits where the game's own kits put it, centred on the outer
+    sleeve (top_round05 texture: x 2734 and 3632, y ~485), with the wrapped logo softened under it
+    (`"soften": {"mask": {"box", "near"}}` finds the old logo by its colour). Front and back sponsors
+    the wrap leaves soft, crooked or off-centre are replaced the same way, where the photo has them.
+
+## Where a kit goes in game
+
+18. **By season:** a kit from before 2025 goes into the Kit Library; 2025, 2026 and 2027 kits go into
+    the club's own kit list. Put the year in `install.name` (e.g. `"INDIGENOUS 2023"`, `"HOME 2027"`)
+    so the installer can tell. A kit with no year in its name needs it in the kit folder name.
+
+## Collars
+
+19. **A kit with a real collar (a polo or rugby collar) uses a collar "manufacturer"**: a top template
+    whose model has the collar, never a collar drawn onto the shirt (user, 2026-11-01). `top_flat02`
+    (item 386, Roosters ANZAC 2026, raglan sleeves; 363 for set-in sleeves) has the same body and sleeve
+    layout as top_round05, so photo wraps and painted designs carry over (kit.json `models.top` +
+    `install.templates.uniformTop`, `numberFrom` the club's own top). The collar's UV island (the
+    strip at the top of the texture) is painted one flat colour, the collar's colour. Photo kits do
+    that for every model: a front product shot shows the inside of the back where the model's collar
+    is (photos.top `"collar"`: a colour, default the colour the back photo shows on the collar).
+
+## Numbers
+
+20. **A big or low sponsor at the top of the back means a smaller number** (user, 2026-11-01), so
+    the number fits under it: `install.numberScale` (a factor on the template's number size, e.g.
+    0.85) in kit.json. The game's own kits are the guide: their back sponsor ends about a fifth of
+    the way down the back panel (texture y ~480 of 2048 on top_round05).
+

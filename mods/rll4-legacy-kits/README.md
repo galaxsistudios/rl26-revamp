@@ -83,6 +83,24 @@ The NSW Cup kits land on RL26's NSW Cup clubs, which only show up with the NSW C
 Featherstone has no current-season club in RL26, so its kits go on "Featherstone Rovers 2025"
 (91).
 
+`resources/old-jerseys/2022/` (guids 60324-60353, added 2026-10-31) is a 2022 RLL4 kit pack shared on
+Google Drive ("2022 Jerseys", March 2022): home and away for every club plus the Broncos and Raiders
+heritage and the Dragons and Panthers alternates (the pack's `dragons_away` and `panthers_clash`;
+its `raiders_indigenous` is the green heritage). Its Eels home/heritage, Rabbitohs, Titans and Tigers
+Indigenous textures duplicate kits already here and aren't used.
+
+`resources/old-jerseys/2023/` (guids 60354-60429, added 2026-10-31) is callmack1's "RLL4 2023 Jerseys"
+pack (MEGA link in the Steam guide "How to: Mod Jersey & Ball Textures", id 2238292113): 2023 NRL kits
+incl. Indigenous, ANZAC, alternates and Women in League, the Dolphins home (in the pack's
+`holden_titans` slot), a Rabbitohs special (`holden_rabbitohs`), QLD Origin and Indigenous All Stars.
+Its Nines kits are older designs (no NRL Nines after 2020, Raiders still on Huawei), so they are named
+`NINES 2020`. The pack mixes in 2024 kits: the Broncos away, Dragons and Roosters ANZAC and Tigers
+Indigenous are filed as 2024 (`2024/`). `2023/unverified/` holds kits held back until identified (12 that
+match neither season's real kit, e.g. its Broncos/Storm/Titans Indigenous and black Dolphins home) and
+3 that duplicate the legacy 2024 Sea Eagles home/away and Sharks away. `2023/unmatched/` keeps kits with no RL26 team (Greece's World Cup kit, the referee
+kits): saved for reference, not in kits.json. The pack's QLD Cup, Super League, Championship, League 1
+and international kits aren't added yet.
+
 ## Adding more kits
 
 Drop the RLL4 texture in `resources/old-jerseys/`, add a row to `kits.json` (next free guid,
@@ -123,6 +141,17 @@ Kits designed in code (photos -> layers + real sponsor logos + an editable `kit.
 `g` instead of the top template. Use it when a kit borrows another team's model but should keep
 its club's number layout, e.g. the Dolphins HOME 2027 on England's `top_flat01` (7020) with
 `"numberFrom": 185` (Dolphins 2026 home).
+`"numberOffset": {"offsetY": 0.3, "scale": 0.36}` overrides the number placement for that kit alone (the
+template's other fields are kept), e.g. to drop the number below a high back sponsor.
+
+**Finished kits are kept in `resources/rl26-kits/<texture>/`**, in RL26's own format: the six
+`m_{top,shorts,socks}_<texture>_col_{1,2}.dds` files exactly as `install` writes them (uncompressed BGRA,
+stored upside down like the stock kit textures), plus `kit.json` (the bake key and the number-colour
+stats `generate` needs) and `preview.png`. `bake` writes them for every kit from `resources/`
+(old-jerseys and custom kits; RLL4's own kits are read from the user's install, so they stay in
+`_build`), skips a kit whose stored key still matches, and `install` writes the stored DDS files as
+they are. So a kit is converted once, even after `_build` is wiped. They're about 65 MB a kit (12 GB
+for all of them), so git ignores them (`*.dds`) and the release doesn't ship them.
 
 `bake` and `install` skip kits that haven't changed. A kit's `bake.json` stamp
 (`_build/rll4-legacy-kits/<texture>/`) hashes its source image and texture fields, and each texture
@@ -130,10 +159,14 @@ entry's `image_sha1` in the add_entries registry records the image it was writte
 redoes them; bump `BAKE_VERSION` in build_kits.py after changing how bakes are made. An entry missing
 from the index (after a game update or Steam verify) is always written again.
 
-A row with `"library": true` doesn't take one of the club's kit slots. The game holds at most 20 kits
-per club, so it goes into the generated `KitLibrary` instead, and a player adds it from the club's
-Uniforms list (copy-academy-jerseys' KIT LIBRARY). Captured and painted (`custom`) kits are added to
-a club before the RLL4 ones, so they're never the kits past slot 20.
+**Project rule: a kit's season decides where it goes.** Kits from before 2025 go into the generated
+`KitLibrary`; 2025, 2026 and 2027 kits go into the club's own kit list. The season is the 20xx in the
+row's `name` (else in its `custom`/`texture` name); `LIBRARY_BEFORE` in build_kits.py holds the cut-off.
+A row's `"library": true/false` overrides it, and a row with no year keeps the old split (RLL4 rows to
+the library, `custom` kits to a slot). The game holds at most 20 kits per club, which is why older
+kits live in the library: a player adds one from the club's Uniforms list (copy-academy-jerseys' KIT
+LIBRARY). Captured and painted (`custom`) kits are added to a club before the RLL4 ones, so they're
+never the kits past slot 20.
 
 Use guids from 64001 up for custom kits, so they stay clear of the RLL4 rows. `bake` only resizes
 them to the installed sizes and renders `preview.png` on the RL26 meshes. It doesn't need RLL4 or
