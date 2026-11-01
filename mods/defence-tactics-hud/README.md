@@ -10,7 +10,7 @@ Three tweaks to the in-match tactics (D-pad) HUD:
    Drop Wingers / Slide Right) stayed on until changed, so Drop Wingers picked for the last play
    carried into the next defensive set. `TacticsHud.update` now puts a human side's defence graphs
    back to `BasicDefence` / `BasicPlayTheBallDefence` the moment that side is the attacking side.
-   The "tactic on" flag is also tracked per side now (stock shared one flag between both teams).
+   It also resets when the opposition starts a new set without this side touching the ball (try + kick-off, six-again, dropout): any drop in the tackle count while defending. Checked against the last update's values, so a change during a cutscene is still caught. Each reset logs `RESET side=N (reason)`. The last-tackle warning now ignores the play-the-ball position once the game clears it to (0,0). The "tactic on" flag is also tracked per side now (stock shared one flag between both teams).
 3. **Defence tactic label.** A small pill just above the player plate shows the defence tactic,
    with a D-pad whose lit arm is the button for it (Up = Compress, Down = Drop Wingers,
    Left/Right = Slide Left/Right), or "STANDARD" with no arm lit on the default defence. It only
@@ -41,3 +41,4 @@ Debug: `DefenceTacticDebugLog` in `nvm_tactics.lua` logs every label change to
 Install both entries (scripts with `python tools\build.py full --confirm`, XAML with
 `build.py full --list manifests\xamls.xml --extracted <stock 57662> ...`, see INSTRUCTIONS.md). With
 only the XAML installed the label never shows (its bindings have nothing to read).
+

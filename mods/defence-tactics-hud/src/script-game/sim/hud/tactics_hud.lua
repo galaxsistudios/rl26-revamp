@@ -279,6 +279,23 @@ function TacticsHud.handleDelaySelection(arg_15_0, arg_15_1, arg_15_2, arg_15_3,
 	return false
 end
 
+-- defence-tactics-hud: logs each automatic defence reset to defence_tactics_debug.txt.
+function logDefenceReset(arg_0_0, arg_0_1)
+	if not nvm_tactics.DefenceTacticDebugLog then
+		return
+	end
+
+	pcall(function()
+		local var_0_2 = io.open("defence_tactics_debug.txt", "a")
+
+		if var_0_2 then
+			var_0_2:write(os.date("%H:%M:%S"), string.format(" RESET side=%s (%s)", tostring(arg_0_0), tostring(arg_0_1)), "\n")
+			var_0_2:flush()
+			var_0_2:close()
+		end
+	end)
+end
+
 function TacticsHud.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12)
 	if not arg_16_0.enabled then
 		return
@@ -305,7 +322,9 @@ function TacticsHud.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg
 		local var_16_15 = arg_16_3:getComponent("matchInData").matchType.maxTackleCount
 		local var_16_16 = arg_16_5:getMatchProgressionEntity().tackleCount
 
-		if var_16_12 and var_16_12.playTheBallState ~= native.EPlayTheBallState.None then
+		-- About 2 s after each play-the-ball the entity's position resets to (0,0); skip that
+		-- (it read as "50 m from the line" and could show the warning near our line).
+		if var_16_12 and var_16_12.playTheBallState ~= native.EPlayTheBallState.None and (var_16_12.playTheBallPosition.x ~= 0 or var_16_12.playTheBallPosition.y ~= 0) then
 			local var_16_13 = var_16_12.playTheBallPosition
 			-- Attacking direction from the dummy half (current, swaps at half
 			-- time); arg_16_3's side data looked fixed at kick-off.
@@ -350,7 +369,38 @@ function TacticsHud.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg
 		-- doesn't carry into the next defensive set.
 		if var_16_2 == var_16_0 and var_16_3.defenseTacticEnabled then
 			arg_16_0:resetDefensiveTactic(var_16_3, var_16_2, arg_16_10)
+			logDefenceReset(var_16_2, "won the ball")
 		end
+
+		-- defence-tactics-hud: also reset when the opposition starts a new set without this side
+		-- having the ball (try + kick-off, six-again, dropout...: the tackle count goes back down). Compared with what
+		-- was seen last update, so it still works when the change happened during a cutscene
+		-- (this update doesn't run then).
+		pcall(function()
+			local var_16_30 = arg_16_5:getMatchProgressionEntity()
+			local var_16_31 = var_16_30.tackleCount or 0
+			local var_16_34 = var_16_3.seenSet
+
+			if var_16_34 and var_16_2 ~= var_16_0 and var_16_3.defenseTacticEnabled then
+				local var_16_35
+
+				if var_16_34.attackingSide ~= var_16_0 then
+					var_16_35 = "attacking side changed"
+				elseif var_16_31 < var_16_34.tackleCount then
+					var_16_35 = string.format("tackle count %d -> %d", var_16_34.tackleCount, var_16_31)
+				end
+
+				if var_16_35 then
+					arg_16_0:resetDefensiveTactic(var_16_3, var_16_2, arg_16_10)
+					logDefenceReset(var_16_2, "new set: " .. var_16_35)
+				end
+			end
+
+			var_16_3.seenSet = {
+				attackingSide = var_16_0,
+				tackleCount = var_16_31
+			}
+		end)
 
 		-- defence-tactics-hud: this loop only visits human-controlled sides; show
 		-- their defence tactic label while they defend in live play (the XAML fades
