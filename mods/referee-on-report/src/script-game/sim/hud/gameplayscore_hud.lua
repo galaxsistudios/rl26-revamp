@@ -249,6 +249,20 @@ end
 function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11, arg_18_12)
 	arg_18_0.scoreCardNVM:update(arg_18_8)
 
+	-- hia-protocol: its banners (OFF FOR HIA / PASSED HIA / FAILED HIA) use the on report slot,
+	-- one at a time, never over an on report or interchange banner.
+	if not arg_18_0.onReportQueued and not arg_18_0.onReportTimer and not arg_18_0.scoreCardNVM.ShowMatchState and not arg_18_0.interchangeTimer and not arg_18_0.interchangeGap then
+		local var_18_hia = rawget(_G, "HIAState")
+
+		if var_18_hia and var_18_hia.banners and #var_18_hia.banners > 0 then
+			arg_18_0.onReportQueued = table.remove(var_18_hia.banners, 1)
+
+			if var_18_hia.log then
+				var_18_hia.log("scoreboard: " .. arg_18_0.onReportQueued)
+			end
+		end
+	end
+
 	-- referee-on-report: a queued banner waits for the scoreboard to be back on screen (the
 	-- close-ups hide it), then OnReportBannerDelay more so it's seen sliding out.
 	if arg_18_0.onReportQueued and arg_18_0.enabled then
@@ -322,7 +336,7 @@ function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 		if arg_18_0.interchangeGap <= 0 then
 			arg_18_0.interchangeGap = nil
 		end
-	elseif arg_18_0.interchangeQueue and #arg_18_0.interchangeQueue > 0 and arg_18_0.enabled and not arg_18_0.scoreCardNVM.ShowMatchState and not arg_18_0.statTimer and not arg_18_0.statGap then
+	elseif arg_18_0.interchangeQueue and #arg_18_0.interchangeQueue > 0 and arg_18_0.enabled and not arg_18_0.scoreCardNVM.ShowMatchState and not arg_18_0.onReportQueued and not arg_18_0.statTimer and not arg_18_0.statGap then
 		arg_18_0.interchangeDelay = (arg_18_0.interchangeDelay or 0) + arg_18_8
 
 		if arg_18_0.interchangeDelay >= InterchangeBannerDelay then

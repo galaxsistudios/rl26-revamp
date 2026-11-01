@@ -119,3 +119,10 @@ side's interchanges), `MaxQueued` (2), `Checkpoints`, `CheckpointMaxStamina` (0.
 - The stock "Interchange queued" notification now shows only for interchanges a human picked (a
   side with a gamer on it, not on automatic interchanges / Be a Pro). AI interchanges queue silently;
   the scoreboard's interchange banner (mods/nrl-broadcast-scoreboard) shows them when they're made.
+
+## hia-protocol
+
+With [hia-protocol](../hia-protocol/) installed, `collectPlayers` skips players in an HIA and their
+replacements (`HIAState.isLocked`), and HIA swaps (free interchanges) are left out of the
+`MaxPerPeriod` count. Without it, both checks do nothing. hia-protocol also needs this mod's exe
+patch so its interchanges for AI-run sides are carried out.

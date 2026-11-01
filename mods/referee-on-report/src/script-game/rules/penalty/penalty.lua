@@ -348,6 +348,23 @@ function generatePenaltyAwardedState(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4
 		var_9_11.nextState = refereeCameoState(var_9_5, var_9_1, var_9_0, var_9_11.nextState)
 
 		onReportLog(string.format("penalty flow: high tackle close-up%s, then penalty choice", var_9_12 and " + report signal" or ""))
+
+		-- hia-protocol: when the high tackle sent the tackled player off for an HIA, his
+		-- concussion scene (injury-cutscene-variety's InjuryCameoRuleState, hiaConcussion) plays
+		-- first, then the referee close-up. Without hia-protocol there is never one.
+		local var_9_hia = rawget(_G, "HIAState")
+		local var_9_hiaId = var_9_hia and var_9_hia.takeConcussionCutscene and var_9_hia.takeConcussionCutscene(var_9_10)
+
+		if var_9_hiaId then
+			var_9_11.nextState = class.instantiate("InjuryCameoRuleState", {
+				nextState = var_9_11.nextState,
+				injuredId = var_9_hiaId,
+				guid = arg_9_2:alloc(),
+				hiaConcussion = true
+			})
+
+			onReportLog("penalty flow: HIA concussion cutscene first")
+		end
 	end
 
 	return (class.instantiate("PenaltyIdleAllPlayersRuleState", var_9_11))

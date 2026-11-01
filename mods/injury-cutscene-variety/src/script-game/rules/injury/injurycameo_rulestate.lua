@@ -35,8 +35,19 @@ rulestateclass.rulestateclass("InjuryCameoRuleState", function(arg_1_0, arg_1_1)
 end).MemberDefinitions = {
 	nextState = types.RuleState,
 	injuredId = types.ObjectId,
-	guid = types.Guid
+	guid = types.Guid,
+	-- hia-protocol: true when this cameo is an HIA's concussion scene (rules/penalty/penalty.lua in
+	-- mods/referee-on-report puts it in front of the high tackle penalty). It plays
+	-- HIAConcussionCutscene and queues no interchange: hia-protocol makes its own free one.
+	hiaConcussion = types.Nilable(types.Boolean)
 }
+HIAConcussionCutscene = "InjuryConcussion_01"
+-- The concussion clip is 12.7 s. The HIA plays about half of it: HIAConcussionStartSeconds in
+-- (event startOffset, game/cutscenes/cutscene_listener.lua) and HIAConcussionEndSeconds cut off
+-- the end (event waneTime). 3.5 + 3.0 off = about 6.2 s.
+HIAConcussionStartSeconds = 3.5
+HIAConcussionEndSeconds = 3
+
 InjuryCameoRuleState.HidePlayerMarkers = true
 InjuryCameoRuleState.HideBallMarkers = true
 
@@ -75,11 +86,18 @@ function InjuryCameoRuleState.updateSolid(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 			var_4_0,
 			var_4_1
 		}
-		local var_4_5 = arg_4_6:getInjuryPool():get(var_4_0)
-		local var_4_6 = native.CInjury.getRegion(var_4_5.injuryType)
-		-- injury-cutscene-variety: a random scene for the region (stock always took the first)
-		local var_4_r = var_0_1[var_4_6]
-		local var_4_7 = var_4_r[native.Random.FromSystemTime():next(1, #var_4_r)]
+		local var_4_7
+
+		if arg_4_0.hiaConcussion then
+			var_4_7 = HIAConcussionCutscene
+		else
+			local var_4_5 = arg_4_6:getInjuryPool():get(var_4_0)
+			local var_4_6 = native.CInjury.getRegion(var_4_5.injuryType)
+			-- injury-cutscene-variety: a random scene for the region (stock always took the first)
+			local var_4_r = var_0_1[var_4_6]
+
+			var_4_7 = var_4_r[native.Random.FromSystemTime():next(1, #var_4_r)]
+		end
 		local var_4_8 = arg_4_0.guid
 		local var_4_9 = native.createTable(64, 0)
 
@@ -95,7 +113,16 @@ function InjuryCameoRuleState.updateSolid(arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 			onFinishedState = arg_4_0.nextState
 		}
 
+		if arg_4_0.hiaConcussion then
+			var_4_10.startOffset = HIAConcussionStartSeconds
+			var_4_10.waneTime = HIAConcussionEndSeconds
+		end
+
 		arg_4_11:add(cutsceneplayevent_request.CutscenePlayEventRequest(var_4_10))
+
+		if arg_4_0.hiaConcussion then
+			return
+		end
 
 		local var_4_11 = arg_4_7:getGameObject(var_4_0).side
 		local var_4_12 = arg_4_6:getGamerSideEntity()

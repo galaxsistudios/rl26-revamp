@@ -96,3 +96,13 @@ Test switch: `OnReportTestEveryTackleHigh` in `rules/tackle/tackle_detect.lua` (
 scrum-feed-control: a tackler flagged offside at a scrum (`_G.ScrumControlState.isScrumOffside`)
 takes the stock offside penalty path, and `onTackleCompleted` clears the scrum flags. Without
 scrum-feed-control this does nothing.
+
+## hia-protocol hooks
+
+Three small hooks for [hia-protocol](../hia-protocol/), all doing nothing without it:
+`rules/penalty/penalty.lua` puts the HIA concussion cutscene (an `InjuryCameoRuleState` with
+`hiaConcussion`) in front of the high tackle close-up when that tackle started an HIA,
+`rules/tackle/tackle_detect.lua` passes each high tackle penalty's tackled player to
+`HIAState.onHighTackle`, and `sim/hud/gameplayscore_hud.lua` shows its HIA banners in the on report
+slot when that slot and the interchange banner are free. The interchange banner now also waits for a
+queued on report / HIA banner.

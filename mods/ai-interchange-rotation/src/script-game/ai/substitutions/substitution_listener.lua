@@ -382,6 +382,20 @@ local function var_0_7(arg_13_0, arg_13_1)
 	return interchange_config.NonAllocatedRoleWeight
 end
 
+-- hia-protocol: players in a Head Injury Assessment (and their replacements) are never moved, and
+-- HIA swaps (free interchanges) don't count towards MaxPerPeriod. Without that mod: false / 0.
+local function var_0_hia_locked(arg_h_0)
+	local var_h_0 = rawget(_G, "HIAState")
+
+	return var_h_0 ~= nil and var_h_0.isLocked ~= nil and var_h_0.isLocked(arg_h_0)
+end
+
+local function var_0_hia_free_swaps(arg_h_1)
+	local var_h_1 = rawget(_G, "HIAState")
+
+	return var_h_1 and var_h_1.freeSwaps and var_h_1.freeSwaps[arg_h_1] or 0
+end
+
 local function var_0_8(arg_14_0)
 	return var_0_3[arg_14_0.primaryRole] or var_0_3[arg_14_0.secondaryRole] or false
 end
@@ -409,7 +423,7 @@ function AiInterchangeManager.evaluateSide(arg_15_0, arg_15_1, arg_15_2)
 	local var_15_6 = math.huge
 
 	if not var_15_4 then
-		local var_15_7 = var_15_2:getCompletedSubstitutions() + var_15_2:getCurrentQueuedSubstitutionCount()
+		local var_15_7 = var_15_2:getCompletedSubstitutions() + var_15_2:getCurrentQueuedSubstitutionCount() - var_0_hia_free_swaps(arg_15_1)
 		local var_15_8 = arg_15_0.periodStartCount[arg_15_1]
 
 		if not var_15_8 or var_15_8.period ~= arg_15_2.period then
@@ -587,7 +601,7 @@ function AiInterchangeManager.collectPlayers(arg_17_0, arg_17_1, arg_17_2, arg_1
 	for iter_17_0, iter_17_1 in pairs(var_17_1.idAssetMap) do
 		local var_17_8 = var_17_3:get(iter_17_1)
 		local var_17_9 = var_17_2:getPlayer(iter_17_0)
-		local var_17_10 = iter_17_1 ~= arg_17_2.proId and var_17_8 and var_17_9 and not arg_17_3:queuedSubstitutionsContains(iter_17_1) and not arg_17_4:queuedSubstitutionsContains(iter_17_1) and var_17_5:get(iter_17_1).status == sinbin_config.sinbinStatus.OnField
+		local var_17_10 = iter_17_1 ~= arg_17_2.proId and var_17_8 and var_17_9 and not arg_17_3:queuedSubstitutionsContains(iter_17_1) and not arg_17_4:queuedSubstitutionsContains(iter_17_1) and var_17_5:get(iter_17_1).status == sinbin_config.sinbinStatus.OnField and not var_0_hia_locked(iter_17_1)
 
 		if var_17_10 then
 			local var_17_11 = var_17_4:get(iter_17_1).severity

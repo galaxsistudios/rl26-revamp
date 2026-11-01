@@ -131,3 +131,9 @@ Without the XAML part the meter and its effects still work, there's just no bar.
   does the same thing, but it's unconfirmed.
 - `timeModifier / 8` (the stamina listener's event scaling) is assumed to be 1 at 5 minute halves.
 - Is the drain too fast? One penalty while tired and under siege costs about 20%.
+
+## hia-protocol rows
+
+The MODDED section also shows [hia-protocol](../hia-protocol/)'s HIA Protocol / HIA Frequency /
+HIA Fail Rate rows when that mod is installed (`var_0_hia_rows`, keys `hia`, `hia_frequency`,
+`hia_fail_rate`). A row left alone isn't saved, so it follows the Misc base difficulty's default.

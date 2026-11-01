@@ -423,6 +423,18 @@ function TackleDetect.onTackleContact(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 			if arg_4_0.lastPenaltyGuid ~= var_4_0 then
 				arg_4_0.lastPenaltyGuid = var_4_0
 
+				-- hia-protocol (game/injury/injuryevent_listener.lua): a head-high tackle can send
+				-- the tackled player off for an HIA. Without that mod this does nothing.
+				if var_4_24.penaltyType == var_4_23.HighTackle then
+					local var_4_hia = rawget(_G, "HIAState")
+
+					if var_4_hia and var_4_hia.onHighTackle then
+						-- live services, match, gamestate, gameobjects, time (same order as the
+						-- penalty factory's): the HIA is decided now, before the penalty is built.
+						pcall(var_4_hia.onHighTackle, var_4_1.tackledId, var_4_11, arg_4_4, arg_4_6, arg_4_7, arg_4_8, arg_4_10)
+					end
+				end
+
 				arg_4_0:onPenaltyTackleOutcome(var_4_1, arg_4_1, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_10, arg_4_11, var_4_24)
 			end
 		end

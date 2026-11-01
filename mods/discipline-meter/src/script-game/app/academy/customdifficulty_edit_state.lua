@@ -136,6 +136,105 @@ local function var_0_modded_rows(arg_values)
 	}
 end
 
+-- hia-protocol: HIA rows, shown when that mod is installed (its HIADifficulty table gives each
+-- base difficulty's defaults). A slider left alone isn't saved, so it keeps following the Misc
+-- base difficulty; game/injury/injuryevent_listener.lua reads hia / hia_frequency / hia_fail_rate.
+local function var_0_hia_rows(arg_values, arg_difficulty)
+	local var_ok, var_table = pcall(function()
+		import("game.injury.injuryevent_listener")
+
+		return injuryevent_listener.HIADifficulty
+	end)
+
+	if not var_ok or type(var_table) ~= "table" then
+		return {}
+	end
+
+	local var_base
+
+	pcall(function()
+		var_base = tostring(native.EDifficulty:fromInt(arg_difficulty.sliderMiscDifficulty))
+	end)
+
+	local var_defaults = var_table[var_base or ""] or var_table.Medium or {
+		frequency = 1,
+		failRate = 40
+	}
+
+	return {
+		{
+			editable = true,
+			label = "HIA Protocol",
+			description = "ModdedHIA",
+			key = "ModdedHIA",
+			defaultVal = true,
+			modDescription = "Head Injury Assessments. A head-high tackle can send the tackled player off for an HIA: he goes off on a free interchange for the best bench player in his position, sits out 15 minutes of match clock, then passes and comes back on, or fails and is out for the match. Off: no HIAs.",
+			getValue = function()
+				return arg_values.hia ~= "off"
+			end,
+			setValue = function(arg_value)
+				arg_values.hia = arg_value and "on" or "off"
+			end,
+			editType = optionmenu_aide.EditTypes.Toggle,
+			displayType = optionmenu_aide.DisplayTypes.Toggle
+		},
+		{
+			editable = true,
+			label = "HIA Frequency",
+			description = "ModdedHIAFrequency",
+			key = "ModdedHIAFrequency",
+			defaultVal = var_defaults.frequency,
+			editRestoreToDefault = true,
+			editWrapAround = false,
+			startFromMin = true,
+			editBumpersJumpBy = 10,
+			adjustBy = 1,
+			smallGap = false,
+			editLeftRightSpeedUp = true,
+			renderFloatValue = true,
+			min = 0,
+			max = 5,
+			editAdjustByMod = 0.05,
+			modDescription = string.format("How often head-high tackles lead to an HIA, for both teams (x1 = a quarter of them; the base difficulty's default is x%.2f). Also scaled by Injury Probability. Only used when HIA Protocol is on.", var_defaults.frequency),
+			getValue = function()
+				return tonumber(arg_values.hia_frequency) or var_defaults.frequency
+			end,
+			setValue = function(arg_value)
+				arg_values.hia_frequency = string.format("%.2f", arg_value)
+			end,
+			editType = optionmenu_aide.EditTypes.Slider,
+			displayType = optionmenu_aide.DisplayTypes.Slider
+		},
+		{
+			editable = true,
+			label = "HIA Fail Rate",
+			description = "ModdedHIAFailRate",
+			key = "ModdedHIAFailRate",
+			defaultVal = var_defaults.failRate,
+			editRestoreToDefault = true,
+			editWrapAround = false,
+			startFromMin = true,
+			editBumpersJumpBy = 4,
+			adjustBy = 1,
+			smallGap = false,
+			editLeftRightSpeedUp = true,
+			renderValue = true,
+			min = 0,
+			max = 100,
+			editAdjustByMod = 5,
+			modDescription = string.format("Percentage of HIAs the player fails, staying off for the rest of the match (the base difficulty's default is %d%%). The rest come back on after 15 minutes. Only used when HIA Protocol is on.", var_defaults.failRate),
+			getValue = function()
+				return tonumber(arg_values.hia_fail_rate) or var_defaults.failRate
+			end,
+			setValue = function(arg_value)
+				arg_values.hia_fail_rate = string.format("%d", math.floor(arg_value + 0.5))
+			end,
+			editType = optionmenu_aide.EditTypes.Slider,
+			displayType = optionmenu_aide.DisplayTypes.Slider
+		}
+	}
+end
+
 local var_0_0 = native.EDifficultySliderCategory
 local var_0_1 = var_0_0.AI
 local var_0_2 = var_0_0.Evades
@@ -182,6 +281,10 @@ function CustomDifficultyEditState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg
 
 	for iter_1_2, iter_1_3 in ipairs(var_0_modded_rows(var_1_modded_values)) do
 		table.insert(var_1_3, iter_1_3)
+	end
+
+	for iter_1_4, iter_1_5 in ipairs(var_0_hia_rows(var_1_modded_values, var_1_0)) do
+		table.insert(var_1_3, iter_1_5)
 	end
 
 	local var_1_4 = {
