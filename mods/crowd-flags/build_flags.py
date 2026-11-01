@@ -718,6 +718,22 @@ def flag_faces():
     return faces
 
 
+def crowd_list(textures):
+    """A club's flag list as the crowd cycles it: national flags
+    (national_flags.py) are repeated so they wave from about half the fans,
+    interleaved with the club designs."""
+    national = [t for t in textures if "_national" in t]
+    club = [t for t in textures if t not in national]
+    if not national or not club:
+        return textures
+    out = []
+    for i in range(max(len(club), len(national))):
+        if i < len(club):
+            out.append(club[i])
+        out.append(national[i % len(national)])
+    return out
+
+
 def cmd_variants(args):
     """Every flag face in resources/flags/<icon>/ -> a crowd texture
     crowd_flag_<icon>_<variant>_col (face_to_texture, 512x512 DXT1 + mips),
@@ -732,7 +748,7 @@ def cmd_variants(args):
     team_flags, missing = [], set()
     for cid, name, icon, _primary, _secondary in load_clubs():
         if icon in textures:
-            team_flags.append((cid, textures[icon][:CROWD_COLS], name))
+            team_flags.append((cid, crowd_list(textures[icon])[:CROWD_COLS], name))
         else:
             missing.add(icon)
     images = [(DEFAULT_FLAG, lambda: flag_image(None, MASK_PRIMARY, MASK_SECONDARY, pole=MASK_SECONDARY), "tint mask")]
