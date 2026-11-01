@@ -1,0 +1,494 @@
+{
+ "title": "Cowboys Las Vegas 2026",
+ "notes": "Las Vegas special-event kit (white with navy horn graphics): plain colour shapes, painted by code (user, 2026-11-01) from Rebel Sport's product shots (kit_photo.flat, white + navy). Navy polo collar = the top_flat02 model's collar (RULES.md 19). Sponsors from the stock Cowboys 2025 home top, crest from cowboys_home_2026. Left off: the Las Vegas match text under YETI. Shorts and socks: stock 2025 home.",
+ "install": {
+  "club": 120,
+  "name": "LAS VEGAS 2026",
+  "texture": "cowboys_vegas_2026",
+  "templates": {
+   "uniformTop": 386,
+   "uniformBottom": 280,
+   "uniformSocks": 280
+  },
+  "numberFrom": 280,
+  "guid": 64035
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   234,
+   240,
+   246
+  ],
+  "navy": [
+   40,
+   55,
+   105
+  ],
+  "blue": [
+   62,
+   82,
+   180
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1394,
+    560
+   ],
+   "shield_height": 80,
+   "colour": "navy"
+  },
+  {
+   "name": "Cowboys crest",
+   "rule": "crest",
+   "source": {
+    "file": "logos/cowboys star.png"
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1905,
+      545
+     ],
+     "height": 135
+    }
+   ]
+  },
+  {
+   "name": "YETI",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     1520,
+     512,
+     1760,
+     580
+    ]
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      1660,
+      655
+     ],
+     "width": 215
+    }
+   ]
+  },
+  {
+   "name": "Toyota",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     1380,
+     840,
+     1920,
+     1292
+    ],
+    "dark": true,
+    "lo": 110,
+    "hi": 200
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      1655,
+      935
+     ],
+     "width": 580
+    }
+   ]
+  },
+  {
+   "name": "Dynasty (right)",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     1180,
+     252,
+     1340,
+     372
+    ]
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      1234,
+      345
+     ],
+     "width": 150
+    }
+   ]
+  },
+  {
+   "name": "Dynasty (left)",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     1940,
+     252,
+     2100,
+     372
+    ]
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      2060,
+      330
+     ],
+     "width": 150
+    }
+   ]
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     1208,
+     1632,
+     1380,
+     1732
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Toyota (back)",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     220,
+     480,
+     860,
+     592
+    ]
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      548,
+      512
+     ],
+     "width": 700
+    }
+   ]
+  },
+  {
+   "name": "Make Great Happen + TAFE",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     240,
+     1152,
+     860,
+     1384
+    ],
+    "dark": true,
+    "channel": 1,
+    "lo": 90,
+    "hi": 200
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      572,
+      1252
+     ],
+     "width": 660
+    }
+   ]
+  },
+  {
+   "name": "Bravus (sleeves)",
+   "source": {
+    "stock": "m_top_cowboys_nrl_home_25_col_1",
+    "box": [
+     2522,
+     393,
+     2986,
+     556
+    ]
+   },
+   "colour": "navy",
+   "place": [
+    {
+     "at": [
+      2734,
+      485
+     ],
+     "width": 440
+    },
+    {
+     "at": [
+      3632,
+      485
+     ],
+     "width": 440
+    }
+   ]
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      402.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      235.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      114.0,
+      356.0
+     ],
+     [
+      -0.235,
+      1.262,
+      173.0,
+      408.0
+     ],
+     [
+      -0.1675,
+      1.305,
+      245.0,
+      444.0
+     ],
+     [
+      -0.15,
+      1.1,
+      317.0,
+      727.3
+     ],
+     [
+      -0.162,
+      0.963,
+      296.0,
+      941.0
+     ],
+     [
+      -0.05,
+      1.472,
+      441.2,
+      133.1
+     ],
+     [
+      -0.085,
+      1.505,
+      405.6,
+      88.6
+     ],
+     [
+      0.068,
+      1.53,
+      580.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      746.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      884.0,
+      359.0
+     ],
+     [
+      0.235,
+      1.262,
+      707.0,
+      445.0
+     ],
+     [
+      0.1675,
+      1.305,
+      727.0,
+      502.0
+     ],
+     [
+      0.15,
+      1.1,
+      720.3,
+      757.9
+     ],
+     [
+      0.162,
+      0.963,
+      715.0,
+      951.0
+     ],
+     [
+      0.05,
+      1.472,
+      540.8,
+      133.1
+     ],
+     [
+      0.085,
+      1.505,
+      576.4,
+      88.6
+     ],
+     [
+      0,
+      0.931,
+      491.0,
+      953.0
+     ],
+     [
+      0,
+      1.462,
+      491.0,
+      133.1
+     ]
+    ]
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      401.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      264.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      158.0,
+      342.0
+     ],
+     [
+      -0.227,
+      1.265,
+      173.0,
+      367.0
+     ],
+     [
+      -0.173,
+      1.307,
+      298.0,
+      426.0
+     ],
+     [
+      -0.143,
+      1.1,
+      317.6,
+      701.3
+     ],
+     [
+      -0.161,
+      0.972,
+      328.0,
+      909.0
+     ],
+     [
+      0.078,
+      1.525,
+      586.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      722.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      840.0,
+      349.0
+     ],
+     [
+      0.227,
+      1.265,
+      815.0,
+      382.0
+     ],
+     [
+      0.173,
+      1.307,
+      712.0,
+      418.0
+     ],
+     [
+      0.143,
+      1.1,
+      689.5,
+      701.9
+     ],
+     [
+      0.161,
+      0.972,
+      682.0,
+      916.0
+     ],
+     [
+      0,
+      0.937,
+      493.5,
+      954.0
+     ],
+     [
+      0,
+      1.547,
+      493.5,
+      46.0
+     ]
+    ]
+   }
+  }
+ },
+ "models": {
+  "top": "top_flat02_short_Male"
+ }
+}

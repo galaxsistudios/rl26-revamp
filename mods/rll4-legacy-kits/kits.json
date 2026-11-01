@@ -2395,6 +2395,20 @@
    "texture": "bulldogs_rll4_home_2022"
   },
   {
+   "guid": 60329,
+   "src": "2022/cowboys-away-22.dds",
+   "club": 120,
+   "name": "AWAY 2022",
+   "texture": "cowboys_rll4_away_2022"
+  },
+  {
+   "guid": 60330,
+   "src": "2022/cowboys-home-22.dds",
+   "club": 120,
+   "name": "HOME 2022",
+   "texture": "cowboys_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2437,6 +2451,34 @@
    "texture": "bulldogs_rll4_nines_2020"
   },
   {
+   "guid": 60362,
+   "src": "2023/cowboys-away-23.dds",
+   "club": 120,
+   "name": "AWAY 2023",
+   "texture": "cowboys_rll4_away_2023"
+  },
+  {
+   "guid": 60363,
+   "src": "2023/cowboys-home-23.dds",
+   "club": 120,
+   "name": "HOME 2023",
+   "texture": "cowboys_rll4_home_2023"
+  },
+  {
+   "guid": 60365,
+   "src": "2023/cowboys-nines-20.dds",
+   "club": 120,
+   "name": "NINES 2020",
+   "texture": "cowboys_rll4_nines_2020"
+  },
+  {
+   "guid": 60366,
+   "src": "2023/cowboys-wil-23.dds",
+   "club": 120,
+   "name": "WOMEN IN LEAGUE 2023",
+   "texture": "cowboys_rll4_wil_2023"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2459,6 +2501,45 @@
     "uniformBottom": 143,
     "uniformSocks": 143
    }
+  },
+  {
+   "guid": 64010,
+   "custom": "cowboys_anzac_2026",
+   "club": 120,
+   "name": "ANZAC 2026",
+   "texture": "cowboys_anzac_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 280,
+    "uniformSocks": 280
+   },
+   "numberFrom": 280
+  },
+  {
+   "guid": 64034,
+   "custom": "cowboys_indigenous_2026",
+   "club": 120,
+   "name": "INDIGENOUS 2026",
+   "texture": "cowboys_indigenous_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 280,
+    "uniformSocks": 280
+   },
+   "numberFrom": 280
+  },
+  {
+   "guid": 64035,
+   "custom": "cowboys_vegas_2026",
+   "club": 120,
+   "name": "LAS VEGAS 2026",
+   "texture": "cowboys_vegas_2026",
+   "templates": {
+    "uniformTop": 386,
+    "uniformBottom": 280,
+    "uniformSocks": 280
+   },
+   "numberFrom": 280
   }
  ]
 }

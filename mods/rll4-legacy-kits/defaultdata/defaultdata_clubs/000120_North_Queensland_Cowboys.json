@@ -34,6 +34,39 @@
           "uniformSocks": 64004
         },
         "index": 2
+      },
+      {
+        "name": "ANZAC 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64010,
+          "uniformBottom": 64010,
+          "uniformSocks": 64010,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64034,
+          "uniformBottom": 64034,
+          "uniformSocks": 64034,
+          "numberColour1_r": 230,
+          "numberColour1_g": 230,
+          "numberColour1_b": 230
+        }
+      },
+      {
+        "name": "LAS VEGAS 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64035,
+          "uniformBottom": 64035,
+          "uniformSocks": 64035
+        }
       }
     ]
   }
