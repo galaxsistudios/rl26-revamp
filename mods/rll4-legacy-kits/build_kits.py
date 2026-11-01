@@ -625,6 +625,17 @@ def _club_kits(clubs_path):
                 rgb.append(struct.unpack_from(dm.UNIFORM_TAG_FMT[f[1]], data, r + lay["config_off"] + f[0])[0])
             kits[name] = tuple(rgb)
         out[cid] = (names[0], kits)
+    # clubs other mods add ({"new": true, "cloneOf": id}, e.g. perth-bears' 220):
+    # they start with the kits of their "uniforms" "from" club, else cloneOf's
+    import glob
+    for path in glob.glob(os.path.join(REPO, "mods", "*", "defaultdata", "defaultdata_clubs", "*.json")):
+        spec = json.load(open(path))
+        if not spec.get("new"):
+            continue
+        src = spec.get("uniforms", {}).get("from", spec["cloneOf"])
+        if src in out:
+            info = spec.get("clubList", {})
+            out[info["id"]] = (info.get("fullName", str(info["id"])), dict(out[src][1]))
     return out
 
 

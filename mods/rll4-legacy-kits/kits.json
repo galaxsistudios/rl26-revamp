@@ -3360,6 +3360,19 @@
     "uniformSocks": 280
    },
    "numberFrom": 280
+  },
+  {
+   "guid": 64036,
+   "custom": "bears_home_2027",
+   "club": 220,
+   "name": "HOME",
+   "renameExisting": "NORTHS HOME",
+   "texture": "bears_home_2027",
+   "templates": {
+    "uniformTop": 345,
+    "uniformBottom": 343,
+    "uniformSocks": 342
+   }
   }
  ]
 }

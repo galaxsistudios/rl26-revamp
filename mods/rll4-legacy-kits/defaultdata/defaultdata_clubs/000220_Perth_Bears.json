@@ -1,0 +1,19 @@
+{
+  "uniforms": {
+    "rename": {
+      "HOME": "NORTHS HOME"
+    },
+    "add": [
+      {
+        "name": "HOME",
+        "copyOf": "NORTHS HOME",
+        "index": 0,
+        "set": {
+          "uniformTop": 64036,
+          "uniformBottom": 64036,
+          "uniformSocks": 64036
+        }
+      }
+    ]
+  }
+}

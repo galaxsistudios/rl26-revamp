@@ -377,11 +377,27 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     anchors = bundle["find_anchors"](bytes(data))
     by_id = {a[2]: a for a in anchors}  # id -> (start, end, id)
 
+    # overrides of a club another mod adds ({"new": true}) wait until it exists
+    # (e.g. rll4-legacy-kits' kit rows for perth-bears' club 220); only the
+    # whole-record keys can be applied to it
+    new_ids = set()
+    if bundle_path == "defaultdata/defaultdata_clubs":
+        new_ids = {json.load(open(f))["clubList"]["id"] for f in new_files}
+    for_new = {}
+
     applied = 0
     whole_record = []  # (id, override, fname) for _apply_whole_record_patches
     for fpath in sorted(override_files):
         fname = os.path.basename(fpath)
         record_id = int(fname.split("_", 1)[0].split(".")[0])
+        if record_id not in by_id and record_id in new_ids:
+            override = json.load(open(fpath))
+            extra = [k for k in override if k not in CLUB_WHOLE_RECORD_KEYS and not k.startswith("_")]
+            if extra:
+                raise ValueError(f"{bundle_path}: override {fname!r} of new club {record_id} sets {extra}; "
+                                 f"only {CLUB_WHOLE_RECORD_KEYS} can be applied to a new club")
+            for_new.setdefault(record_id, []).append((override, fname))
+            continue
         if record_id not in by_id:
             raise ValueError(f"{bundle_path}: override {fname!r} references id {record_id}, not found")
         start, end, _id = by_id[record_id]
@@ -577,11 +593,11 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     if whole_record:
         data = bytearray(_apply_whole_record_patches(bundle_path, bytes(data), pristine_bytes, whole_record, verbose))
     if new_files:
-        data = bytearray(_append_records(bundle_path, bytes(data), new_files, verbose))
+        data = bytearray(_append_records(bundle_path, bytes(data), new_files, verbose, for_new))
     return bytes(data)
 
 
-def _append_clubs(data, files, verbose):
+def _append_clubs(data, files, verbose, for_new):
     """New clubs: {"new": true, "cloneOf": <club id>, "clubList": {field:
     value, null removes it}, "rosterList": [...], "lineupTables": {...},
     "uniforms": <kit_blob spec>}. The club starts as a copy of cloneOf (every
@@ -614,6 +630,13 @@ def _append_clubs(data, files, verbose):
         if "uniforms" in spec:
             rec["blob"] = kit_blob.apply_spec(rec["blob"], spec["uniforms"], stock.__getitem__, fill, label, verbose)
         _set_squad(db, rec, spec, player_ids, f"{label} ({fname})", verbose)
+        # other mods' overrides of this club (kit rows), in file order
+        for override, oname in for_new.get(cid, []):
+            if "uniforms" in override:
+                rec["blob"] = kit_blob.apply_spec(rec["blob"], override["uniforms"], stock.__getitem__, fill,
+                                                  f"{label} ({oname})", verbose)
+            if "rosterList" in override or "lineupTables" in override:
+                _set_squad(db, rec, override, player_ids, f"{label} ({oname})", verbose)
         db.records.append(rec)
         by_id[cid] = rec
         if verbose:
@@ -621,7 +644,7 @@ def _append_clubs(data, files, verbose):
     return bigant_db.dump(db)
 
 
-def _append_records(bundle_path, data, files, verbose):
+def _append_records(bundle_path, data, files, verbose, for_new=None):
     """Append whole records to a database via bigant_db (exact schema
     reader/writer). Each file is {"new": true, "<table name>": {field:
     value}, ...} with one key per schema table (a missing table is written
@@ -631,7 +654,7 @@ def _append_records(bundle_path, data, files, verbose):
     (defaultdata_npcs added 2026-10-27 for team-coaches' default coaches)."""
     import bigant_db
     if bundle_path == "defaultdata/defaultdata_clubs":
-        return _append_clubs(data, files, verbose)
+        return _append_clubs(data, files, verbose, for_new or {})
     if bundle_path not in ("defaultdata/defaultdata_players", "defaultdata/defaultdata_npcs"):
         raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players, "
                          f"defaultdata_npcs and defaultdata_clubs")

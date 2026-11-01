@@ -1,0 +1,556 @@
+{
+ "title": "Perth Bears Home 2027",
+ "notes": "Perth Bears' first home jersey (2027), New Balance. Black with red hoops (red yoke band, chest band, mid and lower hoops), red collar and cuffs, from the user's product shots (front + back). Painted by code from the wrapped photos (kit_photo.flat, hoops levelled). Cash Converters and New Balance from Wikimedia Commons SVGs, Budget Direct sleeve cards from the stock Rabbitohs 2026 home top, crest from resources/new-team-logos/nrl-bears.svg (bear only: the 'PERTH BEARS' text above it on the shirt is left off). XFM, Penrite and ATLAS have no clean source yet: they are keyed out of the user's photos (placeholders, swap in HD files when available). Left off: the product tag, the '19 N 68' neck print and the NB DRY mark. Shorts from the user's photos: black, red hem, red side chevrons (claw marks left off), NB + NRL front left leg, Gage Roads (keyed from the photo, placeholder) front right leg, McDonald's (stock Rabbitohs card) back right leg. Socks: plain black placeholder. Hoops are painted from measured heights (design.py), not the flat wrap.",
+ "install": {
+  "club": 220,
+  "name": "HOME",
+  "renameExisting": "NORTHS HOME",
+  "texture": "bears_home_2027",
+  "templates": {
+   "uniformTop": 345,
+   "uniformBottom": 343,
+   "uniformSocks": 342
+  },
+  "guid": 64036
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   22,
+   22,
+   24
+  ],
+  "black": [
+   22,
+   22,
+   24
+  ],
+  "red": [
+   198,
+   18,
+   46
+  ],
+  "white": [
+   244,
+   244,
+   244
+  ],
+  "gold": [
+   236,
+   178,
+   30
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1420,
+    650
+   ],
+   "shield_height": 112,
+   "patch_colour": "red"
+  },
+  {
+   "name": "Perth Bears crest",
+   "rule": "crest",
+   "source": {
+    "file": "logos/perth_bears_crest.png"
+   },
+   "place": [
+    {
+     "at": [
+      1880,
+      650
+     ],
+     "height": 132
+    }
+   ]
+  },
+  {
+   "name": "XFM",
+   "source": {
+    "python": "photo_logo",
+    "args": [
+     "front",
+     [
+      455,
+      182,
+      545,
+      230
+     ]
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      1645,
+      560
+     ],
+     "width": 170
+    }
+   ]
+  },
+  {
+   "name": "Cash Converters",
+   "source": {
+    "python": "cash_converters"
+   },
+   "place": [
+    {
+     "at": [
+      1645,
+      860
+     ],
+     "width": 760
+    }
+   ]
+  },
+  {
+   "name": "New Balance (right)",
+   "source": {
+    "file": "logos/new_balance.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1300,
+      452
+     ],
+     "width": 120,
+     "angle": 8
+    }
+   ]
+  },
+  {
+   "name": "New Balance (left)",
+   "source": {
+    "file": "logos/new_balance.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1990,
+      452
+     ],
+     "width": 120,
+     "angle": -8
+    }
+   ]
+  },
+  {
+   "name": "Penrite",
+   "source": {
+    "python": "photo_logo",
+    "args": [
+     "back",
+     [
+      318,
+      234,
+      686,
+      306
+     ]
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      540,
+      616
+     ],
+     "width": 700
+    }
+   ],
+   "card": {
+    "size": [
+     760,
+     156
+    ],
+    "radius": 6,
+    "colour": "black"
+   }
+  },
+  {
+   "name": "ATLAS",
+   "source": {
+    "python": "photo_logo",
+    "args": [
+     "back",
+     [
+      336,
+      585,
+      676,
+      660
+     ]
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      540,
+      1240
+     ],
+     "width": 640
+    }
+   ]
+  },
+  {
+   "name": "Budget Direct (right sleeve)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     2560,
+     370,
+     2935,
+     610
+    ],
+    "raw": true,
+    "shape": "card"
+   }
+  },
+  {
+   "name": "Budget Direct (left sleeve)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     3345,
+     365,
+     3800,
+     610
+    ],
+    "raw": true,
+    "shape": "card"
+   }
+  },
+  {
+   "name": "New Balance (shorts)",
+   "part": "shorts",
+   "source": {
+    "file": "logos/new_balance.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      826,
+      1480
+     ],
+     "width": 110
+    }
+   ]
+  },
+  {
+   "name": "NRL (shorts)",
+   "part": "shorts",
+   "source": {
+    "stock": "m_shorts_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     756,
+     1556,
+     904,
+     1748
+    ]
+   }
+  },
+  {
+   "name": "Gage Roads",
+   "part": "shorts",
+   "source": {
+    "python": "photo_logo",
+    "args": [
+     "shorts_front",
+     [
+      100,
+      324,
+      173,
+      414
+     ]
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1310,
+      620
+     ],
+     "width": 150
+    }
+   ]
+  },
+  {
+   "name": "McDonald's",
+   "part": "shorts",
+   "source": {
+    "stock": "m_shorts_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1258,
+     1544,
+     1494,
+     1744
+    ],
+    "raw": true
+   },
+   "place": [
+    {
+     "at": [
+      745,
+      620
+     ],
+     "width": 240
+    }
+   ]
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      419.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      268.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      119.0,
+      399.0
+     ],
+     [
+      -0.235,
+      1.262,
+      260.0,
+      461.0
+     ],
+     [
+      -0.1675,
+      1.305,
+      280.0,
+      463.0
+     ],
+     [
+      -0.15,
+      1.1,
+      268.0,
+      721.2
+     ],
+     [
+      -0.162,
+      0.963,
+      273.0,
+      916.0
+     ],
+     [
+      -0.05,
+      1.472,
+      453.3,
+      122.2
+     ],
+     [
+      -0.085,
+      1.505,
+      422.1,
+      83.2
+     ],
+     [
+      0.068,
+      1.53,
+      575.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      728.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      880.0,
+      406.0
+     ],
+     [
+      0.235,
+      1.262,
+      728.0,
+      458.0
+     ],
+     [
+      0.1675,
+      1.305,
+      722.0,
+      469.0
+     ],
+     [
+      0.15,
+      1.1,
+      730.1,
+      724.4
+     ],
+     [
+      0.162,
+      0.963,
+      723.0,
+      917.0
+     ],
+     [
+      0.05,
+      1.472,
+      540.7,
+      122.2
+     ],
+     [
+      0.085,
+      1.505,
+      571.9,
+      83.2
+     ],
+     [
+      0,
+      0.931,
+      497.0,
+      954.0
+     ],
+     [
+      0,
+      1.462,
+      497.0,
+      122.2
+     ]
+    ]
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      437.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      290.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      135.0,
+      400.0
+     ],
+     [
+      -0.227,
+      1.265,
+      281.0,
+      435.0
+     ],
+     [
+      -0.173,
+      1.307,
+      288.0,
+      458.0
+     ],
+     [
+      -0.143,
+      1.1,
+      278.2,
+      707.1
+     ],
+     [
+      -0.161,
+      0.972,
+      287.0,
+      895.0
+     ],
+     [
+      0.078,
+      1.525,
+      564.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      706.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      863.0,
+      397.0
+     ],
+     [
+      0.227,
+      1.265,
+      702.0,
+      446.0
+     ],
+     [
+      0.173,
+      1.307,
+      702.0,
+      458.0
+     ],
+     [
+      0.143,
+      1.1,
+      711.8,
+      707.1
+     ],
+     [
+      0.161,
+      0.972,
+      709.0,
+      895.0
+     ],
+     [
+      0,
+      0.937,
+      500.5,
+      953.0
+     ],
+     [
+      0,
+      1.547,
+      500.5,
+      45.0
+     ]
+    ]
+   }
+  }
+ }
+}
