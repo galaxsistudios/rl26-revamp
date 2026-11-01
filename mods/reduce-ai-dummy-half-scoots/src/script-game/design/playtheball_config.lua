@@ -18,7 +18,9 @@ luaConfig = {
 	timeToRemainInPostPlayTheBall = 1.75,
 	playTheBallCompleteTime = 1.6,
 	pairedMarkerOneOffset = 2,
-	maxBallDisposalSpeed = 2.5,
+	-- faster-play-the-ball (lives here: one owner per file): stock 2.5. Caps the heel-back speed so the ball
+	-- stops at the dummy half's feet instead of rolling past him.
+	maxBallDisposalSpeed = 1.8,
 	postPlayTheBallScootMarkerTime = 0.6,
 	postPlayTheBallMarkerTime = 0.8,
 	thirdTacklerTrackAngle = 130,

@@ -15,6 +15,16 @@ local var_0_1 = var_0_0.playTheBallInTouchImmuneWindow
 -- at rate 1 (quick / slow never changed the animation speed).
 local var_0_2 = var_0_0.cPlayTheBallConfig.playrateQuickPTB or 1.4
 local var_0_3 = var_0_0.cPlayTheBallConfig.playrateSlowPTB or 0.9
+
+-- Dummy half within this many metres of the ball spot = ready for a quick play-the-ball.
+DummyHalfReadyDistance = 1.5
+
+-- Scale on the ball's roll-back velocity at the play-the-ball (rolling distance goes with its square).
+RollBackVelocityScale = 0.7
+-- ...but never below this (m/s): slow heels (1.2-1.4) damped to ~0.9 stopped short and the dummy half
+-- didn't reach them. Only the fast 2.15 heels that rolled past him get slowed.
+RollBackMinSpeed = 1.4
+
 local var_0_4 = action.Action
 
 action.actionclass("PlayTheBallAction", var_0_4, function(arg_1_0, arg_1_1)
@@ -90,6 +100,25 @@ function PlayTheBallAction.executeRollBack(arg_5_0, arg_5_1, arg_5_2, arg_5_3, a
 
 	var_5_3.initialVelocity = native.quat.transform(arg_5_10.q, var_5_9)
 
+	-- faster-play-the-ball: heel the ball back more softly so it stops at the dummy half's
+	-- feet. At the animation's full speed it could roll past him and he had to turn and chase.
+	pcall(function()
+		local var_5_20 = native.length3(var_5_3.initialVelocity)
+
+		local var_5_22 = math.max(var_5_20 * RollBackVelocityScale, math.min(var_5_20, RollBackMinSpeed))
+
+		if var_5_20 > 0 then
+			var_5_3.initialVelocity = var_5_3.initialVelocity * (var_5_22 / var_5_20)
+		end
+
+		local var_5_21 = io.open("ptb_decision_debug.txt", "a")
+
+		if var_5_21 then
+			var_5_21:write(os.date("%H:%M:%S"), string.format(" ROLLBACK speed %.2f -> %.2f", var_5_20, var_5_22), "\n")
+			var_5_21:close()
+		end
+	end)
+
 	local var_5_10 = arg_5_12.detachBallAngularVelocity
 	local var_5_11 = native.quat.transform(arg_5_10.q, var_5_10)
 
@@ -139,6 +168,41 @@ function PlayTheBallAction.addCallbacks(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_
 	local var_6_8 = arg_6_0.startTime + var_6_7 / 30
 	local var_6_9 = arg_6_5:getPlayTheBallEntity()
 	local var_6_10 = var_6_9.isQuickPlayTheBall and var_0_2 or var_6_9.isSlowPlayTheBall and var_0_3 or 1
+
+
+	-- faster-play-the-ball: the quick rate only once the dummy half is standing
+	-- over the ruck. Played at 1.4 the ball came out before he arrived on ~6% of
+	-- AI quick play-the-balls and the marker picked it up. Otherwise rate 1 (what
+	-- stock quick really played at), which gives him the time to get there.
+	if var_6_9.isQuickPlayTheBall then
+		local var_6_34, var_6_36 = pcall(function()
+			local var_6_30 = var_6_9.dummyHalfId
+			local var_6_31 = var_6_30 and arg_6_2.knowledgeBank.positionInfoPool:get(var_6_30).position
+			local var_6_32 = var_6_31 and native.length2(var_6_31 - var_6_1) or -1
+
+			if not var_6_31 or var_6_32 > DummyHalfReadyDistance then
+				var_6_10 = 1
+			end
+
+			local var_6_33 = io.open("ptb_decision_debug.txt", "a")
+
+			if var_6_33 then
+				var_6_33:write(os.date("%H:%M:%S"), string.format(" ACTION quick play-the-ball dummyHalf=%s dist=%.2f -> rate=%.2f", tostring(var_6_30), var_6_32, var_6_10), "\n")
+				var_6_33:close()
+			end
+		end)
+
+		if not var_6_34 then
+			pcall(function()
+				local var_6_35 = io.open("ptb_decision_debug.txt", "a")
+
+				if var_6_35 then
+					var_6_35:write(os.date("%H:%M:%S"), " ACTION quick play-the-ball dummy-half check failed: ", tostring(var_6_36), "\n")
+					var_6_35:close()
+				end
+			end)
+		end
+	end
 
 	-- faster-play-the-ball: a human ball carrier who spammed pass during the
 	-- hold-down / get-up plays the ball faster than the stock quick rate.

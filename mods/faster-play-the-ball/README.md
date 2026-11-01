@@ -21,6 +21,18 @@ were nil, so every play-the-ball played at rate 1 (found from the debug log: a q
 logged `rate=1.00`). Stock "quick" only shortened the get-up (the early branch in
 `TackledGetUpMonitor`). Now quick plays at 1.4 and slow at 0.9, as configured, for both teams.
 
+**Dummy-half readiness (2026-11-01):** the logs showed the dummy half missing the ball on 15 of 232 AI quick
+play-the-balls (0 of 40 normal/slow): played at 1.4 the ball came out before he arrived, and the defending
+marker picked it up. A quick play-the-ball now only plays at 1.4 when the dummy half
+(`playTheBallEntity.dummyHalfId`) is within `DummyHalfReadyDistance` (2.5 m) of the ball spot; otherwise at
+1 (what stock "quick" really played at). Logged as `ACTION quick play-the-ball dummyHalf=.. dist=.. -> rate=..`.
+
+Second pass (same day, after two more in game: ball rolled past the dummy half, who turned and jogged back):
+the gate is now 1.5 m; the heel-back velocity is scaled by `RollBackVelocityScale` (0.7, logged `ROLLBACK
+speed a -> b`) and `maxBallDisposalSpeed` is 1.8 (stock 2.5; set in reduce-ai-dummy-half-scoots'
+`playtheball_config.lua`, its owner); and reduce-ai-dummy-half-scoots' `DummyHalfCollectBallAi` sprints to a
+loose ball more than `ChaseBallDistance` (1.2 m) away (`CHASE` lines in reduce_scoots_debug.txt).
+
 ## Change: human quick play-the-ball (double-tap left trigger)
 
 Stock read the double-tap only once the tackle had collapsed with no offload possible (and not
@@ -72,6 +84,14 @@ Two debug logs (game folder):
 - Last 10 minutes: losing side always quick; winning side slows in its own half.
 - Neither quick nor slow = normal speed. Animation rates (`design/playtheball_config.lua`):
   quick 1.4, slow 0.9 (tackle 1.2 / 0.9).
+
+## Play-the-ball facing (2026-11-01)
+
+Normal (non-quick) play-the-balls: the turn to face up-field lives in ai-last-tackle-kick's
+`playtheball_ai.lua` (stock hard-coded "facing correct", so its own turn never ran), with the rare
+low-discipline sideways play-the-ball called as a knock-on. A first attempt here (forcing the action's facing)
+never fired, because the action is always handed the play direction, and was removed. `RollBackMinSpeed`
+(1.4 m/s) keeps slow heels from being damped below what the dummy half can reach.
 
 ## Quick play-the-ball faces upfield
 

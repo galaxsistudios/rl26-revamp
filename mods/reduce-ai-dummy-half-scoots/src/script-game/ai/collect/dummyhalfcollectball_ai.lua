@@ -24,6 +24,8 @@ local var_0_1 = network_config.ActionLatency
 -- roll = 0..1 }. Read (and cleared) by HitGapAi.onEnter.
 DummyHalfPickups = {}
 PickupWindow = 3
+-- Loose ball further than this (m) from the dummy half: he sprints to it.
+ChaseBallDistance = 1.2
 
 -- Passes tried, in order, when a scoot is vetoed.
 local FallbackPasses = {
@@ -165,6 +167,7 @@ function DummyHalfCollectBallAi.onEnter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_
 	-- One roll per play-the-ball, so the veto can't be re-rolled every frame.
 	arg_2_0.scootRoll = native.Random(native.Random.FromSystemTime():nextAsSeed()):randomFloatRange(0, 1)
 	arg_2_0.enterLogged = false
+	arg_2_0.chaseLogged = false
 
 	DummyHalfPickups[arg_2_5] = {
 		expires = arg_2_9 + PickupWindow,
@@ -187,6 +190,29 @@ function DummyHalfCollectBallAi.update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3
 	arg_3_0.collectAnticipateMixin:update(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11)
 	arg_3_0.collectApproachMixin:update(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11)
 	arg_3_0.dummyHalfMovementMixin:update(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, arg_3_10, arg_3_11)
+
+	-- Loose ball away from him (rolled past, or played before he got there): go and get it at
+	-- full speed instead of the stock jog/strafe, so the markers can't beat him to it.
+	pcall(function()
+		if arg_3_7:getBallEntity():getOwnerId(arg_3_10) then
+			return
+		end
+
+		local var_3_20 = arg_3_8:getBallObject().pos2
+		local var_3_21 = native.length2(var_3_20 - arg_3_6.pos)
+
+		if var_3_21 > ChaseBallDistance then
+			local var_3_22 = arg_3_6:getDerivedAttribute("max_speed")
+
+			arg_3_6:setMovementSpeed(var_3_22, var_3_22)
+
+			if not arg_3_0.chaseLogged then
+				arg_3_0.chaseLogged = true
+
+				debugWrite(string.format("CHASE dh=%s ball %.2f m away -> full speed", tostring(arg_3_5), var_3_21))
+			end
+		end
+	end)
 
 	return arg_3_0
 end
