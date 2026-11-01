@@ -2,10 +2,16 @@
 
 Three tweaks to the in-match tactics (D-pad) HUD:
 
-1. **Tactics panel width matches the player plate.** `paTacticsControl` sized itself to its four
-   tiles (about 262 wide in design units) while the player plate below it is 350
-   (`PlayerPlateTemplate`, the same in every HUD theme). The panel's border is now `Width="350"`, so
-   both line up at any resolution. Attack and defence use the same control, so both are fixed.
+1. **Tactics menu in the broadcast plate style** (matches nrl-broadcast-scoreboard's player plate,
+   interchange and penalty bar). `patacticscontrol.xaml`: a header plate (team crest in the slanted
+   team-colour box, TACTICS over "ATTACK / CROSS OVER", green underline) over a strip of tiles
+   (dark cards; selected = white with a green bar, since the shared TacticsIcons style turns icons
+   black when selected; confirmed = solid green). 400 wide like the plate, and the defence label
+   pill is 400 too. `nvm_tactics.lua` adds `Team` (set in `TacticsHud`'s constructor, as
+   substitution_hud does), `Subtitle` (card set name + selected tactic, keys split from CamelCase
+   when there's no label) and `RevealKey`/`HideKey`. Kept fast for mid-play use: 0.22 s intro,
+   0.15 s outro that starts inside the existing close delay (`var_0_outro_time`), so the menu never
+   stays up longer than stock. Spacing above the label tightened from 25 to 6.
 2. **Defence tactic resets when you win the ball.** A defence tactic (Slide Left / Compress /
    Drop Wingers / Slide Right) stayed on until changed, so Drop Wingers picked for the last play
    carried into the next defensive set. `TacticsHud.update` now puts a human side's defence graphs
@@ -42,3 +48,14 @@ Install both entries (scripts with `python tools\build.py full --confirm`, XAML 
 `build.py full --list manifests\xamls.xml --extracted <stock 57662> ...`, see INSTRUCTIONS.md). With
 only the XAML installed the label never shows (its bindings have nothing to read).
 
+## Also carries nrl-broadcast-scoreboard layout changes
+
+This mod owns `pagameplayhudcontrol.xaml`, so two changes for
+[nrl-broadcast-scoreboard](../nrl-broadcast-scoreboard/README.md) live in its copy:
+`Home/AwaySubstitutionHud` (quick interchange) moved from the HUD stack's row 2 into the
+player plate grids, directly above the bottom plate; and the top plates collapse
+(`BooleanToVisibilityConverter`) instead of staying Hidden when unused; and `paPenaltyControl` moved to bottom centre
+(RowSpan 2, VerticalAlignment Bottom) for the horizontal penalty bar; and both `PlayerStatisticsControl`s bind
+`Visibility` to `IsShown` (so the stats card can animate out); and the right plate grid and away stats grid
+get a 40-unit scaled spacer column on their right, because baResolutionScaledViewbox
+reports ~9% less width than it draws and right-aligned plates were clipped at the safe area.

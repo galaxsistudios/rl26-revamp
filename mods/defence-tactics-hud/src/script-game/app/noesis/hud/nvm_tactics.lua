@@ -1,6 +1,7 @@
 ﻿import("app.noesis.ns")
 import("app.noesis.ns_viewmodel")
 import("app.noesis.ns_observablecollection")
+import("app.noesis.util.nvm_team")
 
 local var_0_0 = ns_viewmodel.ViewModel
 local var_0_1 = ns_observablecollection.ObservableCollection
@@ -10,6 +11,22 @@ DefaultDefenceTacticText = "Standard"
 -- Debug: log every label change to defence_tactics_debug.txt (game folder).
 -- Turn off for release.
 DefenceTacticDebugLog = true
+
+-- nrl-broadcast-scoreboard look: tactic name for the header subtitle ("CrossOver" -> "Cross Over")
+local function var_0_label(arg_l_0, arg_l_1)
+	return arg_l_1 or (tostring(arg_l_0):gsub("(%l)(%u)", "%1 %2"))
+end
+
+-- Card set index -> subtitle prefix (1 defence, 2 attack, 3 foresight; see tactics_hud.lua var_0_14)
+local var_0_set_names = {
+	"Defence",
+	"Attack",
+	"Foresight"
+}
+
+-- Outro length: it plays inside the existing close delay (starts this long before the menu
+-- hides), so the menu closes no later than stock. Keep in step with patacticscontrol.xaml.
+local var_0_outro_time = 0.15
 
 ns.Class("NVMTacticItem", var_0_0, function(arg_1_0, arg_1_1)
 	var_0_0.init(arg_1_0)
@@ -49,9 +66,18 @@ ns.Class("NVMTactics", var_0_0, function(arg_3_0)
 	arg_3_0.DefenceTacticVisible = false
 	-- Last-tackle warning (red, flashing): set by TacticsHud.update.
 	arg_3_0.DefenceTacticAlert = false
+	-- Plate look: Team (set by TacticsHud), subtitle, intro/outro keys.
+	arg_3_0.Subtitle = ""
+	arg_3_0.RevealKey = 0
+	arg_3_0.HideKey = 0
+	arg_3_0.outroStarted = false
 end).Bindings = {
 	Namespace = "Workspace.ViewModels.HUD.Rugby",
 	Properties = {
+		Team = ns.typeOf(nvm_team.NVMTeam),
+		Subtitle = ns.String,
+		RevealKey = ns.Int32,
+		HideKey = ns.Int32,
 		Items = ns.typeOf(var_0_1),
 		Header = ns.String,
 		Index = ns.Int8,
@@ -100,6 +126,8 @@ function NVMTactics.initialiseCardSets(arg_4_0, arg_4_1)
 				var_4_1 = NVMForesightItem(iter_4_3.key)
 			end
 
+			var_4_1.label = var_0_label(iter_4_3.key, iter_4_3.label)
+
 			var_4_0:addComponent(var_4_1)
 		end
 
@@ -111,8 +139,18 @@ function NVMTactics.getSelectedIndex(arg_5_0)
 	return arg_5_0.Index + 1
 end
 
+function NVMTactics.refreshSubtitle(arg_6_0)
+	local var_6_0 = arg_6_0.Items and arg_6_0.Items:getComponent(arg_6_0.Index + 1)
+	local var_6_1 = var_0_set_names[arg_6_0.cardSetIndex] or ""
+	local var_6_2 = var_6_0 and var_6_0.label
+
+	arg_6_0.Subtitle = var_6_2 and var_6_1 .. "  /  " .. var_6_2 or var_6_1
+end
+
 function NVMTactics.setSelectedIndex(arg_6_0, arg_6_1)
 	arg_6_0.Index = arg_6_1 - 1
+
+	arg_6_0:refreshSubtitle()
 end
 
 function NVMTactics.getCardSetIndex(arg_7_0)
@@ -123,6 +161,8 @@ function NVMTactics.setCardSetIndex(arg_8_0, arg_8_1)
 	arg_8_0.cardSetIndex = arg_8_1
 	arg_8_0.Items = arg_8_0.cardSets[arg_8_0.cardSetIndex]
 	arg_8_0.Index, arg_8_0.Index = arg_8_0.Index, 0
+
+	arg_8_0:refreshSubtitle()
 end
 
 function NVMTactics.cycleSelectedIndex(arg_9_0, arg_9_1)
@@ -139,9 +179,16 @@ function NVMTactics.cycleSelectedIndex(arg_9_0, arg_9_1)
 	end
 
 	arg_9_0.Index = var_9_2
+
+	arg_9_0:refreshSubtitle()
 end
 
 function NVMTactics.openMenu(arg_10_0)
+	if not arg_10_0.TacticsVisibility or arg_10_0.outroStarted then
+		arg_10_0.RevealKey = (arg_10_0.RevealKey + 1) % 1000000
+	end
+
+	arg_10_0.outroStarted = false
 	arg_10_0.TacticsVisibility = true
 end
 
@@ -160,6 +207,7 @@ end
 function NVMTactics.forceClose(arg_12_0)
 	arg_12_0.TacticsVisibility = false
 	arg_12_0.closing = false
+	arg_12_0.outroStarted = false
 
 	local var_12_0 = arg_12_0.confirmedItem
 
@@ -179,6 +227,11 @@ end
 function NVMTactics.update(arg_14_0, arg_14_1)
 	if arg_14_0.closeDelay then
 		arg_14_0.closeDelay = arg_14_0.closeDelay - arg_14_1
+
+		if not arg_14_0.outroStarted and arg_14_0.closeDelay <= var_0_outro_time then
+			arg_14_0.outroStarted = true
+			arg_14_0.HideKey = (arg_14_0.HideKey + 1) % 1000000
+		end
 
 		if arg_14_0.closeDelay <= 0 then
 			arg_14_0.closeDelay = nil

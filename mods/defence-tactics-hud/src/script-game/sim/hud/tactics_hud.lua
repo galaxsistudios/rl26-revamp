@@ -111,6 +111,10 @@ Class("TacticsHud", function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_
 	local var_1_0 = nvm_tactics.NVMTactics()
 	local var_1_1 = nvm_tactics.NVMTactics()
 
+	-- Team colour + crest for the plate-style tactics menu (as substitution_hud.lua does)
+	var_1_0.Team = hud_helper.getSideHudNVMTeam(arg_1_7, hud_helper.HOME_SIDE)
+	var_1_1.Team = hud_helper.getSideHudNVMTeam(arg_1_7, hud_helper.AWAY_SIDE)
+
 	arg_1_7.featureStack:registerViewModel(hud_helper.HUD_IDENTIFIERS.gameplay, "HomeTactics", var_1_0)
 	arg_1_7.featureStack:registerViewModel(hud_helper.HUD_IDENTIFIERS.gameplay, "AwayTactics", var_1_1)
 

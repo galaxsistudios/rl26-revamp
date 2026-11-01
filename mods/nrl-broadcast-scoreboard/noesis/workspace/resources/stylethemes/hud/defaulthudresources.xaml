@@ -688,243 +688,621 @@
 
 
     <!--ooooooooooooooooooooooooooooo-->
-    <!--DEFAULT PLAYER PLATE - LEFT ALIGNED-->
+    <!--DEFAULT PLAYER PLATE (nrl-broadcast-scoreboard)-->
+    <!--Slanted team-colour number box, dark card with name + position, stamina underline.
+        RevealKey (sim/hud/playerinfo_hud.lua) changes whenever a different player is shown or
+        the plate reappears: the box pops in, then the card slides out from behind it.-->
     <!--ooooooooooooooooooooooooooooo-->
+
+    <SolidColorBrush x:Key="PlayerPlateCard" Color="#12171E" />
+    <SolidColorBrush x:Key="PlayerPlatePosition" Color="#8FA39A" />
 
     <ControlTemplate x:Key="PlayerPlateTemplate"
                      TargetType="local:paPlayerPlateControl">
 
         <controls:baResolutionScaledViewbox>
 
-            <Grid Width="350"
-                  Height="40">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="45" />
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+            <Grid x:Name="PlateRoot"
+                  Width="400"
+                  Height="46">
 
-                <Grid x:Name="LogoGrid">
+                <!--Card: clipped from the middle of the box so it emerges from behind it-->
+                <Grid Margin="30,0,0,0"
+                      ClipToBounds="True">
+                    <Grid x:Name="Card">
+                        <Grid.RenderTransform>
+                            <TranslateTransform X="0" />
+                        </Grid.RenderTransform>
 
-                    <Border x:Name="TeamBG"
-                            Background="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
-                            d:Background="PeachPuff"
-                            BorderBrush="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
-                            d:BorderBrush="PeachPuff"
-                            BorderThickness="0,1">
-                        <Rectangle x:Name="TeamOverlay"
-                                   Fill="{StaticResource OverlayGradient}" />
-                    </Border>
+                        <Border Background="{StaticResource PlayerPlateCard}" />
 
-                    <Image x:Name="Logo"
-                           Source="{Binding Team.TeamLogo}"
-                           d:Source="/Images/Club_logos/256/custom.png"
-                           Margin="2.5" />
+                        <StackPanel x:Name="CardText"
+                                    Margin="40,0,24,3"
+                                    VerticalAlignment="Center">
+                            <StackPanel.RenderTransform>
+                                <TranslateTransform X="0" />
+                            </StackPanel.RenderTransform>
+                            <Viewbox StretchDirection="DownOnly"
+                                     HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding PlayerName, Converter={StaticResource UppercaseConverter}}"
+                                           d:Text="JYE GRAY"
+                                           Style="{StaticResource ScoreBoardMaison}"
+                                           FontSize="20"
+                                           HorizontalAlignment="Left" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding PlayerPosition, Converter={StaticResource UppercaseConverter}}"
+                                       d:Text="FULLBACK"
+                                       Style="{StaticResource HUD_SemiBold}"
+                                       FontSize="11"
+                                       Margin="1,-1,0,0"
+                                       Foreground="{StaticResource PlayerPlatePosition}" />
+                        </StackPanel>
 
+                        <!--RATTLED tag (discipline-meter): a short personal slump after being
+                            penalised, fended or big-hit-->
+                        <TextBlock Text="RATTLED"
+                                   FontSize="11"
+                                   Foreground="#FFE63232"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Margin="0,0,24,9">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock"
+                                       BasedOn="{StaticResource HUD_SemiBold}">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsRattled}"
+                                                     Value="True">
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <!--Stamina underline-->
+                        <ProgressBar x:Name="StaminaBar"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Height="3"
+                                     RenderTransformOrigin="0,0.5"
+                                     Value="{Binding Stamina}"
+                                     VerticalAlignment="Bottom"
+                                     Background="#33FFFFFF"
+                                     BorderThickness="0"
+                                     d:Value="80">
+                            <!--StaminaLevel (nvm_playerplate.lua): 0 >=60%, 1 >=40%, 2 >=20%, 3 below-->
+                            <ProgressBar.Style>
+                                <Style TargetType="ProgressBar"
+                                       BasedOn="{StaticResource {x:Type ProgressBar}}">
+                                    <!--Not RLGreen: rl26-revamp-branding recolours that to blue-->
+                                    <Setter Property="Foreground"
+                                            Value="#FF24DB61" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding StaminaLevel}"
+                                                     Value="1">
+                                            <Setter Property="Foreground"
+                                                    Value="#FFF2D21B" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StaminaLevel}"
+                                                     Value="2">
+                                            <Setter Property="Foreground"
+                                                    Value="#FFFF8A1F" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding StaminaLevel}"
+                                                     Value="3">
+                                            <Setter Property="Foreground"
+                                                    Value="#FFE63232" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ProgressBar.Style>
+                            <ProgressBar.RenderTransform>
+                                <ScaleTransform ScaleX="1" />
+                            </ProgressBar.RenderTransform>
+                        </ProgressBar>
+
+                        <!--Discipline bar (discipline-meter, HasDiscipline false = hidden): vertical,
+                            on the right edge of the card, fills from the bottom. The fill height is
+                            set in px by nvm_playerplate.lua (DisciplineFill, track = 34px, keep
+                            var_0_discipline_bar_height in step). Ice blue when settled, then the
+                            stamina bands: yellow, orange, red-->
+                        <Grid x:Name="DisciplineBar"
+                              Width="5"
+                              Height="34"
+                              Margin="0,0,10,0"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              RenderTransformOrigin="0.5,1">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasDiscipline}"
+                                                     Value="False">
+                                            <Setter Property="Visibility"
+                                                    Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <Grid.RenderTransform>
+                                <ScaleTransform ScaleY="1" />
+                            </Grid.RenderTransform>
+
+                            <Border Background="#33FFFFFF" />
+                            <Border Height="{Binding DisciplineFill}"
+                                    d:Height="20"
+                                    VerticalAlignment="Bottom">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background"
+                                                Value="#FF5AC8FA" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DisciplineLevel}"
+                                                         Value="1">
+                                                <Setter Property="Background"
+                                                        Value="#FFF2D21B" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DisciplineLevel}"
+                                                         Value="2">
+                                                <Setter Property="Background"
+                                                        Value="#FFFF8A1F" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DisciplineLevel}"
+                                                         Value="3">
+                                                <Setter Property="Background"
+                                                        Value="#FFE63232" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                            </Border>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
-                <Border Grid.Column="1"
-                        Background="{StaticResource RLWhite}">
-                    <TextBlock Style="{StaticResource HUD_ExtraBold}"
-                               FontSize="22"
-                               Margin="0,-2,0,0"
-                               Text="{Binding PlayerNumber}"
-                               d:Text="43"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="{StaticResource RLBlack}" />
-                </Border>
+                <!--Number box-->
+                <Grid x:Name="NumberBox"
+                      Width="62"
+                      HorizontalAlignment="Left"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <ScaleTransform ScaleX="1"
+                                        ScaleY="1" />
+                    </Grid.RenderTransform>
 
-                <Border Grid.Column="2"
-                        Background="{StaticResource RLBlack}"
-                        BorderThickness="0,1">
-                    <Border.BorderBrush>
-                        <LinearGradientBrush StartPoint="0,0.5"
-                                             EndPoint="1,0.5">
-                            <GradientStop Color="{Binding Team.PrimaryColour}"
-                                          d:Color="PeachPuff"
-                                          Offset="0" />
-                            <GradientStop Color="{StaticResource RLBlackCol}"
-                                          Offset="1" />
-                        </LinearGradientBrush>
-                    </Border.BorderBrush>
-                    <Viewbox StretchDirection="DownOnly"
-                             HorizontalAlignment="Left"
-                             VerticalAlignment="Center"
-                             Margin="12,-2,12,0">
-                        <TextBlock Text="{Binding PlayerName, Converter={StaticResource UppercaseConverter}}"
-                                   d:Text="LASTNAME"
-                                   FontSize="22"
-                                   Style="{StaticResource HUD_Medium}" />
-                    </Viewbox>
-                </Border>
-                <ProgressBar  Grid.Column="2"
-                              Minimum="0"
-                              Height="3"
-                              Maximum="100"
-                              Value="{Binding Stamina}"
-                              VerticalAlignment="Bottom"
-                              Foreground="{StaticResource RLGreen}"
-                              d:Value="50" />
+                    <Path Data="M 10,0 L 62,0 L 52,46 L 0,46 Z"
+                          Stretch="None"
+                          Fill="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                          d:Fill="#1F6B45" />
+                    <Path Data="M 10,0 L 62,0 L 52,46 L 0,46 Z"
+                          Stretch="None">
+                        <Path.Fill>
+                            <LinearGradientBrush StartPoint="0,0"
+                                                 EndPoint="0,1">
+                                <GradientStop Color="#1AFFFFFF"
+                                              Offset="0" />
+                                <GradientStop Color="#00FFFFFF"
+                                              Offset="0.5" />
+                                <GradientStop Color="#33000000"
+                                              Offset="1" />
+                            </LinearGradientBrush>
+                        </Path.Fill>
+                    </Path>
+
+                    <TextBlock Text="{Binding PlayerNumber}"
+                               d:Text="1"
+                               Style="{StaticResource ScoreBoardMaison}"
+                               FontSize="24"
+                               Margin="0,-1,0,0"
+                               Foreground="{Binding Team.HudTextColour, Converter={StaticResource ColorToSolidColorBrushConverter}}" />
+                </Grid>
+
+                <b:Interaction.Triggers>
+                    <b:PropertyChangedTrigger Binding="{Binding RevealKey}">
+                        <b:ControlStoryboardAction>
+                            <b:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <!--Box pops in-->
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="0"
+                                                     To="1"
+                                                     Duration="0:0:0.12" />
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                     From="0.4"
+                                                     To="1"
+                                                     Duration="0:0:0.22">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseOut"
+                                                      Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                     From="0.4"
+                                                     To="1"
+                                                     Duration="0:0:0.22">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseOut"
+                                                      Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+
+                                    <!--Card slides out from behind the box-->
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Card"
+                                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0"
+                                                                Value="-370" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.18"
+                                                              Value="-370" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.55"
+                                                              Value="0">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+
+                                    <!--Text fades up as the card lands-->
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CardText"
+                                                                   Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0"
+                                                                Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.3"
+                                                              Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.55"
+                                                              Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </b:ControlStoryboardAction.Storyboard>
+                        </b:ControlStoryboardAction>
+                    </b:PropertyChangedTrigger>
+
+                    <!--Outro = the intro reversed: text fades, card slides back behind the box,
+                        then the box shrinks away. HideKey is bumped by nvm_playerplate.lua, which
+                        keeps the plate visible for 0.45s (var_0_outro_time) - keep them in step.-->
+                    <b:PropertyChangedTrigger Binding="{Binding HideKey}">
+                        <b:ControlStoryboardAction>
+                            <b:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="CardText"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     To="0"
+                                                     Duration="0:0:0.12" />
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Card"
+                                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0"
+                                                              Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.3"
+                                                              Value="-370">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <QuinticEase EasingMode="EaseIn" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                     From="1"
+                                                     To="0.4"
+                                                     BeginTime="0:0:0.25"
+                                                     Duration="0:0:0.2">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseIn"
+                                                      Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                     From="1"
+                                                     To="0.4"
+                                                     BeginTime="0:0:0.25"
+                                                     Duration="0:0:0.2">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseIn"
+                                                      Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="NumberBox"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="1"
+                                                     To="0"
+                                                     BeginTime="0:0:0.33"
+                                                     Duration="0:0:0.12" />
+                                </Storyboard>
+                            </b:ControlStoryboardAction.Storyboard>
+                        </b:ControlStoryboardAction>
+                    </b:PropertyChangedTrigger>
+
+                    <!--Player switch on a plate that's already up: box and card stay put,
+                        the name/position slide in and the stamina bar wipes across-->
+                    <b:PropertyChangedTrigger Binding="{Binding SwitchKey}">
+                        <b:ControlStoryboardAction>
+                            <b:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="CardText"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="0"
+                                                     To="1"
+                                                     Duration="0:0:0.2" />
+                                    <DoubleAnimation Storyboard.TargetName="CardText"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                     From="-24"
+                                                     To="0"
+                                                     Duration="0:0:0.3">
+                                        <DoubleAnimation.EasingFunction>
+                                            <QuinticEase EasingMode="EaseOut" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="StaminaBar"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                     From="0"
+                                                     To="1"
+                                                     Duration="0:0:0.35">
+                                        <DoubleAnimation.EasingFunction>
+                                            <QuinticEase EasingMode="EaseOut" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="DisciplineBar"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                     From="0"
+                                                     To="1"
+                                                     BeginTime="0:0:0.06"
+                                                     Duration="0:0:0.35">
+                                        <DoubleAnimation.EasingFunction>
+                                            <QuinticEase EasingMode="EaseOut" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </b:ControlStoryboardAction.Storyboard>
+                        </b:ControlStoryboardAction>
+                    </b:PropertyChangedTrigger>
+                </b:Interaction.Triggers>
             </Grid>
         </controls:baResolutionScaledViewbox>
     </ControlTemplate>
 
 
     <!--ooooooooooooooooooooooooooooo-->
-    <!--DEFAULT PLAYER STATISTICS-->
+    <!--DEFAULT PLAYER STATISTICS (nrl-broadcast-scoreboard)-->
+    <!--Player plate look: number in the slanted team-colour box, name over position, crest at
+        the right, green underline, then the stat rows. Binds the Shown* copies that
+        nvm_playerstatisticshud.lua takes in show(), so the card keeps its data while animating
+        out. RevealKey -> intro (box pops, card slides, rows drop in), HideKey -> 0.3s outro.-->
     <!--ooooooooooooooooooooooooooooo-->
 
     <ControlTemplate TargetType="{x:Type local:PlayerStatisticsControl}"
                      x:Key="PlayerStatisticsTemplate">
 
         <controls:baResolutionScaledViewbox DisableHeightScaling="True">
-            <Grid Width="350"
-                  VerticalAlignment="Center" d:DataContext="{d:DesignInstance Type={x:Type vm:paNVMPlayerPlate}, IsDesignTimeCreatable=True}">
+            <Grid x:Name="StatsRoot"
+                  Width="400"
+                  VerticalAlignment="Center">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
+                    <RowDefinition Height="46" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Height="40">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45" />
-                        <ColumnDefinition Width="40" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                <!--Header plate-->
+                <Grid Margin="30,0,0,0"
+                      ClipToBounds="True">
+                    <Grid x:Name="StatsCard">
+                        <Grid.RenderTransform>
+                            <TranslateTransform X="0" />
+                        </Grid.RenderTransform>
 
-                    <Grid x:Name="LogoGrid">
+                        <Border Background="{StaticResource PlayerPlateCard}" />
 
-                        <Border x:Name="TeamBG"
-                                Background="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
-                                d:Background="PeachPuff"
-                                BorderBrush="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
-                                d:BorderBrush="PeachPuff"
-                                BorderThickness="0,1">
-                            <Rectangle x:Name="TeamOverlay"
-                                       Fill="{StaticResource OverlayGradient}" />
-                        </Border>
+                        <Image Source="{Binding ShownTeam.TeamLogo}"
+                               HorizontalAlignment="Right"
+                               Height="34"
+                               Margin="0,0,8,3"
+                               Opacity="0.9" />
 
-                        <Image x:Name="Logo"
-                               Source="{Binding Team.TeamLogo}"
-                               d:Source="/Images/Club_logos/256/custom.png"
-                               Margin="2.5" />
+                        <StackPanel x:Name="StatsHeaderText"
+                                    Margin="40,0,56,3"
+                                    VerticalAlignment="Center">
+                            <Viewbox StretchDirection="DownOnly"
+                                     HorizontalAlignment="Left">
+                                <TextBlock Text="{Binding ShownName, Converter={StaticResource UppercaseConverter}}"
+                                           d:Text="S. CRICHTON"
+                                           Style="{StaticResource ScoreBoardMaison}"
+                                           FontSize="20"
+                                           HorizontalAlignment="Left" />
+                            </Viewbox>
+                            <TextBlock Text="{Binding ShownPosition, Converter={StaticResource UppercaseConverter}}"
+                                       d:Text="FIVE-EIGHTH"
+                                       Style="{StaticResource HUD_SemiBold}"
+                                       FontSize="11"
+                                       Margin="1,-1,0,0"
+                                       Foreground="{StaticResource PlayerPlatePosition}" />
+                        </StackPanel>
 
+                        <Rectangle Height="3"
+                                   VerticalAlignment="Bottom"
+                                   Fill="#FF24DB61" />
                     </Grid>
-
-                    <Border Grid.Column="1"
-                            Background="{StaticResource RLWhite}">
-                        <TextBlock Style="{StaticResource HUD_ExtraBold}"
-                                   FontSize="22"
-                                   Margin="0,-2,0,0"
-                                   Text="{Binding PlayerNumber, Mode=TwoWay, FallbackValue=''}"
-                                   d:Text="43"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Foreground="{StaticResource RLBlack}" />
-                    </Border>
-
-                    <Border Grid.Column="2"
-                            Background="{StaticResource RLBlack80}"
-                            BorderThickness="0,1">
-                        <Border.BorderBrush>
-                            <LinearGradientBrush StartPoint="0,0.5"
-                                                 EndPoint="1,0.5">
-                                <GradientStop Color="{Binding Team.PrimaryColour}"
-                                              d:Color="PeachPuff"
-                                              Offset="0" />
-                                <GradientStop Color="{StaticResource RLBlackCol}"
-                                              Offset="1" />
-                            </LinearGradientBrush>
-                        </Border.BorderBrush>
-                        <Viewbox StretchDirection="DownOnly"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Center"
-                                 Margin="12,-2,12,0">
-                            <TextBlock Text="{Binding PlayerName, Converter={StaticResource UppercaseConverter}}"
-                                       FontSize="22"
-                                       Style="{StaticResource HUD_Medium}" />
-                        </Viewbox>
-                    </Border>
                 </Grid>
 
-                <Border Background="{StaticResource RLBlack80}"
-                        BorderBrush="{StaticResource ButtonBorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="2"
-                        Grid.Row="1"
-                        Height="Auto">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                <!--Number box-->
+                <Grid x:Name="StatsNumberBox"
+                      Width="62"
+                      HorizontalAlignment="Left"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                    </Grid.RenderTransform>
 
+                    <Path Data="M 10,0 L 62,0 L 52,46 L 0,46 Z"
+                          Stretch="None"
+                          Fill="{Binding ShownTeam.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                          d:Fill="#1F6B45" />
+                    <Path Data="M 10,0 L 62,0 L 52,46 L 0,46 Z"
+                          Stretch="None">
+                        <Path.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                <GradientStop Color="#1AFFFFFF" Offset="0" />
+                                <GradientStop Color="#00FFFFFF" Offset="0.5" />
+                                <GradientStop Color="#33000000" Offset="1" />
+                            </LinearGradientBrush>
+                        </Path.Fill>
+                    </Path>
+                    <TextBlock Text="{Binding ShownNumber}"
+                               d:Text="6"
+                               Style="{StaticResource ScoreBoardMaison}"
+                               FontSize="24"
+                               Margin="0,-1,0,0"
+                               Foreground="{Binding ShownTeam.HudTextColour, Converter={StaticResource ColorToSolidColorBrushConverter}}" />
+                </Grid>
 
-                        <TextBlock Text="{Binding PlayerPosition, Mode=TwoWay, Converter={StaticResource UppercaseConverter}, FallbackValue=''}"
-                                   d:Text="POSITION"
-                                   Margin="10,5"
-                                   FontSize="18"
-                                   Style="{StaticResource HUD_Bold}" />
+                <!--Stat rows-->
+                <ItemsControl x:Name="StatsRows"
+                              Grid.Row="1"
+                              Margin="0,2,0,0"
+                              ItemsSource="{Binding ShownStats}"
+                              d:ItemsSource="{d:SampleData ItemCount=2}">
+                    <ItemsControl.RenderTransform>
+                        <TranslateTransform Y="0" />
+                    </ItemsControl.RenderTransform>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="32"
+                                  Margin="0,0,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="72" />
+                                </Grid.ColumnDefinitions>
 
+                                <Border Grid.ColumnSpan="2"
+                                        Background="{StaticResource PlayerPlateCard}" />
+                                <Border Grid.Column="1"
+                                        Background="#0B0F14" />
+                                <Rectangle Width="3"
+                                           HorizontalAlignment="Left"
+                                           Fill="{Binding DataContext.ShownTeam.PrimaryColour, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource ColorToSolidColorBrushConverter}}" />
 
-                        <ItemsControl ItemsSource="{Binding PlayerStatsHud}"
-                                      d:ItemsSource="{d:SampleData ItemCount=3}"
-                                      Grid.Row="1"
-                                      Margin="-1,0,-1,5">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Margin="0,3.5"
-                                            Height="27"
-                                            BorderBrush="{StaticResource ButtonBorderBrush}"
-                                            BorderThickness="0,1,0,0"
-                                            Background="#161616">
+                                <TextBlock Text="{Binding Message, Converter={StaticResource UppercaseConverter}}"
+                                           d:Text="CONVERSIONS"
+                                           Style="{StaticResource HUD_SemiBold}"
+                                           FontSize="14"
+                                           Margin="14,0,8,0"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding SecondMessage, Converter={StaticResource UppercaseConverter}}"
+                                           d:Text="1"
+                                           Style="{StaticResource ScoreBoardMaison}"
+                                           FontSize="18" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                                        <Grid ClipToBounds="True">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition Width="0.4*" />
-                                            </Grid.ColumnDefinitions>
+                <b:Interaction.Triggers>
 
-                                            <Rectangle Fill="#202020">
-                                                <Rectangle.Effect>
-                                                    <DropShadowEffect ShadowDepth="4"
-                                                                      Color="Black"
-                                                                      Opacity="0.3"
-                                                                      BlurRadius="5"
-                                                                      Direction="0" />
-                                                </Rectangle.Effect>
-                                            </Rectangle>
-                                            <TextBlock Style="{StaticResource HUD_Medium}"
-                                                       Text="{Binding Message, Mode=TwoWay, Converter={StaticResource UppercaseConverter}}"
-                                                       Margin="10,0"
-                                                       FontSize="18"
-                                                       VerticalAlignment="Center" />
-                                            <TextBlock Style="{StaticResource  HUD_Bold}"
-                                                       Text="{Binding SecondMessage, Mode=TwoWay, Converter={StaticResource UppercaseConverter}}"
-                                                       FontSize="18"
-                                                       d:Text="1995"
-                                                       Margin="10,0"
-                                                       Grid.Column="2"
-                                                       TextAlignment="Right"
-                                                       VerticalAlignment="Center" />
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </Grid>
+                    <!--Intro: same timing as the player plate, then the rows drop in-->
+                    <b:PropertyChangedTrigger Binding="{Binding RevealKey}">
+                        <b:ControlStoryboardAction>
+                            <b:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="0" To="1" Duration="0:0:0.12" />
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                     From="0.4" To="1" Duration="0:0:0.22">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseOut" Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                     From="0.4" To="1" Duration="0:0:0.22">
+                                        <DoubleAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseOut" Amplitude="0.4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatsCard"
+                                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-370" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.18" Value="-370" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.55" Value="0">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatsHeaderText"
+                                                                   Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.55" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatsRows"
+                                                                   Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.45" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.65" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatsRows"
+                                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-14" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.45" Value="-14" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.75" Value="0">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </b:ControlStoryboardAction.Storyboard>
+                        </b:ControlStoryboardAction>
+                    </b:PropertyChangedTrigger>
 
-                </Border>
-
-
+                    <!--Outro, 0.3s (var_0_outro_time in nvm_playerstatisticshud.lua): rows go first,
+                        then the card slides back behind the box and the box shrinks away-->
+                    <b:PropertyChangedTrigger Binding="{Binding HideKey}">
+                        <b:ControlStoryboardAction>
+                            <b:ControlStoryboardAction.Storyboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="StatsRows"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     To="0" Duration="0:0:0.1" />
+                                    <DoubleAnimation Storyboard.TargetName="StatsHeaderText"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     To="0" BeginTime="0:0:0.04" Duration="0:0:0.08" />
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="StatsCard"
+                                                                   Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.04" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.22" Value="-370">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <QuinticEase EasingMode="EaseIn" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                     From="1" To="0.4" BeginTime="0:0:0.16" Duration="0:0:0.13" />
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                     From="1" To="0.4" BeginTime="0:0:0.16" Duration="0:0:0.13" />
+                                    <DoubleAnimation Storyboard.TargetName="StatsNumberBox"
+                                                     Storyboard.TargetProperty="Opacity"
+                                                     From="1" To="0" BeginTime="0:0:0.2" Duration="0:0:0.09" />
+                                </Storyboard>
+                            </b:ControlStoryboardAction.Storyboard>
+                        </b:ControlStoryboardAction>
+                    </b:PropertyChangedTrigger>
+                </b:Interaction.Triggers>
             </Grid>
 
         </controls:baResolutionScaledViewbox>
     </ControlTemplate>
-
-
 
 
 </ResourceDictionary>

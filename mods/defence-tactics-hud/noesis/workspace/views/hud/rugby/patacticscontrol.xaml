@@ -11,6 +11,12 @@
              Visibility="{Binding TacticsVisibility, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
              mc:Ignorable="d">
 
+    <!--Tactics menu in the nrl-broadcast-scoreboard plate style: header plate (crest in the slanted
+        team-colour box, TACTICS over "ATTACK / CROSS OVER", green underline) and a strip of tiles.
+        Same 400 design width as the player plate. Animations are short because the menu is used
+        mid-play: RevealKey -> 0.22s intro, HideKey -> 0.15s outro, which nvm_tactics.lua starts
+        inside the existing close delay (var_0_outro_time), so the menu closes no later than stock.-->
+
     <d:UserControl.DataContext>
         <vm:NVMTactics />
     </d:UserControl.DataContext>
@@ -21,32 +27,44 @@
                 <ResourceDictionary Source="../../../Resources/TacticsIcons.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <SolidColorBrush x:Key="TacCard" Color="#12171E" />
+            <SolidColorBrush x:Key="TacPosition" Color="#8FA39A" />
+            <!--Not RLGreen: rl26-revamp-branding recolours that to the Revamp blue-->
+            <SolidColorBrush x:Key="TacGreen" Color="#FF24DB61" />
+
+            <Style x:Key="TacMaison" TargetType="{x:Type TextBlock}">
+                <Setter Property="FontFamily" Value="{StaticResource FontFamily_ScoreMaison}" />
+                <Setter Property="FontWeight" Value="Regular" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <!--Tile: dark card; selected = white (the shared icon style turns icons black when
+                selected) with a green bar; confirmed = solid green-->
             <Style TargetType="controls:paListBoxItem"
                    x:Key="TacticsListBoxItem">
-                <Setter Property="Focusable" Value="False"/>
-
+                <Setter Property="Focusable" Value="False" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="controls:paListBoxItem">
-                            <Border>
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background"
-                                                Value="{StaticResource RLBlack80}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=controls:paListBoxItem}}"
-                                                         Value="True">
-                                                <Setter Property="Background"
-                                                        Value="{StaticResource RLWhite}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding Confirmed}" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource RLGreen}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
+                            <Grid Margin="1,0">
+                                <Border x:Name="TileBack" Background="{StaticResource TacCard}" />
                                 <ContentPresenter />
-                            </Border>
+                                <Rectangle x:Name="TileBar"
+                                           Height="3"
+                                           VerticalAlignment="Bottom"
+                                           Fill="{StaticResource TacGreen}"
+                                           Opacity="0" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="TileBack" Property="Background" Value="White" />
+                                    <Setter TargetName="TileBar" Property="Opacity" Value="1" />
+                                </Trigger>
+                                <DataTrigger Binding="{Binding Confirmed}" Value="True">
+                                    <Setter TargetName="TileBack" Property="Background" Value="{StaticResource TacGreen}" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -56,32 +74,28 @@
                         Value="{Binding HighlightedCommand}" />
             </Style>
 
-
             <DataTemplate DataType="{x:Type vm:NVMForesightItem}">
-                <Grid Width="63">
-                    <Viewbox Width="40"
-                             Height="40"
+                <Grid Height="56">
+                    <Viewbox Width="36"
+                             Height="36"
                              StretchDirection="DownOnly">
-
-                        <ContentControl Style="{StaticResource ForesightSelector}" Focusable="False"/>
+                        <ContentControl Style="{StaticResource ForesightSelector}" Focusable="False" />
                     </Viewbox>
                 </Grid>
             </DataTemplate>
 
-
             <DataTemplate DataType="{x:Type vm:NVMTacticItem}">
-                <Grid>
-                    <Viewbox Width="63">
+                <Grid Height="56">
+                    <Viewbox Width="56">
                         <Path Data="{StaticResource FieldGeo}"
                               Style="{StaticResource PS}"
                               Fill="Transparent"
                               StrokeThickness="5"
                               Opacity="0.1" />
                     </Viewbox>
-
-                    <Viewbox Width="53"
+                    <Viewbox Width="46"
                              StretchDirection="DownOnly">
-                        <ContentControl Style="{StaticResource TacticSelector}" Focusable="False"/>
+                        <ContentControl Style="{StaticResource TacticSelector}" Focusable="False" />
                     </Viewbox>
                 </Grid>
             </DataTemplate>
@@ -92,57 +106,188 @@
 
     <controls:baResolutionScaledViewbox DisableWidthScaling="True">
 
-        <!-- defence-tactics-hud: same design width as the player plate (Width 350 in PlayerPlateTemplate) -->
-        <Border Background="{StaticResource RLBlack}"
-                Width="350"
-                Height="100"
-                BorderBrush="{StaticResource ButtonBorderBrush}"
-                BorderThickness="1">
+        <!-- defence-tactics-hud: same design width as the player plate (Width 400 in PlayerPlateTemplate) -->
+        <Grid x:Name="PanelRoot"
+              Width="400">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
+            <!--Header plate-->
+            <Grid Margin="26,0,0,0"
+                  ClipToBounds="True">
+                <Grid x:Name="HeaderCard">
+                    <Grid.RenderTransform>
+                        <TranslateTransform X="0" />
+                    </Grid.RenderTransform>
 
-                <TextBlock Grid.Column="1"
-                           Text="{Binding Header, Mode=TwoWay, Converter={StaticResource UppercaseConverter}}"
-                           Style="{StaticResource HUD_Bold}"
-                           FontSize="18"
-                           Margin="0,5,0,0"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center" />
+                    <Border Background="{StaticResource TacCard}" />
 
+                    <StackPanel x:Name="HeaderText"
+                                Margin="36,0,12,3"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Header, Converter={StaticResource UppercaseConverter}}"
+                                   d:Text="TACTICS"
+                                   Style="{StaticResource TacMaison}"
+                                   FontSize="16" />
+                        <TextBlock Text="{Binding Subtitle, Converter={StaticResource UppercaseConverter}}"
+                                   d:Text="ATTACK  /  CROSS OVER"
+                                   Style="{StaticResource HUD_SemiBold}"
+                                   FontSize="10"
+                                   Margin="1,-1,0,0"
+                                   Foreground="{StaticResource TacPosition}" />
+                    </StackPanel>
 
-                <Grid Margin="5"
-                      Grid.Row="1"
-                      ClipToBounds="True">
-                    <Border BorderBrush="{StaticResource ButtonBorderBrush}"
-                            BorderThickness="0.5">
-
-                        <Border Background="{StaticResource RLWhite05}"
-                                BorderBrush="{StaticResource RLWhite30}"
-                                BorderThickness="3">
-                            <Border.Effect>
-                                <BlurEffect Radius="15" />
-                            </Border.Effect>
-                        </Border>
-                    </Border>
-
-                    <controls:paListBox ItemContainerStyle="{StaticResource TacticsListBoxItem}"
-                                        ItemsSource="{Binding Items}"
-                                        SelectedIndex="{Binding Index}" Focusable="False">
-                        <controls:paListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <UniformGrid Rows="1" />
-                            </ItemsPanelTemplate>
-                        </controls:paListBox.ItemsPanel>
-                    </controls:paListBox>
-
-
+                    <Rectangle Height="3"
+                               VerticalAlignment="Bottom"
+                               Fill="{StaticResource TacGreen}" />
                 </Grid>
             </Grid>
-        </Border>
+
+            <!--Crest box-->
+            <Grid x:Name="CrestBox"
+                  Width="54"
+                  HorizontalAlignment="Left"
+                  RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Grid.RenderTransform>
+
+                <Path Data="M 9,0 L 54,0 L 45,40 L 0,40 Z"
+                      Stretch="None"
+                      Fill="{Binding Team.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                      d:Fill="#1F6B45" />
+                <Path Data="M 9,0 L 54,0 L 45,40 L 0,40 Z"
+                      Stretch="None">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#1AFFFFFF" Offset="0" />
+                            <GradientStop Color="#00FFFFFF" Offset="0.5" />
+                            <GradientStop Color="#33000000" Offset="1" />
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                </Path>
+                <Image Source="{Binding Team.TeamLogo}"
+                       d:Source="/Images/Club_Logos/256/custom.png"
+                       Margin="11,4" />
+            </Grid>
+
+            <!--Tiles-->
+            <Grid x:Name="Tiles"
+                  Grid.Row="1"
+                  Margin="0,2,0,0">
+                <Grid.RenderTransform>
+                    <TranslateTransform Y="0" />
+                </Grid.RenderTransform>
+                <controls:paListBox ItemContainerStyle="{StaticResource TacticsListBoxItem}"
+                                    ItemsSource="{Binding Items}"
+                                    SelectedIndex="{Binding Index}"
+                                    Focusable="False">
+                    <controls:paListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" />
+                        </ItemsPanelTemplate>
+                    </controls:paListBox.ItemsPanel>
+                </controls:paListBox>
+            </Grid>
+
+            <b:Interaction.Triggers>
+
+                <!--Intro, 0.22s: box pops, card snaps out, tiles drop in-->
+                <b:PropertyChangedTrigger Binding="{Binding RevealKey}">
+                    <b:ControlStoryboardAction>
+                        <b:ControlStoryboardAction.Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 From="0" To="1" Duration="0:0:0.06" />
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 From="0.5" To="1" Duration="0:0:0.12">
+                                    <DoubleAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 From="0.5" To="1" Duration="0:0:0.12">
+                                    <DoubleAnimation.EasingFunction>
+                                        <BackEase EasingMode="EaseOut" Amplitude="0.3" />
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderCard"
+                                                               Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-374" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="-374" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <QuinticEase EasingMode="EaseOut" />
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText"
+                                                               Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Tiles"
+                                                               Storyboard.TargetProperty="Opacity">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Tiles"
+                                                               Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="-10" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-10" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.22" Value="0">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <QuinticEase EasingMode="EaseOut" />
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </b:ControlStoryboardAction.Storyboard>
+                    </b:ControlStoryboardAction>
+                </b:PropertyChangedTrigger>
+
+                <!--Outro, 0.15s: the intro reversed (var_0_outro_time in nvm_tactics.lua)-->
+                <b:PropertyChangedTrigger Binding="{Binding HideKey}">
+                    <b:ControlStoryboardAction>
+                        <b:ControlStoryboardAction.Storyboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="Tiles"
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 To="0" Duration="0:0:0.06" />
+                                <DoubleAnimation Storyboard.TargetName="HeaderText"
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 To="0" Duration="0:0:0.05" />
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderCard"
+                                                               Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                    <EasingDoubleKeyFrame KeyTime="0:0:0.11" Value="-374">
+                                        <EasingDoubleKeyFrame.EasingFunction>
+                                            <QuinticEase EasingMode="EaseIn" />
+                                        </EasingDoubleKeyFrame.EasingFunction>
+                                    </EasingDoubleKeyFrame>
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 From="1" To="0.5" BeginTime="0:0:0.07" Duration="0:0:0.08" />
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 From="1" To="0.5" BeginTime="0:0:0.07" Duration="0:0:0.08" />
+                                <DoubleAnimation Storyboard.TargetName="CrestBox"
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 From="1" To="0" BeginTime="0:0:0.09" Duration="0:0:0.06" />
+                            </Storyboard>
+                        </b:ControlStoryboardAction.Storyboard>
+                    </b:ControlStoryboardAction>
+                </b:PropertyChangedTrigger>
+            </b:Interaction.Triggers>
+        </Grid>
 
     </controls:baResolutionScaledViewbox>
 </UserControl>
