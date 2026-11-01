@@ -56,7 +56,9 @@ isPlayTheBallInProgress and isAttackingSide and ballAvailable and amExpectedColl
 isPassReceiver => ReceivePassAi
 
 -- Collect the ball if it has a target that I will beat
-not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and ballHasTarget and shouldIntercept => InterceptPassAi
+-- attack-play-coverage: an offside defender (e.g. still lying on the wrong side of the ruck after being
+-- fended) may not intercept; stock let him and he ran free (Crichton, 2026-11-01).
+not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and ballHasTarget and shouldIntercept and not isOffside => InterceptPassAi
 
 -- Collect the ball if it's loose
 isDefendingSide and not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and not ballHasTarget  => CollectBallAi
@@ -75,6 +77,10 @@ isAttackingSide and hasBall and iveBrokenLine => LineBreakerAi
 
 --chase a grubber or chip kick
 isKickChaser => KickChaseAi
+-- attack-play-coverage: the rest of the kicking team chases too (stock: held the support formation). Its
+-- KickChaseAi copy sends the side of the field the kick lands on (the fullback for a middle kick) at the
+-- ball and the rest up as a line.
+isAttackingSide and isInPlayKick and not hasBall => KickChaseAi
 
 isLastTackle and isPrimaryDefensivePlayer and (kickerIsAimingTarget or activeKickForChargeDown) and (teamUrgencyModerate or teamUrgencyHigh) and not isPlayTheBallActive => ChargeDownAi
 isPrimaryDefensivePlayer and (kickerIsAimingTarget or activeKickForChargeDown) and (teamUrgencyModerate or teamUrgencyHigh) and not isPlayTheBallActive => ChargeDownAi --isLastTackle
@@ -82,11 +88,15 @@ isPrimaryDefensivePlayer and (kickerIsAimingTarget or activeKickForChargeDown) a
 isAttackingSide and hasBall and hasGapVeryHighQuality and not isLastTackle => HitGapAi
 isAttackingSide and ballHasTarget and not isBallTarget and willGetHit => AvoidBallAi
 
-isAttackingSide and hasBall and isPastForty and (hasGapMediumQuality or hasGapHighQuality) => HitGapAi
+-- attack-play-coverage (lives here: one owner per file): the two gap-run rules below skipped the last tackle check, so the
+-- punt play's kicker ran any gap he saw on tackle 5. Last tackle: only in the green zone.
+isAttackingSide and hasBall and isPastForty and (hasGapMediumQuality or hasGapHighQuality) and not isLastTackle => HitGapAi
+isAttackingSide and hasBall and isPastForty and (hasGapMediumQuality or hasGapHighQuality) and isInGreenZone => HitGapAi
 isAttackingSide and hasBall and isRunningPlay => OffensiveMovementWithBallAi
 isAttackingSide and isRunningPlay => OffensiveMovementAi
 
-isAttackingSide and hasBall and (hasGapLowQuality or hasGapMediumQuality or hasGapHighQuality) => HitGapAi
+isAttackingSide and hasBall and (hasGapLowQuality or hasGapMediumQuality or hasGapHighQuality) and not isLastTackle => HitGapAi
+isAttackingSide and hasBall and (hasGapLowQuality or hasGapMediumQuality or hasGapHighQuality) and isInGreenZone => HitGapAi
 isAttackingSide and hasBall => OffensiveMovementWithBallAi
 isAttackingSide and isPostPartOfScrum => PostScrumAttackingAi
 isAttackingSide and couldGetHit => PassiveCollectBallAi

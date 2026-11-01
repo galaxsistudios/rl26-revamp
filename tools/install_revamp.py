@@ -201,6 +201,8 @@ def _steps():
                     if o.get("texconv") else [])
          + [[PY, mod("nrl-led-boards", "install.py"), "lua"]]),
         ("scripts", "script bundle (all Lua mods)", always, bundle("scripts")),
+        ("plays", "attack play coverage and kick-off receive layout (compiled play sets)", always,
+         lambda o: [[PY, mod("attack-play-coverage", "install.py"), "install", "--confirm"]]),
         ("strings", "corrected stadium names (UI string tables)", always,
          lambda o: [[PY, mod("stadium-name-fixes", "install.py"), "install", "--confirm"]]),
         ("textures", "texture replacements, field sponsor markings, line numbers and special balls", always,

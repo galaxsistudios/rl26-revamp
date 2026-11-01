@@ -1,0 +1,30 @@
+
+import 'ai.flowcharts_ai.action_overrides_flowchart_ai'
+
+isSentToSinBin => SubstituteAi
+isSentOff => SubstituteAi
+isSubstitute => SubstituteAi
+
+isPlaceKickerWait => IdleAi
+
+action = PlaceBallAction => LockControls
+
+isPlaceKickerPlaceBall => PlaceBallAi
+isPlaceKickerTargeting => PlaceKickTargetAi
+
+isKickOff and isDefendingSide and (isPlaceKickWindUp or isPlaceKickKicking) and canStartRunUp and not isFullBack => KickOffRunUpAi
+isKickOff and isDefendingSide and not isFullBack => KickOffIdleAi
+
+
+isKickOff and isPlaceKickDisposed and ballAvailable and amExpectedCollector and not ballHasTarget => CollectBallAi
+isKickOff and isPlaceKickDisposed and isPlayTheBallInProgress and isDummyHalf and amExpectedCollector => CollectBallAi
+isKickOff and isPlaceKickDisposed and isAttackingSide and hasBall => OffensiveMovementWithBallAi
+isKickOff and isPlaceKickDisposed and isAttackingSide => OffensiveMovementAi
+isPenaltyGoal and isPlaceKickDisposed and not isAttackingSide => DefensiveMovementAi
+
+-- attack-play-coverage: once a kick-off is kicked isKickOff stops matching, so the kicking team fell through
+-- to IdleAi and stood still until the catch. KickOffIdleAi (this mod) chases a fresh kick-off and idles
+-- otherwise, so conversions / drop-outs through here behave as before.
+isPlaceKickDisposed and isDefendingSide and not isFullBack => KickOffIdleAi
+
+=> IdleAi

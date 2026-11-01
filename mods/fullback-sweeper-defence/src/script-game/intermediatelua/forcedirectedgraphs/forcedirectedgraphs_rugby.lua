@@ -8566,7 +8566,7 @@
 				hardLimit = "Default",
 				minExtentsY = 0,
 				minExtentsX = 0,
-				xOffset = -14,
+				xOffset = -10, -- attack-play-coverage (one owner per file): stock -14. Backs stood 12-14 m behind the ruck
 				yOffset = -34
 			},
 			{
@@ -8642,7 +8642,7 @@
 				hardLimit = "Default",
 				minExtentsY = 0,
 				minExtentsX = 0,
-				xOffset = -14,
+				xOffset = -10, -- attack-play-coverage (one owner per file): stock -14
 				yOffset = 34
 			},
 			{
