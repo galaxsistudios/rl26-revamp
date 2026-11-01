@@ -9,6 +9,24 @@
           "uniformBottom": 64005,
           "uniformSocks": 64005
         }
+      },
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64007,
+          "uniformBottom": 64007,
+          "uniformSocks": 64007
+        }
+      },
+      {
+        "name": "ANZAC 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64011,
+          "uniformBottom": 64011,
+          "uniformSocks": 64011
+        }
       }
     ]
   }

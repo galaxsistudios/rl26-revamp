@@ -1,0 +1,497 @@
+{
+ "title": "Dolphins Indigenous 2026",
+ "notes": "Artwork kit (RULES.md 16-17): the top is the user's two product photos wrapped onto the jersey (kit_photo.py), never painted. Blurry sponsors are replaced with clean stock/real logos, the photo softened under them. Kept from the photos: flags, BUANGAN + emblem, Betr, the collar. Shorts and socks are the stock Dolphins home ones until photos of the real ones are supplied.",
+ "install": {
+  "club": 134,
+  "name": "INDIGENOUS 2026",
+  "texture": "dolphins_indigenous_2026",
+  "templates": {
+   "uniformTop": 185,
+   "uniformBottom": 183,
+   "uniformSocks": 180
+  },
+  "guid": 64007,
+  "numberOffset": {
+   "offsetY": 0.3,
+   "scale": 0.36
+  }
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   28,
+   28,
+   32
+  ],
+  "white": [
+   244,
+   244,
+   244
+  ],
+  "text": [
+   24,
+   24,
+   26
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "Budget Direct",
+   "source": {
+    "file": "@/dolphins_home_2027/logos/budget_direct.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1635,
+      940
+     ],
+     "width": 479
+    }
+   ],
+   "soften": {
+    "px": 61,
+    "pad": 20
+   }
+  },
+  {
+   "name": "WAHL",
+   "source": {
+    "python": "wahl_badge"
+   },
+   "place": [
+    {
+     "at": [
+      1639,
+      605
+     ],
+     "width": 206
+    }
+   ],
+   "soften": {
+    "px": 31,
+    "pad": 14
+   }
+  },
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1383,
+    660
+   ],
+   "shield_height": 127,
+   "soften": {
+    "px": 31,
+    "pad": 10
+   }
+  },
+  {
+   "name": "Dolphins crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_dolphins_nrl_home_26_col_1",
+    "box": [
+     1768,
+     592,
+     1952,
+     737
+    ]
+   },
+   "soften": {
+    "px": 31,
+    "pad": 24
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1886,
+      673
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Classic",
+   "source": {
+    "stock": "m_top_dolphins_nrl_home_26_col_1",
+    "box": [
+     1167,
+     246,
+     1368,
+     324
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      1309,
+      325
+     ],
+     "width": 112,
+     "angle": 51
+    },
+    {
+     "at": [
+      1975,
+      322
+     ],
+     "width": 108,
+     "angle": -43
+    }
+   ],
+   "soften": {
+    "px": 41,
+    "pad": 26
+   }
+  },
+  {
+   "name": "Budget Direct (right sleeve)",
+   "source": {
+    "python": "white_patch",
+    "args": [
+     [
+      2536,
+      395,
+      2949,
+      612
+     ]
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      2755,
+      491
+     ],
+     "width": 500
+    }
+   ],
+   "soften": {
+    "fill": "main",
+    "px": 121,
+    "pad": 20,
+    "mask": {
+     "python": "old_patch",
+     "args": [
+      [
+       2290,
+       150,
+       3200,
+       720
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "name": "Budget Direct (left sleeve)",
+   "source": {
+    "python": "white_patch",
+    "args": [
+     [
+      3422,
+      395,
+      3836,
+      612
+     ]
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      3610,
+      491
+     ],
+     "width": 500
+    }
+   ],
+   "soften": {
+    "fill": "main",
+    "px": 121,
+    "pad": 20,
+    "mask": {
+     "python": "old_patch",
+     "args": [
+      [
+       3200,
+       150,
+       4096,
+       720
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "name": "Anglo American",
+   "source": {
+    "stock": "m_top_dolphins_nrl_home_26_col_1",
+    "box": [
+     236,
+     1086,
+     834,
+     1258
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      505,
+      1285
+     ],
+     "width": 697
+    }
+   ],
+   "soften": {
+    "px": 41,
+    "pad": 26
+   }
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "file": "photos/front.png",
+    "points": [
+     [
+      -0.068,
+      1.53,
+      402,
+      58
+     ],
+     [
+      0.068,
+      1.53,
+      598,
+      58
+     ],
+     [
+      -0.2,
+      1.463,
+      215,
+      140
+     ],
+     [
+      0.2,
+      1.463,
+      785,
+      140
+     ],
+     [
+      -0.293,
+      1.323,
+      156,
+      398
+     ],
+     [
+      0.293,
+      1.323,
+      844,
+      398
+     ],
+     [
+      -0.235,
+      1.262,
+      284,
+      410
+     ],
+     [
+      0.235,
+      1.262,
+      716,
+      410
+     ],
+     [
+      -0.1675,
+      1.305,
+      298,
+      392
+     ],
+     [
+      0.1675,
+      1.305,
+      702,
+      392
+     ],
+     [
+      -0.15,
+      1.1,
+      293,
+      700
+     ],
+     [
+      0.15,
+      1.1,
+      707,
+      700
+     ],
+     [
+      -0.162,
+      0.963,
+      288,
+      935
+     ],
+     [
+      0.162,
+      0.963,
+      712,
+      935
+     ],
+     [
+      0,
+      0.931,
+      500,
+      962
+     ],
+     [
+      0,
+      1.462,
+      500,
+      149
+     ],
+     [
+      -0.05,
+      1.472,
+      445,
+      149
+     ],
+     [
+      0.05,
+      1.472,
+      555,
+      149
+     ],
+     [
+      -0.085,
+      1.505,
+      406,
+      100
+     ],
+     [
+      0.085,
+      1.505,
+      594,
+      100
+     ]
+    ]
+   },
+   "back": {
+    "file": "photos/back.png",
+    "points": [
+     [
+      0,
+      1.547,
+      500,
+      50
+     ],
+     [
+      -0.078,
+      1.525,
+      405,
+      54
+     ],
+     [
+      0.078,
+      1.525,
+      595,
+      54
+     ],
+     [
+      -0.2,
+      1.472,
+      205,
+      150
+     ],
+     [
+      0.2,
+      1.472,
+      795,
+      150
+     ],
+     [
+      -0.293,
+      1.329,
+      155,
+      402
+     ],
+     [
+      0.293,
+      1.329,
+      845,
+      402
+     ],
+     [
+      -0.227,
+      1.265,
+      284,
+      412
+     ],
+     [
+      0.227,
+      1.265,
+      716,
+      412
+     ],
+     [
+      -0.173,
+      1.307,
+      300,
+      392
+     ],
+     [
+      0.173,
+      1.307,
+      700,
+      392
+     ],
+     [
+      -0.143,
+      1.1,
+      293,
+      717
+     ],
+     [
+      0.143,
+      1.1,
+      707,
+      717
+     ],
+     [
+      -0.161,
+      0.972,
+      288,
+      940
+     ],
+     [
+      0.161,
+      0.972,
+      712,
+      940
+     ],
+     [
+      0,
+      0.937,
+      500,
+      965
+     ]
+    ]
+   }
+  }
+ }
+}

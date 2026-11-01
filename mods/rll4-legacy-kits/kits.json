@@ -2360,6 +2360,22 @@
    }
   },
   {
+   "guid": 64007,
+   "custom": "dolphins_indigenous_2026",
+   "club": 134,
+   "name": "INDIGENOUS 2026",
+   "texture": "dolphins_indigenous_2026",
+   "templates": {
+    "uniformTop": 185,
+    "uniformBottom": 183,
+    "uniformSocks": 180
+   },
+   "numberOffset": {
+    "offsetY": 0.3,
+    "scale": 0.36
+   }
+  },
+  {
    "guid": 60324,
    "src": "2022/broncos-away-22.dds",
    "club": 118,
@@ -3018,6 +3034,18 @@
     "uniformSocks": 280
    },
    "numberFrom": 280
+  },
+  {
+   "guid": 64011,
+   "custom": "dolphins_anzac_2026",
+   "club": 134,
+   "name": "ANZAC 2026",
+   "texture": "dolphins_anzac_2026",
+   "templates": {
+    "uniformTop": 185,
+    "uniformBottom": 183,
+    "uniformSocks": 180
+   }
   },
   {
    "guid": 64012,

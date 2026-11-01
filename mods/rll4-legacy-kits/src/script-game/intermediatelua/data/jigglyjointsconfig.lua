@@ -566,6 +566,7 @@ do
 		{ 64004, "cowboys_alternate_2026", {  }, { top = 282, bottom = 280, socks = 280 } }, -- ALTERNATE, club 120
 		{ 64005, "dolphins_home_2027", { "Red" }, { top = 7020, bottom = 7020, socks = 7020, number = 185 } }, -- HOME 2027, club 134
 		{ 64006, "bulldogs_alternate_2026", {  }, { top = 145, bottom = 143, socks = 143 } }, -- ALTERNATE, club 119
+		{ 64007, "dolphins_indigenous_2026", {  }, { top = 185, bottom = 183, socks = 180, numberOffset = { offsetY = 0.3, scale = 0.36 } } }, -- INDIGENOUS 2026, club 134
 		{ 60324, "broncos_rll4_away_2022", { "White" } }, -- AWAY 2022, club 118
 		{ 60325, "broncos_rll4_heritage_2022", { "Orange", "White" } }, -- HERITAGE 2022, club 118
 		{ 60326, "broncos_rll4_home_2022", {  } }, -- HOME 2022, club 118
@@ -658,6 +659,7 @@ do
 		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 		{ 64009, "bulldogs_indigenous_2026", { "Blue" }, { top = 145, bottom = 143, socks = 143 } }, -- INDIGENOUS 2026, club 119
 		{ 64010, "cowboys_anzac_2026", {  }, { top = 105, bottom = 280, socks = 280, number = 280 } }, -- ANZAC 2026, club 120
+		{ 64011, "dolphins_anzac_2026", { "White" }, { top = 185, bottom = 183, socks = 180 } }, -- ANZAC 2026, club 134
 		{ 64012, "dragons_indigenous_2026", { "Orange", "Red" }, { top = 364, bottom = 363, socks = 363 } }, -- INDIGENOUS 2026, club 121
 		{ 64013, "eels_anzac_2026", {  }, { top = 105, bottom = 300, socks = 300, number = 304 } }, -- ANZAC 2026, club 122
 		{ 64014, "knights_indigenous_2026", { "Orange", "Red" }, { top = 265, bottom = 265, socks = 264 } }, -- INDIGENOUS 2026, club 123
