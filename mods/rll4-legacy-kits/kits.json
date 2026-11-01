@@ -2999,6 +2999,20 @@
    "texture": "rabbitohs_rll4_special_2023"
   },
   {
+   "guid": 60428,
+   "src": "2023/qld-home-23.dds",
+   "club": 18,
+   "name": "HOME 2023",
+   "texture": "qld_rll4_home_2023"
+  },
+  {
+   "guid": 60429,
+   "src": "2023/allstars-home-23.dds",
+   "club": 105,
+   "name": "ALL STARS 2023",
+   "texture": "allstars_rll4_home_2023"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,

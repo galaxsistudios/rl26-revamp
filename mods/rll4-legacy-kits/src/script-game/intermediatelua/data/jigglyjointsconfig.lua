@@ -656,6 +656,8 @@ do
 		{ 60424, "warriors_rll4_nines_2020", {  } }, -- NINES 2020, club 133
 		{ 60425, "warriors_rll4_wil_2023", { "Yellow" } }, -- WOMEN IN LEAGUE 2023, club 133
 		{ 60427, "rabbitohs_rll4_special_2023", { "Red", "Green", "White" } }, -- SPECIAL 2023, club 125
+		{ 60428, "qld_rll4_home_2023", {  } }, -- HOME 2023, club 18
+		{ 60429, "allstars_rll4_home_2023", { "White" } }, -- ALL STARS 2023, club 105
 		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 		{ 64009, "bulldogs_indigenous_2026", { "Blue" }, { top = 145, bottom = 143, socks = 143 } }, -- INDIGENOUS 2026, club 119
 		{ 64010, "cowboys_anzac_2026", {  }, { top = 105, bottom = 280, socks = 280, number = 280 } }, -- ANZAC 2026, club 120
@@ -753,6 +755,7 @@ KitLibrary = {
 		{ name = "HOME 2021", copyOf = "HOME", set = { uniformTop = 60079, uniformBottom = 60079, uniformSocks = 60079 } },
 		{ name = "HOME 2022", copyOf = "HOME", set = { uniformTop = 60080, uniformBottom = 60080, uniformSocks = 60080 } },
 		{ name = "ORIGIN 2017", copyOf = "HOME", set = { uniformTop = 60299, uniformBottom = 60299, uniformSocks = 60299 } },
+		{ name = "HOME 2023", copyOf = "HOME", set = { uniformTop = 60428, uniformBottom = 60428, uniformSocks = 60428 } },
 	},
 	[19] = {
 		{ name = "HOME 2021", copyOf = "HOME", set = { uniformTop = 60075, uniformBottom = 60075, uniformSocks = 60075, numberColour1_r = 230, numberColour1_g = 230, numberColour1_b = 230 } },
@@ -802,6 +805,7 @@ KitLibrary = {
 	},
 	[105] = {
 		{ name = "ALL STARS 2017", copyOf = "HOME", set = { uniformTop = 60297, uniformBottom = 60297, uniformSocks = 60297 } },
+		{ name = "ALL STARS 2023", copyOf = "HOME", set = { uniformTop = 60429, uniformBottom = 60429, uniformSocks = 60429, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
 	},
 	[118] = {
 		{ name = "HOME 2024", copyOf = "AWAY", set = { uniformTop = 60001, uniformBottom = 60001, uniformSocks = 60001 } },
