@@ -1,0 +1,11 @@
+import 'ai.flowcharts_human.action_overrides_flowchart_human'
+
+not isPlayTheBallInProgress and ballAvailable and amExpectedCollector and isBallTarget and not isPassReceiver => CollectBallHuman
+isPassReceiver => ReceivePassHuman
+
+-- scrum-feed-control: a player outside the scrum that a human switches to can move (the
+-- offside line is in rules/scrum/scrum_setup_rulestate.lua).
+isAttackingSide => AttackingFreeRoamHuman
+isDefendingSide => DefendingFreeRoamHuman
+
+=> IdleHuman

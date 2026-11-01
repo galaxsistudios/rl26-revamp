@@ -255,7 +255,19 @@ function playTheBallRuleStateRequestFactory(arg_2_0, arg_2_1, arg_2_2, arg_2_3, 
 			guid = arg_2_2:alloc()
 		}
 
-		var_2_11 = class.instantiate("PlayTheBallSetupRuleState", var_2_21)
+		-- scrum-feed-control TEST (ScrumTestEveryTackle in game/scrum/scrum_helper.lua): the
+		-- tackle becomes a scrum. Not when play stops for an injury.
+		local var_2_scrum = rawget(_G, "ScrumControlState")
+
+		if not var_2_9 and var_2_scrum and var_2_scrum.testTackleScrum then
+			var_2_11 = var_2_scrum.testTackleScrum(var_2_2, var_2_0.playTheBallPosition or var_2_14, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+
+			if var_2_11 then
+				arg_2_7:add(playtheballentity_request.ClearPlayTheBallEntityRequest({}))
+			end
+		end
+
+		var_2_11 = var_2_11 or class.instantiate("PlayTheBallSetupRuleState", var_2_21)
 	end
 
 	arg_2_7:add(resetsixagaininfringement_request.ResetSixAgainInfringementRequest())

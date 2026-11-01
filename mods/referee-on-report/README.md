@@ -90,3 +90,9 @@ works with it in two ways:
   send-off cutscene covers it.
 
 Test switch: `OnReportTestEveryTackleHigh` in `rules/tackle/tackle_detect.lua` (false for play).
+
+## Also in tackle_detect.lua
+
+scrum-feed-control: a tackler flagged offside at a scrum (`_G.ScrumControlState.isScrumOffside`)
+takes the stock offside penalty path, and `onTackleCompleted` clears the scrum flags. Without
+scrum-feed-control this does nothing.

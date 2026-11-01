@@ -88,3 +88,13 @@ name font will print in Joyride / Maison instead.
 
 `HalfAbbr` is mapped `H1`/`1ST` -> `1ST HALF` and `H2`/`2ND` -> `2ND HALF` in
 XAML; anything else (golden point, extra time) shows as-is.
+
+## Scrum prompt (scrum-feed-control)
+
+The penalty bar doubles as the scrum prompt, and it carries the scrum clock: while
+`NVMPenaltyHud.IsScrumPrompt` is set, `papenaltycontrol.xaml` shows `ScrumTitle` ("SCRUM  4", red on
+`ScrumUrgent`) and the three option slots show `ScrumOpt1-3Glyph/Text` (hidden when
+`ScrumOpt<n>Visible` is false). `PenaltySelectHud.showScrumPrompt` / `setScrumTitle` /
+`hideScrumPrompt` drive it. `hide()` (the HUD feature stack's disable) is ignored while a scrum
+prompt is up, and `setup()` switches back to the penalty labels. The scoreboard is untouched. See
+mods/scrum-feed-control.

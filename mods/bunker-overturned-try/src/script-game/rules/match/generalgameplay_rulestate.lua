@@ -657,7 +657,25 @@ function GeneralGameplayRuleState.addSolidRules(arg_6_0, arg_6_1, arg_6_2, arg_6
 			local var_20_19 = var_20_18 == nil or var_20_18 == var_20_8
 
 			if var_20_11 == penaltytypes.infringementTypes.OffSide then
-				if var_20_16 or var_20_19 then
+				-- scrum-feed-control: offside off a scrum is a full penalty anywhere on the field.
+				if var_20_16 or var_20_19 or arg_20_8.scrumOffside then
+					-- ... and the side awarded it may pack the scrum again instead.
+					local var_20_scrum = arg_20_8.scrumOffside and rawget(_G, "ScrumControlState")
+
+					if var_20_scrum and var_20_scrum.offerRepack then
+						-- Offside again off the repacked scrum: 2nd in a row sin bins the tackler,
+						-- 3rd sends him off and there's no repack.
+						local var_20_offence = var_20_scrum.scrumOffenceNumber(var_20_6)
+
+						if var_20_offence >= 2 then
+							var_20_scrum.scrumSinBin(arg_20_1, arg_20_3, arg_20_4, arg_20_5, var_20_8, arg_20_6, arg_20_7, var_20_offence >= 3)
+						end
+
+						if var_20_offence < 3 then
+							var_20_scrum.offerRepack(var_20_9, var_20_offence)
+						end
+					end
+
 					var_20_3 = penalty.generatePenaltyAwardedState(arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, var_20_17)
 				else
 					local var_20_20 = arg_20_4:getMatchProgressionEntity()

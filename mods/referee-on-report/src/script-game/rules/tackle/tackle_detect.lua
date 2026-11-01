@@ -21,6 +21,14 @@ import("design.tackle.tacklequery_cconfig")
 -- on-report flow can be tested on demand. false for normal play.
 local OnReportTestEveryTackleHigh = false
 
+-- scrum-feed-control: a player who went past his line at a scrum is offside for the next tackle
+-- (mods/scrum-feed-control, rules/scrum/scrum_setup_rulestate.lua). False without that mod.
+local function var_0_scrumOffside(arg_id, arg_time)
+	local var_state = rawget(_G, "ScrumControlState")
+
+	return var_state ~= nil and var_state.isScrumOffside ~= nil and var_state.isScrumOffside(arg_id, arg_time)
+end
+
 Class("TackleDetect", function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 	arg_1_0.penaltyRequestFactory = arg_1_1
 	arg_1_0.tackledInOwnGoalRequestFactory = arg_1_2
@@ -334,6 +342,11 @@ function TackleDetect.onTackleContact(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 
 		local var_4_11 = var_4_1.tacklerIds[1]
 		local var_4_12 = arg_4_8:getGameObject(var_4_11, playertype.TypeId).offsideInfo.flaggedOffside
+		-- scrum-feed-control: offside off a scrum is always a full penalty (scrumOffside), never
+		-- a six again (generalgameplay_rulestate.lua).
+		local var_4_scrumOffside = not var_4_12 and var_0_scrumOffside(var_4_11, var_4_1.startTime)
+
+		var_4_12 = var_4_12 or var_4_scrumOffside
 		local var_4_13 = arg_4_8:getGameObject(var_4_1.tackledId, playertype.TypeId).pos
 		local var_4_14 = var_4_2:getOwnerId(var_4_1.startTime) or 0
 		local var_4_15 = false
@@ -371,7 +384,8 @@ function TackleDetect.onTackleContact(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_
 					penaltyPosition = var_4_13,
 					penaltyType = var_4_23.OffSide,
 					refereeSignalType = native.EUmpireSignalTypes.Offside,
-					tackledPlayerHasBall = var_4_21
+					tackledPlayerHasBall = var_4_21,
+					scrumOffside = var_4_scrumOffside or nil
 				}
 			elseif var_4_1.isHighTackle then
 				var_4_24 = {
@@ -428,7 +442,7 @@ function TackleDetect.onTackleCommitted(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_
 
 		local var_5_3 = var_5_1.tacklerIds[1]
 		local var_5_4 = arg_5_8:getGameObject(var_5_3, playertype.TypeId)
-		local var_5_5 = var_5_4.offsideInfo.flaggedOffside
+		local var_5_5 = var_5_4.offsideInfo.flaggedOffside or var_0_scrumOffside(var_5_3, arg_5_10)
 		local var_5_6 = arg_5_7:getBallEntity():getOwnerId(arg_5_10)
 		local var_5_7
 
@@ -522,6 +536,13 @@ function TackleDetect.onTackleCompleted(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_
 	local var_6_0 = arg_6_7:getMatchProgressionEntity().tackleCount
 
 	formatPrintT("[TackleDetect] - onTackleCompleted, tackle count: %d", var_6_0)
+
+	-- scrum-feed-control: the first completed tackle after a scrum ends its offside flags.
+	local var_6_scrum = rawget(_G, "ScrumControlState")
+
+	if var_6_scrum and var_6_scrum.clearScrumOffside then
+		var_6_scrum.clearScrumOffside()
+	end
 
 	local var_6_1 = arg_6_1.guid
 	local var_6_2 = arg_6_0:getTackleInfo(var_6_1, arg_6_7, arg_6_4)
@@ -698,7 +719,8 @@ function TackleDetect.onPenaltyTackleOutcome(arg_10_0, arg_10_1, arg_10_2, arg_1
 		defensiveOffside = arg_10_11.defensiveOffside,
 		penaltyType = arg_10_11.penaltyType,
 		refereeSignalType = arg_10_11.refereeSignalType,
-		tackledPlayerHasBall = arg_10_11.tackledPlayerHasBall
+		tackledPlayerHasBall = arg_10_11.tackledPlayerHasBall,
+		scrumOffside = arg_10_11.scrumOffside
 	}
 	local var_10_4 = arg_10_0.penaltyRequestFactory(arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10, var_10_3)
 
