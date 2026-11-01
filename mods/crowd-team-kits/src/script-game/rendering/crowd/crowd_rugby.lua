@@ -46,6 +46,11 @@ local function var_0_18(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	-- crowd-team-kits: crowd_item_config reads the node file to size the
 	-- random Souths guy's odds to the ground
 	rawset(_G, "crowdTeamKitsNodeFile", arg_4_2)
+	-- crowd-team-kits: the playing teams' crowd tag ids, for per-match items (crowd-flags)
+	rawset(_G, "crowdTeamKitsTeams", {
+		home = arg_4_3.home.academyId,
+		away = arg_4_3.away.academyId
+	})
 
 	local var_4_5 = var_0_17(arg_4_3)
 	local var_4_6 = var_4_4.crowdQuality

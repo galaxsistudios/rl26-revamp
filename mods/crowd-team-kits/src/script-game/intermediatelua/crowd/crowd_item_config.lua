@@ -625,3 +625,15 @@ if #southsJerseys > 0 then
 
 	log("%s: %d nodes, Souths guy bias %d/%d x %d/%d slots -> %.1f expected at a full ground (%s)", tostring(nodeFile), nodes, bias, BIAS_TOTAL, slots, COLS_CAPACITY, maleFans * bias / BIAS_TOTAL * slots / COLS_CAPACITY, table.concat(cols, " ", 1, slots))
 end
+
+-- per-match hooks from other crowd mods (crowd-flags mixes both teams' flags);
+-- crowd_rugby.lua publishes the playing teams just before the crowd loads
+local crowdFlagsPerMatch = rawget(_G, "crowdFlagsPerMatch")
+
+if crowdFlagsPerMatch then
+	local ok, err = pcall(crowdFlagsPerMatch, items, rawget(_G, "crowdTeamKitsTeams"), log)
+
+	if not ok then
+		log("crowdFlagsPerMatch failed: %s", tostring(err))
+	end
+end
