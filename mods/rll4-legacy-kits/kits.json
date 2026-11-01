@@ -2913,6 +2913,27 @@
    "texture": "tigers_rll4_nines_2020"
   },
   {
+   "guid": 60418,
+   "src": "2023/titans-away-23.dds",
+   "club": 132,
+   "name": "AWAY 2023",
+   "texture": "titans_rll4_away_2023"
+  },
+  {
+   "guid": 60419,
+   "src": "2023/titans-home-23.dds",
+   "club": 132,
+   "name": "HOME 2023",
+   "texture": "titans_rll4_home_2023"
+  },
+  {
+   "guid": 60421,
+   "src": "2023/titans-nines-20.dds",
+   "club": 132,
+   "name": "NINES 2020",
+   "texture": "titans_rll4_nines_2020"
+  },
+  {
    "guid": 60427,
    "src": "2023/rabbitohs-special-23.dds",
    "club": 125,
@@ -3104,6 +3125,19 @@
     "uniformSocks": 422
    },
    "numberFrom": 424
+  },
+  {
+   "guid": 64024,
+   "custom": "titans_indigenous_2026",
+   "club": 132,
+   "name": "INDIGENOUS 2026",
+   "texture": "titans_indigenous_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 201,
+    "uniformSocks": 202
+   },
+   "numberFrom": 205
   },
   {
    "guid": 64026,

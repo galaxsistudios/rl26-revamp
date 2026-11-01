@@ -645,6 +645,9 @@ do
 		{ 60415, "tigers_rll4_home_2023", {  } }, -- HOME 2023, club 131
 		{ 60416, "tigers_rll4_indigenous_2024", { "Orange" } }, -- INDIGENOUS 2024, club 131
 		{ 60417, "tigers_rll4_nines_2020", { "White" } }, -- NINES 2020, club 131
+		{ 60418, "titans_rll4_away_2023", { "White" } }, -- AWAY 2023, club 132
+		{ 60419, "titans_rll4_home_2023", { "Blue" } }, -- HOME 2023, club 132
+		{ 60421, "titans_rll4_nines_2020", { "Blue", "Orange" } }, -- NINES 2020, club 132
 		{ 60427, "rabbitohs_rll4_special_2023", { "Red", "Green", "White" } }, -- SPECIAL 2023, club 125
 		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 		{ 64009, "bulldogs_indigenous_2026", { "Blue" }, { top = 145, bottom = 143, socks = 143 } }, -- INDIGENOUS 2026, club 119
@@ -661,6 +664,7 @@ do
 		{ 64021, "storm_anzac_2026", {  }, { top = 386, bottom = 240, socks = 243, number = 245 } }, -- ANZAC 2026, club 130
 		{ 64022, "storm_indigenous_2026", {  }, { top = 245, bottom = 240, socks = 243 } }, -- INDIGENOUS 2026, club 130
 		{ 64023, "tigers_indigenous_2026", {  }, { top = 105, bottom = 422, socks = 422, number = 424 } }, -- INDIGENOUS 2026, club 131
+		{ 64024, "titans_indigenous_2026", {  }, { top = 105, bottom = 201, socks = 202, number = 205 } }, -- INDIGENOUS 2026, club 132
 		{ 64026, "raiders_alternate_2026", { "White" }, { top = 125, bottom = 123, socks = 123 } }, -- ALTERNATE 2026, club 126
 		{ 64027, "rabbitohs_alternate_2026", { "Orange", "Red", "White" }, { top = 345, bottom = 343, socks = 342 } }, -- ALTERNATE 2026, club 125
 		{ 64028, "tigers_alternate_2026", { "Orange" }, { top = 424, bottom = 422, socks = 422 } }, -- ALTERNATE 2026, club 131
@@ -1074,6 +1078,9 @@ KitLibrary = {
 		{ name = "HOME 2017", copyOf = "HOME", set = { uniformTop = 60249, uniformBottom = 60249, uniformSocks = 60249 } },
 		{ name = "INDIGENOUS 2017", copyOf = "HOME", set = { uniformTop = 60250, uniformBottom = 60250, uniformSocks = 60250, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
 		{ name = "NINES 2017", copyOf = "HOME", set = { uniformTop = 60251, uniformBottom = 60251, uniformSocks = 60251, numberColour1_r = 230, numberColour1_g = 230, numberColour1_b = 230 } },
+		{ name = "AWAY 2023", copyOf = "HOME", set = { uniformTop = 60418, uniformBottom = 60418, uniformSocks = 60418, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
+		{ name = "HOME 2023", copyOf = "HOME", set = { uniformTop = 60419, uniformBottom = 60419, uniformSocks = 60419 } },
+		{ name = "NINES 2020", copyOf = "HOME", set = { uniformTop = 60421, uniformBottom = 60421, uniformSocks = 60421, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
 	},
 	[133] = {
 		{ name = "HOME 2024", copyOf = "HOME", set = { uniformTop = 60052, uniformBottom = 60052, uniformSocks = 60052, numberColour1_r = 230, numberColour1_g = 230, numberColour1_b = 230 } },
