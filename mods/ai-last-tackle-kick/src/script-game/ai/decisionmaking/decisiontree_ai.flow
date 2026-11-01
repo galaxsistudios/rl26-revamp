@@ -1,0 +1,103 @@
+
+isTrainingActive => None
+
+hasBall and inGoal and inAttackingHalf => TryAttempt
+
+-- ai-last-tackle-kick: an AI ball carrier (not the dummy half) within ~5 m of the line goes for it: dive when in
+-- range (stock dive rules treat isVeryNearOppositionTryLine as range; withinDiveDistance is NOT a flowchart
+-- condition and crashed the game at boot), ahead of any planned pass (Crichton passed at the line).
+hasBall and not isHumanOnSide and not isDummyHalf and isVeryNearOppositionTryLine => DiveTryAttempt
+
+hasBall and hasTeamOrderPass and isHumanOnSide and quickPassQualityVeryHigh => PassQuick
+hasBall and hasTeamOrderPass and not isVeryNearOppositionTryLine and quickPassQualityVeryHigh => PassQuick
+hasBall and hasTeamOrderPass and isHumanOnSide and flatPassQualityVeryHigh => PassFlat
+hasBall and hasTeamOrderPass and not isVeryNearOppositionTryLine and flatPassQualityVeryHigh => PassFlat
+hasBall and hasTeamOrderPass and isHumanOnSide and deepPassQualityVeryHigh => PassDeep
+hasBall and hasTeamOrderPass and not isVeryNearOppositionTryLine and deepPassQualityVeryHigh => PassDeep
+hasBall and hasTeamOrderPass and isHumanOnSide and backPassQualityVeryHigh => PassBack
+hasBall and hasTeamOrderPass and not isVeryNearOppositionTryLine and backPassQualityVeryHigh => PassBack
+
+hasBall and hasTeamOrderKick and hasGrubberKick => KickGrubber
+hasBall and hasTeamOrderKick and hasChipKick => KickChip
+hasBall and hasTeamOrderKick and hasBombKick => KickBomb
+hasBall and hasTeamOrderKick and hasPuntKick => KickPunt
+hasBall and hasTeamOrderKick and hasFieldGoalKick => KickFieldGoal
+
+isHumanOnSide and not isBeAPro => None
+
+hasBall and isVeryNearOppositionTryLine and iveBrokenLine => DiveTryAttempt
+hasBall and isVeryNearOppositionTryLine and (hasGapHighQuality or hasGapVeryHighQuality or passedGaps or iveBrokenLine) => DiveTryAttempt
+
+--heads up kicks
+--field goal
+hasBall and not hasSideKickedThisTackle and isLastTenMinutesOfMatch and scoresAreTied and (hasFieldGoalHighQuality or hasFieldGoalVeryHighQuality) => KickFieldGoal
+hasBall and not hasSideKickedThisTackle and goldenPointActive and (hasFieldGoalHighQuality or hasFieldGoalVeryHighQuality) => KickFieldGoal
+hasBall and not hasSideKickedThisTackle and periodCanEndAtNextStoppage and scoresAreTied and (hasFieldGoalHighQuality or hasFieldGoalVeryHighQuality) => KickFieldGoal
+--grubber
+hasBall and not fullBackLineBroken and not hasSideKickedThisTackle and not hasGapHighQuality and not hasGapVeryHighQuality and not passedGaps and isLastTackle and not isDummyHalf and isFarOppositionTryLine and not isNearOppositionTryLine and not isVeryNearOppositionTryLine and (hasGrubberHighQuality or hasGrubberVeryHighQuality) => KickGrubber
+hasBall and not fullBackLineBroken and not hasSideKickedThisTackle and not hasGapHighQuality and not hasGapVeryHighQuality and not passedGaps and isSecondLastTackle and isFarOppositionTryLine and not isVeryNearOppositionTryLine and hasGrubberVeryHighQuality => KickGrubber
+hasBall and not fullBackLineBroken and not hasSideKickedThisTackle and not hasGapHighQuality and not hasGapVeryHighQuality and not passedGaps and periodCanEndAtNextStoppage and isFarOppositionTryLine and not isVeryNearOppositionTryLine and hasGrubberVeryHighQuality => KickGrubber
+--chip
+hasBall and (isFullBack or isCentre or isHalf or isFiveEigth) and isInYellowZone and not hasSideKickedThisTackle and isLastTackle and isFarOppositionTryLine and (hasChipHighQuality or hasChipVeryHighQuality) => KickChip
+hasBall and (isFullBack or isCentre or isHalf or isFiveEigth) and isInYellowZone and not hasSideKickedThisTackle and isSecondLastTackle and isFarOppositionTryLine and hasChipVeryHighQuality => KickChip
+hasBall and (isFullBack or isCentre or isHalf or isFiveEigth) and isInYellowZone and not hasSideKickedThisTackle and periodCanEndAtNextStoppage and isFarOppositionTryLine and hasChipVeryHighQuality => KickChip
+
+--kicks from plays
+hasBall and hasGrubberKick and (isCoveredLowStrength or isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) => KickGrubber
+hasBall and hasChipKick and (isCoveredLowStrength or isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) => KickChip
+hasBall and hasBombKick => KickBomb
+hasBall and hasPuntKick and shouldKickFortyTwenty => KickFortyTwenty
+hasBall and hasPuntKick and shouldKickTwentyForty => KickTwentyForty
+hasBall and hasPuntKick and shouldKickFortyThirty => KickFortyThirty
+hasBall and hasPuntKick and shouldKickTwentyFifty => KickTwentyFifty
+hasBall and hasPuntKick => KickPunt
+
+-- ai-last-tackle-kick: safety net when no set play gave a kick. A half, five-eighth or fullback holding the ball on the last tackle outside the attacking 25 (green zone) kicks long instead of running it.
+hasBall and isLastTackle and not isFirstTackle and not hasSideKickedThisTackle and not isDummyHalf and not isInGreenZone and (isHalf or isFiveEigth or isFullBack) => KickPunt
+
+-- Dive dive dive!
+-- The dive cone is only active if a tackle isn't active, you are not going to dive into the try zone, if not banned, and finally 
+-- if you are within a cone and distance of the ball carrier.
+not isAttackingSide and isFullBack and lastDitchDiveCone and not isFlaggedOffside and not isPlayTheBallActive and isNotInTryArea and fullBackLineBroken => DivingTackle
+not isAttackingSide and not isFullBack and reasonableDiveCone and not isFlaggedOffside and not isPlayTheBallActive and isNotInTryArea and (fullBackLineBroken or ballCarrierWillGainMetres or ballCarrierInterceptionInTryArea) and isOutOfCharge => DivingTackle
+not isAttackingSide and not isFullBack and reasonableDiveCone and not isFlaggedOffside and not isPlayTheBallActive and isNotInTryArea and (fullBackLineBroken or ballCarrierWillGainMetres or ballCarrierInterceptionInTryArea) and isSomewhatNearOwnTryLine => DivingTackle
+
+-- ai-last-tackle-kick (lives here: one owner per file): disabled for reduce-ai-dummy-half-scoots. This mechanic let the
+-- dummy half scoot straight from the pickup, bypassing master_flowchart's HitGapAi rule and its situational
+-- chance / veto (no HITGAP line in 38 play-the-balls while scoots still happened, 2026-11-01).
+-- isPlayTheBallInProgress and not isNines and (isDummyHalf or isPostDummyHalf) and shouldScoot => Scoot
+
+hasBall and isPartOfPlay and quickPassQualityVeryHigh and not isVeryNearOppositionTryLine and not hasGapVeryHighQuality and not passedGaps => PassQuick
+hasBall and isPartOfPlay and flatPassQualityVeryHigh and not isVeryNearOppositionTryLine and not hasGapVeryHighQuality and not passedGaps => PassFlat
+hasBall and isPartOfPlay and deepPassQualityVeryHigh and not isVeryNearOppositionTryLine and not hasGapVeryHighQuality and not passedGaps => PassDeep
+
+hasBall and not isFrontRow and not isSecondRow and passCandidateOverrideActive and not isVeryNearOppositionTryLine and isMechanicPassValid and (quickPassQualityHigh or quickPassQualityVeryHigh) => PassQuick
+hasBall and not isFrontRow and not isSecondRow and passCandidateOverrideActive and not isVeryNearOppositionTryLine and isMechanicPassValid and (flatPassQualityHigh or flatPassQualityVeryHigh) => PassFlat
+hasBall and not isFrontRow and not isSecondRow and passCandidateOverrideActive and not isVeryNearOppositionTryLine and isMechanicPassValid and (deepPassQualityHigh or deepPassQualityVeryHigh) => PassDeep
+
+not isPlayTheBallActive and (hasBall or collectWithinLatency) and (isCoveredMediumStrength or isCoveredHighStrength) and not isVeryNearOppositionTryLine and isMechanicPassValid and not isFirstTackle and not isLastTackle and (quickPassQualityHigh or quickPassQualityVeryHigh) => PassQuick
+
+(hasBall or collectWithinLatency) and isDummyHalf and quickPassQualityVeryHigh => PassQuick
+(hasBall or collectWithinLatency) and isDummyHalf and flatPassQualityVeryHigh => PassFlat
+(hasBall or collectWithinLatency) and isDummyHalf and deepPassQualityVeryHigh => PassDeep
+
+isAttackingSide and not offloadCooldownActive and hasBall and not isInRedZone and isInvolvedInTackle and (isMiddleForward or isFrontRow or isSecondRow) and (offloadQualityHigh or offloadQualityVeryHigh) and not isFirstTackle => Offload
+isAttackingSide and not offloadCooldownActive and hasBall and not isInRedZone and isInvolvedInTackle and (isMiddleForward or isFrontRow or isSecondRow) and (offloadQualityHigh or offloadQualityVeryHigh) and not isFirstTackle => Offload
+isAttackingSide and not offloadCooldownActive and hasBall and not isInRedZone and isInvolvedInTackle and (isHalf or isWinger or isBack) and offloadQualityVeryHigh and not isFirstTackle => Offload
+
+isAttackingSide and (isHalf or customDiffNoFakePassRoleCheck) and (isCoveredHighStrength or isCoveredVeryHighStrength) and isMechanicFakePassValid => FakePass
+isAttackingSide and (isWinger or customDiffNoSideStepRoleCheck) and (isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) and isMechanicSideStepValid => SideStep
+isAttackingSide and (isBack or customDiffNoSideStepRoleCheck) and (isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) and isMechanicSideStepValid => SideStep
+isAttackingSide and (isFrontRow or isSecondRow or customDiffNoFendRoleCheck) and (isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) and isMechanicFendValid => Fend
+isAttackingSide and (isFrontRow or customDiffNoHitUpRoleCheck) and (isCoveredMediumStrength or isCoveredHighStrength or isCoveredVeryHighStrength) and isMechanicHitUpValid => HitUp
+isAttackingSide and isMechanicDriveTackleValid => DriveTackle
+
+isDefendingSide and (isFrontRow or customDiffNoSideStepRoleCheck) and not isVeryNearOppositionTryLine and isMechanicBigHitValid => BigHit
+--isDefendingSide and isFrontRow and isMechanicDragValid => Drag
+--isDefendingSide and isSecondRow and isMechanicDragValid => Drag
+
+-- This logic is done in the mixin, as by this point you never really have a two man tackle.
+--isDefendingSide and (isInvolvedInTwoManTackle or isInvolvedInThreeManTackle) and isMechanicDragValid => Drag
+isDefendingSide and isMechanicDragValid => Drag
+
+=> None
