@@ -49,6 +49,14 @@ python tools\add_sound_bank.py add --name sfx_ref_field_goal --audio resources\r
 TRY decision, when the event carries `bunkerBroadcast`. That is as the TRY text lands. See
 [bunker-broadcast-decision](../bunker-broadcast-decision/).
 
+## Handover whistle
+
+Stock handover cameos (sixth-tackle handover, last-tackle kick out on the full) have no whistle.
+`onRefereeSignalEvent` now plays `HandOverWhistle` (`Whistle_Out_Of_Play`, the short touch whistle)
+when the `HandOver` signal starts. It uses `playEvent`, not `queueEvent`: queued referee events
+share one tag and wait for each other, so a queued whistle would sit behind the "Handover" call
+that `HandOverEvent` queues just before the cameo.
+
 ## Install
 
 Script mod, entry 39959: `python tools\build.py full --confirm` (game closed).

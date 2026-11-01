@@ -21,6 +21,9 @@ local FieldGoalCallDelay = 0.8
 -- bunker-broadcast-decision: seconds from VideoRefereeDecisionEvent to the try whistle.
 local BunkerTryWhistleDelay = 3.25
 
+-- Short whistle blown at the start of a handover cameo (the touch whistle is the short one).
+local HandOverWhistle = "Whistle_Out_Of_Play"
+
 Class("SoundListenerReferee", function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
 	arg_1_0.soundSystem = arg_1_1
 	arg_1_0.soundManager = arg_1_5
@@ -320,6 +323,20 @@ function SoundListenerReferee.onRefereeSignalEvent(arg_24_0, arg_24_1, arg_24_2,
 	elseif var_24_3 == refereesignaltypes.VideoReferee then
 		var_24_0 = "Whistle_Videoref"
 		var_24_1 = "sfxRefVideoRefCheck"
+	elseif var_24_3 == refereesignaltypes.HandOver then
+		-- Handover cameos are silent in stock. Play (not queue) a short whistle as the cameo
+		-- starts: a queued one would wait behind HandOverEvent's "Handover" call (same tag).
+		local var_24_4 = {
+			soundObject = arg_24_0.soundObject,
+			queueTag = var_0_4
+		}
+
+		if arg_24_0.refereeObject then
+			var_24_4.worldPosition = arg_24_0.refereeObject.pos3
+			var_24_4.worldDirection = arg_24_0.refereeObject.facing:tovec3()
+		end
+
+		arg_24_0.soundSystem:playEvent(HandOverWhistle, var_24_4, var_0_4)
 	end
 
 	if var_24_0 then
