@@ -231,6 +231,7 @@ def _steps():
                     [PY, mod("ai-interchange-rotation", "install.py"), "--apply"],
                     [PY, mod("play-now-crowd-settings", "install.py"), "--apply"],
                     [PY, mod("hd-nrl-club-logos", "install.py"), "--apply"],
+                    [PY, mod("club-slots-224", "install.py"), "--apply"],
                     [PY, mod("controller-button-icons", "install.py"), "--icons", o.get("controller", "detect"), "--apply"]]
          + ([[PY, mod("skip-intro-to-main-menu", "install.py"), "--apply"]] if o.get("skip_intro", True) else [])),
     ]
@@ -425,7 +426,7 @@ def restore_saves(name, confirm):
 
 
 EXE_PATCHERS = ["skip-intro-to-main-menu", "controller-button-icons", "ai-interchange-rotation", "hd-nrl-club-logos",
-                "play-now-crowd-settings", "unlock-all-kits"]
+                "play-now-crowd-settings", "club-slots-224", "unlock-all-kits"]
 
 
 def uninstall(confirm):

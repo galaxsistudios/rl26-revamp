@@ -112,6 +112,10 @@ DATA_BUNDLES = {
 LEAGUE_WHOLE_RECORD_KEYS = ("clubs", "name", "shortName", "sortIndex")
 # club override keys applied by _apply_whole_record_patches (they resize records)
 CLUB_WHOLE_RECORD_KEYS = ("uniforms", "rosterList", "lineupTables")
+# the native club pool: ids 0-219 (rugbyleague1.exe club loader, cmp id, 0xDC);
+# mods/club-slots-224's exe patch makes it 0-223
+MAX_CLUB_ID = 224 if os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                                 "mods", "club-slots-224", "install.py")) else 220
 
 IDENTITY_KEYS = {"id", "firstname", "surname", "fullName", "shortName", "nickname", "hudName", "name", "shortName"}
 
@@ -390,7 +394,7 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     for fpath in sorted(override_files):
         fname = os.path.basename(fpath)
         record_id = int(fname.split("_", 1)[0].split(".")[0])
-        if record_id not in by_id and record_id in new_ids:
+        if record_id in new_ids:
             override = json.load(open(fpath))
             extra = [k for k in override if k not in CLUB_WHOLE_RECORD_KEYS and not k.startswith("_")]
             if extra:
@@ -602,8 +606,11 @@ def _append_clubs(data, files, verbose, for_new):
     value, null removes it}, "rosterList": [...], "lineupTables": {...},
     "uniforms": <kit_blob spec>}. The club starts as a copy of cloneOf (every
     table and its kit list), as the record carries far more than a JSON would
-    want to spell out. The clubList id must be new, and should be the next
-    free id: like players, ids far past the record count may abort the game."""
+    want to spell out. The native club pool holds ids 0-219 (loader checks
+    id < 0xDC; stock uses 1-219), so an id of 220+ crashes at boot.
+    mods/club-slots-224 patches the exe for ids 220-223. Otherwise take over
+    an existing record with "replaces": <that id> (clubList id = the same
+    id): the old club is swapped out in place."""
     import copy
     import bigant_db
     import kit_blob
@@ -624,8 +631,14 @@ def _append_clubs(data, files, verbose, for_new):
             else:
                 main[key] = val
         cid = main["id"]
-        if cid in by_id:
-            raise ValueError(f"{label_base}: new club {fname} uses id {cid}, which exists")
+        if not 0 < cid < MAX_CLUB_ID:
+            raise ValueError(f"{label_base}: new club {fname} uses id {cid}; the game only holds club ids "
+                             f"1-{MAX_CLUB_ID - 1} (higher crashes at boot), take over one with \"replaces\"")
+        replaces = spec.get("replaces")
+        if replaces is not None and replaces != cid:
+            raise ValueError(f"{label_base}: {fname} replaces {replaces} but its clubList id is {cid}")
+        if cid in by_id and replaces is None:
+            raise ValueError(f"{label_base}: new club {fname} uses id {cid}, which exists (add \"replaces\": {cid})")
         label = f"{label_base} new id={cid}"
         if "uniforms" in spec:
             rec["blob"] = kit_blob.apply_spec(rec["blob"], spec["uniforms"], stock.__getitem__, fill, label, verbose)
@@ -637,10 +650,16 @@ def _append_clubs(data, files, verbose, for_new):
                                                   f"{label} ({oname})", verbose)
             if "rosterList" in override or "lineupTables" in override:
                 _set_squad(db, rec, override, player_ids, f"{label} ({oname})", verbose)
-        db.records.append(rec)
+        if cid in by_id:
+            old = by_id[cid]
+            db.records[db.records.index(old)] = rec
+            what = f"replaced club {cid} {old['tables'][0].get('fullName')!r} with"
+        else:
+            db.records.append(rec)
+            what = f"added club {cid}"
         by_id[cid] = rec
         if verbose:
-            print(f"  added club {cid} {main.get('fullName')!r} (copy of {spec['cloneOf']})")
+            print(f"  {what} {main.get('fullName')!r} (copy of {spec['cloneOf']})")
     return bigant_db.dump(db)
 
 

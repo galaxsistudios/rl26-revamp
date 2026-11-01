@@ -18,6 +18,7 @@ wrapper with an `EXTRA_PATCHES` list).
 | NPC lookup | `getRelativeNPCIdOfType` | Aborts when no NPC matches the type and sex |
 | Defence graph choice | `CTeamTacticsProcess` | Adds `10m` / `LastTackle` to graph names |
 | AI conditions | flowchart condition registry | Unknown names crash at boot |
+| Club slots | `defaultdata_clubs` loader (RVA ~0xa90510 on 1.0.5933) | Sets up 220 on-disc club slots (ids 0-219, all used by stock), and `id < 220` means built-in. A record with id 220+ crashes at boot. Academy clubs use ids from 1000. The id bitset is inline and holds 224 |
 
 ## Patches we apply
 
@@ -28,6 +29,7 @@ wrapper with an `EXTRA_PATCHES` list).
 | ai-interchange-rotation | Merge Lua substitution requests for AI sides, and allow forwards |
 | hd-nrl-club-logos | Loading-screen logo render-target size |
 | play-now-crowd-settings | Crowd side threshold (home/away fan split) |
+| club-slots-224 | 224 on-disc club slots instead of 220 (11 sites; never the custom-licensed save dict, whose size is save format), for the Perth Bears at 220 |
 | skip-intro-to-main-menu | Optional boot straight to the main menu (`skip_intro` in `rl26_revamp.ini`) |
 
 Each mod's README has its exact sites. Finding native code: the exe registers Lua bindings next to their

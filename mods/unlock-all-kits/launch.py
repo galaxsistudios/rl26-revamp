@@ -36,7 +36,7 @@ import install  # noqa: E402
 # Other mods' exe patches, applied after the kit patch (so unlock-all-kits'
 # md5-keyed --restore still works once these are restored first).
 EXTRA_PATCHES = ["skip-intro-to-main-menu", "controller-button-icons", "ai-interchange-rotation", "hd-nrl-club-logos",
-                 "play-now-crowd-settings"]
+                 "play-now-crowd-settings", "club-slots-224"]
 
 
 def load_patch(mod):

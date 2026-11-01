@@ -20,6 +20,7 @@ anything else is from code or data only.
 | Gameplay AI: flowcharts, decision trees, plays, formations | [gameplay-ai.md](gameplay-ai.md) |
 | Match presentation: cutscenes, lighting, intros, replays, music | [presentation.md](presentation.md) |
 | The exe: native-only behaviour and the patches we make | [native-exe.md](native-exe.md) |
+| Career mode's hard limits: club ids, 204 matches a season, the 46-entry container | [career-limits.md](career-limits.md) |
 | Debugging: logs, crash dumps, test harnesses | [debugging.md](debugging.md) |
 
 For where each of these is changed by a mod, see [../our-changes/](../our-changes/README.md).

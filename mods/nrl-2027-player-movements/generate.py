@@ -57,7 +57,7 @@ SRC_DIR = os.path.join(ROOT, "resources", "player-movements")
 OUT_DIR = os.path.join(HERE, "defaultdata", "defaultdata_clubs")
 URL = "https://www.zerotackle.com/nrl/player-movements/"
 
-PERTH_ID = 220          # mods/perth-bears' new club record
+PERTH_ID = 220          # mods/perth-bears' club record (a club-slots-224 slot)
 MIN_SQUAD = 26          # NRL2026Match needs 19; a few spare for injuries
 ROSTER_SLOTS = 64
 LINEUP_TABLES = ("LeagueMatch", "NinesMatch", "NRL2026Match")
@@ -150,7 +150,9 @@ class World:
             self.by_surname[norm(p.get("surname", ""))].append(pid)
 
     def info(self, cid):
-        return self.clubs[cid]["tables"][0] if cid in self.clubs else {"fullName": "Perth Bears", "sex": 0}
+        if cid == PERTH_ID:
+            return {"fullName": "Perth Bears", "sex": 0}
+        return self.clubs[cid]["tables"][0]
 
     def name(self, cid):
         return self.info(cid)["fullName"]

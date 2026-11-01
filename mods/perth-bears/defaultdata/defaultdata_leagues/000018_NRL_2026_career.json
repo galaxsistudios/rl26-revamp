@@ -1,0 +1,26 @@
+{
+ "_comment": "perth-bears: hidden stock 17-club NRL that career / dynasty load",
+ "name": "NATIONAL RUGBY LEAGUE 2026",
+ "shortName": "NRL 2026",
+ "B": 0,
+ "sortIndex": 16,
+ "clubs": [
+  118,
+  119,
+  120,
+  121,
+  122,
+  123,
+  124,
+  125,
+  126,
+  127,
+  128,
+  129,
+  130,
+  131,
+  132,
+  133,
+  134
+ ]
+}

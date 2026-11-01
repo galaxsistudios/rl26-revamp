@@ -12,16 +12,16 @@ writes squad.json):
       North Sydney Bears), home grounds HBF Park (perthRectangularStadium, 29)
       and North Sydney Oval (65), the North Sydney Bears' kits, the squad
       from squad.json and lineups picked by preferred role.
-  defaultdata/defaultdata_leagues/000018_NRL_2026_perth.json
-      the NRL 2026 league (Quick Match / competition team lists) + club 220.
-  career/career_leaguestructure, career_clubs_domestic, career_nrl_fixture_season
-      (careerdata bundle) career mode: the NRL's club list + 220, a
-      clubs_domestic record (a copy of the Dolphins'), and the draw with
-      Perth's 24 games. Byes:
-        the 2026 draw has 17 teams, 8 games and 1 bye a round (3 byes in the
-        Origin rounds 13/16/19, 7 in 12/15/18). Perth plays the bye team in
-        every one-bye round and one of the three in rounds 13/16/19, and has
-        its own byes in 12/15/18: 24 games and 3 byes, like everyone else.
+  defaultdata/defaultdata_leagues/000001_NRL_main_perth.json, 000018_NRL_2026_career.json
+      league 1 (stock hidden NRL 2025) becomes the visible NATIONAL RUGBY LEAGUE
+      (17 clubs + 220); league 18 becomes the hidden NATIONAL RUGBY LEAGUE 2026
+      (stock 17 clubs) that career and dynasty load.
+  career/ (only with --career; career mode can't hold Perth yet)
+      career_leaguestructure, career_clubs_domestic, career_nrl_fixture_season: the NRL's club list + 220, a
+      clubs_domestic record (a copy of the Dolphins'), and an 18-team draw:
+        career holds at most 204 matches a season (the stock 17-team draw
+        exactly), so it's 22 rounds of 9 = 198 matches, 22 games each, no
+        byes, on the stock round dates minus 5 Origin weekends (nrl_draw).
 
     python mods\\perth-bears\\generate.py
 """
@@ -38,10 +38,19 @@ import bigant_db  # noqa: E402
 import extract_m3mp  # noqa: E402
 import pack  # noqa: E402
 
-PERTH_ID = 220
+PERTH_ID = 220          # the first extra slot from mods/club-slots-224 (stock exe: ids 0-219 only)
 TEMPLATE = 134          # Dolphins
 KITS_FROM = 72          # North Sydney Bears
 NRL_LEAGUE = 18
+# Career (and Dynasty) build their NRL from league 18 (AcademyLeagues.League_NRL2026,
+# fixed in the exe), and career can't take an 18th club (46-club pro list: NRL +
+# QLD Cup + Super League is already 46 in stock). So the roles swap:
+#   league 1  (stock hidden "NRL 2025", merge-2025-clubs) -> the visible
+#             "NATIONAL RUGBY LEAGUE", 17 clubs + Perth, sorted first;
+#   league 18 -> hidden "NATIONAL RUGBY LEAGUE 2026", stock 17 clubs, career only.
+MAIN_NRL_LEAGUE = 1
+CAREER_NRL_LEAGUE = 18
+CAREER_NRL_SORT = 16   # where merge-2025-clubs had league 1
 NRL_2026 = list(range(118, 135))
 HBF_PARK, NORTH_SYDNEY_OVAL = 29, 65   # native EStadiums
 CAREER_NRL = "NRL"
@@ -100,9 +109,19 @@ def club_record():
         json.dump(spec, f, indent=1)
     out = os.path.join(HERE, "defaultdata", "defaultdata_leagues")
     os.makedirs(out, exist_ok=True)
-    with open(os.path.join(out, f"{NRL_LEAGUE:06d}_NRL_2026_perth.json"), "w", encoding="utf-8") as f:
-        json.dump({"_comment": "perth-bears: the NRL's 18th club", "clubs": NRL_2026 + [PERTH_ID]}, f, indent=1)
-    print(f"club {PERTH_ID}: {len(squad)} players; league {NRL_LEAGUE} + {PERTH_ID}")
+    for old in ("000001_NRL_2027_perth.json", "000018_NRL_2026_perth.json"):
+        if os.path.exists(os.path.join(out, old)):
+            os.remove(os.path.join(out, old))
+    with open(os.path.join(out, f"{MAIN_NRL_LEAGUE:06d}_NRL_main_perth.json"), "w", encoding="utf-8") as f:
+        json.dump({"_comment": "perth-bears: the visible NRL (Quick Match / competitions), 17 clubs + Perth",
+                   "name": "NATIONAL RUGBY LEAGUE", "shortName": "NRL", "B": 1, "sortIndex": 1,
+                   "clubs": NRL_2026 + [PERTH_ID]}, f, indent=1)
+    with open(os.path.join(out, f"{CAREER_NRL_LEAGUE:06d}_NRL_2026_career.json"), "w", encoding="utf-8") as f:
+        json.dump({"_comment": "perth-bears: hidden stock 17-club NRL that career / dynasty load",
+                   "name": "NATIONAL RUGBY LEAGUE 2026", "shortName": "NRL 2026", "B": 0,
+                   "sortIndex": CAREER_NRL_SORT, "clubs": NRL_2026}, f, indent=1)
+    print(f"club {PERTH_ID}: {len(squad)} players; league {MAIN_NRL_LEAGUE} = NRL + {PERTH_ID}, "
+          f"league {CAREER_NRL_LEAGUE} = hidden NRL 2026 (career)")
 
 
 # ---- career data -------------------------------------------------------------------
@@ -149,7 +168,7 @@ def clubs_domestic(raw, template=17):
     recs = [raw[5 + i * size:5 + (i + 1) * size] for i in range(n)]
     ids = [struct.unpack_from("<I", r, 0)[0] for r in recs]
     if PERTH_ID in ids:
-        raise SystemExit("career_clubs_domestic already has club 220")
+        raise SystemExit(f"career_clubs_domestic already has club {PERTH_ID}")
     rec = bytearray(recs[ids.index(template)])
     struct.pack_into("<I", rec, 0, PERTH_ID)
     rec[4:36] = b"Perth Bears".ljust(32, b"\x00")
@@ -177,27 +196,63 @@ def write_draw(head, rounds, tail):
     return bytes(out + tail)
 
 
-def nrl_draw(raw, teams=17):
-    head, rounds, tail = read_draw(raw)
-    perth = teams
-    played = {t: 0 for t in range(teams)}
-    home = True
-    log = []
-    for r, ms in enumerate(rounds):
-        busy = {x for m in ms for x in m[:2]}
-        byes = [t for t in range(teams) if t not in busy]
-        if len(byes) >= 7:
-            log.append(f"R{r + 1}: Perth bye")
-            continue
-        opp = min(byes, key=lambda t: (played[t], t))
-        played[opp] += 1
-        last = max(ms, key=lambda m: (m[3], m[4], m[5], m[6], m[7]))
-        used = {(m[4], m[5], m[6], m[7]) for m in ms}
-        hh, mi = next(t for t in ((16, 5), (14, 0), (18, 15), (20, 5), (15, 0)) if (last[4], last[5], *t) not in used)
-        h, a = (perth, opp) if home else (opp, perth)
-        ms.append((h, a, 2, last[3], last[4], last[5], hh, mi))
-        log.append(f"R{r + 1}: {'v' if home else '@'} {opp} {last[3]}-{last[4]:02}-{last[5]:02} {hh:02}:{mi:02}")
-        home = not home
+# Career holds at most 204 matches per competition season (about 50 0xCC
+# immediates in the exe's career code, some of them save format): the stock
+# 17-team draw is exactly 204 (17 x 24 / 2). 18 teams x 24 games = 216 overflowed
+# the fixture parser's match pool at career creation (2026-11-02). So the
+# 18-team draw is 22 rounds of 9 = 198 matches, every club 22 games, no byes.
+MAX_SEASON_MATCHES = 204
+ORIGIN_ROUNDS_DROPPED = (12, 13, 15, 16, 18)   # stock rounds left empty: 27 - 5 = 22
+
+
+def round_robin(teams):
+    """Circle method: teams - 1 rounds, every pair once, homes alternating."""
+    ring = list(range(teams))
+    out = []
+    for r in range(teams - 1):
+        ms = []
+        for k in range(teams // 2):
+            a, b = ring[k], ring[teams - 1 - k]
+            ms.append((a, b) if (r + k) % 2 == 0 else (b, a))
+        out.append(ms)
+        ring = [ring[0], ring[-1]] + ring[1:-1]
+    return out
+
+
+def nrl_draw(raw, teams=18):
+    """A new draw for `teams` clubs on the stock 2026 round dates: a full round
+    robin, then the first rounds again with home and away swapped, as many as
+    fit in the stock rounds left after ORIGIN_ROUNDS_DROPPED. Each match takes
+    a stock kick-off slot of its round (one extra slot is added on the round's
+    last day). Venues: a round played entirely at one ground (Magic Round)
+    keeps it, and the Las Vegas slots (20) stay in Las Vegas; other neutral
+    grounds become home games (2), as they belonged to stock pairings."""
+    head, stock_rounds, tail = read_draw(raw)
+    keep = [ms for r, ms in enumerate(stock_rounds) if r + 1 not in ORIGIN_ROUNDS_DROPPED]
+    robin = round_robin(teams)
+    pairings = robin + [[(a, h) for h, a in ms] for ms in robin[:len(keep) - len(robin)]]
+    rounds, log = [], []
+    for r, (stock, ms) in enumerate(zip(keep, pairings)):
+        slots = sorted(stock, key=lambda m: (m[3], m[4], m[5], m[6], m[7]))
+        last = slots[-1]
+        used = {(m[4], m[5], m[6], m[7]) for m in slots}
+        while len(slots) < len(ms):
+            hh, mi = next(t for t in ((16, 5), (14, 0), (18, 15), (20, 5), (15, 0), (13, 0))
+                          if (last[4], last[5], *t) not in used)
+            used.add((last[4], last[5], hh, mi))
+            slots.append((0, 0, 2, last[3], last[4], last[5], hh, mi))
+        magic = len({m[2] for m in stock}) == 1 and stock[0][2] != 2
+        out = []
+        for (h, a), s in zip(ms, slots):
+            venue = stock[0][2] if magic else (20 if s[2] == 20 else 2)
+            out.append((h, a, venue) + tuple(s[3:]))
+        rounds.append(out)
+        log.append(f"R{r + 1} ({slots[0][3]}-{slots[0][4]:02}-{slots[0][5]:02}): "
+                   + ", ".join(f"{h}v{a}" + (f"@{v}" if v != 2 else "") for h, a, v, *_ in out))
+    total = sum(len(ms) for ms in rounds)
+    if total > MAX_SEASON_MATCHES:
+        raise SystemExit(f"NRL draw has {total} matches; career holds {MAX_SEASON_MATCHES}")
+    perth = teams - 1
     games = sum(1 for ms in rounds for m in ms if perth in m[:2])
     return write_draw(head, rounds, tail), games, log
 
@@ -212,25 +267,34 @@ def career():
     }
     draw, games, log = nrl_draw(files["career/career_nrl_fixture_season"])
     data["career_nrl_fixture_season"] = draw
-    # round trip check: every other team still has its 24 games plus its Perth game(s)
+    # round trip check: every team plays every round, every pair meets
     _h, rounds, _t = read_draw(draw)
-    counts = {}
+    counts, pairs = {}, set()
     for ms in rounds:
+        busy = [x for m in ms for x in m[:2]]
+        if len(busy) != len(set(busy)):
+            raise SystemExit("career draw: a team plays twice in one round")
         for m in ms:
+            pairs.add(frozenset(m[:2]))
             for x in m[:2]:
                 counts[x] = counts.get(x, 0) + 1
+    if len(pairs) != 18 * 17 // 2:
+        raise SystemExit(f"career draw: {len(pairs)} distinct pairings, expected {18 * 17 // 2}")
     for name, blob in data.items():
         with open(os.path.join(out, name), "wb") as f:
             f.write(blob)
     with open(os.path.join(HERE, "perth_draw.txt"), "w") as f:
         f.write("\n".join(log) + "\n")
     print(f"career: NRL list + {PERTH_ID}, clubs_domestic + Perth, draw: Perth {games} games; "
-          f"games per team {sorted(set(counts.values()))}")
+          f"games per team {sorted(set(counts.values()))}, {sum(len(ms) for ms in rounds)} matches")
 
 
 def main():
     club_record()
-    career()
+    # career mode is left out (46-club pro list, see NRL_2027_LEAGUE). --career
+    # still writes the 18-team career data (198-match draw) for when that's solved.
+    if "--career" in sys.argv:
+        career()
 
 
 if __name__ == "__main__":
