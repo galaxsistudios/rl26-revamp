@@ -2358,6 +2358,53 @@
     "uniformBottom": 143,
     "uniformSocks": 143
    }
+  },
+  {
+   "guid": 60324,
+   "src": "2022/broncos-away-22.dds",
+   "club": 118,
+   "name": "AWAY 2022",
+   "texture": "broncos_rll4_away_2022"
+  },
+  {
+   "guid": 60325,
+   "src": "2022/broncos-heritage-22.dds",
+   "club": 118,
+   "name": "HERITAGE 2022",
+   "texture": "broncos_rll4_heritage_2022"
+  },
+  {
+   "guid": 60326,
+   "src": "2022/broncos-home-22.dds",
+   "club": 118,
+   "name": "HOME 2022",
+   "texture": "broncos_rll4_home_2022"
+  },
+  {
+   "guid": 60354,
+   "src": "2024/broncos-away-24.dds",
+   "club": 118,
+   "name": "AWAY 2024",
+   "texture": "broncos_rll4_away_2024"
+  },
+  {
+   "guid": 60355,
+   "src": "2023/broncos-home-23.dds",
+   "club": 118,
+   "name": "HOME 2023",
+   "texture": "broncos_rll4_home_2023"
+  },
+  {
+   "guid": 64008,
+   "custom": "broncos_indigenous_2026",
+   "club": 118,
+   "name": "INDIGENOUS 2026",
+   "texture": "broncos_indigenous_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 104,
+    "uniformSocks": 104
+   }
   }
  ]
 }

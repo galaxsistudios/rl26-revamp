@@ -566,6 +566,12 @@ do
 		{ 64004, "cowboys_alternate_2026", {  }, { top = 282, bottom = 280, socks = 280 } }, -- ALTERNATE, club 120
 		{ 64005, "dolphins_home_2027", { "Red" }, { top = 7020, bottom = 7020, socks = 7020, number = 185 } }, -- HOME 2027, club 134
 		{ 64006, "bulldogs_alternate_2026", {  }, { top = 145, bottom = 143, socks = 143 } }, -- ALTERNATE, club 119
+		{ 60324, "broncos_rll4_away_2022", { "White" } }, -- AWAY 2022, club 118
+		{ 60325, "broncos_rll4_heritage_2022", { "Orange", "White" } }, -- HERITAGE 2022, club 118
+		{ 60326, "broncos_rll4_home_2022", {  } }, -- HOME 2022, club 118
+		{ 60354, "broncos_rll4_away_2024", { "White" } }, -- AWAY 2024, club 118
+		{ 60355, "broncos_rll4_home_2023", { "Orange", "White" } }, -- HOME 2023, club 118
+		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 	}
 
 	for _, kit in ipairs(kits) do
@@ -698,6 +704,11 @@ KitLibrary = {
 		{ name = "HOME 2017", copyOf = "AWAY", set = { uniformTop = 60175, uniformBottom = 60175, uniformSocks = 60175 } },
 		{ name = "INDIGENOUS 2017", copyOf = "AWAY", set = { uniformTop = 60176, uniformBottom = 60176, uniformSocks = 60176 } },
 		{ name = "NINES 2017", copyOf = "AWAY", set = { uniformTop = 60177, uniformBottom = 60177, uniformSocks = 60177, numberColour1_r = 230, numberColour1_g = 230, numberColour1_b = 230 } },
+		{ name = "AWAY 2022", copyOf = "HOME", set = { uniformTop = 60324, uniformBottom = 60324, uniformSocks = 60324, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
+		{ name = "HERITAGE 2022", copyOf = "AWAY", set = { uniformTop = 60325, uniformBottom = 60325, uniformSocks = 60325 } },
+		{ name = "HOME 2022", copyOf = "AWAY", set = { uniformTop = 60326, uniformBottom = 60326, uniformSocks = 60326 } },
+		{ name = "AWAY 2024", copyOf = "HOME", set = { uniformTop = 60354, uniformBottom = 60354, uniformSocks = 60354, numberColour1_r = 20, numberColour1_g = 20, numberColour1_b = 28 } },
+		{ name = "HOME 2023", copyOf = "AWAY", set = { uniformTop = 60355, uniformBottom = 60355, uniformSocks = 60355 } },
 	},
 	[119] = {
 		{ name = "HOME 2024", copyOf = "HOME", set = { uniformTop = 60004, uniformBottom = 60004, uniformSocks = 60004 } },
