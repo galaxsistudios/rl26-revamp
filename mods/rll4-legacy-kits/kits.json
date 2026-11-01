@@ -2500,6 +2500,20 @@
    "texture": "roosters_rll4_home_2022"
   },
   {
+   "guid": 60344,
+   "src": "2022/seaeagles-away-22.dds",
+   "club": 128,
+   "name": "AWAY 2022",
+   "texture": "seaeagles_rll4_away_2022"
+  },
+  {
+   "guid": 60345,
+   "src": "2022/seaeagles-home-22.dds",
+   "club": 128,
+   "name": "HOME 2022",
+   "texture": "seaeagles_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2773,6 +2787,20 @@
    "texture": "roosters_rll4_nines_2020"
   },
   {
+   "guid": 60400,
+   "src": "2023/seaeagles-alternate-23.dds",
+   "club": 128,
+   "name": "ALTERNATE 2023",
+   "texture": "seaeagles_rll4_alternate_2023"
+  },
+  {
+   "guid": 60403,
+   "src": "2023/seaeagles-nines-20.dds",
+   "club": 128,
+   "name": "NINES 2020",
+   "texture": "seaeagles_rll4_nines_2020"
+  },
+  {
    "guid": 60427,
    "src": "2023/rabbitohs-special-23.dds",
    "club": 125,
@@ -2914,6 +2942,18 @@
    },
    "numberFrom": 384,
    "numberScale": 0.85
+  },
+  {
+   "guid": 64020,
+   "custom": "seaeagles_indigenous_2026",
+   "club": 128,
+   "name": "INDIGENOUS 2026",
+   "texture": "seaeagles_indigenous_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 104,
+    "uniformSocks": 104
+   }
   },
   {
    "guid": 64026,
