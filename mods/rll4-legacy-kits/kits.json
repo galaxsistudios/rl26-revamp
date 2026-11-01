@@ -2409,6 +2409,20 @@
    "texture": "cowboys_rll4_home_2022"
   },
   {
+   "guid": 60331,
+   "src": "2022/dragons-alternate-22.dds",
+   "club": 121,
+   "name": "ALTERNATE 2022",
+   "texture": "dragons_rll4_alternate_2022"
+  },
+  {
+   "guid": 60332,
+   "src": "2022/dragons-home-22.dds",
+   "club": 121,
+   "name": "HOME 2022",
+   "texture": "dragons_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2479,6 +2493,48 @@
    "texture": "cowboys_rll4_wil_2023"
   },
   {
+   "guid": 60367,
+   "src": "2023/dragons-alternate-23.dds",
+   "club": 121,
+   "name": "ALTERNATE 2023",
+   "texture": "dragons_rll4_alternate_2023"
+  },
+  {
+   "guid": 60368,
+   "src": "2024/dragons-anzac-24.dds",
+   "club": 121,
+   "name": "ANZAC 2024",
+   "texture": "dragons_rll4_anzac_2024"
+  },
+  {
+   "guid": 60369,
+   "src": "2023/dragons-away-23.dds",
+   "club": 121,
+   "name": "AWAY 2023",
+   "texture": "dragons_rll4_away_2023"
+  },
+  {
+   "guid": 60370,
+   "src": "2023/dragons-charityshield-23.dds",
+   "club": 121,
+   "name": "CHARITY SHIELD 2023",
+   "texture": "dragons_rll4_charityshield_2023"
+  },
+  {
+   "guid": 60371,
+   "src": "2023/dragons-home-23.dds",
+   "club": 121,
+   "name": "HOME 2023",
+   "texture": "dragons_rll4_home_2023"
+  },
+  {
+   "guid": 60372,
+   "src": "2023/dragons-nines-20.dds",
+   "club": 121,
+   "name": "NINES 2020",
+   "texture": "dragons_rll4_nines_2020"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2514,6 +2570,18 @@
     "uniformSocks": 280
    },
    "numberFrom": 280
+  },
+  {
+   "guid": 64012,
+   "custom": "dragons_indigenous_2026",
+   "club": 121,
+   "name": "INDIGENOUS 2026",
+   "texture": "dragons_indigenous_2026",
+   "templates": {
+    "uniformTop": 364,
+    "uniformBottom": 363,
+    "uniformSocks": 363
+   }
   },
   {
    "guid": 64034,

@@ -1,0 +1,18 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64012,
+          "uniformBottom": 64012,
+          "uniformSocks": 64012,
+          "numberColour1_r": 20,
+          "numberColour1_g": 20,
+          "numberColour1_b": 28
+        }
+      }
+    ]
+  }
+}
