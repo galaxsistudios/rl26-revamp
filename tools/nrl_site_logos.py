@@ -7,7 +7,10 @@ The draw data (https://www.nrl.com/draw/data?competition=N&season=Y) lists
 each team's theme key and logo files; they're served from
 https://www.nrl.com/.theme/<key>/<file>. Seasons are merged per comp, so
 teams that only appeared in an older season (e.g. the 2017 / 2022 World
-Cups) are picked up too. Only .svg files are kept, and each is given a
+Cups) are picked up too. The players data
+(https://www.nrl.com/players/data/?competition=N) is merged in as well: it
+lists teams the draw doesn't have yet (e.g. the Perth Bears before their
+first season). Only .svg files are kept, and each is given a
 width of at least 1500px (viewBox untouched, height kept in proportion).
 
 index.json records names / theme key / files per comp and team; a run
@@ -81,8 +84,10 @@ def main():
         cid, seasons = COMPS[folder]
         teams = {}
         comp = None
-        for season in seasons:
-            url = f"https://www.nrl.com/draw/data?competition={cid}" + (f"&season={season}" if season else "")
+        urls = [f"https://www.nrl.com/draw/data?competition={cid}" + (f"&season={season}" if season else "")
+                for season in seasons]
+        urls.append(f"https://www.nrl.com/players/data/?competition={cid}")
+        for url in urls:
             d = json.loads(get(url))
             for t in d.get("filterTeams", []):
                 merge(teams, t["name"], t["theme"])

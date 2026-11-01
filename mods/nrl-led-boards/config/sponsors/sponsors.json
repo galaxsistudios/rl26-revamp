@@ -94,5 +94,8 @@
   "jd-sports": {"name": "JD Sports", "logo": "jd-sports.webp", "background": [10, 10, 12], "white": true, "source": "resources/las-vegas-update"},
   "allegiant-stadium": {"name": "Allegiant Stadium", "logo": "allegiant-stadium.png", "source": "resources/las-vegas-update"},
   "westpac": {"name": "Westpac", "logo": "westpac.png", "repeat": 14, "margin": 0.16, "source": "resources/field-markings"},
-  "accor": {"name": "Accor", "logo": "accor-stay-where-the-players-stay.png", "background": [16, 22, 58], "repeat": 1, "margin": 0.07, "source": "ALL Accor lockup from all.accor.com (all-accor-vertical.svg) re-laid horizontally + the \"Stay where the players stay\" line, as on the NRL broadcast boards"}
+  "accor": {"name": "Accor", "logo": "accor-stay-where-the-players-stay.png", "background": [16, 22, 58], "repeat": 1, "margin": 0.07, "source": "ALL Accor lockup from all.accor.com (all-accor-vertical.svg) re-laid horizontally + the \"Stay where the players stay\" line, as on the NRL broadcast boards"},
+  "cash-converters": {"name": "Cash Converters", "logo": "cash-converters.svg", "background": [240, 179, 16], "source": "Wikimedia Commons File:CashConvertersLogo.svg (perthbears.com.au principal partner)"},
+  "atlas": {"name": "ATLAS", "logo": "atlas.png", "background": [28, 55, 93], "knockout": [28, 55, 93], "white": true, "source": "perthbears.com.au partners (major partner)"},
+  "corporate-traveller": {"name": "Corporate Traveller", "logo": "corporate-traveller.png", "background": [0, 78, 89], "white": true, "source": "perthbears.com.au partners (major partner)"}
 }

@@ -1,6 +1,6 @@
 # hd-nrl-club-logos
 
-Replaces 95 club emblems with HD renders of the current nrl.com vector badges
+Replaces 96 club emblems with HD renders of the current nrl.com vector badges
 (`resources/nrl-site-logos/<comp>/<team>/`, pulled by `tools/nrl_site_logos.py`) and, for British clubs,
 Gallery of League's ~1000px PNGs (`resources/gallery-of-league-logos/<section>/<club>/badge.png`, pulled by
 `tools/gol_logos.py`). Layouts come from
@@ -8,7 +8,7 @@ Gallery of League's ~1000px PNGs (`resources/gallery-of-league-logos/<section>/<
 
 | Comp | Icons | Source folder |
 |---|---|---|
-| NRL | all 17 `nrl_*` clubs | `nrl/` |
+| NRL | all 17 `nrl_*` clubs, plus `nrl_bears` (Perth Bears, club 113 in [perth-bears](../perth-bears/README.md)) | `nrl/` (Perth from nrl.com's players data) |
 | NSW Cup | `nsw_bears`, `nsw_jets`, `nsw_westernsuburbs` | `nswrl/` |
 | QLD Cup | `qld_capras`, `qld_clydesdales`, `qld_cutters`, `qld_dolphins`, `qld_falcons`, `qld_gullsmanly`, `qld_hunters`, `qld_jets`, `qld_magpies`, `qld_seagulls`, `qld_tigers` | `qrl/` |
 | State of Origin | `rep_nsw` (Blues), `rep_qld` (Maroons) | `state-of-origin/` |

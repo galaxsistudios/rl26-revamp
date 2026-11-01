@@ -3368,6 +3368,10 @@
    "name": "HOME",
    "renameExisting": "NORTHS HOME",
    "texture": "bears_home_2027",
+   "removeExisting": [
+    "NORTHS HOME",
+    "AWAY"
+   ],
    "templates": {
     "uniformTop": 345,
     "uniformBottom": 343,

@@ -845,8 +845,11 @@ def cmd_generate(args):
         # the RLL4 2017 rows are the ones to lose
         kits = sorted(kits, key=lambda k: "custom" not in k)
         club_name, existing = clubs[cid]
-        adds, renames = [], {}
+        adds, renames, removes = [], {}, []
         for kit in kits:
+            # stock kits the club shouldn't keep (e.g. the North Sydney kits a
+            # new club inherits from its cloneOf), dropped after the adds
+            removes += kit.get("removeExisting", [])
             if "renameExisting" in kit:
                 # the new kit takes over a stock kit's name, place and number
                 # styling (e.g. the Cowboys' 2026 HOME); the stock one is kept
@@ -885,6 +888,8 @@ def cmd_generate(args):
             # inserts in list order, so each lands at its index
             adds.sort(key=lambda a: a.get("index", len(existing) + len(adds)))
             spec = {"rename": renames, "add": adds} if renames else {"add": adds}
+            if removes:
+                spec["remove"] = removes
             with open(path, "w") as f:
                 json.dump({"uniforms": spec}, f, indent=2)
                 f.write("\n")

@@ -14,6 +14,10 @@
           "uniformSocks": 64036
         }
       }
+    ],
+    "remove": [
+      "NORTHS HOME",
+      "AWAY"
     ]
   }
 }

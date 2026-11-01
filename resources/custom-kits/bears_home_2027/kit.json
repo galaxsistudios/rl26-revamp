@@ -1,6 +1,6 @@
 {
  "title": "Perth Bears Home 2027",
- "notes": "Perth Bears' first home jersey (2027), New Balance. Black with red hoops (red yoke band, chest band, mid and lower hoops), red collar and cuffs, from the user's product shots (front + back). Painted by code from the wrapped photos (kit_photo.flat, hoops levelled). Cash Converters and New Balance from Wikimedia Commons SVGs, Budget Direct sleeve cards from the stock Rabbitohs 2026 home top, crest from resources/new-team-logos/nrl-bears.svg (bear only: the 'PERTH BEARS' text above it on the shirt is left off). XFM, Penrite and ATLAS have no clean source yet: they are keyed out of the user's photos (placeholders, swap in HD files when available). Left off: the product tag, the '19 N 68' neck print and the NB DRY mark. Shorts from the user's photos: black, red hem, red side chevrons (claw marks left off), NB + NRL front left leg, Gage Roads (keyed from the photo, placeholder) front right leg, McDonald's (stock Rabbitohs card) back right leg. Socks: plain black placeholder. Hoops are painted from measured heights (design.py), not the flat wrap.",
+ "notes": "Perth Bears' first home jersey (2027), New Balance. Black with red hoops (red yoke band, chest band, mid and lower hoops), red collar and cuffs, from the user's product shots (front + back). Painted by code from the wrapped photos (kit_photo.flat, hoops levelled). Cash Converters and New Balance from Wikimedia Commons SVGs, Budget Direct sleeve cards from the stock Rabbitohs 2026 home top, crest = the NRL site's light badge (resources/nrl-site-logos/nrl/perth-bears/badge-light.svg: PERTH BEARS + bear, user's pick 2026-11-02). XFM, Penrite and ATLAS have no clean source yet: they are keyed out of the user's photos (placeholders, swap in HD files when available). Left off: the product tag, the '19 N 68' neck print and the NB DRY mark. Shorts from the user's photos: black, red hem, red side chevrons (claw marks left off), NB + NRL front left leg, Gage Roads (keyed from the photo, placeholder) front right leg, McDonald's (stock Rabbitohs card) back right leg. Socks: plain black placeholder. Hoops are painted from measured heights (design.py), not the flat wrap. Only this kit on the club: the North Sydney kits Perth inherits (NORTHS HOME, AWAY) are removed (install.removeExisting).",
  "install": {
   "club": 220,
   "name": "HOME",
@@ -11,7 +11,11 @@
    "uniformBottom": 343,
    "uniformSocks": 342
   },
-  "guid": 64036
+  "guid": 64036,
+  "removeExisting": [
+   "NORTHS HOME",
+   "AWAY"
+  ]
  },
  "canvas": {
   "top": [
@@ -60,7 +64,7 @@
    "rule": "nrl",
    "at": [
     1420,
-    650
+    605
    ],
    "shield_height": 112,
    "patch_colour": "red"
@@ -69,15 +73,15 @@
    "name": "Perth Bears crest",
    "rule": "crest",
    "source": {
-    "file": "logos/perth_bears_crest.png"
+    "file": "logos/perth_bears_badge_light.png"
    },
    "place": [
     {
      "at": [
       1880,
-      650
+      652
      ],
-     "height": 132
+     "height": 170
     }
    ]
   },
@@ -92,18 +96,20 @@
       182,
       545,
       230
-     ]
+     ],
+     true
     ]
    },
    "place": [
     {
      "at": [
       1645,
-      560
+      605
      ],
      "width": 170
     }
-   ]
+   ],
+   "colour": "white"
   },
   {
    "name": "Cash Converters",
@@ -114,7 +120,7 @@
     {
      "at": [
       1645,
-      860
+      900
      ],
      "width": 760
     }
@@ -129,11 +135,11 @@
    "place": [
     {
      "at": [
-      1300,
-      452
+      1250,
+      385
      ],
-     "width": 120,
-     "angle": 8
+     "width": 130,
+     "angle": 20
     }
    ]
   },
@@ -146,11 +152,11 @@
    "place": [
     {
      "at": [
-      1990,
-      452
+      2040,
+      385
      ],
-     "width": 120,
-     "angle": -8
+     "width": 130,
+     "angle": -20
     }
    ]
   },

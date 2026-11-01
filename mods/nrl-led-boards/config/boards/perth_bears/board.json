@@ -1,0 +1,16 @@
+{
+  "_doc": "Team board. clubs = club full names (any match, case-insensitive) that get this board when they are the home side. competition = the competition board whose rows follow the team's. identity = the club row that leads the board: badge + wordmark (recoloured to colours[1]) on colours[0] (primary, secondary - from the game's club data); \"repeat\", \"margin\", \"wordmark_height\" tune it, \"manual\": true keeps a hand-made club.png. sponsors = ids in config/sponsors/sponsors.json, in order: the club's top four non-gambling partners from its official partners page (perthbears.com.au, 2026-11-02: principal Cash Converters, premier Budget Direct, then the first two major partners as listed).",
+  "type": "team",
+  "name": "Perth Bears",
+  "clubs": ["Perth Bears"],
+  "competition": "nrl",
+  "sponsors": ["cash-converters", "budget-direct", "atlas", "corporate-traveller"],
+  "identity": {
+    "badge": "res:nrl-site-logos/nrl/perth-bears/badge-basic24-light.svg",
+    "wordmark": "res:nrl-site-logos/nrl/perth-bears/text.svg",
+    "focus": {"eye": [0.5, 0.42], "span": 0.52},
+    "badge_width": 0.34,
+    "wordmark_height": 0.9,
+    "colours": [[227, 27, 35], [17, 17, 17]]
+  }
+}

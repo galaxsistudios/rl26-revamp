@@ -83,6 +83,9 @@ TEAMS = {
     "nrl_tigers": "nrl/wests-tigers",
     "nrl_titans": "nrl/titans",
     "nrl_warriors": "nrl/warriors",
+    # Perth Bears (club 113 in mods/perth-bears) use the appended nrl_bears
+    # icon; nrl.com lists them in its players data (tools/nrl_site_logos.py).
+    "nrl_bears": "nrl/perth-bears",
     "nsw_bears": "nswrl/north-sydney-bears",
     "nsw_jets": "nswrl/jets",
     "nsw_westernsuburbs": "nswrl/western-suburbs-magpies",
@@ -224,6 +227,7 @@ DYNASTY_FOCUS = {
     "nrl/titans": (0.50, 0.45, 1.6),       # visor
     "nrl/warriors": (0.50, 0.55, 1.5),     # eyes
     "nrl/wests-tigers": (0.50, 0.52, 1.6), # face
+    "nrl/perth-bears": (0.50, 0.50, 1.4),  # bear's face
     "nswrl/north-sydney-bears": (0.45, 0.55, 2.1),     # bear's face
     "nswrl/jets": (0.50, 0.45, 1.1),                   # whole oval
     "nswrl/western-suburbs-magpies": (0.50, 0.62, 1.6),  # magpie

@@ -14,8 +14,9 @@ Logo sources (kit.json):
     recoloured as on the shirt by cash_converters(): ground dropped, "cash" and
     the swoosh white, "converters" gold.
   - New Balance: Wikimedia Commons File:New_Balance_logo.svg, in white.
-  - Perth Bears crest: resources/new-team-logos/nrl-bears.svg (the bear; the
-    "PERTH BEARS" lettering above it on the shirt is left off).
+  - Perth Bears crest: the NRL site's light badge,
+    resources/nrl-site-logos/nrl/perth-bears/badge-light.svg (PERTH BEARS +
+    the bear), rasterised to logos/perth_bears_badge_light.png.
   - Budget Direct sleeves: the stock Rabbitohs 2026 home top's cards.
   - XFM, Penrite, ATLAS: no clean source found (not in the game, not on
     Commons, no logo file on penriteoil.com.au), so photo_logo() keys them out
@@ -48,9 +49,17 @@ def top(kit):
     W, H = kit.size("top")
     P, _N, covered = kit_photo.surface("top", kit.model("top"), (W, H))
     y = P[..., 1]
-    front = P[..., 2] > 0          # top_round05 faces +z on its front panel
     tex_x = np.arange(W)[None, :].repeat(H, 0)
     tex_y = np.arange(H)[:, None].repeat(W, 1)
+    # front vs back by the side seams, not by z: the upper chest and the sides
+    # of top_round05's front sit at z < 0 (down to -0.09), and taking them as
+    # back stepped the hoops at the front panel's edges. Each row's seams are
+    # its widest texels (max |x|) between the back centre (x 540), the front
+    # centre (1645) and the sleeves
+    wide = np.where(covered, np.abs(P[..., 0]), -1)
+    seam_l = 540 + wide[:, 540:1645].argmax(1)
+    seam_r = 1645 + wide[:, 1645:SLEEVE_X].argmax(1)
+    front = (tex_x >= seam_l[:, None]) & (tex_x <= seam_r[:, None])
     x0, y0, x1, y1 = COLLAR_BOX
     collar = covered & (tex_x >= x0) & (tex_x < x1) & (tex_y >= y0) & (tex_y < y1)
     torso = covered & (tex_x < SLEEVE_X) & ~collar
@@ -121,14 +130,16 @@ def cash_converters(kit):
     return kd.trim(Image.fromarray(out.astype(np.uint8), "RGBA"))
 
 
-def photo_logo(kit, side, box):
+def photo_logo(kit, side, box, white=False):
     """A logo keyed out of the user's photo (side "front"/"back", box in the
     source photo's pixels): the light (white / gold) parts, alpha from
-    brightness. 4x upscaled so it isn't blocky on the 4096 texture."""
+    brightness. white=True keys on the darkest channel instead, so a white
+    logo on the red band (XFM) leaves the red behind. 4x upscaled so it isn't
+    blocky on the 4096 texture."""
     im = Image.open(kit.file(f"photos/src_{side}.png")).convert("RGB").crop(tuple(box))
     im = im.resize((im.width * 4, im.height * 4), Image.LANCZOS)
     a = np.asarray(im, np.float32)
-    lum = a.max(-1)
+    lum = a.min(-1) if white else a.max(-1)
     alpha = np.clip((lum - 110) / 90, 0, 1)
     out = np.dstack([a, alpha * 255])
     return kd.trim(Image.fromarray(out.clip(0, 255).astype(np.uint8), "RGBA"))
