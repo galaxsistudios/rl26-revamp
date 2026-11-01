@@ -54,6 +54,7 @@ row k = skeleton joint k. A posed vertex is sum(w * (rotate(q, p) + t)).
 
 import argparse
 import io
+import json
 import math
 import os
 import struct
@@ -98,6 +99,15 @@ WAVE_K = 0.75                   # phase lag per segment (rad)
 WAVE_AMP0, WAVE_AMP1 = 0.10, 0.22   # per-segment bend amplitude at the pole / at the free end (rad)
 FLUTTER_AMP = 0.05              # secondary vertical ripple (rad per segment)
 DROOP = 0.035                   # constant downward bend per segment (rad)
+
+# Physics (physics_rows): the wave is the rest pose the chain is pulled toward
+PHYS_K_ROOT, PHYS_K_TIP = 400.0, 80.0   # pull-to-rest stiffness at the pole / at the free end (1/s^2)
+PHYS_DAMPING = 10.0                     # velocity damping (1/s)
+PHYS_MAX_SWING = math.radians(35)       # hard limit of each segment from its rest direction (no folding back;
+                                        # a clamp between neighbouring segments made the tip jitter instead)
+PHYS_GRAVITY = 2.0                      # m/s^2 - a light cloth droops less than full gravity
+PHYS_SUBSTEPS = 4                       # per 30 fps frame
+PHYS_PASSES = 3                         # loops per clip before the kept one (settling)
 
 # Per-LOD geometry: (cloth columns, cloth rows, pole sides). The template's
 # max-weights per LOD are 4,3,2,2,1,1,1; from LOD 4 the columns sit exactly
@@ -349,6 +359,103 @@ def wave_rows(frame, rows, clips):
     return out
 
 
+def physics_rows(frame, rows, clips, rest=None):
+    """Flag joint rows with spring-chain physics, baked offline: the touch
+    judge's flag swings through the game's jiggly joints (pull to rest +
+    stretch constraints, simulated per character on the CPU), which the
+    GPU-instanced crowd can't run. So the same idea runs here, per clip, against
+    the clip's real hand motion: the 11 chain nodes (pole top + 10 segment
+    ends) are pulled toward the wave pose (wave_rows, the animated rest pose),
+    stiff at the pole and loose at the tip, damped, with a little gravity,
+    segment lengths held and each segment kept within PHYS_MAX_SWING of its
+    rest direction (the jiggly system's hard constraints) so the cloth can't
+    fold over itself. Each clip is simulated PHYS_PASSES times to settle;
+    the last pass is kept, and its loop residual is spread across the clip so
+    the loop is seamless. Rows keep wave_rows' convention: joint k is segment
+    k's rigid transform, bind hinge pivot + c*k*seg_len -> posed node k."""
+    from scipy.spatial.transform import Rotation
+    grip, d, c, n = frame
+    total = rows.shape[0]
+    seg_len = CLOTH_WIDTH / SEGMENTS
+    pivot = grip + d * (POLE_ABOVE - 0.01)
+    rest = wave_rows(frame, rows, clips) if rest is None else rest
+    bind = pivot + np.outer(np.arange(SEGMENTS + 1), c) * seg_len               # 11 bind nodes
+    # rest pose: node 0 on the hand, node k+1 = end of segment k
+    target = np.zeros((total, SEGMENTS + 1, 3))
+    target[:, 0] = qrot(rows[:, HAND, :4].astype(np.float64), np.broadcast_to(pivot, (total, 3))) + rows[:, HAND, 4:7]
+    for k in range(SEGMENTS):
+        r = rest[:, k].astype(np.float64)
+        target[:, k + 1] = qrot(r[:, :4], np.broadcast_to(bind[k + 1], (total, 3))) + r[:, 4:7]
+    rest_normal = np.stack([qrot(rest[:, k, :4].astype(np.float64), np.broadcast_to(n, (total, 3)))
+                            for k in range(SEGMENTS)], 1)
+
+    stiffness = np.linspace(PHYS_K_ROOT, PHYS_K_TIP, SEGMENTS)[:, None]
+    gravity = np.array([0.0, -PHYS_GRAVITY, 0.0])
+    dt = 1.0 / FPS / PHYS_SUBSTEPS
+    cos_swing, sin_swing = math.cos(PHYS_MAX_SWING), math.sin(PHYS_MAX_SWING)
+
+    def clamp_dir(dirn, ref, cos, cos_limit, sin_limit):
+        """dirn turned toward ref until the angle between them is the limit."""
+        side = dirn - ref * cos
+        side /= max(np.linalg.norm(side), 1e-9)
+        return ref * cos_limit + side * sin_limit
+    nodes = np.zeros((total, SEGMENTS + 1, 3))
+    for s, e in clips:
+        x = target[s, 1:].copy()
+        v = np.zeros_like(x)
+        for p in range(PHYS_PASSES):
+            record = p == PHYS_PASSES - 1
+            if record:
+                nodes[s, 1:] = x                                                 # the last pass's frame s
+            for f in range(s, e):
+                nxt = f + 1 if f + 1 < e else s                                  # clips loop
+                for sub in range(PHYS_SUBSTEPS):
+                    a = (sub + 1) / PHYS_SUBSTEPS
+                    goal = target[f] * (1 - a) + target[nxt] * a
+                    old = x.copy()
+                    v += (stiffness * (goal[1:] - x) - PHYS_DAMPING * v + gravity) * dt
+                    x += v * dt
+                    prev = goal[0]
+                    for k in range(SEGMENTS):                                   # stretch + swing constraints
+                        seg = x[k] - prev
+                        dirn = seg / max(np.linalg.norm(seg), 1e-9)
+                        rest_dir = goal[k + 1] - goal[k]
+                        rest_dir /= max(np.linalg.norm(rest_dir), 1e-9)
+                        cos = float(dirn @ rest_dir)
+                        if cos < cos_swing:
+                            dirn = clamp_dir(dirn, rest_dir, cos, cos_swing, sin_swing)
+                        x[k] = prev + dirn * seg_len
+                        prev = x[k]
+                    v = (x - old) / dt
+                if record and nxt != s:
+                    nodes[nxt, 1:] = x
+        # x is now where the loop wraps back into frame s; spread the difference
+        # over the clip so the last frame flows into the first
+        residual = x - nodes[s, 1:]
+        ramp = (np.arange(e - s) / (e - s))[:, None, None]
+        nodes[s:e, 1:] -= ramp * residual
+    nodes[:, 0] = target[:, 0]
+
+    out = np.zeros((total, SEGMENTS, 8), np.float32)
+    bind_basis = np.stack([c, n, np.cross(c, n)], 1)                              # columns
+    start = nodes[:, 0].copy()
+    for k in range(SEGMENTS):
+        seg = nodes[:, k + 1] - nodes[:, k]
+        dirn = seg / np.linalg.norm(seg, axis=1, keepdims=True)
+        # rebuild the chain from the pole out (exact lengths, no gaps between segments)
+        nodes[:, k] = start
+        start = start + dirn * seg_len
+        nrm = rest_normal[:, k] - dirn * (rest_normal[:, k] * dirn).sum(1, keepdims=True)
+        nrm /= np.linalg.norm(nrm, axis=1, keepdims=True)
+        posed_basis = np.stack([dirn, nrm, np.cross(dirn, nrm)], 2)              # columns
+        R = posed_basis @ bind_basis.T
+        q = Rotation.from_matrix(R).as_quat()                                    # x, y, z, w
+        out[:, k, :4] = q
+        out[:, k, 4:7] = nodes[:, k] - qrot(q, np.broadcast_to(bind[k], (total, 3)))
+        out[:, k, 7] = 1.0
+    return out
+
+
 def check_flag_joints_unused():
     """Refuse to patch the bank if any stock crowd model is skinned to the flag joints."""
     ce.load_index(pack.BLOBSET_PATH)
@@ -403,10 +510,12 @@ def cmd_preview(args):
     joints = skeleton(template)
     _head, rows, clips = load_bank()
     frame = flag_frame(joints, rows)
-    rows[:, FLAG_JOINTS] = wave_rows(frame, rows, clips)
-    verts, tris = build_lod(frame, *LODS[0][:3], 4)
     s, e = clips[args.clip]
-    frames = [s + (e - s) * k // args.count for k in range(args.count)]
+    # only this clip's frames, so the physics doesn't simulate the whole bank
+    rows = rows[s:e].copy()
+    rows[:, FLAG_JOINTS] = (physics_rows if args.style == "physics" else wave_rows)(frame, rows, [(0, e - s)])
+    verts, tris = build_lod(frame, *LODS[0][:3], 4)
+    frames = [(e - s) * k // args.count for k in range(args.count)]
     W, H = 220, 300
     img = Image.new("RGB", (W * 2 * len(frames), H), "white")
     d = ImageDraw.Draw(img)
@@ -426,9 +535,9 @@ def cmd_preview(args):
             fx, fy = xy(flag)
             for t in tris:
                 d.polygon([(fx[i], fy[i]) for i in t], outline=(200, 30, 30))
-        d.text((2 * k * W + 4, 4), f"clip {args.clip} f{f}: front | side", fill="black")
+        d.text((2 * k * W + 4, 4), f"{args.style} clip {args.clip} f{s + f}: front | side", fill="black")
     os.makedirs(WORK, exist_ok=True)
-    out = os.path.join(WORK, f"preview_clip{args.clip}.png")
+    out = os.path.join(WORK, f"preview_clip{args.clip}_{args.style}.png")
     img.save(out)
     print(out)
 
@@ -448,14 +557,27 @@ def cmd_model(args):
                  "crowd-flags build_flags.py model", args.confirm, replace=index.entry(MODEL_PATH) is not None)
 
 
+def stock_bank():
+    """The stock animation bank: from pack.py's install backup when the bank is
+    already patched (so a dry run works without restoring), else live."""
+    meta_path = pack.backup_meta_path(BANK_ENTRY)
+    if not os.path.exists(meta_path):
+        return read_entry(BANK_ENTRY)
+    with open(meta_path) as f:
+        meta = json.load(f)
+    with open(meta["blob_backup"], "rb") as f:
+        raw = f.read()
+    if meta["main_compressed_size"] == meta["main_uncompressed_size"]:
+        main = meta["main_uncompressed_size"]
+        return raw[:main] + ce.decode_outer_zstd_frames(raw[main:])
+    return ce.decode_outer_zstd_frames(raw)
+
+
 def cmd_bank(args):
     check_flag_joints_unused()
-    if os.path.exists(pack.backup_meta_path(BANK_ENTRY)):
-        if not args.confirm:
-            print(f"(entry {BANK_ENTRY} is installed; --confirm restores it before rebuilding)")
-        else:
-            pack.do_restore(pack.BLOBSET_PATH, BANK_ENTRY)
-    raw = read_entry(BANK_ENTRY)
+    raw = stock_bank()
+    if args.confirm and os.path.exists(pack.backup_meta_path(BANK_ENTRY)):
+        pack.do_restore(pack.BLOBSET_PATH, BANK_ENTRY)
     head, rows, clips = load_bank(raw)
     template = read_entry(TEMPLATE_MODEL)
     frame = flag_frame(skeleton(template), rows)
@@ -463,7 +585,7 @@ def cmd_bank(args):
     moving = max(np.abs(rows[s:e, FLAG_JOINTS] - rows[s, FLAG_JOINTS]).max() for s, e in clips)
     if moving > 1e-6 and not args.force:
         raise SystemExit("flag joint rows move within a clip - is the bank already patched? (--force to ignore)")
-    rows[:, FLAG_JOINTS] = wave_rows(frame, rows, clips)
+    rows[:, FLAG_JOINTS] = (physics_rows if args.style == "physics" else wave_rows)(frame, rows, clips)
     vram = rows.astype(np.float32).tobytes()
     enc = texture_mods.encode_outer_chunks(vram)
     blob = head + enc
@@ -649,9 +771,11 @@ def main():
     p = sub.add_parser("preview")
     p.add_argument("--clip", type=int, default=47)
     p.add_argument("--count", type=int, default=5)
+    p.add_argument("--style", choices=["physics", "wave"], default="physics")
     p = sub.add_parser("model")
     p.add_argument("--confirm", action="store_true")
     p = sub.add_parser("bank")
+    p.add_argument("--style", choices=["physics", "wave"], default="physics")
     p.add_argument("--confirm", action="store_true")
     p.add_argument("--force", action="store_true")
     p = sub.add_parser("variants")

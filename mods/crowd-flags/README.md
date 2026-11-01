@@ -17,12 +17,20 @@ that no animation moves. This mod uses them:
   template's max weights per LOD (4, 3, 2, 2, 1, 1, 1). From LOD 4 down, the cloth columns sit exactly on the
   joints, so single-weight skinning stays exact. The pole direction is chosen so the pole points as
   upward as possible on average across every crowd animation frame, and the cloth faces the pitch.
-- **Animation:** the crowd's baked animation (entry 39122) stores 94 joint rows per frame (10,233 frames,
-  103 clips), each a skinning delta (quaternion + translation). The ten flag rows are rewritten for every
-  frame: the right hand's delta, composed with a chain wave about the pole (bend that grows toward the free
-  end, slight droop, a vertical ripple). Each clip gets a whole number of wave cycles (~1.4 Hz at 30 fps),
-  so loops are seamless. No other row changes. The tool refuses to patch if any stock crowd model is
-  skinned to those joints.
+- **Animation:** the crowd's baked animation (`crowd-anim-bank`) stores 94 joint rows per frame (10,233
+  frames, 103 clips), each a skinning delta (quaternion + translation). The ten flag rows are rewritten for
+  every frame. No other row changes. The tool refuses to patch if any stock crowd model is skinned to those
+  joints.
+  - **Rest pose (`wave_rows`):** the right hand's motion composed with a chain wave about the pole (bend that
+    grows toward the free end, slight droop, a vertical ripple), a whole number of cycles per clip.
+  - **Physics (`physics_rows`, the default):** the touch judge's flag swings through the game's jiggly joints,
+    simulated per character on the CPU, which the GPU-instanced crowd can't run. So the same model runs
+    offline, per clip, against the clip's real hand motion: the chain is pulled toward the rest pose
+    (stiffness 400 at the pole down to 80 at the tip, damping 10, light gravity), segment lengths are held,
+    and each segment stays within 35° of its rest direction so the cloth can't fold over. A clamp between
+    neighbouring segments was tried and dropped: it made the tip jitter. Each clip runs 3 times to settle,
+    then its loop residual is spread across the clip for a seamless loop. Zero runtime cost.
+    `bank --style wave` installs the plain wave; `preview --style wave|physics` compares them.
 - **Textures:** every flag face in `resources/flags/<icon>/*.png` (1560 x 1020, the template's shape; see
   `resources/flags/README.md`) becomes `crowd_flag_<icon>_<variant>_col`: squashed into a 512² DXT1 texture with
   mips by `face_to_texture` (face in the top 7/8, pole colour below). `default_flags.py` generates the defaults
