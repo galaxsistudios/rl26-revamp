@@ -1,6 +1,7 @@
 ﻿import("rules.penalty.penaltytypes")
 import("sim.hud.hud_helper")
 import("app.noesis.hud.nvm_scorecard")
+import("script-config.rules.rules.rulesenvironment")
 
 local var_0_0 = penaltytypes.infringementTypes
 
@@ -18,6 +19,17 @@ local InterchangeBannerSeconds = 4
 local InterchangeBannerDelay = 0.5
 -- How often the on-field sets are compared to find interchanges.
 local InterchangePollSeconds = 0.25
+-- An off or on waits this long for its partner before it's dropped (sin bin, send-off...).
+local InterchangePendingSeconds = 8
+
+-- nrl-broadcast-scoreboard: TV-style team stat banner (same slot as the interchange banner).
+-- One shows every StatBannerEvery seconds of live play while the slot is free, for
+-- StatBannerSeconds, cycling through StatBannerOrder (stats both teams are still 0 on are skipped).
+local StatBannerEvery = 75
+local StatBannerSeconds = 6
+local StatBannerGap = 0.8
+-- A play-the-ball this close (m) to the attacking side's try line counts as in the red zone.
+local RedZoneMetres = 20
 
 -- nrl-broadcast-scoreboard: logs detected interchanges to interchange_banner_debug.txt (game
 -- folder) until the banner is confirmed in game. Turn off then.
@@ -270,6 +282,19 @@ function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 		end
 	end
 
+	-- nrl-broadcast-scoreboard: the on report banner takes the slot from a stat banner, and the
+	-- red zone counts are updated from each play-the-ball.
+	if arg_18_0.scoreCardNVM.ShowMatchState and arg_18_0.statTimer then
+		arg_18_0.statTimer = nil
+		arg_18_0.statGap = StatBannerGap
+
+		arg_18_0.scoreCardNVM:hideStat()
+	end
+
+	pcall(function()
+		arg_18_0:trackRedZone(arg_18_3, arg_18_5, arg_18_6)
+	end)
+
 	-- nrl-broadcast-scoreboard: interchanges are detected by watching each side's on-field set
 	-- (SubstitutionClearEvent never fired for AI interchanges in game), then queued below.
 	arg_18_0.interchangePollTimer = (arg_18_0.interchangePollTimer or 0) - arg_18_8
@@ -297,7 +322,7 @@ function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 		if arg_18_0.interchangeGap <= 0 then
 			arg_18_0.interchangeGap = nil
 		end
-	elseif arg_18_0.interchangeQueue and #arg_18_0.interchangeQueue > 0 and arg_18_0.enabled and not arg_18_0.scoreCardNVM.ShowMatchState then
+	elseif arg_18_0.interchangeQueue and #arg_18_0.interchangeQueue > 0 and arg_18_0.enabled and not arg_18_0.scoreCardNVM.ShowMatchState and not arg_18_0.statTimer and not arg_18_0.statGap then
 		arg_18_0.interchangeDelay = (arg_18_0.interchangeDelay or 0) + arg_18_8
 
 		if arg_18_0.interchangeDelay >= InterchangeBannerDelay then
@@ -313,6 +338,8 @@ function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 	else
 		arg_18_0.interchangeDelay = nil
 	end
+
+	arg_18_0:updateStatBanner(arg_18_3, arg_18_5, arg_18_8)
 
 	if not arg_18_0.enabled then
 		return
@@ -735,6 +762,12 @@ function GameplayScoreHud.pollInterchanges(arg_q_0, arg_q_1, arg_q_2)
 
 	arg_q_0.interchangeRoles = arg_q_0.interchangeRoles or {}
 	arg_q_0.interchangeCache = arg_q_0.interchangeCache or {}
+	-- Offs / ons not yet paired, per side. The player going off and the one coming on can change
+	-- role in different polls, so leftovers wait up to InterchangePendingSeconds for a partner.
+	arg_q_0.interchangePending = arg_q_0.interchangePending or {}
+	arg_q_0.interchangeClock = (arg_q_0.interchangeClock or 0) + InterchangePollSeconds
+
+	local var_q_c = arg_q_0.interchangeClock
 
 	for iter_q_0 = 1, 2 do
 		local var_q_2, var_q_3 = pcall(function()
@@ -784,11 +817,35 @@ function GameplayScoreHud.pollInterchanges(arg_q_0, arg_q_1, arg_q_2)
 					end
 				end
 
+				-- Merge in earlier polls' unpaired offs/ons, oldest first.
+				local var_q_p = arg_q_0.interchangePending[iter_q_0] or {
+					offs = {},
+					ons = {}
+				}
+
+				for iter_q_p, iter_q_e in ipairs(var_q_9) do
+					iter_q_e.seen = var_q_c
+				end
+
+				for iter_q_p, iter_q_e in ipairs(var_q_10) do
+					iter_q_e.seen = var_q_c
+				end
+
+				for iter_q_p = #var_q_p.offs, 1, -1 do
+					table.insert(var_q_9, 1, var_q_p.offs[iter_q_p])
+				end
+
+				for iter_q_p = #var_q_p.ons, 1, -1 do
+					table.insert(var_q_10, 1, var_q_p.ons[iter_q_p])
+				end
+
+				local var_q_leftOffs = {}
+
 				for iter_q_5, iter_q_6 in ipairs(var_q_9) do
 					local var_q_14
 
 					for iter_q_7, iter_q_8 in ipairs(var_q_10) do
-						if not iter_q_8.used and iter_q_8.role == iter_q_6.role then
+						if not iter_q_8.used and iter_q_8.id ~= iter_q_6.id and iter_q_8.role == iter_q_6.role then
 							var_q_14 = iter_q_8
 
 							break
@@ -797,7 +854,7 @@ function GameplayScoreHud.pollInterchanges(arg_q_0, arg_q_1, arg_q_2)
 
 					if not var_q_14 then
 						for iter_q_9, iter_q_10 in ipairs(var_q_10) do
-							if not iter_q_10.used then
+							if not iter_q_10.used and iter_q_10.id ~= iter_q_6.id then
 								var_q_14 = iter_q_10
 
 								break
@@ -840,11 +897,266 @@ function GameplayScoreHud.pollInterchanges(arg_q_0, arg_q_1, arg_q_2)
 							onName = var_q_16.name or ""
 						})
 						var_0_interchange_log(string.format("side %d OFF %s %s  ON %s %s  (queue %d)", iter_q_0, tostring(var_q_15.number), tostring(var_q_15.name), tostring(var_q_16.number), tostring(var_q_16.name), #arg_q_0.interchangeQueue))
+					else
+						table.insert(var_q_leftOffs, iter_q_6)
 					end
 				end
+
+				-- Keep what's still unpaired for the next polls, until it's too old (sin bin, send-off).
+				local var_q_np = {
+					offs = {},
+					ons = {}
+				}
+
+				for iter_q_p, iter_q_e in ipairs(var_q_leftOffs) do
+					if var_q_c - (iter_q_e.seen or var_q_c) < InterchangePendingSeconds then
+						table.insert(var_q_np.offs, iter_q_e)
+					end
+				end
+
+				for iter_q_p, iter_q_e in ipairs(var_q_10) do
+					if not iter_q_e.used and var_q_c - (iter_q_e.seen or var_q_c) < InterchangePendingSeconds then
+						table.insert(var_q_np.ons, iter_q_e)
+					end
+				end
+
+				arg_q_0.interchangePending[iter_q_0] = var_q_np
 			end
 
 			arg_q_0.interchangeRoles[iter_q_0] = var_q_4
+		end
+	end
+end
+
+-- nrl-broadcast-scoreboard: red zone counts per side, from each play-the-ball. A play-the-ball is
+-- counted once its position is set (the entity holds (0,0) at first and again ~2 s after). Entries
+-- = sets with at least one play-the-ball in the red zone.
+function GameplayScoreHud.trackRedZone(arg_z_0, arg_z_1, arg_z_2, arg_z_3)
+	arg_z_0.redZone = arg_z_0.redZone or {
+		{
+			entries = 0,
+			tackles = 0
+		},
+		{
+			entries = 0,
+			tackles = 0
+		}
+	}
+
+	local var_z_0 = arg_z_2:getPlayTheBallEntity()
+
+	if not var_z_0 or var_z_0.playTheBallState == native.EPlayTheBallState.None then
+		arg_z_0.redZonePtbCounted = false
+
+		return
+	end
+
+	local var_z_1 = var_z_0.playTheBallPosition
+
+	if arg_z_0.redZonePtbCounted or not var_z_1 or var_z_1.x == 0 and var_z_1.y == 0 then
+		return
+	end
+
+	arg_z_0.redZonePtbCounted = true
+
+	local var_z_2 = arg_z_2:getMatchProgressionEntity()
+	local var_z_3 = var_z_2.attackingSide
+	local var_z_4 = var_z_2.tackleCount or 0
+
+	-- A new set: possession changed or the tackle count went back down.
+	if var_z_3 ~= arg_z_0.redZoneLastSide or var_z_4 < (arg_z_0.redZoneLastTackle or 0) then
+		arg_z_0.redZoneSet = (arg_z_0.redZoneSet or 0) + 1
+	end
+
+	arg_z_0.redZoneLastSide = var_z_3
+	arg_z_0.redZoneLastTackle = var_z_4
+
+	local var_z_5
+	local var_z_6 = var_z_0.dummyHalfId and arg_z_3:getGameObject(var_z_0.dummyHalfId)
+
+	if var_z_6 and var_z_6.side == var_z_3 then
+		var_z_5 = var_z_6:getPlayDir().x
+	else
+		var_z_5 = arg_z_1:getSide(var_z_3):getPlayDir().x
+	end
+
+	local var_z_7 = rulesenvironment.halfFieldLength - var_z_1.x * var_z_5
+	local var_z_8 = arg_z_0.redZone[var_z_3]
+
+	if var_z_8 and var_z_7 <= RedZoneMetres then
+		var_z_8.tackles = var_z_8.tackles + 1
+
+		if var_z_8.lastSet ~= arg_z_0.redZoneSet then
+			var_z_8.lastSet = arg_z_0.redZoneSet
+			var_z_8.entries = var_z_8.entries + 1
+		end
+
+		var_0_interchange_log(string.format("red zone: side %d %.1f m out, entries %d tackles %d", var_z_3, var_z_7, var_z_8.entries, var_z_8.tackles))
+	end
+end
+
+-- Live team stats (simlisteners/statistics/teamstatistics_listener.lua), read straight from its
+-- tables so a missing field is 0 instead of tripping getTeamStat's ASSERT.
+local StatFields = {
+	"sets",
+	"completions",
+	"errors",
+	"timeInPossession",
+	"lineBreaks",
+	"missedTackles",
+	"penaltiesConceded",
+	"tackleMetresGained"
+}
+
+function GameplayScoreHud.collectTeamStats(arg_t_0, arg_t_1)
+	local var_t_0 = {
+		{},
+		{}
+	}
+	local var_t_1, var_t_2 = pcall(function()
+		return arg_t_1:getComponent("statistics").statistics_listeners.team.stats
+	end)
+
+	for iter_t_0 = 1, 2 do
+		for iter_t_1, iter_t_2 in ipairs(StatFields) do
+			local var_t_3, var_t_4 = pcall(function()
+				return var_t_2[iter_t_0][iter_t_2]
+			end)
+
+			var_t_0[iter_t_0][iter_t_2] = var_t_1 and var_t_3 and tonumber(var_t_4) or 0
+		end
+
+		local var_t_5 = arg_t_0.redZone and arg_t_0.redZone[iter_t_0]
+
+		var_t_0[iter_t_0].redZoneEntries = var_t_5 and var_t_5.entries or 0
+		var_t_0[iter_t_0].redZoneTackles = var_t_5 and var_t_5.tackles or 0
+	end
+
+	return var_t_0
+end
+
+local function var_0_share(arg_r_0, arg_r_1)
+	local var_r_0 = arg_r_0 + arg_r_1
+
+	return var_r_0 > 0 and arg_r_0 / var_r_0 or 0.5
+end
+
+-- A count stat: title + both values, skipped while both are 0.
+local function var_0_count_stat(arg_k_0, arg_k_1, arg_k_2)
+	return function(arg_k_3)
+		local var_k_0 = math.floor(arg_k_3[1][arg_k_1] + 0.5)
+		local var_k_1 = math.floor(arg_k_3[2][arg_k_1] + 0.5)
+
+		if var_k_0 + var_k_1 == 0 then
+			return nil
+		end
+
+		local var_k_2 = arg_k_2 or "%d"
+
+		return arg_k_0, string.format(var_k_2, var_k_0), string.format(var_k_2, var_k_1), var_0_share(var_k_0, var_k_1)
+	end
+end
+
+local StatBannerOrder = {
+	function(arg_o_0)
+		local var_o_0, var_o_1 = arg_o_0[1], arg_o_0[2]
+
+		if var_o_0.sets + var_o_1.sets < 4 or var_o_0.sets == 0 or var_o_1.sets == 0 then
+			return nil
+		end
+
+		local var_o_2 = math.floor(var_o_0.completions / var_o_0.sets * 100 + 0.5)
+		local var_o_3 = math.floor(var_o_1.completions / var_o_1.sets * 100 + 0.5)
+
+		return "COMPLETION RATE", string.format("%d/%d  %d%%", var_o_0.completions, var_o_0.sets, var_o_2), string.format("%d%%  %d/%d", var_o_3, var_o_1.completions, var_o_1.sets), var_0_share(var_o_2, var_o_3)
+	end,
+	function(arg_o_0)
+		local var_o_0, var_o_1 = arg_o_0[1].timeInPossession, arg_o_0[2].timeInPossession
+
+		if var_o_0 + var_o_1 <= 0 then
+			return nil
+		end
+
+		local var_o_2 = math.floor(var_o_0 / (var_o_0 + var_o_1) * 100 + 0.5)
+
+		return "POSSESSION", string.format("%d%%", var_o_2), string.format("%d%%", 100 - var_o_2), var_o_2 / 100
+	end,
+	var_0_count_stat("ERRORS", "errors"),
+	var_0_count_stat("RED ZONE ENTRIES", "redZoneEntries"),
+	var_0_count_stat("LINE BREAKS", "lineBreaks"),
+	var_0_count_stat("TACKLES IN THE RED ZONE", "redZoneTackles"),
+	var_0_count_stat("MISSED TACKLES", "missedTackles"),
+	var_0_count_stat("PENALTIES CONCEDED", "penaltiesConceded"),
+	var_0_count_stat("RUN METRES", "tackleMetresGained", "%dm")
+}
+
+-- nrl-broadcast-scoreboard: shows the next stat in StatBannerOrder every StatBannerEvery seconds of
+-- live play, when nothing else wants the slot. Interchanges and on report take priority: a stat
+-- banner up when one arrives is cut short.
+function GameplayScoreHud.updateStatBanner(arg_u_0, arg_u_1, arg_u_2, arg_u_3)
+	local var_u_0 = arg_u_0.scoreCardNVM
+	local var_u_1 = arg_u_0.interchangeQueue and #arg_u_0.interchangeQueue > 0
+
+	if arg_u_0.statTimer then
+		arg_u_0.statTimer = arg_u_0.statTimer - arg_u_3
+
+		if arg_u_0.statTimer <= 0 or var_u_1 or arg_u_0.onReportQueued then
+			arg_u_0.statTimer = nil
+			arg_u_0.statGap = StatBannerGap
+
+			var_u_0:hideStat()
+		end
+
+		return
+	end
+
+	if arg_u_0.statGap then
+		arg_u_0.statGap = arg_u_0.statGap - arg_u_3
+
+		if arg_u_0.statGap <= 0 then
+			arg_u_0.statGap = nil
+		end
+
+		return
+	end
+
+	if not arg_u_0.enabled or var_u_1 or var_u_0.ShowMatchState or var_u_0.ShowInterchange or var_u_0.ShowTryConfirmed or arg_u_0.interchangeTimer or arg_u_0.interchangeGap or arg_u_0.onReportQueued then
+		return
+	end
+
+	local var_u_2 = false
+
+	pcall(function()
+		var_u_2 = arg_u_2:getMatchProgressionEntity():getGeneralGameplayActive() and true or false
+	end)
+
+	if not var_u_2 then
+		return
+	end
+
+	arg_u_0.statClock = (arg_u_0.statClock or 0) + arg_u_3
+
+	if arg_u_0.statClock < StatBannerEvery then
+		return
+	end
+
+	arg_u_0.statClock = 0
+
+	local var_u_3 = arg_u_0:collectTeamStats(arg_u_1)
+
+	for iter_u_0 = 1, #StatBannerOrder do
+		arg_u_0.statIndex = (arg_u_0.statIndex or 0) % #StatBannerOrder + 1
+
+		local var_u_4, var_u_5, var_u_6, var_u_7, var_u_8 = pcall(StatBannerOrder[arg_u_0.statIndex], var_u_3)
+
+		if var_u_4 and var_u_5 then
+			var_u_0:showStat(var_u_5, var_u_6, var_u_7, var_u_8)
+
+			arg_u_0.statTimer = StatBannerSeconds
+
+			var_0_interchange_log(string.format("stat banner: %s  %s | %s", var_u_5, tostring(var_u_6), tostring(var_u_7)))
+
+			return
 		end
 	end
 end

@@ -90,6 +90,14 @@ ns.Class("NVMScoreCard", var_0_0, function(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.InterchangeOnName = " "
 	arg_5_0.ShowInterchange = false
 
+	-- nrl-broadcast-scoreboard: TV-style team stat banner in the same slot (completion rate,
+	-- possession, errors, red zone...), set by showStat() from sim/hud/gameplayscore_hud.lua.
+	arg_5_0.StatTitle = " "
+	arg_5_0.StatHome = " "
+	arg_5_0.StatAway = " "
+	arg_5_0.StatHomeShare = 0.5
+	arg_5_0.ShowStat = false
+
 	-- bunker-overturned-try: a new match HUD starts with no provisional try left over.
 	local var_p_0 = rawget(_G, "ProvisionalTryState")
 
@@ -121,7 +129,12 @@ end).Bindings = {
 		InterchangeOffName = ns.String,
 		InterchangeOnNumber = ns.String,
 		InterchangeOnName = ns.String,
-		ShowInterchange = ns.Bool
+		ShowInterchange = ns.Bool,
+		StatTitle = ns.String,
+		StatHome = ns.String,
+		StatAway = ns.String,
+		StatHomeShare = ns.Double,
+		ShowStat = ns.Bool
 	}
 }
 
@@ -137,6 +150,19 @@ end
 
 function NVMScoreCard.hideInterchange(arg_h_0)
 	arg_h_0.ShowInterchange = false
+end
+
+-- nrl-broadcast-scoreboard: fills the stat banner. arg 5 = home share of the comparison bar (0-1).
+function NVMScoreCard.showStat(arg_s_0, arg_s_1, arg_s_2, arg_s_3, arg_s_4)
+	arg_s_0.StatTitle = arg_s_1
+	arg_s_0.StatHome = arg_s_2
+	arg_s_0.StatAway = arg_s_3
+	arg_s_0.StatHomeShare = math.max(0, math.min(1, arg_s_4 or 0.5))
+	arg_s_0.ShowStat = true
+end
+
+function NVMScoreCard.hideStat(arg_s_0)
+	arg_s_0.ShowStat = false
 end
 
 function NVMScoreCard.updateScores(arg_6_0, arg_6_1, arg_6_2)

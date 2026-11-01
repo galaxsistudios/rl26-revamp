@@ -111,6 +111,30 @@ then the stat rows (dark cards with a team-colour edge, value in Maison on the r
 
 Untested in game.
 
+## Team stat banner
+
+TV-style team stats slide out under the scoreboard (same slot and slide as the interchange
+banner): home abbreviation + value at the home team-colour end, the stat title in the middle,
+away value + abbreviation at the away end, and a bar along the bottom split by the home team's
+share in team colours. XAML `StatBanner` here; `StatTitle/StatHome/StatAway/StatHomeShare/
+ShowStat` + `showStat`/`hideStat` in mods/bunker-overturned-try's `nvm_scorecard.lua`; the logic
+in mods/referee-on-report's `gameplayscore_hud.lua`.
+
+- Every `StatBannerEvery` (75) seconds of live play (general play, slot free) the next stat in
+  `StatBannerOrder` shows for `StatBannerSeconds` (6): completion rate (`c/s  %`), possession,
+  errors, red zone entries, line breaks, tackles in the red zone, missed tackles, penalties
+  conceded, run metres. Stats both teams are still 0 on are skipped (completion needs 4+ sets).
+- Live values are read from the statistics component's team listener tables
+  (`statistics_listeners.team.stats[side][field]`), not `getTeamStat`, whose ASSERT would trip on
+  a missing field; missing = 0.
+- Red zone isn't a game stat: `trackRedZone` counts each play-the-ball within `RedZoneMetres` (20)
+  of the attacking side's try line (`halfFieldLength - ruckX * playDir.x`, playDir from the dummy
+  half). Entries = sets with at least one.
+- Interchange and on report banners take priority (a stat banner is cut short and they wait out
+  its 0.8 s gap). Detections log to `interchange_banner_debug.txt`.
+
+Untested in game.
+
 ## Crests
 
 Uses the game's unused `ui/club_logos/hud_score/<icon>.texture` crops (48x80
@@ -207,7 +231,9 @@ to be on screen and for the on report banner (same slot) to clear. Jersey number
 Detection: `SubstitutionClearEvent` never fired for AI interchanges in game (no banner at all
 during a mass interchange, 2026-11-01), so `GameplayScoreHud.pollInterchanges` compares each
 side's on-field set (`roleInfoPool` assigned role not `Substitute`) every 0.25 s. A player who left
-is paired with the player now in his role; unpaired changes (sin bin, send-off) are ignored.
+is paired with the player now in his role. The two can change role in different polls, so
+unpaired offs/ons wait up to 8 s (`InterchangePendingSeconds`) for a partner, then are dropped
+(sin bin, send-off).
 Numbers and surnames are cached at the first poll (shirt order) and from `InterchangeQueuedEvent`.
 `onInterchangeMade` is inert. `InterchangeBannerDebugLog` writes `interchange_banner_debug.txt`.
 
