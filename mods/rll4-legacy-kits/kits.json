@@ -2444,6 +2444,27 @@
    "texture": "knights_rll4_home_2022"
   },
   {
+   "guid": 60336,
+   "src": "2022/panthers-away-22.dds",
+   "club": 124,
+   "name": "AWAY 2022",
+   "texture": "panthers_rll4_away_2022"
+  },
+  {
+   "guid": 60337,
+   "src": "2022/panthers-alternate-22.dds",
+   "club": 124,
+   "name": "ALTERNATE 2022",
+   "texture": "panthers_rll4_alternate_2022"
+  },
+  {
+   "guid": 60338,
+   "src": "2022/panthers-home-22.dds",
+   "club": 124,
+   "name": "HOME 2022",
+   "texture": "panthers_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2612,6 +2633,34 @@
    "texture": "knights_rll4_nines_2020"
   },
   {
+   "guid": 60382,
+   "src": "2023/panthers-alternate-23.dds",
+   "club": 124,
+   "name": "ALTERNATE 2023",
+   "texture": "panthers_rll4_alternate_2023"
+  },
+  {
+   "guid": 60383,
+   "src": "2023/panthers-away-23.dds",
+   "club": 124,
+   "name": "AWAY 2023",
+   "texture": "panthers_rll4_away_2023"
+  },
+  {
+   "guid": 60384,
+   "src": "2023/panthers-clash-23.dds",
+   "club": 124,
+   "name": "CLASH 2023",
+   "texture": "panthers_rll4_clash_2023"
+  },
+  {
+   "guid": 60385,
+   "src": "2023/panthers-home-23.dds",
+   "club": 124,
+   "name": "HOME 2023",
+   "texture": "panthers_rll4_home_2023"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2683,6 +2732,30 @@
     "uniformTop": 265,
     "uniformBottom": 265,
     "uniformSocks": 264
+   }
+  },
+  {
+   "guid": 64015,
+   "custom": "panthers_indigenous_2026",
+   "club": 124,
+   "name": "INDIGENOUS 2026",
+   "texture": "panthers_indigenous_2026",
+   "templates": {
+    "uniformTop": 334,
+    "uniformBottom": 334,
+    "uniformSocks": 334
+   }
+  },
+  {
+   "guid": 64029,
+   "custom": "panthers_alternate_2026",
+   "club": 124,
+   "name": "ALTERNATE 2026",
+   "texture": "panthers_alternate_2026",
+   "templates": {
+    "uniformTop": 334,
+    "uniformBottom": 334,
+    "uniformSocks": 334
    }
   },
   {

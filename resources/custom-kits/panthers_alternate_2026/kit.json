@@ -1,0 +1,390 @@
+{
+ "title": "Panthers 60th Anniversary 2026",
+ "notes": "60th anniversary alternate (1967 colours: brown yoke, cream body, red/white/blue shoulder stripes), commemorative but plain colour blocks so painted by code (user, 2026-10-31). Only the back photo is a product shot (the front is on a player), so the design is painted from the back photo and the front takes the back's design (kit_photo.flat front_from_back); the player photo shows the same yoke and cream body. Front sponsors at the stock 2026 home positions; Picklebet from picklebet.com (inline SVG wordmark). westfund (westfund.com.au) and the milestone text '149 JOHN FARRAGHER' (RL Font Bold, as on the launch photo) between the NRL logo and crest; Allam and Hertz keep their black lettering. Shoulder stripes painted in 3D from collar to cuff. Shorts: stock 2026 home recoloured brown; socks stock 2026 home.",
+ "install": {
+  "club": 124,
+  "name": "ALTERNATE 2026",
+  "texture": "panthers_alternate_2026",
+  "templates": {
+   "uniformTop": 334,
+   "uniformBottom": 334,
+   "uniformSocks": 334
+  },
+  "guid": 64029
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   70,
+   36,
+   30
+  ],
+  "cream": [
+   204,
+   195,
+   182
+  ],
+  "red": [
+   200,
+   55,
+   50
+  ],
+  "blue": [
+   70,
+   125,
+   170
+  ],
+  "white": [
+   232,
+   226,
+   216
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1457,
+    620
+   ],
+   "shield_height": 110
+  },
+  {
+   "name": "Panthers crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     1783,
+     569,
+     1918,
+     715
+    ],
+    "raw": true,
+    "clear": [
+     13,
+     13,
+     13
+    ]
+   },
+   "align_shield_centre": false
+  },
+  {
+   "name": "westfund",
+   "source": {
+    "file": "logos/westfund.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1645,
+      566
+     ],
+     "width": 150
+    }
+   ]
+  },
+  {
+   "name": "Milestone number",
+   "source": {
+    "python": "text",
+    "args": [
+     "149",
+     44
+    ]
+   },
+   "colour": "red",
+   "place": [
+    {
+     "at": [
+      1645,
+      636
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Milestone name",
+   "source": {
+    "python": "text",
+    "args": [
+     "JOHN FARRAGHER",
+     11,
+     0.05
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1645,
+      690
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MyPlaceIQ",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     1323,
+     876,
+     2001,
+     1077
+    ],
+    "channel": 0,
+    "lo": 60,
+    "hi": 170
+   },
+   "colour": "main"
+  },
+  {
+   "name": "O'Neills (right)",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     1243,
+     282,
+     1372,
+     418
+    ]
+   },
+   "colour": "white"
+  },
+  {
+   "name": "O'Neills (left)",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     1915,
+     282,
+     2052,
+     424
+    ]
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     1235,
+     1637,
+     1369,
+     1728
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Picklebet",
+   "source": {
+    "file": "logos/picklebet.png"
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      560,
+      564
+     ],
+     "width": 600
+    }
+   ]
+  },
+  {
+   "name": "Allam",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     287,
+     1087,
+     806,
+     1277
+    ],
+    "raw": true,
+    "clear": [
+     13,
+     13,
+     13
+    ],
+    "clear_edge": true
+   },
+   "place": [
+    {
+     "at": [
+      566,
+      1164
+     ],
+     "width": 612
+    }
+   ]
+  },
+  {
+   "name": "Hertz (right sleeve)",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     2593,
+     466,
+     2879,
+     622
+    ],
+    "raw": true,
+    "clear": [
+     13,
+     13,
+     13
+    ],
+    "clear_edge": true
+   }
+  },
+  {
+   "name": "Hertz (left sleeve)",
+   "source": {
+    "stock": "m_top_panthers_nrl_home_26_col_1",
+    "box": [
+     3500,
+     466,
+     3786,
+     622
+    ],
+    "raw": true,
+    "clear": [
+     13,
+     13,
+     13
+    ],
+    "clear_edge": true
+   }
+  }
+ ],
+ "photos": {
+  "top": {
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      409.5,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      255.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      147.0,
+      397.0
+     ],
+     [
+      -0.227,
+      1.265,
+      294.0,
+      437.0
+     ],
+     [
+      -0.173,
+      1.307,
+      301.8,
+      437.0
+     ],
+     [
+      -0.143,
+      1.1,
+      301.4,
+      717.4
+     ],
+     [
+      -0.161,
+      0.972,
+      287.0,
+      929.0
+     ],
+     [
+      0.078,
+      1.525,
+      589.5,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      753.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      852.0,
+      395.0
+     ],
+     [
+      0.227,
+      1.265,
+      707.0,
+      437.0
+     ],
+     [
+      0.173,
+      1.307,
+      695.5,
+      437.0
+     ],
+     [
+      0.143,
+      1.1,
+      701.6,
+      717.4
+     ],
+     [
+      0.161,
+      0.972,
+      719.0,
+      929.0
+     ],
+     [
+      0,
+      0.937,
+      499.5,
+      954.0
+     ],
+     [
+      0,
+      1.547,
+      499.5,
+      45.0
+     ]
+    ]
+   },
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png"
+   }
+  }
+ }
+}

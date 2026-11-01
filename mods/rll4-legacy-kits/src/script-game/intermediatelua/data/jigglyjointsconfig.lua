@@ -578,6 +578,9 @@ do
 		{ 60333, "eels_rll4_away_2022", { "Yellow", "Orange" } }, -- AWAY 2022, club 122
 		{ 60334, "knights_rll4_away_2022", { "White" } }, -- AWAY 2022, club 123
 		{ 60335, "knights_rll4_home_2022", { "Red" } }, -- HOME 2022, club 123
+		{ 60336, "panthers_rll4_away_2022", {  } }, -- AWAY 2022, club 124
+		{ 60337, "panthers_rll4_alternate_2022", { "White" } }, -- ALTERNATE 2022, club 124
+		{ 60338, "panthers_rll4_home_2022", {  } }, -- HOME 2022, club 124
 		{ 60354, "broncos_rll4_away_2024", { "White" } }, -- AWAY 2024, club 118
 		{ 60355, "broncos_rll4_home_2023", { "Orange", "White" } }, -- HOME 2023, club 118
 		{ 60357, "bulldogs_rll4_anzac_2023", { "White" } }, -- ANZAC 2023, club 119
@@ -602,12 +605,18 @@ do
 		{ 60379, "knights_rll4_clash_2023", { "Orange", "Red" } }, -- CLASH 2023, club 123
 		{ 60380, "knights_rll4_home_2023", { "Red" } }, -- HOME 2023, club 123
 		{ 60381, "knights_rll4_nines_2020", { "Red" } }, -- NINES 2020, club 123
+		{ 60382, "panthers_rll4_alternate_2023", {  } }, -- ALTERNATE 2023, club 124
+		{ 60383, "panthers_rll4_away_2023", {  } }, -- AWAY 2023, club 124
+		{ 60384, "panthers_rll4_clash_2023", {  } }, -- CLASH 2023, club 124
+		{ 60385, "panthers_rll4_home_2023", {  } }, -- HOME 2023, club 124
 		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 		{ 64009, "bulldogs_indigenous_2026", { "Blue" }, { top = 145, bottom = 143, socks = 143 } }, -- INDIGENOUS 2026, club 119
 		{ 64010, "cowboys_anzac_2026", {  }, { top = 105, bottom = 280, socks = 280, number = 280 } }, -- ANZAC 2026, club 120
 		{ 64012, "dragons_indigenous_2026", { "Orange", "Red" }, { top = 364, bottom = 363, socks = 363 } }, -- INDIGENOUS 2026, club 121
 		{ 64013, "eels_anzac_2026", {  }, { top = 105, bottom = 300, socks = 300, number = 304 } }, -- ANZAC 2026, club 122
 		{ 64014, "knights_indigenous_2026", { "Orange", "Red" }, { top = 265, bottom = 265, socks = 264 } }, -- INDIGENOUS 2026, club 123
+		{ 64015, "panthers_indigenous_2026", {  }, { top = 334, bottom = 334, socks = 334 } }, -- INDIGENOUS 2026, club 124
+		{ 64029, "panthers_alternate_2026", {  }, { top = 334, bottom = 334, socks = 334 } }, -- ALTERNATE 2026, club 124
 		{ 64034, "cowboys_indigenous_2026", {  }, { top = 105, bottom = 280, socks = 280, number = 280 } }, -- INDIGENOUS 2026, club 120
 		{ 64035, "cowboys_vegas_2026", { "White" }, { top = 386, bottom = 280, socks = 280, number = 280 } }, -- LAS VEGAS 2026, club 120
 	}
@@ -858,6 +867,13 @@ KitLibrary = {
 		{ name = "HOME 2017", copyOf = "HOME", set = { uniformTop = 60208, uniformBottom = 60208, uniformSocks = 60208 } },
 		{ name = "INDIGENOUS 2017", copyOf = "HOME", set = { uniformTop = 60209, uniformBottom = 60209, uniformSocks = 60209 } },
 		{ name = "NINES 2017", copyOf = "AWAY", set = { uniformTop = 60210, uniformBottom = 60210, uniformSocks = 60210 } },
+		{ name = "AWAY 2022", copyOf = "AWAY", set = { uniformTop = 60336, uniformBottom = 60336, uniformSocks = 60336 } },
+		{ name = "ALTERNATE 2022", copyOf = "HOME", set = { uniformTop = 60337, uniformBottom = 60337, uniformSocks = 60337 } },
+		{ name = "HOME 2022", copyOf = "HOME", set = { uniformTop = 60338, uniformBottom = 60338, uniformSocks = 60338 } },
+		{ name = "ALTERNATE 2023", copyOf = "HOME", set = { uniformTop = 60382, uniformBottom = 60382, uniformSocks = 60382 } },
+		{ name = "AWAY 2023", copyOf = "AWAY", set = { uniformTop = 60383, uniformBottom = 60383, uniformSocks = 60383 } },
+		{ name = "CLASH 2023", copyOf = "HOME", set = { uniformTop = 60384, uniformBottom = 60384, uniformSocks = 60384 } },
+		{ name = "HOME 2023", copyOf = "HOME", set = { uniformTop = 60385, uniformBottom = 60385, uniformSocks = 60385 } },
 	},
 	[125] = {
 		{ name = "HOME 2024", copyOf = "AWAY", set = { uniformTop = 60025, uniformBottom = 60025, uniformSocks = 60025 } },
