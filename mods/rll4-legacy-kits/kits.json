@@ -2423,6 +2423,13 @@
    "texture": "dragons_rll4_home_2022"
   },
   {
+   "guid": 60333,
+   "src": "2022/eels-away-22.dds",
+   "club": 122,
+   "name": "AWAY 2022",
+   "texture": "eels_rll4_away_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2535,6 +2542,34 @@
    "texture": "dragons_rll4_nines_2020"
   },
   {
+   "guid": 60373,
+   "src": "2023/eels-alternate-23.dds",
+   "club": 122,
+   "name": "ALTERNATE 2023",
+   "texture": "eels_rll4_alternate_2023"
+  },
+  {
+   "guid": 60374,
+   "src": "2023/eels-away-23.dds",
+   "club": 122,
+   "name": "AWAY 2023",
+   "texture": "eels_rll4_away_2023"
+  },
+  {
+   "guid": 60376,
+   "src": "2023/eels-home-23.dds",
+   "club": 122,
+   "name": "HOME 2023",
+   "texture": "eels_rll4_home_2023"
+  },
+  {
+   "guid": 60377,
+   "src": "2023/eels-nines-20.dds",
+   "club": 122,
+   "name": "NINES 2020",
+   "texture": "eels_rll4_nines_2020"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2582,6 +2617,19 @@
     "uniformBottom": 363,
     "uniformSocks": 363
    }
+  },
+  {
+   "guid": 64013,
+   "custom": "eels_anzac_2026",
+   "club": 122,
+   "name": "ANZAC 2026",
+   "texture": "eels_anzac_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 300,
+    "uniformSocks": 300
+   },
+   "numberFrom": 304
   },
   {
    "guid": 64034,
