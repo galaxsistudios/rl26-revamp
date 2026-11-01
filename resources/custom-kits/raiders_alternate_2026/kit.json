@@ -1,0 +1,468 @@
+{
+ "title": "Raiders Alternate 2026",
+ "notes": "White alternate with a dark green yoke and lime band, from the user's product shots (resources/missing-jerseys/2026/raiders-alternate). Painted by code from the wrapped photos (kit_photo.flat); sponsors are the stock 2026 home logos where the game has them. Under Armour manufacturer. Shorts and socks: stock home, recoloured dark green.",
+ "install": {
+  "club": 126,
+  "name": "ALTERNATE 2026",
+  "texture": "raiders_alternate_2026",
+  "templates": {
+   "uniformTop": 125,
+   "uniformBottom": 123,
+   "uniformSocks": 123
+  },
+  "guid": 64026
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   22,
+   40,
+   44
+  ],
+  "white": [
+   245,
+   246,
+   250
+  ],
+  "green": [
+   112,
+   200,
+   124
+  ],
+  "stock_green": [
+   51,
+   152,
+   92
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1405,
+    514
+   ],
+   "shield_height": 118
+  },
+  {
+   "name": "Raiders crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     1771,
+     569,
+     1922,
+     759
+    ],
+    "raw": true,
+    "clear": [
+     51,
+     152,
+     92
+    ]
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1878,
+      542
+     ],
+     "height": 160
+    }
+   ]
+  },
+  {
+   "name": "Canberra Airport",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     1551,
+     643,
+     1737,
+     713
+    ],
+    "lo": 80
+   },
+   "place": [
+    {
+     "at": [
+      1633,
+      551
+     ],
+     "width": 209
+    }
+   ]
+  },
+  {
+   "name": "Toyota Forklifts",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     1330,
+     925,
+     1965,
+     1192
+    ],
+    "raw": true,
+    "clear": [
+     191,
+     191,
+     191
+    ]
+   },
+   "place": [
+    {
+     "at": [
+      1648,
+      895
+     ],
+     "width": 550
+    }
+   ]
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     1211,
+     1631,
+     1386,
+     1736
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Toyota Forklifts (back)",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     265,
+     430,
+     819,
+     535
+    ],
+    "raw": true
+   },
+   "place": [
+    {
+     "at": [
+      562,
+      528
+     ],
+     "width": 668
+    }
+   ]
+  },
+  {
+   "name": "Club Lime",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     285,
+     990,
+     802,
+     1145
+    ],
+    "dark": true
+   },
+   "card": {
+    "size": [
+     600,
+     175
+    ],
+    "colour": "green"
+   },
+   "place": [
+    {
+     "at": [
+      560,
+      1245
+     ],
+     "width": 520
+    }
+   ]
+  },
+  {
+   "name": "CDC (right sleeve)",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     2560,
+     372,
+     2920,
+     492
+    ],
+    "dark": true
+   }
+  },
+  {
+   "name": "CDC (left sleeve)",
+   "source": {
+    "stock": "m_top_raiders_nrl_home_26_col_1",
+    "box": [
+     3440,
+     372,
+     3800,
+     492
+    ],
+    "dark": true
+   }
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      401.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      241.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      108.0,
+      408.0
+     ],
+     [
+      -0.235,
+      1.262,
+      173.3,
+      419.8
+     ],
+     [
+      -0.1675,
+      1.305,
+      189.0,
+      401.6
+     ],
+     [
+      -0.15,
+      1.1,
+      267.7,
+      709.5
+     ],
+     [
+      -0.162,
+      0.963,
+      274.0,
+      937.0
+     ],
+     [
+      -0.05,
+      1.472,
+      444.3,
+      142.5
+     ],
+     [
+      -0.085,
+      1.505,
+      404.9,
+      93.3
+     ],
+     [
+      0.068,
+      1.53,
+      598.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      778.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      891.0,
+      401.0
+     ],
+     [
+      0.235,
+      1.262,
+      813.7,
+      412.8
+     ],
+     [
+      0.1675,
+      1.305,
+      798.0,
+      394.6
+     ],
+     [
+      0.15,
+      1.1,
+      738.3,
+      707.7
+     ],
+     [
+      0.162,
+      0.963,
+      736.0,
+      939.0
+     ],
+     [
+      0.05,
+      1.472,
+      554.7,
+      142.5
+     ],
+     [
+      0.085,
+      1.505,
+      594.1,
+      93.3
+     ],
+     [
+      0,
+      0.931,
+      499.5,
+      954.0
+     ],
+     [
+      0,
+      1.462,
+      499.5,
+      142.5
+     ]
+    ],
+    "tol": 2
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      412.5,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      262.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      110.0,
+      395.0
+     ],
+     [
+      -0.227,
+      1.265,
+      169.4,
+      406.8
+     ],
+     [
+      -0.173,
+      1.307,
+      185.0,
+      388.6
+     ],
+     [
+      -0.143,
+      1.1,
+      266.8,
+      680.0
+     ],
+     [
+      -0.161,
+      0.972,
+      271.0,
+      895.0
+     ],
+     [
+      0.078,
+      1.525,
+      585.5,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      734.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      888.0,
+      411.0
+     ],
+     [
+      0.227,
+      1.265,
+      825.6,
+      422.8
+     ],
+     [
+      0.173,
+      1.307,
+      810.0,
+      404.6
+     ],
+     [
+      0.143,
+      1.1,
+      735.2,
+      605.9
+     ],
+     [
+      0.161,
+      0.972,
+      731.0,
+      753.0
+     ],
+     [
+      0,
+      0.937,
+      499.0,
+      953.0
+     ],
+     [
+      0,
+      1.547,
+      499.0,
+      45.0
+     ]
+    ]
+   }
+  }
+ },
+ "models": {
+  "top": "top_vneck01_short_Male"
+ }
+}

@@ -1,0 +1,24 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64018,
+          "uniformBottom": 64018,
+          "uniformSocks": 64018
+        }
+      },
+      {
+        "name": "ALTERNATE 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64026,
+          "uniformBottom": 64026,
+          "uniformSocks": 64026
+        }
+      }
+    ]
+  }
+}

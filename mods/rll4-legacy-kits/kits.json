@@ -2465,6 +2465,27 @@
    "texture": "panthers_rll4_home_2022"
   },
   {
+   "guid": 60339,
+   "src": "2022/raiders-away-22.dds",
+   "club": 126,
+   "name": "AWAY 2022",
+   "texture": "raiders_rll4_away_2022"
+  },
+  {
+   "guid": 60340,
+   "src": "2022/raiders-home-22.dds",
+   "club": 126,
+   "name": "HOME 2022",
+   "texture": "raiders_rll4_home_2022"
+  },
+  {
+   "guid": 60341,
+   "src": "2022/raiders-heritage-22.dds",
+   "club": 126,
+   "name": "HERITAGE 2022",
+   "texture": "raiders_rll4_heritage_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2682,6 +2703,27 @@
    "texture": "rabbitohs_rll4_nines_2020"
   },
   {
+   "guid": 60392,
+   "src": "2023/raiders-away-23.dds",
+   "club": 126,
+   "name": "AWAY 2023",
+   "texture": "raiders_rll4_away_2023"
+  },
+  {
+   "guid": 60393,
+   "src": "2023/raiders-home-23.dds",
+   "club": 126,
+   "name": "HOME 2023",
+   "texture": "raiders_rll4_home_2023"
+  },
+  {
+   "guid": 60394,
+   "src": "2023/raiders-nines-20.dds",
+   "club": 126,
+   "name": "NINES 2020",
+   "texture": "raiders_rll4_nines_2020"
+  },
+  {
    "guid": 60427,
    "src": "2023/rabbitohs-special-23.dds",
    "club": 125,
@@ -2796,6 +2838,30 @@
     "uniformTop": 345,
     "uniformBottom": 343,
     "uniformSocks": 342
+   }
+  },
+  {
+   "guid": 64018,
+   "custom": "raiders_indigenous_2026",
+   "club": 126,
+   "name": "INDIGENOUS 2026",
+   "texture": "raiders_indigenous_2026",
+   "templates": {
+    "uniformTop": 125,
+    "uniformBottom": 123,
+    "uniformSocks": 123
+   }
+  },
+  {
+   "guid": 64026,
+   "custom": "raiders_alternate_2026",
+   "club": 126,
+   "name": "ALTERNATE 2026",
+   "texture": "raiders_alternate_2026",
+   "templates": {
+    "uniformTop": 125,
+    "uniformBottom": 123,
+    "uniformSocks": 123
    }
   },
   {
