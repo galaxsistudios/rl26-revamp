@@ -96,6 +96,14 @@ local function chaseTarget(arg_0_0, arg_0_1, arg_0_2)
 		return nil, string.format("old kick (%.1fs)", var_0_7 - var_0_5)
 	end
 
+	-- not until the ball has actually left the tee (a kick-off disposal event can fire before the kick)
+	local var_0_8 = rawget(_G, "APC_KickOffPos")
+	local var_0_9 = toField(var_0_1.position)
+
+	if var_0_8 and var_0_9 and native.length2(var_0_9 - var_0_8) < 3 then
+		return nil, "ball still on the tee"
+	end
+
 	if not var_0_1.hasBounced and var_0_1.nextBouncePosition then
 		return toField(var_0_1.nextBouncePosition)
 	end

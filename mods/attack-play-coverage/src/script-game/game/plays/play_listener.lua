@@ -221,6 +221,7 @@ local TeamChaseWindow = 6
 local TeamChaseInterval = 0.25
 local TeamChaseFunnel = 0.4
 local TeamChaseStopShort = 2
+local KickedDistance = 3
 
 -- Times reaching Lua are native Time objects (tostring prints seconds, type() is userdata): use seconds.
 local function toSecs(arg_0_0)
@@ -283,6 +284,14 @@ local function teamKickOffChase(arg_0_0, arg_0_1, arg_0_2, arg_0_3, arg_0_4, arg
 
 	local var_0_2 = arg_0_1.knowledgeBank
 	local var_0_3 = var_0_2.ballInfo
+	local var_0_16 = rawget(_G, "APC_KickOffPos")
+	local var_0_17 = toFieldPos(var_0_3.position)
+
+	if var_0_16 and var_0_17 and native.length2(var_0_17 - var_0_16) < KickedDistance then
+		skip("ball still on the tee")
+
+		return
+	end
 	local var_0_4 = not var_0_3.hasBounced and var_0_3.nextBouncePosition and toFieldPos(var_0_3.nextBouncePosition) or toFieldPos(var_0_3.position)
 
 	if not var_0_4 then
@@ -375,6 +384,12 @@ function PlayListener.update(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_
 	if arg_8_0.kickOffPending then
 		arg_8_0.kickOffPending = nil
 		_G.APC_KickOffTime = toSecs(arg_8_9)
+
+		-- A kick-off disposal event can also fire while the ball still sits on the tee (seen 8 s before the
+		-- real kick, which pulled the whole team onto the kicker): chases wait until the ball has left here.
+		pcall(function()
+			_G.APC_KickOffPos = toFieldPos(arg_8_3.knowledgeBank.ballInfo.position)
+		end)
 
 		debugWrite("KICKOFF stamp t=" .. tostring(arg_8_9) .. " kicking side=" .. tostring(arg_8_0.kickOffKickingSide))
 	end
