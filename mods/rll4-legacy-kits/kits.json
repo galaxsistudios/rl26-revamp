@@ -2430,6 +2430,20 @@
    "texture": "eels_rll4_away_2022"
   },
   {
+   "guid": 60334,
+   "src": "2022/knights-away-22.dds",
+   "club": 123,
+   "name": "AWAY 2022",
+   "texture": "knights_rll4_away_2022"
+  },
+  {
+   "guid": 60335,
+   "src": "2022/knights-home-22.dds",
+   "club": 123,
+   "name": "HOME 2022",
+   "texture": "knights_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2570,6 +2584,34 @@
    "texture": "eels_rll4_nines_2020"
   },
   {
+   "guid": 60378,
+   "src": "2023/knights-away-23.dds",
+   "club": 123,
+   "name": "AWAY 2023",
+   "texture": "knights_rll4_away_2023"
+  },
+  {
+   "guid": 60379,
+   "src": "2023/knights-clash-23.dds",
+   "club": 123,
+   "name": "CLASH 2023",
+   "texture": "knights_rll4_clash_2023"
+  },
+  {
+   "guid": 60380,
+   "src": "2023/knights-home-23.dds",
+   "club": 123,
+   "name": "HOME 2023",
+   "texture": "knights_rll4_home_2023"
+  },
+  {
+   "guid": 60381,
+   "src": "2023/knights-nines-20.dds",
+   "club": 123,
+   "name": "NINES 2020",
+   "texture": "knights_rll4_nines_2020"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2630,6 +2672,18 @@
     "uniformSocks": 300
    },
    "numberFrom": 304
+  },
+  {
+   "guid": 64014,
+   "custom": "knights_indigenous_2026",
+   "club": 123,
+   "name": "INDIGENOUS 2026",
+   "texture": "knights_indigenous_2026",
+   "templates": {
+    "uniformTop": 265,
+    "uniformBottom": 265,
+    "uniformSocks": 264
+   }
   },
   {
    "guid": 64034,
