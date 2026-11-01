@@ -2486,6 +2486,20 @@
    "texture": "raiders_rll4_heritage_2022"
   },
   {
+   "guid": 60342,
+   "src": "2022/roosters-away-22.dds",
+   "club": 127,
+   "name": "AWAY 2022",
+   "texture": "roosters_rll4_away_2022"
+  },
+  {
+   "guid": 60343,
+   "src": "2022/roosters-home-22.dds",
+   "club": 127,
+   "name": "HOME 2022",
+   "texture": "roosters_rll4_home_2022"
+  },
+  {
    "guid": 60354,
    "src": "2024/broncos-away-24.dds",
    "club": 118,
@@ -2724,6 +2738,41 @@
    "texture": "raiders_rll4_nines_2020"
   },
   {
+   "guid": 60395,
+   "src": "2024/roosters-anzac-24.dds",
+   "club": 127,
+   "name": "ANZAC 2024",
+   "texture": "roosters_rll4_anzac_2024"
+  },
+  {
+   "guid": 60396,
+   "src": "2023/roosters-away-23.dds",
+   "club": 127,
+   "name": "AWAY 2023",
+   "texture": "roosters_rll4_away_2023"
+  },
+  {
+   "guid": 60397,
+   "src": "2023/roosters-home-23.dds",
+   "club": 127,
+   "name": "HOME 2023",
+   "texture": "roosters_rll4_home_2023"
+  },
+  {
+   "guid": 60398,
+   "src": "2023/roosters-nines_away-20.dds",
+   "club": 127,
+   "name": "NINES AWAY 2020",
+   "texture": "roosters_rll4_nines_away_2020"
+  },
+  {
+   "guid": 60399,
+   "src": "2023/roosters-nines-20.dds",
+   "club": 127,
+   "name": "NINES 2020",
+   "texture": "roosters_rll4_nines_2020"
+  },
+  {
    "guid": 60427,
    "src": "2023/rabbitohs-special-23.dds",
    "club": 125,
@@ -2853,6 +2902,20 @@
    }
   },
   {
+   "guid": 64019,
+   "custom": "roosters_indigenous_2026",
+   "club": 127,
+   "name": "INDIGENOUS 2026",
+   "texture": "roosters_indigenous_2026",
+   "templates": {
+    "uniformTop": 105,
+    "uniformBottom": 382,
+    "uniformSocks": 382
+   },
+   "numberFrom": 384,
+   "numberScale": 0.85
+  },
+  {
    "guid": 64026,
    "custom": "raiders_alternate_2026",
    "club": 126,
@@ -2887,6 +2950,19 @@
     "uniformBottom": 334,
     "uniformSocks": 334
    }
+  },
+  {
+   "guid": 64032,
+   "custom": "roosters_heritage_2026",
+   "club": 127,
+   "name": "HERITAGE 2026",
+   "texture": "roosters_heritage_2026",
+   "templates": {
+    "uniformTop": 7100,
+    "uniformBottom": 382,
+    "uniformSocks": 382
+   },
+   "numberFrom": 384
   },
   {
    "guid": 64034,

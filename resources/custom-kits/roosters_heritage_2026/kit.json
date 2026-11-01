@@ -1,0 +1,233 @@
+{
+ "title": "Roosters Heritage 2026",
+ "notes": "Heritage kit painted by code on top_vneck02 (the cut the user picked in game: #79 = item 7100), measured from the user's photos (on a player: measuring only). Crest = the user's photo of the embroidered rooster patch. Sponsors: NRL rule, adidas, Adapt Ovate and Reosteel (stock 2026 home). BYD AUTO set in the game's Barlow Semi Condensed ExtraBold (no source artwork; user OK'd drawing it). Left off: tonal sleeve marks. Shorts and socks: stock 2026 home.",
+ "install": {
+  "club": 127,
+  "name": "HERITAGE 2026",
+  "texture": "roosters_heritage_2026",
+  "templates": {
+   "uniformTop": 7100,
+   "uniformBottom": 382,
+   "uniformSocks": 382
+  },
+  "guid": 64032,
+  "numberFrom": 384
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   24,
+   34,
+   64
+  ],
+  "red": [
+   200,
+   30,
+   40
+  ],
+  "white": [
+   238,
+   236,
+   232
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1369,
+    665
+   ],
+   "shield_height": 105
+  },
+  {
+   "name": "Roosters crest (heritage patch)",
+   "rule": "crest",
+   "source": {
+    "python": "crest"
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1915,
+      670
+     ],
+     "height": 175
+    }
+   ]
+  },
+  {
+   "name": "Adapt Ovate",
+   "source": {
+    "stock": "m_top_roosters_nrl_home_26_col_1",
+    "box": [
+     1577,
+     512,
+     1710,
+     584
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1645,
+      590
+     ],
+     "width": 185
+    }
+   ]
+  },
+  {
+   "name": "adidas (right)",
+   "source": {
+    "stock": "m_top_roosters_nrl_home_26_col_1",
+    "box": [
+     1290,
+     307,
+     1413,
+     400
+    ],
+    "dark": true
+   },
+   "colour": [
+    20,
+    20,
+    24
+   ],
+   "place": [
+    {
+     "at": [
+      1200,
+      455
+     ],
+     "width": 105,
+     "angle": -38
+    }
+   ]
+  },
+  {
+   "name": "adidas (left)",
+   "source": {
+    "stock": "m_top_roosters_nrl_home_26_col_1",
+    "box": [
+     1874,
+     307,
+     1990,
+     400
+    ],
+    "dark": true
+   },
+   "colour": [
+    20,
+    20,
+    24
+   ],
+   "place": [
+    {
+     "at": [
+      2090,
+      455
+     ],
+     "width": 105,
+     "angle": 38
+    }
+   ]
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_roosters_nrl_home_26_col_1",
+    "box": [
+     1235,
+     1637,
+     1375,
+     1728
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Reosteel",
+   "source": {
+    "stock": "m_top_roosters_nrl_home_26_col_1",
+    "box": [
+     237,
+     1078,
+     844,
+     1258
+    ]
+   },
+   "colour": [
+    205,
+    205,
+    215
+   ],
+   "place": [
+    {
+     "at": [
+      535,
+      1330
+     ],
+     "width": 520
+    }
+   ]
+  },
+  {
+   "name": "BYD AUTO (BYD)",
+   "source": {
+    "python": "felt_text",
+    "args": [
+     "BYD",
+     118
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1426,
+      1262
+     ]
+    }
+   ]
+  },
+  {
+   "name": "BYD AUTO (AUTO)",
+   "source": {
+    "python": "felt_text",
+    "args": [
+     "AUTO",
+     118
+    ]
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1912,
+      1262
+     ]
+    }
+   ]
+  }
+ ],
+ "models": {
+  "top": "top_vneck02_short_Male"
+ }
+}
