@@ -384,6 +384,20 @@ local var_0_laneNames = {
 	"MIDDLE",
 	"RIGHT"
 }
+-- Defence line-up at the scrum: stack the defence's left / right (ScrumDefence copies with that
+-- side's edges pulled in, like BasicDefenceSlideLeft / Right; in fullback-sweeper-defence's
+-- forcedirectedgraphs_rugby.lua).
+local var_0_defenceNames = {
+	"STACK LEFT",
+	"STANDARD",
+	"STACK RIGHT"
+}
+-- Stacks now shift the defending side's formation focus instead (defenceShiftY, scrum_helper.lua).
+-- Was disabled 2026-11-01: adding the two graphs took forcedirectedgraphs_rugby.lua past the stock 63 and
+-- crashed the match load (native access violation at exe+0x69ca6d, "TapRestartDefence10m" on the stack:
+-- the graph container is a fixed pool). Every stack choice uses stock ScrumDefence until the line-ups are
+-- rebuilt without new graphs (e.g. a shifted manualFocusPoint). The removed graphs are in
+-- docs/scrum-defence-stack-graphs.lua.txt.
 
 local function var_0_showPlayerMarkers(arg_services)
 	if not arg_services.gamers then
@@ -398,6 +412,223 @@ local function var_0_showPlayerMarkers(arg_services)
 			var_markers:show()
 		end
 	end
+end
+
+-- AI scrum position ---------------------------------------------------------------------------
+-- The AI with the feed picks its lane: away from a human defence's stack (it "reads" it), the
+-- middle in the attacking 20 m, otherwise the stock spot or a lane at random. arg_stackY: y of
+-- the stacked lane, or nil. Returns the position and a reason for the log.
+function var_0_control.aiLane(arg_position, arg_side, arg_match, arg_stackY)
+	local var_settings = var_0_settings()
+	local var_dirX = arg_match:getSide(arg_side):getPlayDir().x
+	local var_choice, var_reason
+
+	if arg_stackY and arg_stackY ~= 0 and var_0_random(0, 100) < (var_settings.aiReadStackChance or 75) then
+		for iter_0, iter_choice in ipairs({
+			1,
+			3
+		}) do
+			if var_0_laneY(iter_choice, var_dirX) * arg_stackY < 0 then
+				var_choice = iter_choice
+			end
+		end
+
+		var_reason = "away from the stack"
+	end
+
+	if not var_choice then
+		local var_toLine = rulesenvironment.halfFieldLength - arg_position.x * (var_dirX < 0 and -1 or 1)
+		local var_roll = var_0_random(0, 100)
+
+		if var_toLine < 20 then
+			var_choice = var_roll < 50 and 2 or var_roll < 75 and 1 or 3
+			var_reason = "attacking 20 m"
+		elseif var_roll < 50 then
+			return arg_position, "stock spot"
+		else
+			var_choice = var_roll < 66.7 and 1 or var_roll < 83.3 and 2 or 3
+			var_reason = "mixing it up"
+		end
+	end
+
+	return native.vec2(arg_position.x, var_0_laneY(var_choice, var_dirX)), var_reason .. " -> " .. var_0_laneNames[var_choice]
+end
+
+-- discipline-meter ----------------------------------------------------------------------------
+-- Chance multiplier from a player's discipline: x0.5 at full, x2 at empty, x1.5 more when
+-- rattled. 1 without discipline-meter.
+local function var_0_disciplineFactor(arg_id)
+	local var_discipline = rawget(_G, "DisciplineState")
+
+	if not var_0_settings().useDiscipline or not var_discipline or not var_discipline.get or not arg_id then
+		return 1, nil
+	end
+
+	local var_ok, var_value, var_rattled = pcall(var_discipline.get, arg_id)
+
+	if not var_ok or not var_value then
+		return 1, nil
+	end
+
+	return (0.5 + 1.5 * (1 - var_value)) * (var_rattled and 1.5 or 1), var_value
+end
+
+-- Set plays -----------------------------------------------------------------------------------
+-- The attacking human picks a set play on the feed clock (D-pad): forced through the play
+-- selection knowledge's debug override (the same fields the play selection debug menu sets),
+-- then cleared by afterScrumUpdate (generalgameplay_rulestate.lua) at the first tackle, a
+-- turnover or after ~25 s, and by the next scrum.
+local var_0_playNames = {
+	"AUTO",
+	"LEFT",
+	"RIGHT"
+}
+
+local function var_0_playKnowledge(arg_services, arg_side)
+	return arg_services.knowledgeBank.teamPlaySelectionKnowledgePair:get(arg_side)
+end
+
+function var_0_control.forceScrumPlay(arg_services, arg_side, arg_match, arg_choice)
+	local var_nines = arg_match:getComponent("matchInData").matchType.categorisedMatchType == native.EMatchType.MT_Nines
+	local var_name = (arg_choice == 2 and "ScrumOffenceLeft" or "ScrumOffenceRight") .. (var_nines and "Nines" or "")
+	local var_ok, var_error = pcall(function()
+		local var_knowledge = var_0_playKnowledge(arg_services, arg_side)
+
+		var_knowledge.DEBUG_playNameOverride = var_name
+		var_knowledge.playSelectionDisabled = true
+	end)
+
+	var_0_control.forcedPlay = var_ok and {
+		frames = 0,
+		side = arg_side,
+		name = var_name
+	} or nil
+
+	var_0_log(string.format("set play: %s for side %s (%s)", var_name, tostring(arg_side), var_ok and "ok" or tostring(var_error)))
+end
+
+function var_0_control.clearForcedPlay(arg_services, arg_reason)
+	local var_forced = var_0_control.forcedPlay
+
+	if not var_forced then
+		return
+	end
+
+	var_0_control.forcedPlay = nil
+
+	pcall(function()
+		local var_knowledge = var_0_playKnowledge(arg_services, var_forced.side)
+
+		var_knowledge.DEBUG_playNameOverride = ""
+		var_knowledge.playSelectionDisabled = false
+	end)
+	var_0_log("set play: " .. var_forced.name .. " cleared (" .. tostring(arg_reason) .. ")")
+end
+
+-- Every general play frame (GeneralGameplayRuleState.updateSolid).
+function var_0_control.afterScrumUpdate(arg_services, arg_gamestate)
+	local var_forced = var_0_control.forcedPlay
+
+	if not var_forced then
+		return
+	end
+
+	local var_progress = arg_gamestate:getMatchProgressionEntity()
+
+	var_forced.frames = var_forced.frames + 1
+	var_forced.tackleCount = var_forced.tackleCount or var_progress.tackleCount
+
+	if var_forced.frames == 30 then
+		pcall(function()
+			var_0_log("set play: side is running " .. tostring(arg_gamestate:getPlayEntityPair():get(var_forced.side):getPlayName()))
+		end)
+	end
+
+	if var_progress.tackleCount ~= var_forced.tackleCount then
+		var_0_control.clearForcedPlay(arg_services, "tackle")
+	elseif var_progress.attackingSide ~= var_forced.side then
+		var_0_control.clearForcedPlay(arg_services, "turnover")
+	elseif var_forced.frames > 1500 then
+		var_0_control.clearForcedPlay(arg_services, "time")
+	end
+end
+
+-- Offside line on the pitch ------------------------------------------------------------------
+-- While the line is live, the controlled player's line is drawn across the field (white; red
+-- once he's flagged), on the field HUD lines (services.hudLines, a CFieldHudLines).
+
+local function var_0_overlayLine(arg_services)
+	local var_hudLines = arg_services and arg_services.hudLines
+
+	if not var_hudLines then
+		return nil
+	end
+
+	local var_overlay = var_0_control.overlay
+
+	if not var_overlay or var_overlay.hudLines ~= var_hudLines then
+		local var_ok, var_line = pcall(function()
+			local var_new = var_hudLines:addLine(2)
+
+			var_new.width = 0.12
+
+			return var_new
+		end)
+
+		if not var_ok then
+			var_0_log("overlay: no line (" .. tostring(var_line) .. ")")
+		end
+
+		var_overlay = {
+			hudLines = var_hudLines,
+			line = var_ok and var_line or nil
+		}
+		var_0_control.overlay = var_overlay
+	end
+
+	return var_overlay.line
+end
+
+function var_0_control.hideOffsideOverlay(arg_services)
+	local var_overlay = var_0_control.overlay
+
+	if var_overlay and var_overlay.line and (not arg_services or var_overlay.hudLines == arg_services.hudLines) then
+		pcall(function()
+			var_overlay.line:setColour(native.vec4(1, 1, 1, 0))
+		end)
+	end
+end
+
+function var_0_control.updateOffsideOverlay(arg_services, arg_gamers)
+	local var_line = var_0_overlayLine(arg_services)
+
+	if not var_line then
+		return
+	end
+
+	local var_offside = var_0_control.offside
+	local var_gamers = arg_services.gamers or arg_gamers
+
+	if var_offside.tracking and var_gamers then
+		for iter_0, iter_gamer in var_gamers:iterLocalGamers() do
+			local var_id = iter_gamer.objectId
+			local var_playerLine = var_id and var_offside.lines[var_id]
+
+			if var_playerLine then
+				local var_halfWidth = rulesenvironment.fieldWidth * 0.5
+
+				pcall(function()
+					var_line:setControlPoint(0, var_playerLine.x, -var_halfWidth)
+					var_line:setControlPoint(1, var_playerLine.x, var_halfWidth)
+					var_line:setColour(var_offside.flagged[var_id] and native.vec4(0.9, 0.15, 0.15, 0.9) or native.vec4(1, 1, 1, 0.6))
+				end)
+
+				return
+			end
+		end
+	end
+
+	var_0_control.hideOffsideOverlay(arg_services)
 end
 
 -- Offside line -------------------------------------------------------------------------------
@@ -545,10 +776,33 @@ local function var_0_planAiLines(arg_session, arg_match, arg_gameobjects, arg_si
 
 	arg_session.lineMoves = {}
 
-	local var_creepChance = var_settings.testAiAlwaysCreeps and 100 or var_0_difficultyChance(arg_match, var_settings.aiCreepChance, var_settings.aiCreepChanceDefault or 8)
+	local var_creepChance = var_0_difficultyChance(arg_match, var_settings.aiCreepChance, var_settings.aiCreepChanceDefault or 8)
+
+	-- discipline-meter: the least disciplined defender sets the chance and is the likeliest one.
+	local var_worstId, var_worstFactor = nil, 1
+
+	for iter_0, iter_id in ipairs(var_defenders) do
+		local var_factor = var_0_disciplineFactor(iter_id)
+
+		if var_factor > var_worstFactor or not var_worstId then
+			var_worstId, var_worstFactor = iter_id, var_factor
+		end
+	end
+
+	var_creepChance = var_settings.testAiAlwaysCreeps and 100 or var_creepChance * var_worstFactor
 
 	if var_0_random(0, 100) < var_creepChance then
-		local var_id = var_pick(var_defenders)
+		local var_id
+
+		if var_worstId and var_worstFactor > 1 and var_0_random(0, 100) < 60 then
+			for iter_index = #var_defenders, 1, -1 do
+				if var_defenders[iter_index] == var_worstId then
+					var_id = table.remove(var_defenders, iter_index)
+				end
+			end
+		end
+
+		var_id = var_id or var_pick(var_defenders)
 
 		if var_id then
 			var_offside.creepers[var_id] = true
@@ -585,6 +839,8 @@ local function var_0_planAiLines(arg_session, arg_match, arg_gameobjects, arg_si
 			})
 		end
 	end
+
+	var_0_log(string.format("AI line: creep chance %.1f%% (discipline x%.2f)", var_creepChance, var_worstFactor))
 
 	for iter_0, iter_move in ipairs(arg_session.lineMoves) do
 		var_0_log(string.format("AI line: player %d %s %.1f m forward, %.1f m across at %.1f s", iter_move.id, iter_move.creep and "CREEPS" or "adjusts", iter_move.forward, iter_move.across, iter_move.at))
@@ -811,6 +1067,18 @@ local var_0_positionInputs = {
 		3
 	}
 }
+local var_0_playInputs = {
+	{
+		"PlayTheBall",
+		"LeftPlaySelect",
+		2
+	},
+	{
+		"PlayTheBall",
+		"RightPlaySelect",
+		3
+	}
+}
 local var_0_feedInputs = {
 	{
 		"PlaceKick",
@@ -873,6 +1141,18 @@ function ScrumControlGameController.update(arg_self, arg_params, arg_gamers, arg
 				end
 			end
 		elseif var_session.phase == "feed" and not var_session.feedPressed then
+			-- D-pad left / right: set play LEFT / RIGHT (again = back to AUTO).
+			for iter_1, iter_input in ipairs(var_0_playInputs) do
+				if var_0_inputEvent(iter_gamer, iter_input[1], iter_input[2]) then
+					var_session.playChoice = var_session.playChoice == iter_input[3] and 1 or iter_input[3]
+					var_session.playChanged = true
+
+					pcall(function()
+						arg_services.uiServices:playSound("Select_No_Vib")
+					end)
+				end
+			end
+
 			for iter_1, iter_input in ipairs(var_0_feedInputs) do
 				if var_0_inputEvent(iter_gamer, iter_input[1], iter_input[2]) then
 					var_session.feedPressed = true
@@ -959,10 +1239,24 @@ end
 function ScrumPositionSelectRuleState.onEnterSolid(arg_self, arg_1, arg_gamers, arg_services, arg_guid, arg_match, arg_gamestate, arg_gameobjects, arg_time, arg_9, arg_requests)
 	local var_settings = var_0_settings()
 	local var_session = var_0_newSession("position", arg_self.sideWithFeed, true, var_settings.positionSelectSeconds or 5)
+	local var_attackHuman = arg_gamestate:getGamerSideEntity():isAnyGamerOnSide(arg_self.sideWithFeed)
 
 	arg_self.sessionId = var_session.id
 	var_session.dirX = arg_match:getSide(arg_self.sideWithFeed):getPlayDir().x
-	var_session.defaultChoice = var_0_closestLane(arg_self.scrumPosition.y, var_session.dirX)
+
+	-- Attack human: picks the lane. Defence human (AI feed): picks how to line up, and the AI
+	-- picks its lane after (aiLane).
+	if var_attackHuman then
+		var_session.mode = "lane"
+		var_session.label = "SCRUM"
+		var_session.defaultChoice = var_0_closestLane(arg_self.scrumPosition.y, var_session.dirX)
+	else
+		var_session.mode = "defence"
+		var_session.label = "DEFENCE"
+		var_session.side = sidehelper.getOtherSide(arg_self.sideWithFeed)
+		var_session.defenceDirX = arg_match:getSide(var_session.side):getPlayDir().x
+		var_session.defaultChoice = 2
+	end
 
 	for iter_id, iter_player in arg_gameobjects:activeObjects(playertype.TypeId) do
 		iter_player:setBehaviour("Idle", arg_time)
@@ -976,6 +1270,7 @@ function ScrumPositionSelectRuleState.onEnterSolid(arg_self, arg_1, arg_gamers, 
 	var_0_addController(arg_1 and arg_1.gameControllerSet, var_session)
 
 	local var_prompt = var_0_promptHud(arg_services)
+	local var_names = var_session.mode == "lane" and var_0_laneNames or var_0_defenceNames
 
 	if var_prompt then
 		local var_options = {}
@@ -987,19 +1282,19 @@ function ScrumPositionSelectRuleState.onEnterSolid(arg_self, arg_1, arg_gamers, 
 		}) do
 			var_options[iter_choice] = {
 				glyph = iter_glyph,
-				text = var_0_laneNames[iter_choice] .. (iter_choice == var_session.defaultChoice and " (AUTO)" or "")
+				text = var_names[iter_choice] .. (iter_choice == var_session.defaultChoice and " (AUTO)" or "")
 			}
 		end
 
 		var_prompt:showScrumPrompt({
-			title = "SCRUM",
-			side = arg_self.sideWithFeed,
+			title = var_session.label,
+			side = var_session.side,
 			options = var_options
 		})
 	end
 
-	var_0_showClock(arg_services, var_session, "SCRUM", 0)
-	var_0_log(string.format("position select: side %s, default %s, %.1f s", tostring(arg_self.sideWithFeed), var_0_laneNames[var_session.defaultChoice], var_session.total))
+	var_0_showClock(arg_services, var_session, var_session.label, 0)
+	var_0_log(string.format("position select (%s): side %s, default %s, %.1f s", var_session.mode, tostring(var_session.side), var_names[var_session.defaultChoice], var_session.total))
 end
 
 function ScrumPositionSelectRuleState.createRules(arg_self, arg_1, arg_time)
@@ -1018,7 +1313,7 @@ function ScrumPositionSelectRuleState.controlUpdate(arg_self, arg_session, arg_g
 	arg_session.remaining = arg_session.remaining - arg_dt
 	arg_session.elapsed = arg_session.elapsed + arg_dt
 
-	var_0_showClock(arg_services, arg_session, "SCRUM", arg_dt)
+	var_0_showClock(arg_services, arg_session, arg_session.label or "SCRUM", arg_dt)
 
 	if not arg_session.choice and arg_session.remaining > 0 then
 		return
@@ -1028,19 +1323,38 @@ function ScrumPositionSelectRuleState.controlUpdate(arg_self, arg_session, arg_g
 	arg_session.finished = true
 
 	local var_position = arg_self.scrumPosition
+	local var_defenceShiftY
 
-	if arg_session.choice then
-		var_position = native.vec2(var_position.x, var_0_laneY(arg_session.choice, arg_session.dirX))
+	if arg_session.mode == "defence" then
+		local var_choice = arg_session.choice or 2
+		local var_stackY
+
+		if var_choice ~= 2 then
+			var_stackY = var_0_laneY(var_choice, arg_session.defenceDirX)
+			var_defenceShiftY = (var_stackY < 0 and -1 or 1) * (var_0_settings().defenceStackShift or 6)
+		end
+
+		local var_why
+
+		var_position, var_why = var_0_control.aiLane(var_position, arg_self.sideWithFeed, arg_match, var_stackY)
+
+		var_0_log(string.format("defence select: %s%s, AI lane %s (%.1f, %.1f)", var_0_defenceNames[var_choice], arg_session.choice and "" or " (timed out)", var_why, var_position.x, var_position.y))
+	else
+		if arg_session.choice then
+			var_position = native.vec2(var_position.x, var_0_laneY(arg_session.choice, arg_session.dirX))
+		end
+
+		var_0_log(string.format("position select: %s -> (%.1f, %.1f)", arg_session.choice and var_0_laneNames[arg_session.choice] or "timed out, stock spot", var_position.x, var_position.y))
 	end
 
-	var_0_log(string.format("position select: %s -> (%.1f, %.1f)", arg_session.choice and var_0_laneNames[arg_session.choice] or "timed out, stock spot", var_position.x, var_position.y))
 	var_0_hideHud(arg_services)
 
 	local var_nextState = scrum_helper.GetScrumState({
 		scrumPositionChosen = true,
 		scrumPosition = var_position,
 		sideWithFeed = arg_self.sideWithFeed,
-		randomSeed = arg_self.randomSeed
+		randomSeed = arg_self.randomSeed,
+		defenceShiftY = var_defenceShiftY
 	}, arg_services, arg_guid, arg_match, arg_gamestate, arg_gameobjects, arg_time, arg_requests)
 
 	arg_requests:add(rulestate_request.RuleStateRequest(var_nextState, arg_guid:alloc()))
@@ -1159,12 +1473,12 @@ function ScrumFeedPendingRuleState.onEnterSolid(arg_self, arg_1, arg_gamers, arg
 				side = arg_self.sideWithFeed,
 				options = {
 					{
-						glyph = "|CROSS|",
+						glyph = "|CROSS| |L1| |R1|",
 						text = "FEED"
 					},
 					{
-						glyph = "|L1| |R1|",
-						text = "FEED"
+						glyph = "|DPADLEFT| |DPADRIGHT|",
+						text = "PLAY: AUTO"
 					}
 				}
 			})
@@ -1174,10 +1488,14 @@ function ScrumFeedPendingRuleState.onEnterSolid(arg_self, arg_1, arg_gamers, arg
 	else
 		local var_chance, var_difficulty = var_0_aiViolationChance(arg_match)
 
+		-- discipline-meter: a rattled feeder runs the clock down more often.
+		local var_factor = var_0_disciplineFactor(arg_self.feederId)
+
+		var_chance = var_chance * var_factor
 		var_session.aiViolation = var_0_random(0, 100) < var_chance
 		var_session.aiFeedAt = var_0_random(var_settings.aiFeedMinSeconds or 1.5, math.min(var_settings.aiFeedMaxSeconds or 6, var_session.total - 0.5))
 
-		var_0_log(string.format("feed clock: AI feed, side %s, difficulty %s, feeds at %.1f s, violation %s (%d%%)", tostring(arg_self.sideWithFeed), var_difficulty, var_session.aiFeedAt, tostring(var_session.aiViolation), var_chance))
+		var_0_log(string.format("feed clock: AI feed, side %s, difficulty %s, feeds at %.1f s, violation %s (%.1f%%, discipline x%.2f)", tostring(arg_self.sideWithFeed), var_difficulty, var_session.aiFeedAt, tostring(var_session.aiViolation), var_chance, var_factor))
 	end
 
 	var_0_showClock(arg_services, var_session, "SCRUM", 0)
@@ -1202,7 +1520,18 @@ function ScrumFeedPendingRuleState.controlUpdate(arg_self, arg_session, arg_game
 
 	var_0_control.runAiLineMoves(arg_session, arg_services, arg_guid, arg_gameobjects, arg_time, arg_requests)
 	var_0_control.trackScrumOffside(arg_session, arg_gameobjects)
+	var_0_control.updateOffsideOverlay(arg_services, arg_gamers)
 	var_0_showClock(arg_services, arg_session, "SCRUM", arg_dt)
+
+	if arg_session.playChanged then
+		arg_session.playChanged = false
+
+		local var_prompt = var_0_promptHud(arg_services)
+
+		if var_prompt and var_prompt.setScrumOptionText then
+			var_prompt:setScrumOptionText(2, "PLAY: " .. var_0_playNames[arg_session.playChoice or 1])
+		end
+	end
 
 	local var_feed
 
@@ -1218,6 +1547,10 @@ function ScrumFeedPendingRuleState.controlUpdate(arg_self, arg_session, arg_game
 		arg_session.remaining = nil
 
 		var_0_log(string.format("feed at %.1f s", arg_session.elapsed))
+
+		if arg_session.human and arg_session.playChoice and arg_session.playChoice ~= 1 then
+			var_0_control.forceScrumPlay(arg_services, arg_self.sideWithFeed, arg_match, arg_session.playChoice)
+		end
 
 		local var_prompt = var_0_promptHud(arg_services)
 
@@ -1263,7 +1596,7 @@ function ScrumFeedPendingRuleState.controlUpdate(arg_self, arg_session, arg_game
 		penaltyAwardedToSide = var_otherSide,
 		infringementTypes = var_infringementTypes,
 		penaltyType = var_infringementTypes.TimerExpired,
-		refereeSignal = native.EUmpireSignalTypes.None
+		refereeSignal = native.EUmpireSignalTypes.Scrum
 	})
 
 	arg_requests:add(rulestate_request.RuleStateRequest(var_penaltyState, arg_guid:alloc()))
@@ -1277,6 +1610,7 @@ function ScrumFeedPendingRuleState.onExitSolid(arg_self, arg_1, arg_gamers, arg_
 
 		var_0_hideHud(arg_services)
 		var_0_control.clearScrumOffside()
+		var_0_control.hideOffsideOverlay(arg_services)
 	end
 
 	if not arg_self.endedWithPenalty then

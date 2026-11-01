@@ -30,6 +30,32 @@ Scrums you have to run yourself:
    option isn't offered. The penalty then goes on as normal, and the sin bin / send-off cutscene
    plays when an option is picked (repack included).
 
+7. **Defence line-up.** When the AI has the feed and you're defending, the bar shows
+   `DEFENCE  5 | □ STACK LEFT  △ STANDARD  ○ STACK RIGHT` before the pack goes down. A stack shifts
+   the defending side's formation focus 6 m towards that side for the positioning wipe
+   (`ScrumDefenceStackShift`, `defenceShiftY` in `GetScrumState`). **Don't add force-directed graphs
+   for this:** the native graph container is a fixed pool, and two extra graphs (65) crashed match
+   load (exe+0x69ca6d, 2026-11-01; the removed graphs are in docs/scrum-defence-stack-graphs.lua.txt).
+8. **AI picks its lane.** The AI with the feed packs away from your stack 75 % of the time (it
+   reads it), favours the middle in the attacking 20 m, and otherwise keeps the stock spot half the
+   time and mixes it up the rest (`aiLane`; log `AI lane, ...`).
+9. **Set plays.** On the feed clock the bar also shows `◄ ► PLAY: AUTO`. D-pad left / right picks
+   `ScrumOffenceLeft` / `ScrumOffenceRight` (`...Nines` in Nines), again for AUTO. It's forced
+   through the play selection knowledge's `DEBUG_playNameOverride` + `playSelectionDisabled` (what the
+   play debug menu sets) and cleared at the first tackle, a turnover, ~25 s or the next scrum
+   (`afterScrumUpdate`, called from GeneralGameplayRuleState.updateSolid). The log line
+   `set play: side is running ...` shows whether the play took.
+10. **Offside line on the pitch.** While the line is live, your controlled player's offside line is
+   drawn across the field (white, red once he's offside) on the field HUD lines
+   (`services.hudLines:addLine`).
+11. **Referee.** The feed clock penalty now has the referee's scrum signal (call + whistle) instead
+   of none. Scrum offside penalties already use the offside signal; the 2nd / 3rd offence sin bin /
+   send-off cutscenes are the stock ones.
+12. **discipline-meter.** The AI creep chance is scaled by the least disciplined defender's
+   discipline (x0.5 at full, x2 at empty, x1.5 more when rattled) and he's the likeliest creeper;
+   the AI feeder's discipline scales the feed clock violation chance the same way
+   (`ScrumUseDiscipline`). Penalties already drain discipline in that mod.
+
 Online matches and training keep the stock scrum.
 
 Installed 2026-11-01 (scripts + xamls), untested in game.
@@ -115,9 +141,9 @@ game folder (`ScrumControlDebug`).
 
 | Mod | File | Change |
 |---|---|---|
-| nrl-broadcast-scoreboard | `app/noesis/hud/nvm_penaltyhud.lua`, `sim/hud/penaltyselect_hud.lua`, `views/hud/rugby/papenaltycontrol.xaml` | Scrum mode on the penalty bar (`IsScrumPrompt`, `ScrumTitle`, `ScrumUrgent`, `ScrumOpt1-3Glyph/Text/Visible`; `showScrumPrompt` / `setScrumTitle` / `hideScrumPrompt`; `hide()` ignored during a scrum prompt) |
+| nrl-broadcast-scoreboard | `app/noesis/hud/nvm_penaltyhud.lua`, `sim/hud/penaltyselect_hud.lua`, `views/hud/rugby/papenaltycontrol.xaml` | Scrum mode on the penalty bar (`IsScrumPrompt`, `ScrumTitle`, `ScrumUrgent`, `setScrumOptionText`, `ScrumOpt1-3Glyph/Text/Visible`; `showScrumPrompt` / `setScrumTitle` / `hideScrumPrompt`; `hide()` ignored during a scrum prompt) |
 | bunker-overturned-try | `rules/tackle/tackleoutcomes.lua` | Test switch hook (every tackle -> scrum) |
-| bunker-overturned-try | `rules/match/generalgameplay_rulestate.lua` | `scrumOffside` skips the six-again branch: always a full penalty |
+| bunker-overturned-try | `rules/match/generalgameplay_rulestate.lua` | `updateSolid` calls `afterScrumUpdate` (ends a forced set play); `scrumOffside` skips the six-again branch: always a full penalty |
 | bunker-overturned-try | `rules/match/generalgameplay_rulestate.lua` | Offers the repack (`offerRepack`); repeat offsides after repacks: 2nd sin bins the tackler, 3rd sends him off with no repack (`scrumOffenceNumber`, `scrumSinBin`: discipline-meter's `SinBinSystem.sendPlayerToSinBin`, or the send-off requests) |
 | referee-on-report | `rules/tackle/tackle_detect.lua` | Scrum offside tacklers are penalised as offside; a completed tackle clears the flags |
 
@@ -132,3 +158,9 @@ but the rules still apply. The prompt bar works under every HUD theme.
 - The pack standing on its clip start spots looks right, and the bind starts cleanly on the feed.
 - A switched-to player moves, and crossing the line shows `OFFSIDE`.
 - Feed clock timeout: the penalty flow starts, and nobody plays the scrum animation afterwards.
+- Defence stack sides vs `aiLane`: stack y uses the same lane maths as the attack pick (defender's
+  left). Check the defence leans the way you picked, and the AI packs away from it.
+- Set plays: check `set play: side is running ScrumOffence...` in the log; if it shows the stock
+  play, the debug override isn't honoured in retail.
+- Offside line: drawn across the field at your player's line; if it runs along the field instead,
+  the control point axes are swapped.

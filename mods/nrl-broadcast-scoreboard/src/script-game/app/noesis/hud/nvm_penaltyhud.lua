@@ -91,6 +91,11 @@ function NVMPenaltyHud.setScrumPrompt(arg_2_0, arg_2_1)
 	arg_2_0.ShowPenaltyScrum = false
 end
 
+-- scrum-feed-control: an option's label while the prompt is up (the set play on the feed clock).
+function NVMPenaltyHud.setScrumOptionText(arg_2_0, arg_2_1, arg_2_2)
+	arg_2_0["ScrumOpt" .. arg_2_1 .. "Text"] = arg_2_2
+end
+
 -- scrum-feed-control: SCRUM (pack again) on the penalty choice after offside off a scrum.
 function NVMPenaltyHud.setAllowScrum(arg_2_0, arg_2_1)
 	arg_2_0.ShowPenaltyScrum = arg_2_1 == true

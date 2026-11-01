@@ -79,6 +79,12 @@ function PenaltySelectHud.setScrumTitle(arg_9_0, arg_9_1, arg_9_2)
 	end
 end
 
+function PenaltySelectHud.setScrumOptionText(arg_9_0, arg_9_1, arg_9_2)
+	if arg_9_0.scrumPrompt then
+		arg_9_0.penaltyHud:setScrumOptionText(arg_9_1, arg_9_2)
+	end
+end
+
 function PenaltySelectHud.hideScrumPrompt(arg_9_0)
 	if arg_9_0.scrumPrompt then
 		arg_9_0.scrumPrompt = false

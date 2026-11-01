@@ -57,6 +57,18 @@ local ScrumAiCreepChance = {
 	[native.EDifficulty.Hardest] = 3
 }
 local ScrumAiCreepChanceDefault = 8
+-- AI with the feed picks its lane: when the human defence stacked one side, it packs on the
+-- other side this percent of the time ("reads" the stack); in the attacking 20 m it favours the
+-- middle; otherwise half the time it keeps the stock spot.
+local ScrumAiReadStackChance = 75
+-- Defence line-up pick: STACK LEFT / RIGHT moves the defending side's formation focus this many
+-- metres towards that side for the positioning wipe. (New force-directed graphs are not an
+-- option: the native graph container is a fixed pool, 65 graphs crashed match load.)
+local ScrumDefenceStackShift = 6
+-- discipline-meter: a defender's discipline scales the AI creep chance (x0.5 at full, x2 at
+-- empty, x1.5 more when rattled) and the least disciplined defender is the likeliest creeper.
+-- The AI feeder's discipline scales the feed clock violation chance the same way.
+local ScrumUseDiscipline = true
 -- Seconds after the ball comes out of the scrum that a flagged player is still offside (also
 -- cleared by the first completed tackle).
 local ScrumOffsideFlagSeconds = 10
@@ -125,6 +137,9 @@ var_0_control.settings = {
 	offsideAiPlayers = ScrumOffsideAiPlayers,
 	offsideFlagSeconds = ScrumOffsideFlagSeconds,
 	aiLineAdjustChance = ScrumAiLineAdjustChance,
+	aiReadStackChance = ScrumAiReadStackChance,
+	defenceStackShift = ScrumDefenceStackShift,
+	useDiscipline = ScrumUseDiscipline,
 	aiCreepChance = ScrumAiCreepChance,
 	aiCreepChanceDefault = ScrumAiCreepChanceDefault,
 	testAiAlwaysCreeps = ScrumTestAiAlwaysCreeps,
@@ -154,31 +169,33 @@ function var_0_control.isActive(arg_match, arg_gamestate)
 	return true
 end
 
--- Position select: only when a human is on the side with the feed.
+-- Before the pack goes down: "select" when a human is on either side (attack picks the lane,
+-- defence picks how to line up; ScrumPositionSelectRuleState), "ai" when nobody is (the AI
+-- picks its lane here), nil for the stock scrum.
 local function wantsPositionSelect(arg_params, arg_match, arg_gamestate)
 	if arg_params.scrumPositionChosen then
-		return false
+		return nil
 	end
 
-	local var_active, var_reason = scrumControl().isActive(arg_match, arg_gamestate)
+	local var_active, var_reason = var_0_control.isActive(arg_match, arg_gamestate)
 
 	if not var_active then
 		scrumControlLog("GetScrumState: stock scrum (" .. tostring(var_reason) .. ")")
 
-		return false
+		return nil
 	end
 
 	local var_ok, var_human = pcall(function()
-		return arg_gamestate:getGamerSideEntity():isAnyGamerOnSide(arg_params.sideWithFeed)
+		local var_sides = arg_gamestate:getGamerSideEntity()
+
+		return var_sides:isAnyGamerOnSide(arg_params.sideWithFeed) or var_sides:isAnyGamerOnSide(sidehelper.getOtherSide(arg_params.sideWithFeed))
 	end)
 
-	if not var_ok or not var_human then
-		scrumControlLog("GetScrumState: AI feed, stock position")
-
-		return false
+	if var_ok and var_human then
+		return "select"
 	end
 
-	return true
+	return "ai"
 end
 
 -- Incapacitation of the scrum players has to outlast the feed clock as well as the scrum.
@@ -210,7 +227,22 @@ end
 function GetScrumState(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	print("[9464] GetScrumState() called. Assuemes next state must be Scrum.")
 
-	if wantsPositionSelect(arg_1_0, arg_1_3, arg_1_4) then
+	-- A set play forced off the last scrum is over.
+	if var_0_control.clearForcedPlay then
+		var_0_control.clearForcedPlay(arg_1_1, "new scrum")
+	end
+
+	local var_1_mode = wantsPositionSelect(arg_1_0, arg_1_3, arg_1_4)
+
+	if var_1_mode == "ai" and var_0_control.aiLane then
+		local var_1_position, var_1_why = var_0_control.aiLane(arg_1_0.scrumPosition, arg_1_0.sideWithFeed, arg_1_3, nil)
+
+		scrumControlLog(string.format("GetScrumState: AI lane, %s (%.1f, %.1f)", var_1_why, var_1_position.x, var_1_position.y))
+
+		arg_1_0.scrumPosition = var_1_position
+	end
+
+	if var_1_mode == "select" then
 		scrumControlLog(string.format("GetScrumState: position select, side %s, stock spot (%.1f, %.1f)", tostring(arg_1_0.sideWithFeed), arg_1_0.scrumPosition.x, arg_1_0.scrumPosition.y))
 		arg_1_7:add(stopplay_request.StopPlayRequest({}))
 
@@ -313,6 +345,19 @@ function GetScrumState(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 		awayFormationName = var_1_10,
 		resetBallPosition = var_1_0
 	}
+	-- scrum-feed-control: the defence's STACK LEFT / RIGHT pick shifts its formation focus across.
+	if arg_1_0.defenceShiftY and arg_1_0.defenceShiftY ~= 0 then
+		local var_1_shifted = native.vec2(var_1_0.x, native.clamp1(var_1_0.y + arg_1_0.defenceShiftY, -29, 29))
+
+		if var_1_1 == sidehelper.home then
+			var_1_19.awayFocusPosition = var_1_shifted
+		else
+			var_1_19.homeFocusPosition = var_1_shifted
+		end
+
+		scrumControlLog(string.format("defence stack: focus shifted %.1f m to y %.1f", arg_1_0.defenceShiftY, var_1_shifted.y))
+	end
+
 	local var_1_20 = positionplayerstransition_rulestate.PositionPlayersTransitionRulestate(var_1_19)
 	local var_1_21 = IncapacitateScrumPlayers(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 

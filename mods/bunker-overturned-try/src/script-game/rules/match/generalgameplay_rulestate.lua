@@ -290,6 +290,13 @@ function GeneralGameplayRuleState.updateSolid(arg_5_0, arg_5_1, arg_5_2, arg_5_3
 	if var_5_7 and var_5_7:isHidden() then
 		var_5_7:show()
 	end
+
+	-- scrum-feed-control: ends a set play forced off a scrum (first tackle, turnover, timeout).
+	local var_5_scrum = rawget(_G, "ScrumControlState")
+
+	if var_5_scrum and var_5_scrum.afterScrumUpdate then
+		var_5_scrum.afterScrumUpdate(arg_5_3, arg_5_6)
+	end
 end
 
 function GeneralGameplayRuleState.addSolidRules(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)

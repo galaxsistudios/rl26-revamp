@@ -109,6 +109,7 @@ function ScrumRuleState.onExitSolid(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4,
 		var_6_session.finished = true
 
 		var_6_control.scrumBallOut(arg_6_8)
+		var_6_control.hideOffsideOverlay(arg_6_3)
 	end
 
 	local var_6_0 = arg_6_3.gameplayCameras:getGroup("gameplay").activeCamera
@@ -138,6 +139,7 @@ function ScrumRuleState.controlUpdate(arg_self, arg_session, arg_gamers, arg_ser
 
 	var_control.runAiLineMoves(arg_session, arg_services, arg_guid, arg_gameobjects, arg_time, arg_requests)
 	var_control.trackScrumOffside(arg_session, arg_gameobjects)
+	var_control.updateOffsideOverlay(arg_services, arg_gamers)
 end
 
 function ScrumRuleState.addSolidRules(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
