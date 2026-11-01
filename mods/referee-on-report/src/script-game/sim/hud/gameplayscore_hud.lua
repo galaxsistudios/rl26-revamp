@@ -11,6 +11,33 @@ local OnReportBannerSeconds = 4
 -- Seconds after the scoreboard comes back from the close-ups before the banner slides out.
 local OnReportBannerDelay = 0.75
 
+-- nrl-broadcast-scoreboard: seconds the interchange banner (red OFF / green ON rows) stays under
+-- the scoreboard when a queued interchange is made (SubstitutionClearEvent). Several made at once
+-- show one after another.
+local InterchangeBannerSeconds = 4
+local InterchangeBannerDelay = 0.5
+-- How often the on-field sets are compared to find interchanges.
+local InterchangePollSeconds = 0.25
+
+-- nrl-broadcast-scoreboard: logs detected interchanges to interchange_banner_debug.txt (game
+-- folder) until the banner is confirmed in game. Turn off then.
+local InterchangeBannerDebugLog = true
+
+local function var_0_interchange_log(arg_g_0)
+	if not InterchangeBannerDebugLog then
+		return
+	end
+
+	pcall(function()
+		local var_g_0 = io.open("interchange_banner_debug.txt", "a")
+
+		if var_g_0 then
+			var_g_0:write(os.date("%H:%M:%S"), " ", arg_g_0, "\n")
+			var_g_0:close()
+		end
+	end)
+end
+
 Class("GameplayScoreHud", function(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
 	local var_1_0 = nvm_scorecard.NVMScoreCard(arg_1_7, arg_1_2)
 	local var_1_1 = arg_1_7.featureStack
@@ -76,7 +103,9 @@ function GameplayScoreHud.registerWithMatchSim(arg_4_0, arg_4_1)
 		SinBinCompletedEvent = var_4_0(arg_4_0.onSinBinCompleted),
 		SixAgainEvent = var_4_0(arg_4_0.onSixAgainEvent),
 		SinBinInfoEvent = var_4_0(arg_4_0.onSinBinInfoEvent),
-		RefereeSignalEvent = var_4_0(arg_4_0.onRefereeSignal)
+		RefereeSignalEvent = var_4_0(arg_4_0.onRefereeSignal),
+		InterchangeQueuedEvent = var_4_0(arg_4_0.onInterchangeQueued),
+		SubstitutionClearEvent = var_4_0(arg_4_0.onInterchangeMade)
 	}
 
 	for iter_4_0, iter_4_1 in pairs(var_4_1) do
@@ -239,6 +268,50 @@ function GameplayScoreHud.update(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_
 			arg_18_0.onReportTimer = nil
 			arg_18_0.scoreCardNVM.ShowMatchState = false
 		end
+	end
+
+	-- nrl-broadcast-scoreboard: interchanges are detected by watching each side's on-field set
+	-- (SubstitutionClearEvent never fired for AI interchanges in game), then queued below.
+	arg_18_0.interchangePollTimer = (arg_18_0.interchangePollTimer or 0) - arg_18_8
+
+	if arg_18_0.interchangePollTimer <= 0 then
+		arg_18_0.interchangePollTimer = InterchangePollSeconds
+
+		arg_18_0:pollInterchanges(arg_18_3, arg_18_5)
+	end
+
+	-- nrl-broadcast-scoreboard: interchange banner, same wait-for-the-scoreboard as on report,
+	-- and never over the on report banner (same slot).
+	if arg_18_0.interchangeTimer then
+		arg_18_0.interchangeTimer = arg_18_0.interchangeTimer - arg_18_8
+
+		if arg_18_0.interchangeTimer <= 0 then
+			arg_18_0.interchangeTimer = nil
+			arg_18_0.interchangeGap = 0.6
+
+			arg_18_0.scoreCardNVM:hideInterchange()
+		end
+	elseif arg_18_0.interchangeGap then
+		arg_18_0.interchangeGap = arg_18_0.interchangeGap - arg_18_8
+
+		if arg_18_0.interchangeGap <= 0 then
+			arg_18_0.interchangeGap = nil
+		end
+	elseif arg_18_0.interchangeQueue and #arg_18_0.interchangeQueue > 0 and arg_18_0.enabled and not arg_18_0.scoreCardNVM.ShowMatchState then
+		arg_18_0.interchangeDelay = (arg_18_0.interchangeDelay or 0) + arg_18_8
+
+		if arg_18_0.interchangeDelay >= InterchangeBannerDelay then
+			local var_18_i = table.remove(arg_18_0.interchangeQueue, 1)
+
+			var_0_interchange_log(string.format("banner shown: side %d OFF %s ON %s (%d left)", var_18_i.side, tostring(var_18_i.offName), tostring(var_18_i.onName), #arg_18_0.interchangeQueue))
+
+			arg_18_0.scoreCardNVM:showInterchange(var_18_i.side, var_18_i.offNumber, var_18_i.offName, var_18_i.onNumber, var_18_i.onName)
+
+			arg_18_0.interchangeTimer = InterchangeBannerSeconds
+			arg_18_0.interchangeDelay = nil
+		end
+	else
+		arg_18_0.interchangeDelay = nil
 	end
 
 	if not arg_18_0.enabled then
@@ -579,6 +652,201 @@ end
 
 function GameplayScoreHud.onPlayerOffEvent(arg_52_0, arg_52_1)
 	return
+end
+
+-- nrl-broadcast-scoreboard: jersey number and surname for the interchange banner. Numbers are
+-- read when the interchange is queued (before the swap can reorder the lineup) and kept by id.
+local function var_0_interchange_player(arg_c_0, arg_c_1, arg_c_2)
+	local var_c_0, var_c_1, var_c_2 = pcall(function()
+		local var_c_3 = arg_c_0:getComponent("matchInData"):getTeamConfig(arg_c_1)
+		local var_c_4 = arg_c_0:getSide(arg_c_1).assetIdMap[arg_c_2]
+		local var_c_5 = var_c_3:getIdentity(var_c_4)
+		local var_c_6 = var_c_3.matchClub.lineup
+		local var_c_7 = var_c_6:getShirtNumber(var_c_6:getIndexForPlayer(var_c_4) + 1)
+		local var_c_8 = var_c_5.surname
+
+		if not var_c_8 or var_c_8 == "" then
+			var_c_8 = var_c_5.shortName
+		end
+
+		return var_c_7 and var_c_7 ~= 0 and tostring(var_c_7) or "", string.upper(var_c_8 or "")
+	end)
+
+	if var_c_0 then
+		return var_c_1, var_c_2
+	end
+
+	return "", ""
+end
+
+function GameplayScoreHud.onInterchangeQueued(arg_i_0, arg_i_1, arg_i_2, arg_i_3, arg_i_4, arg_i_5, arg_i_6)
+	arg_i_0.interchangeNumbers = arg_i_0.interchangeNumbers or {}
+
+	for iter_i_0, iter_i_1 in ipairs({
+		arg_i_1.offId,
+		arg_i_1.onId
+	}) do
+		local var_i_0 = var_0_interchange_player(arg_i_6, arg_i_1.side, iter_i_1)
+
+		if var_i_0 ~= "" then
+			arg_i_0.interchangeNumbers[iter_i_1] = var_i_0
+		end
+	end
+end
+
+-- nrl-broadcast-scoreboard: no longer used to queue the banner (pollInterchanges does, so every
+-- interchange shows exactly once). Kept registered but inert in case the event does fire.
+function GameplayScoreHud.onInterchangeMade(arg_m_0, arg_m_1, arg_m_2, arg_m_3, arg_m_4, arg_m_5, arg_m_6)
+	if true then
+		return
+	end
+
+	local var_m_0 = arg_m_1.side
+	local var_m_1 = arg_m_0.interchangeNumbers or {}
+	local var_m_2, var_m_3 = var_0_interchange_player(arg_m_6, var_m_0, arg_m_1.offId)
+	local var_m_4, var_m_5 = var_0_interchange_player(arg_m_6, var_m_0, arg_m_1.onId)
+
+	arg_m_0.interchangeQueue = arg_m_0.interchangeQueue or {}
+
+	table.insert(arg_m_0.interchangeQueue, {
+		side = var_m_0,
+		offNumber = var_m_1[arg_m_1.offId] or var_m_2,
+		offName = var_m_3,
+		onNumber = var_m_1[arg_m_1.onId] or var_m_4,
+		onName = var_m_5
+	})
+
+	var_m_1[arg_m_1.offId] = nil
+	var_m_1[arg_m_1.onId] = nil
+end
+
+-- nrl-broadcast-scoreboard: compare each side's on-field players (assigned role not Substitute)
+-- with the last poll. A player who left is paired with the player now in his role; leftovers
+-- (sin bin, send-off) are ignored. Numbers come from a cache filled at the first poll, because the
+-- lineup can reorder after a swap. Each pair joins interchangeQueue (shown one at a time).
+function GameplayScoreHud.pollInterchanges(arg_q_0, arg_q_1, arg_q_2)
+	local var_q_0 = arg_q_2 and arg_q_2.roleInfoPool
+
+	if not arg_q_1 or not var_q_0 then
+		return
+	end
+
+	local var_q_1 = native.EAssignedRole.Substitute
+
+	arg_q_0.interchangeRoles = arg_q_0.interchangeRoles or {}
+	arg_q_0.interchangeCache = arg_q_0.interchangeCache or {}
+
+	for iter_q_0 = 1, 2 do
+		local var_q_2, var_q_3 = pcall(function()
+			return arg_q_1:getSide(iter_q_0).assetIdMap
+		end)
+
+		if var_q_2 and var_q_3 then
+			local var_q_4 = {}
+
+			for iter_q_1 in pairs(var_q_3) do
+				local var_q_5 = var_q_0:get(iter_q_1)
+
+				var_q_4[iter_q_1] = var_q_5 and var_q_5.assignedRole
+			end
+
+			local var_q_6 = arg_q_0.interchangeRoles[iter_q_0]
+
+			if not var_q_6 then
+				-- First poll: remember numbers and names while the lineup is still in shirt order.
+				for iter_q_2 in pairs(var_q_4) do
+					local var_q_7, var_q_8 = var_0_interchange_player(arg_q_1, iter_q_0, iter_q_2)
+
+					arg_q_0.interchangeCache[iter_q_2] = {
+						number = var_q_7,
+						name = var_q_8
+					}
+				end
+			else
+				local var_q_9 = {}
+				local var_q_10 = {}
+
+				for iter_q_3, iter_q_4 in pairs(var_q_4) do
+					local var_q_11 = var_q_6[iter_q_3]
+					local var_q_12 = iter_q_4 and iter_q_4 ~= var_q_1
+					local var_q_13 = var_q_11 and var_q_11 ~= var_q_1
+
+					if var_q_13 and not var_q_12 then
+						table.insert(var_q_9, {
+							id = iter_q_3,
+							role = var_q_11
+						})
+					elseif var_q_12 and not var_q_13 then
+						table.insert(var_q_10, {
+							id = iter_q_3,
+							role = iter_q_4
+						})
+					end
+				end
+
+				for iter_q_5, iter_q_6 in ipairs(var_q_9) do
+					local var_q_14
+
+					for iter_q_7, iter_q_8 in ipairs(var_q_10) do
+						if not iter_q_8.used and iter_q_8.role == iter_q_6.role then
+							var_q_14 = iter_q_8
+
+							break
+						end
+					end
+
+					if not var_q_14 then
+						for iter_q_9, iter_q_10 in ipairs(var_q_10) do
+							if not iter_q_10.used then
+								var_q_14 = iter_q_10
+
+								break
+							end
+						end
+					end
+
+					if var_q_14 then
+						var_q_14.used = true
+
+						local var_q_15 = arg_q_0.interchangeCache[iter_q_6.id] or {}
+						local var_q_16 = arg_q_0.interchangeCache[var_q_14.id] or {}
+						local var_q_17 = arg_q_0.interchangeNumbers or {}
+
+						if not var_q_15.name then
+							local var_q_18, var_q_19 = var_0_interchange_player(arg_q_1, iter_q_0, iter_q_6.id)
+
+							var_q_15 = {
+								number = var_q_18,
+								name = var_q_19
+							}
+						end
+
+						if not var_q_16.name then
+							local var_q_20, var_q_21 = var_0_interchange_player(arg_q_1, iter_q_0, var_q_14.id)
+
+							var_q_16 = {
+								number = var_q_20,
+								name = var_q_21
+							}
+						end
+
+						arg_q_0.interchangeQueue = arg_q_0.interchangeQueue or {}
+
+						table.insert(arg_q_0.interchangeQueue, {
+							side = iter_q_0,
+							offNumber = var_q_17[iter_q_6.id] or var_q_15.number or "",
+							offName = var_q_15.name or "",
+							onNumber = var_q_17[var_q_14.id] or var_q_16.number or "",
+							onName = var_q_16.name or ""
+						})
+						var_0_interchange_log(string.format("side %d OFF %s %s  ON %s %s  (queue %d)", iter_q_0, tostring(var_q_15.number), tostring(var_q_15.name), tostring(var_q_16.number), tostring(var_q_16.name), #arg_q_0.interchangeQueue))
+					end
+				end
+			end
+
+			arg_q_0.interchangeRoles[iter_q_0] = var_q_4
+		end
+	end
 end
 
 function GameplayScoreHud.onSixAgainEvent(arg_53_0, arg_53_1)

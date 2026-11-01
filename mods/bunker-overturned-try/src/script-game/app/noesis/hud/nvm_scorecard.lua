@@ -81,6 +81,15 @@ ns.Class("NVMScoreCard", var_0_0, function(arg_5_0, arg_5_1, arg_5_2)
 	arg_5_0.ShowTryConfirmed = false
 	arg_5_0.SuperLeagueType = var_5_1[var_5_0] or ""
 
+	-- nrl-broadcast-scoreboard: interchange banner under the scoreboard (OFF / ON rows), set by
+	-- showInterchange() from sim/hud/gameplayscore_hud.lua (mods/referee-on-report).
+	arg_5_0.InterchangeTeam = arg_5_0.HomeTeam
+	arg_5_0.InterchangeOffNumber = " "
+	arg_5_0.InterchangeOffName = " "
+	arg_5_0.InterchangeOnNumber = " "
+	arg_5_0.InterchangeOnName = " "
+	arg_5_0.ShowInterchange = false
+
 	-- bunker-overturned-try: a new match HUD starts with no provisional try left over.
 	local var_p_0 = rawget(_G, "ProvisionalTryState")
 
@@ -106,9 +115,29 @@ end).Bindings = {
 		MatchStateMessage = ns.String,
 		ShowMatchState = ns.Bool,
 		SuperLeagueType = ns.String,
-		ShowTryConfirmed = ns.Bool
+		ShowTryConfirmed = ns.Bool,
+		InterchangeTeam = ns.typeOf(nvm_team.NVMTeam),
+		InterchangeOffNumber = ns.String,
+		InterchangeOffName = ns.String,
+		InterchangeOnNumber = ns.String,
+		InterchangeOnName = ns.String,
+		ShowInterchange = ns.Bool
 	}
 }
+
+-- nrl-broadcast-scoreboard: fills the interchange banner; side 1 home, 2 away.
+function NVMScoreCard.showInterchange(arg_i_0, arg_i_1, arg_i_2, arg_i_3, arg_i_4, arg_i_5)
+	arg_i_0.InterchangeTeam = arg_i_0.sides[arg_i_1] or arg_i_0.HomeTeam
+	arg_i_0.InterchangeOffNumber = arg_i_2
+	arg_i_0.InterchangeOffName = arg_i_3
+	arg_i_0.InterchangeOnNumber = arg_i_4
+	arg_i_0.InterchangeOnName = arg_i_5
+	arg_i_0.ShowInterchange = true
+end
+
+function NVMScoreCard.hideInterchange(arg_h_0)
+	arg_h_0.ShowInterchange = false
+end
 
 function NVMScoreCard.updateScores(arg_6_0, arg_6_1, arg_6_2)
 	local var_6_0 = false

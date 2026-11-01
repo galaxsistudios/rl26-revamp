@@ -38,6 +38,17 @@ function SubstitutionListener.onInterchangeQueuedEvent(arg_3_0, arg_3_1, arg_3_2
 	local var_3_1 = VERIFY(arg_3_1.offId)
 	local var_3_2 = VERIFY(arg_3_1.onId)
 	local var_3_3 = arg_3_6:getComponent("matchInData")
+
+	-- ai-interchange-rotation: "Interchange queued" only for interchanges a human picked. AI
+	-- sides (and gamer sides on automatic interchanges / Be a Pro, same test as
+	-- substitution_hud.lua) queue silently; the scoreboard shows the swap when it happens.
+	local var_3_a = arg_3_4.primaryPartyMemberSettings
+	local var_3_b = var_3_a and var_3_a.automaticInterchanges and not var_3_3.onlineMultiplayer or var_3_3:isBeAProMode()
+
+	if var_3_b or not arg_3_7:getGamerSideEntity():isAnyGamerOnSide(var_3_0) then
+		return
+	end
+
 	local var_3_4 = VERIFY(arg_3_6:getSide(var_3_0))
 	local var_3_5 = VERIFY(var_3_3:getTeamConfig(var_3_4.side))
 	local var_3_6 = VERIFY(var_3_4:getAssetIdMap())

@@ -116,3 +116,6 @@ side's interchanges), `MaxQueued` (2), `Checkpoints`, `CheckpointMaxStamina` (0.
   injury check too.
 - Positions aren't reshuffled. The player coming on takes the outgoing player's role, as with human
   interchanges.
+- The stock "Interchange queued" notification now shows only for interchanges a human picked (a
+  side with a gamer on it, not on automatic interchanges / Be a Pro). AI interchanges queue silently;
+  the scoreboard's interchange banner (mods/nrl-broadcast-scoreboard) shows them when they're made.

@@ -98,3 +98,23 @@ The penalty bar doubles as the scrum prompt, and it carries the scrum clock: whi
 `hideScrumPrompt` drive it. `hide()` (the HUD feature stack's disable) is ignored while a scrum
 prompt is up, and `setup()` switches back to the penalty labels. The scoreboard is untouched. See
 mods/scrum-feed-control.
+
+## Interchange banner
+
+When an interchange is made, a two-row banner slides out under the scoreboard for 4 s: a red left arrow + `OFF <number> <SURNAME>` and a green right arrow +
+`ON <number> <SURNAME>`, with the side's team colour on the left edge. Both teams, human or AI.
+Several interchanges made together show one after another, and the banner waits for the scoreboard
+to be on screen and for the on report banner (same slot) to clear. Jersey numbers are cached at
+`InterchangeQueuedEvent`, before the swap can reorder the lineup.
+
+Detection: `SubstitutionClearEvent` never fired for AI interchanges in game (no banner at all
+during a mass interchange, 2026-11-01), so `GameplayScoreHud.pollInterchanges` compares each
+side's on-field set (`roleInfoPool` assigned role not `Substitute`) every 0.25 s. A player who left
+is paired with the player now in his role; unpaired changes (sin bin, send-off) are ignored.
+Numbers and surnames are cached at the first poll (shirt order) and from `InterchangeQueuedEvent`.
+`onInterchangeMade` is inert. `InterchangeBannerDebugLog` writes `interchange_banner_debug.txt`.
+
+The pieces live in other mods' copies of the files: the XAML is `InterchangeBanner` here, the view
+model properties (`Interchange*`, `ShowInterchange`, `showInterchange`/`hideInterchange`) are in
+mods/bunker-overturned-try's `nvm_scorecard.lua`, and the event handling is in
+mods/referee-on-report's `gameplayscore_hud.lua`. Untested in-game (polling version installed 2026-11-01).

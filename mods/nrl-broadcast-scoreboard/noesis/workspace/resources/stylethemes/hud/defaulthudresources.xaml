@@ -253,6 +253,149 @@
                     </b:Interaction.Triggers>
                 </Grid>
 
+                <!--Interchange banner: slides out from under the bar when a queued interchange is made.
+                    Red left arrow + OFF row, green right arrow + ON row, team-colour edge on the left.
+                    Interchange* / ShowInterchange are set by NVMScoreCard.showInterchange
+                    (app/noesis/hud/nvm_scorecard.lua) from sim/hud/gameplayscore_hud.lua.
+                    62 tall, parked 17 up so nothing peeks out under the 45 bar while hidden.
+                    Spans crest to clock (not the tackle count, which hides when empty).
+                    The -17 bottom margin grows its layout slot to 62: RootGrid is 45 tall and a
+                    taller child gets layout-clipped to the slot.-->
+                <Grid x:Name="InterchangeBanner"
+                      Height="62"
+                      Margin="0,0,0,-17"
+                      VerticalAlignment="Top"
+                      Grid.ColumnSpan="8"
+                      Opacity="0"
+                      d:Opacity="1">
+                    <Grid.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#1A1A1A" Offset="0"/>
+                            <GradientStop Color="#000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Grid.Background>
+                    <Grid.RenderTransform>
+                        <TranslateTransform Y="-17"/>
+                    </Grid.RenderTransform>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5" />  <!--team colour-->
+                        <ColumnDefinition Width="34" /> <!--arrow-->
+                        <ColumnDefinition Width="58" /> <!--OFF / ON-->
+                        <ColumnDefinition Width="40" /> <!--number-->
+                        <ColumnDefinition Width="*" />  <!--surname-->
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Rectangle Grid.RowSpan="2"
+                               Fill="{Binding InterchangeTeam.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                               d:Fill="#2E7D46" />
+
+                    <!--Light team-colour glow at the right end (fill masked, so no binding inside the brush)-->
+                    <Rectangle Grid.RowSpan="2"
+                               Grid.Column="4"
+                               Width="220"
+                               HorizontalAlignment="Right"
+                               Fill="{Binding InterchangeTeam.PrimaryColour, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                               d:Fill="#2E7D46">
+                        <Rectangle.OpacityMask>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#00000000" Offset="0" />
+                                <GradientStop Color="#99000000" Offset="1" />
+                            </LinearGradientBrush>
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+
+                    <Path Grid.Column="1"
+                          Data="M 0,6 L 7,0 L 7,4 L 14,4 L 14,8 L 7,8 L 7,12 Z"
+                          Fill="#FFE63232"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2"
+                               Text="OFF"
+                               Style="{StaticResource ScoreBoardJoyride}"
+                               FontSize="15"
+                               HorizontalAlignment="Left" />
+                    <TextBlock Grid.Column="3"
+                               Text="{Binding InterchangeOffNumber}"
+                               d:Text="2"
+                               Style="{StaticResource ScoreBoardMaison}"
+                               FontSize="15"
+                               HorizontalAlignment="Left" />
+                    <Viewbox Grid.Column="4"
+                             StretchDirection="DownOnly"
+                             HorizontalAlignment="Left"
+                             Margin="0,0,8,0">
+                        <TextBlock Text="{Binding InterchangeOffName}"
+                                   d:Text="JENNINGS"
+                                   Style="{StaticResource ScoreBoardMaison}"
+                                   FontSize="15" />
+                    </Viewbox>
+
+                    <Path Grid.Row="1"
+                          Grid.Column="1"
+                          Data="M 14,6 L 7,0 L 7,4 L 0,4 L 0,8 L 7,8 L 7,12 Z"
+                          Fill="#FF24DB61"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="2"
+                               Text="ON"
+                               Style="{StaticResource ScoreBoardJoyride}"
+                               FontSize="15"
+                               HorizontalAlignment="Left" />
+                    <TextBlock Grid.Row="1"
+                               Grid.Column="3"
+                               Text="{Binding InterchangeOnNumber}"
+                               d:Text="18"
+                               Style="{StaticResource ScoreBoardMaison}"
+                               FontSize="15"
+                               HorizontalAlignment="Left" />
+                    <Viewbox Grid.Row="1"
+                             Grid.Column="4"
+                             StretchDirection="DownOnly"
+                             HorizontalAlignment="Left"
+                             Margin="0,0,8,0">
+                        <TextBlock Text="{Binding InterchangeOnName}"
+                                   d:Text="GRAY"
+                                   Style="{StaticResource ScoreBoardMaison}"
+                                   FontSize="15" />
+                    </Viewbox>
+
+                    <b:Interaction.Triggers>
+                        <b:DataTrigger Binding="{Binding ShowInterchange}" Value="True">
+                            <b:ControlStoryboardAction>
+                                <b:ControlStoryboardAction.Storyboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0" />
+                                        <DoubleAnimation Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)" From="-17" To="45" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </b:ControlStoryboardAction.Storyboard>
+                            </b:ControlStoryboardAction>
+                        </b:DataTrigger>
+                        <b:DataTrigger Binding="{Binding ShowInterchange}" Value="False">
+                            <b:ControlStoryboardAction>
+                                <b:ControlStoryboardAction.Storyboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(Grid.RenderTransform).(TranslateTransform.Y)" From="45" To="-17" Duration="0:0:0.5">
+                                            <DoubleAnimation.EasingFunction>
+                                                <QuinticEase EasingMode="EaseOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" To="0" BeginTime="0:0:0.5" Duration="0:0:0" />
+                                    </Storyboard>
+                                </b:ControlStoryboardAction.Storyboard>
+                            </b:ControlStoryboardAction>
+                        </b:DataTrigger>
+                    </b:Interaction.Triggers>
+                </Grid>
+
                 <!--Home name-->
                 <Grid x:Name="HomeTeam"
                       Grid.Column="1">
