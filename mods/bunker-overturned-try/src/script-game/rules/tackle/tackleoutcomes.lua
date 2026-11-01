@@ -35,6 +35,10 @@ end
 -- bunker-overturned-try: a held-up tackle in the in-goal is awarded as a try first. Issues the
 -- provisional TryScoredRequest (scoreboard, replay moments, try presentation) and returns the
 -- ReactToScore that starts the celebration, or nil to keep the stock flow.
+-- Ball height (m) above which a held-up tackle counts as held up standing. Same 0.8 m the
+-- stock code uses to skip the video referee.
+HeldUpStandingBallHeight = 0.8
+
 local function provisionalHeldUpTry(arg_gamers, arg_services, arg_guids, arg_match, arg_gamestate, arg_gameobjects, arg_time, arg_requests, arg_event, arg_extra, arg_outcomeState, arg_seed)
 	local var_state = provisionalTry()
 
@@ -316,8 +320,18 @@ function heldUpRequestFactory(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3
 
 		local var_3_13 = playtheballwipesetup_helper.GetPlayTheBallWipeSetupState(var_3_12, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
 
-		-- bunker-overturned-try
-		local var_p_0, var_p_1 = pcall(provisionalHeldUpTry, arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, var_3_13, var_3_3)
+		-- bunker-overturned-try. Held up standing (ball above HeldUpStandingBallHeight) is an
+		-- obvious held up: no try award and no bunker, just the stock HeldUp call below.
+		local var_p_h = arg_3_5:getBallObject().pos3.y
+		local var_p_0, var_p_1 = true, nil
+
+		if var_p_h > HeldUpStandingBallHeight then
+			if provisionalTry().log then
+				provisionalTry().log(string.format("held-up tackle: ball %.2f m up, standing -> straight HELD UP", var_p_h))
+			end
+		else
+			var_p_0, var_p_1 = pcall(provisionalHeldUpTry, arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9, var_3_13, var_3_3)
+		end
 
 		if not var_p_0 and provisionalTry().log then
 			provisionalTry().log("held-up tackle error: " .. tostring(var_p_1))

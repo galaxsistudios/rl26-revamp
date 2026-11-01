@@ -40,7 +40,7 @@ local ProvisionalTryDebug = true
 local ProvisionalTryTestOutcome = nil
 -- TEST ONLY (bunker-broadcast-decision): every real try goes to the video referee (stock: 25%
 -- of tackled tries), so the bunker TRY flow can be tested on demand. false for normal play.
-local BunkerTestAllTries = true
+local BunkerTestAllTries = false
 
 -- Shared state for the other bunker-overturned-try files: scoreboard points, the replay
 -- selection flag and the debug log. Modules have their own environments, so it lives in _G.

@@ -20,7 +20,7 @@ crossfade.
 ## Which attempts
 
 `ProvisionalTryOutcomes` in `rules/try/tryattemptoutcomes.lua` lists them: held up, knock-on,
-outside the try area and double movement. A ball held up outside the try area is left alone.
+outside the try area and double movement. A ball held up outside the try area is left alone, and so is a carrier held up **standing** (ball above `HeldUpStandingBallHeight`, 0.8 m, in `tackleoutcomes.lua`): that gets the stock straight HELD UP call with no bunker (2026-11-01; logged as `standing -> straight HELD UP`).
 `ProvisionalTryChance` (currently **100**, so every one) is the percentage that get the
 award-then-overturn. Online matches, practice and training always keep the stock flow.
 
@@ -94,7 +94,7 @@ to `teamstinger_debug.txt` (`outro: kicked over the end of the provisional try r
 
 `ProvisionalTryTestOutcome` in `tryattemptoutcomes.lua` (`"KnockOn"` or `"HeldUp"`, normally
 `nil`) turns every real try into that outcome, so the flow plays on demand. **Set it back to
-`nil` before real play**, or no try can stand.
+`nil` before real play**, or no try can stand. `BunkerTestAllTries` (bunker-broadcast-decision) sends every real try to the video referee; it is `false` for normal play (stock: 25% of tackled tries). It was left on until 2026-11-01.
 
 Tested in-game 2026-10-23: held-up tackles and knock-ons while grounding (via the test switch),
 the player spread, the touch judges and the logo-wipe outro. A plain dropped ball in the in-goal
