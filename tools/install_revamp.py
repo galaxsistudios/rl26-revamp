@@ -212,7 +212,10 @@ def _steps():
          lambda o: ([[PY, mod("realistic-pitch-grass", "make_grass.py"), "--texconv", o["texconv"]],
                      [PY, mod("menu-grass-floor", "make_floor.py"), "--texconv", o["texconv"]]]
                     if o.get("texconv") else [])
-         + [[PY, tool("texture_mods.py"), "apply", "--confirm"],
+         # hd-nrl-club-logos' DDS (1.7 GB, not in git) are rendered from resources/nrl-site-logos +
+         # gallery-of-league-logos and the stock emblems
+         + [[PY, mod("hd-nrl-club-logos", "generate.py"), "--all-icons"],
+            [PY, tool("texture_mods.py"), "apply", "--confirm"],
             # competition logos preloaded for the team loading screen's background logo
             [PY, mod("loading-screen-secondary-arrows", "install.py"), "install", "--confirm"]]
          + ([[PY, mod("nrl-field-sponsor-markings", "fieldmarkings.py"), "build", "--texconv", o["texconv"]],

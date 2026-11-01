@@ -16,8 +16,9 @@ What goes in (_dist/RL26-Revamp/):
                generators) and texconv (field sponsor markings, line numbers)
   tools/, mods/   every tracked or new (not git-ignored) file, minus each
                mod.json's "generated" paths and mods that need another game's
-               content baked in
-  resources/   only the art the install steps read (RESOURCES)
+               content baked in, plus the git-ignored mod textures in PREBUILT
+  resources/   only the art the install steps read (RESOURCES); custom kits
+               as their exported textures (kit.psd stays here)
 
 Never packaged: anything built from Rugby League Live 4 or Rugby 25, the game
 working copies (extracted/, decompiled/, manifests/ - the installer rebuilds
@@ -63,14 +64,25 @@ RESOURCES = [
     "resources/las-vegas-stadium/**",                                # las-vegas-stadium (Allegiant logo)
     "resources/field-numbers/fieldmarkings_numbers_col.png",         # field-numbers-font
     "resources/old-jerseys/*.png",                                   # legacy kits (community jerseys, lossless PNG; * spans subfolders)
-    "resources/custom-kits/**",                                      # kits painted on the jersey templates
+    "resources/custom-kits/*/top.png", "resources/custom-kits/*/shorts.png",  # kits painted on the jersey
+    "resources/custom-kits/*/socks.png",                             # templates (kit.psd: custom_kit_textures)
     "resources/ref-jerseys/2026/*/top.png",                          # nrl-referee-2026-kits
     "resources/balls/nsw_cup/**", "resources/balls/nrlw_ball/**",    # nrl-special-balls logos
     "resources/balls/ashes/**",                                      # (+ Josefin Sans, OFL)
     "resources/fangear/*/tee_*.png", "resources/fangear/*/polo_*.png",  # crowd-fangear design sheets
     "resources/fangear/*/scarf_*.png", "resources/fangear/fangear.json",
     "resources/fangear/templates/*",
+    "resources/flags/*/*.png",                                       # crowd-flags faces (+ fangear's club list)
+    "resources/nrl-site-logos/**", "resources/gallery-of-league-logos/**",  # hd-nrl-club-logos sources
     "Maison-Neue-Extended-Bold.ttf",                                 # title screen lettering
+]
+
+# Finished mod textures that are git-ignored (*.dds) and that no install step
+# rebuilds: their sources are game-derived or need the dev tree.
+PREBUILT = [
+    "mods/goalpost-pads/textures/*.dds",
+    "mods/nrl-broadcast-scoreboard/textures/*.dds",                  # hud_score crests
+    "mods/rl26-revamp-branding/textures/*.dds",                      # screen-wipe logo
 ]
 
 TOOLCHAIN = [
@@ -80,8 +92,6 @@ TOOLCHAIN = [
 ]
 
 SKIP_NAMES = {"__pycache__", ".pytest_cache"}
-# kit_studio build state (layer signatures); kit.psd ships so the kits can be edited
-SKIP_RESOURCE_FILES = {".studio.json"}
 
 
 def tracked_files(*roots):
@@ -137,7 +147,7 @@ def strip_generated(path):
 
 def resource_files():
     out = []
-    for pattern in RESOURCES:
+    for pattern in RESOURCES + PREBUILT:
         base = pattern.split("*")[0].rstrip("/")
         root = os.path.join(REPO, base)
         if os.path.isfile(root):
@@ -147,12 +157,32 @@ def resource_files():
             if SKIP_NAMES & set(dirpath.replace("\\", "/").split("/")):
                 continue
             for n in names:
-                if n in SKIP_RESOURCE_FILES:
-                    continue
                 rel = os.path.relpath(os.path.join(dirpath, n), REPO).replace("\\", "/")
                 if fnmatch.fnmatch(rel, pattern.replace("/**", "/*")) or pattern.endswith("/**"):
                     out.append(rel)
     return sorted(set(out))
+
+
+def custom_kit_textures(dest):
+    """Custom kits ship as the top/shorts/socks.png the install bakes, never
+    kit.psd. Those PNGs are the PSD's export unless the PSD was saved after
+    the last kit_studio build; then they're exported from it again here (the
+    PSD is the source of truth, as in kit_studio build)."""
+    import kit_studio as ks
+    redone = []
+    for name in sorted(os.listdir(ks.CUSTOM)):
+        psd_path = os.path.join(ks.CUSTOM, name, "kit.psd")
+        if not os.path.exists(psd_path):
+            continue
+        kit = ks.Kit(name)
+        man = ks.load_manifest(kit)
+        if man and ks.file_sha1(psd_path) == man.get("psd_sha1"):
+            continue
+        for part, im in ks.export_from_psd(kit, ks.open_psd(psd_path)).items():
+            im.save(os.path.join(dest, "resources", "custom-kits", name, f"{part}.png"))
+        redone.append(name)
+    if redone:
+        print(f"  custom kits exported from kit.psd (saved since their last build): {', '.join(redone)}")
 
 
 def fetch(url, name):
@@ -214,6 +244,7 @@ def build(args):
         copy(rel, OUT)
     for rel in blocks:
         strip_generated(os.path.join(OUT, rel))
+    custom_kit_textures(OUT)
     tc = os.path.join(OUT, "toolchain")
     for src, dst in TOOLCHAIN:
         path = games.toolchain(*src.split("/"))

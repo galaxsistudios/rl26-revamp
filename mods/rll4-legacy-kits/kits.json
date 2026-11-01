@@ -213,7 +213,7 @@
   },
   {
    "guid": 60028,
-   "src": "rabbitohs-ind-2022.dds",
+   "custom": "rabbitohs_rll4_indigenous_2022",
    "club": 125,
    "name": "INDIGENOUS 2022",
    "texture": "rabbitohs_rll4_indigenous_2022"
@@ -297,7 +297,7 @@
   },
   {
    "guid": 60040,
-   "src": "holden_sharks_away_col.pc.dds",
+   "custom": "seaeagles_rll4_pride_2022",
    "club": 128,
    "name": "PRIDE 2022",
    "texture": "seaeagles_rll4_pride_2022"
