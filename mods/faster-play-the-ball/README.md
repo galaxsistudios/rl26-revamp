@@ -72,3 +72,14 @@ Two debug logs (game folder):
 - Last 10 minutes: losing side always quick; winning side slows in its own half.
 - Neither quick nor slow = normal speed. Animation rates (`design/playtheball_config.lua`):
   quick 1.4, slow 0.9 (tackle 1.2 / 0.9).
+
+## Quick play-the-ball faces upfield
+
+A quick play-the-ball branches straight out of the tackle get-up (`BranchToPlayTheBall` in
+`ai/playtheball/playtheball_helper.lua`). Stock kept the facing the get-up left the player in and
+picked the play-the-ball animation by its angle to upfield, so a player could play the ball side-on
+to the sideline. With this mod making AI quick play-the-balls much more common (early tackles in
+its own end), it showed up on the first play of a match. `QuickPlayTheBallFaceUpfield` (default
+true) turns him to the team's attacking direction during the 8-frame transition and plays the
+straight-on animation, as a normal play-the-ball does. Each correction logs a `FACING` line (how far
+off upfield he was) to `ptb_decision_debug.txt`. Untested in game.
