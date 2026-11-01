@@ -2661,6 +2661,34 @@
    "texture": "panthers_rll4_home_2023"
   },
   {
+   "guid": 60388,
+   "src": "2023/rabbitohs-away-23.dds",
+   "club": 125,
+   "name": "AWAY 2023",
+   "texture": "rabbitohs_rll4_away_2023"
+  },
+  {
+   "guid": 60389,
+   "src": "2023/rabbitohs-home-23.dds",
+   "club": 125,
+   "name": "HOME 2023",
+   "texture": "rabbitohs_rll4_home_2023"
+  },
+  {
+   "guid": 60391,
+   "src": "2023/rabbitohs-nines-20.dds",
+   "club": 125,
+   "name": "NINES 2020",
+   "texture": "rabbitohs_rll4_nines_2020"
+  },
+  {
+   "guid": 60427,
+   "src": "2023/rabbitohs-special-23.dds",
+   "club": 125,
+   "name": "SPECIAL 2023",
+   "texture": "rabbitohs_rll4_special_2023"
+  },
+  {
    "guid": 64008,
    "custom": "broncos_indigenous_2026",
    "club": 118,
@@ -2744,6 +2772,42 @@
     "uniformTop": 334,
     "uniformBottom": 334,
     "uniformSocks": 334
+   }
+  },
+  {
+   "guid": 64016,
+   "custom": "rabbitohs_anzac_2026",
+   "club": 125,
+   "name": "ANZAC 2026",
+   "texture": "rabbitohs_anzac_2026",
+   "templates": {
+    "uniformTop": 345,
+    "uniformBottom": 343,
+    "uniformSocks": 342
+   }
+  },
+  {
+   "guid": 64017,
+   "custom": "rabbitohs_indigenous_2026",
+   "club": 125,
+   "name": "INDIGENOUS 2026",
+   "texture": "rabbitohs_indigenous_2026",
+   "templates": {
+    "uniformTop": 345,
+    "uniformBottom": 343,
+    "uniformSocks": 342
+   }
+  },
+  {
+   "guid": 64027,
+   "custom": "rabbitohs_alternate_2026",
+   "club": 125,
+   "name": "ALTERNATE 2026",
+   "texture": "rabbitohs_alternate_2026",
+   "templates": {
+    "uniformTop": 345,
+    "uniformBottom": 343,
+    "uniformSocks": 342
    }
   },
   {

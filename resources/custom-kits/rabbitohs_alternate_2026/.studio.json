@@ -1,0 +1,28 @@
+{
+ "layers": {
+  "shorts/Design/Shorts (stock 2026 home)": "0166efce901aaded100240e96bc2bd593c88b857",
+  "shorts/Guides/UV outlines (never exported)": "0769cbb2010f2f18e6004d6fd13c8ced82415651",
+  "socks/Design/Socks (stock 2026 home)": "f436a23b740bc278144676ec783a809a72bc4ab7",
+  "socks/Guides/UV outlines (never exported)": "65ca41cde657cfb69f8d1f6e833a21155602646e",
+  "top/Design/Cream": "7a533193cba06aeb2daf52973d2b30a7135f946f",
+  "top/Design/Green": "66ba054eb3dcea3d19a023316ec22ebd56354144",
+  "top/Design/Red": "07b29ab38bbb98b6a247b3ed5a6a30ed257bc040",
+  "top/Guides/UV outlines (never exported)": "8e21aa1034725222b7c62f41e2a7f81808894091",
+  "top/Sponsors/Budget Direct (left sleeve)": "e6c934af5c646fc9636ed41e844f89b34a9e8726",
+  "top/Sponsors/Budget Direct (right sleeve)": "cf04a64bbf0a2116fe4bdbbdcad0dd9c130c66ef",
+  "top/Sponsors/Classic (left)": "d3e1d1e0a1ffb208aaa2aac5fe40b3e31ffaec0d",
+  "top/Sponsors/Classic (right)": "eee7c5b0f508cd86703bad7fe35b1b8e697d9cbe",
+  "top/Sponsors/Deicorp": "1969c7fe45263fee3dbf716ed69148a81aad61e7",
+  "top/Sponsors/Ingenia Holiday Parks": "d797587cc1188fc57e37578989322fc24449e608",
+  "top/Sponsors/MG": "d2ea901f3323c362174174e8e811c784b09c2ff1",
+  "top/Sponsors/NRL": "52ab62f4ef87031f2b3d14a595f19b019881976a",
+  "top/Sponsors/NRL patch": "9f2fb89ebaf53dfb7d6bdb11273fbbdaa5529e5f",
+  "top/Sponsors/Product tag": "123ba92e976e127d02c77a5ecac43e9afe5f55e3",
+  "top/Sponsors/Rabbitohs crest": "8818cbbfded0db3c3222c34d73b5c1940fd6d094",
+  "top/Sponsors/wotif": "5c9638e0d7d1776db44350cd92f29e77ced11cff"
+ },
+ "psd_edited": false,
+ "psd_sha1": "53a24d5a2e23a7d96e3b77d5c3765a4308c44546",
+ "source": "code",
+ "version": 1
+}

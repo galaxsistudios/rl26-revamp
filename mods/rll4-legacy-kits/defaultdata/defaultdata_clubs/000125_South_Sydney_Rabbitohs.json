@@ -1,0 +1,33 @@
+{
+  "uniforms": {
+    "add": [
+      {
+        "name": "ANZAC 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64016,
+          "uniformBottom": 64016,
+          "uniformSocks": 64016
+        }
+      },
+      {
+        "name": "INDIGENOUS 2026",
+        "copyOf": "AWAY",
+        "set": {
+          "uniformTop": 64017,
+          "uniformBottom": 64017,
+          "uniformSocks": 64017
+        }
+      },
+      {
+        "name": "ALTERNATE 2026",
+        "copyOf": "HOME",
+        "set": {
+          "uniformTop": 64027,
+          "uniformBottom": 64027,
+          "uniformSocks": 64027
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,476 @@
+{
+ "title": "Rabbitohs Alternate 2026",
+ "notes": "'An Ode to Redfern' cream alternate with red and green hoops on the yoke, from the user's product shots (resources/missing-jerseys/2026/rabbitohs-alternate). Painted by code from the wrapped photos (kit_photo.flat, hoops levelled); sponsors are the stock 2026 home logos, Deicorp from deicorp.com.au. Left off: the 'South Sydney' script at the back of the neck and the 'An Ode to Redfern' collar text (no clean source). Shorts and socks: stock home.",
+ "install": {
+  "club": 125,
+  "name": "ALTERNATE 2026",
+  "texture": "rabbitohs_alternate_2026",
+  "templates": {
+   "uniformTop": 345,
+   "uniformBottom": 343,
+   "uniformSocks": 342
+  },
+  "guid": 64027
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   228,
+   62,
+   58
+  ],
+  "cream": [
+   238,
+   233,
+   230
+  ],
+  "red": [
+   226,
+   62,
+   58
+  ],
+  "green": [
+   48,
+   92,
+   78
+  ],
+  "text": [
+   34,
+   40,
+   42
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1387,
+    628
+   ],
+   "shield_height": 104,
+   "patch_colour": "green"
+  },
+  {
+   "name": "Rabbitohs crest",
+   "rule": "crest",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1776,
+     604,
+     1959,
+     705
+    ],
+    "dark": true,
+    "channel": 1,
+    "lo": 170,
+    "hi": 235
+   },
+   "colour": "cream",
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1885,
+      667
+     ],
+     "width": 163
+    }
+   ]
+  },
+  {
+   "name": "wotif",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1546,
+     627,
+     1732,
+     684
+    ],
+    "lo": 80
+   },
+   "colour": "cream",
+   "place": [
+    {
+     "at": [
+      1640,
+      765
+     ],
+     "width": 196
+    }
+   ]
+  },
+  {
+   "name": "MG",
+   "source": {
+    "python": "mg_badge"
+   },
+   "place": [
+    {
+     "at": [
+      1638,
+      1157
+     ],
+     "width": 520
+    }
+   ]
+  },
+  {
+   "name": "Classic (right)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1188,
+     276,
+     1370,
+     392
+    ],
+    "lo": 80
+   },
+   "colour": "cream"
+  },
+  {
+   "name": "Classic (left)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1840,
+     270,
+     2010,
+     392
+    ],
+    "lo": 80
+   },
+   "colour": "cream"
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     1186,
+     1594,
+     1352,
+     1692
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Deicorp",
+   "source": {
+    "python": "deicorp"
+   },
+   "colour": "cream",
+   "place": [
+    {
+     "at": [
+      535,
+      598
+     ],
+     "width": 613
+    }
+   ]
+  },
+  {
+   "name": "Ingenia Holiday Parks",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     170,
+     1205,
+     915,
+     1345
+    ],
+    "lo": 80
+   },
+   "colour": "text",
+   "place": [
+    {
+     "at": [
+      546,
+      1326
+     ],
+     "width": 684
+    }
+   ]
+  },
+  {
+   "name": "Budget Direct (right sleeve)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     2560,
+     370,
+     2935,
+     610
+    ],
+    "raw": true,
+    "shape": "card"
+   }
+  },
+  {
+   "name": "Budget Direct (left sleeve)",
+   "source": {
+    "stock": "m_top_rabbitohs_nrl_home_26_col_1",
+    "box": [
+     3345,
+     365,
+     3800,
+     610
+    ],
+    "raw": true,
+    "shape": "card"
+   }
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      399.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      223.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      151.0,
+      408.0
+     ],
+     [
+      -0.235,
+      1.262,
+      280.1,
+      419.8
+     ],
+     [
+      -0.1675,
+      1.305,
+      294.0,
+      401.6
+     ],
+     [
+      -0.15,
+      1.1,
+      287.4,
+      710.7
+     ],
+     [
+      -0.162,
+      0.963,
+      284.0,
+      939.0
+     ],
+     [
+      -0.05,
+      1.472,
+      443.0,
+      144.0
+     ],
+     [
+      -0.085,
+      1.505,
+      403.0,
+      94.0
+     ],
+     [
+      0.068,
+      1.53,
+      599.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      777.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      847.0,
+      408.0
+     ],
+     [
+      0.235,
+      1.262,
+      718.9,
+      419.8
+     ],
+     [
+      0.1675,
+      1.305,
+      705.0,
+      401.6
+     ],
+     [
+      0.15,
+      1.1,
+      712.6,
+      710.7
+     ],
+     [
+      0.162,
+      0.963,
+      716.0,
+      939.0
+     ],
+     [
+      0.05,
+      1.472,
+      555.0,
+      144.0
+     ],
+     [
+      0.085,
+      1.505,
+      595.0,
+      94.0
+     ],
+     [
+      0,
+      0.931,
+      499.0,
+      954.0
+     ],
+     [
+      0,
+      1.462,
+      499.0,
+      144.0
+     ]
+    ]
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      399.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      223.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      152.0,
+      408.0
+     ],
+     [
+      -0.227,
+      1.265,
+      281.1,
+      419.8
+     ],
+     [
+      -0.173,
+      1.307,
+      295.0,
+      401.6
+     ],
+     [
+      -0.143,
+      1.1,
+      290.4,
+      710.7
+     ],
+     [
+      -0.161,
+      0.972,
+      285.0,
+      939.0
+     ],
+     [
+      0.078,
+      1.525,
+      600.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      777.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      847.0,
+      408.0
+     ],
+     [
+      0.227,
+      1.265,
+      716.9,
+      419.8
+     ],
+     [
+      0.173,
+      1.307,
+      703.0,
+      401.6
+     ],
+     [
+      0.143,
+      1.1,
+      712.6,
+      710.7
+     ],
+     [
+      0.161,
+      0.972,
+      716.0,
+      939.0
+     ],
+     [
+      0,
+      0.937,
+      499.5,
+      954.0
+     ],
+     [
+      0,
+      1.547,
+      499.5,
+      45.0
+     ]
+    ]
+   }
+  }
+ }
+}
