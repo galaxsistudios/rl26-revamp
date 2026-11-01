@@ -33,19 +33,25 @@ Each seat in a ground's node file (80 bytes per node) holds two random numbers:
 
 - **Attendance** (Lua only): crowd-team-kits' `rendering/crowd/crowd_rugby.lua` calls
   `setWantCrowdPercentage(attendance)` for Play Now.
-- **Home/away split** (exe patch + Lua): `install.py` patches the populate function to read the threshold
-  from the crowd scene's padding dword at `+0x1c` through a 20-byte code cave in int3 padding. The scene
-  starts with 6 LOD ratio floats, a byte at `+0x18` and a qword at `+0x20`; no crowd code touches
-  `+0x19`–`+0x1f`. The docstring has the bytes. `crowd_rugby.lua` writes it before `init` with
+- **Home/away split** (exe patch + Lua): `install.py` replaces only the side compare
+  (`comiss xmm10, [seat+0x24]`) with a jump to a 23-byte code cave in int3 padding. The cave loads the
+  scene from the function's spilled `this`, compares the seat's value with the threshold in a scratch
+  register (`xmm1`), then returns to the stock `jae`. The threshold is the crowd scene's padding dword at
+  `+0x1c`. The scene starts with 6 LOD ratio floats, a byte at `+0x18` and a qword at `+0x20`; no crowd
+  code touches `+0x19`–`+0x1f`. The docstring has the bytes. `crowd_rugby.lua` writes it before `init` with
   `setLODRatio(7, 1 - 2H)`, which stores a float at `scene + 4 * index` without checking the index. For a
   home share H (0–1) the threshold is `1 - 2H`: 80% gives -0.6. Padding isn't initialised, so it's written
   for every match (0, the stock split, outside Play Now) and for the menu crowd (this mod's
   `rendering/crowd/crowd_frontend.lua`). Without the patch nothing reads it.
-- **The first version crashed** (2026-11-01): it used `+0x1027194`, which is the top half of a heap
-  pointer at `+0x1027190` that the scene's cleanup frees, so the next match load died in the allocator
-  (dump: access violation reading `0xffffffffffffffff` in the allocator's free, called from
-  `0x140bbf541`). `install.py` still recognises that version's cave: `--apply` replaces it and
-  `--restore` removes it.
+- **Earlier versions** (both 2026-11-01) loaded the threshold into `xmm10` itself, by patching the
+  `xorps` that zeroes it:
+  - v1 read `+0x1027194`, the top half of a heap pointer at `+0x1027190` that the scene's cleanup
+    frees. The next match load died in the allocator (dump: access violation reading
+    `0xffffffffffffffff` in the allocator's free, called from `0x140bbf541`).
+  - v2 read `+0x1c`, but the function also uses `xmm10` as a 0.0 constant in later clamps and
+    compares (0x140bb5e98–0x140bb614b). With a non-zero threshold, fans sat facing backwards.
+
+  `install.py` recognises both: `--apply` replaces them and `--restore` removes them.
 - **Sound** (`simlisteners/sound/listeners/soundlistener_crowd.lua`, the stock file plus marked blocks):
   - At 0% attendance the listener stays disabled. No ambience loops, chants or reactions play, and
     `Crowd.setCrowdSound` already ignores a disabled listener. `respondToQuietPeriod`, which
@@ -75,7 +81,7 @@ it after a game update, and `install_revamp.py` runs it in its exe step.
 ## Caveats
 
 - Not tested in game yet.
-- The code cave uses the only int3 run of 20+ bytes in the 1.0.5933 code section, at 0x1401e3ab4. A future
+- The code cave uses the only int3 run of 23+ bytes in the 1.0.5933 code section, at 0x1401e3ab4. A future
   exe patch that needs a cave has to find another spot, or share this one.
 - Seat side values are close to uniform on [-1, 1], so the split is close to the slider; it was 54/46 at
   Brookvale at the stock 0.
