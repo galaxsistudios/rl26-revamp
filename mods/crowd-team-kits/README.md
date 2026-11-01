@@ -41,6 +41,21 @@ Overrides `intermediatelua/crowd/crowd_item_config.lua`, the module the crowd lo
 - `SPRINKLE_TINTED_POLOS` (off by default, **untested**): also adds the tinted default polos to clubs that
   have their own polo. If the engine only tints them on the fallback path, those fans wear raw red/yellow.
 
+## Fangear
+
+With crowd-fangear installed, `crowd_item_config.lua` also mixes each club's fan tees, polos and scarves
+(`FangearLibrary` in `crowd_items.lua`) into its jersey, polo and scarf lists at every match load. How much
+goes in follows the **Crowd Variance** setting (`crowd_variance` in `rl26_revamp.ini`, `CROWD_VARIANCE`
+here):
+- **low:** 8-entry jersey lists, no fan tees.
+- **standard:** fan tees share the jersey list.
+- **high:** full jersey lists, plus fan tees as their own top item.
+
+Designs switched off in the Fangear Library (`rl26_revamp_fangear.txt`) are left out. The pre-fangear
+lists are kept in `_G.crowdFangearOriginals`, so reruns never stack. Extra top items (Souths guy, fan tees)
+are added by `addExtraTop` and applied once per tops table from the shipped weights. Details in
+`mods/crowd-fangear/README.md`.
+
 ## Random Souths guy
 
 Whoever is playing, a few fans somewhere in the crowd wear a South Sydney jersey. It can be any Souths jersey

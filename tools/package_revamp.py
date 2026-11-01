@@ -67,6 +67,9 @@ RESOURCES = [
     "resources/ref-jerseys/2026/*/top.png",                          # nrl-referee-2026-kits
     "resources/balls/nsw_cup/**", "resources/balls/nrlw_ball/**",    # nrl-special-balls logos
     "resources/balls/ashes/**",                                      # (+ Josefin Sans, OFL)
+    "resources/fangear/*/tee_*.png", "resources/fangear/*/polo_*.png",  # crowd-fangear design sheets
+    "resources/fangear/*/scarf_*.png", "resources/fangear/fangear.json",
+    "resources/fangear/templates/*",
     "Maison-Neue-Extended-Bold.ttf",                                 # title screen lettering
 ]
 

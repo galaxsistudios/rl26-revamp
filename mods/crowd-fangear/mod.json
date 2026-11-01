@@ -1,0 +1,6 @@
+{
+ "_comment": "Core mod (RL26 only). The FangearClubs/FangearLibrary tables between the GENERATED markers in crowd_items.lua list the fangear textures installed on this machine, so the installer reruns fangear.py install before crowd-team-kits' register and generate. 'generatedBlocks' files ship with those tables emptied (tools/package_revamp.py); the rest of the file is the stock crowd_items.lua.",
+ "requires": [],
+ "releaseChannel": "core",
+ "generatedBlocks": ["src/script-game/intermediatelua/crowd/crowd_items.lua"]
+}

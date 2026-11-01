@@ -83,3 +83,12 @@ competitions, career and the crowd use it.
 Library kits can't be offered straight from the match setup: Play Now's team select is a native
 widget (`ESimpleClubAndJerseys`) that steps through the club's own kits and builds the match club by
 kit index. crowd-team-kits also puts library kits in their club's crowd list.
+
+## FANGEAR LIBRARY
+
+When crowd-fangear is installed, a club's Uniforms list also shows **FANGEAR LIBRARY (n)**: the fan tees,
+polos and scarves its crowd wears (`FangearLibrary` in `intermediatelua/crowd/crowd_items.lua`), grouped by
+item, each marked ON or OFF. Picking a row switches it. The switched-off designs are saved to
+`rl26_revamp_fangear.txt` in the game folder, which crowd-team-kits reads at the next match load. The row
+is there for every club with fangear, editable or not, and not in the community browser. See
+`mods/crowd-fangear/README.md`.

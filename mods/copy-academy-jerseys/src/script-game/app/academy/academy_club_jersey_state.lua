@@ -598,6 +598,159 @@ function AcademyClubJerseyKitLibraryState.enter(arg_kl_0, arg_kl_1, arg_kl_2, ar
 	arg_kl_0.stateMachine:changeState(JerseyKitLibraryList(), arg_kl_2, arg_kl_3, arg_kl_4, arg_kl_5, arg_kl_6, arg_kl_7, arg_kl_8)
 end
 
+-- crowd-fangear (when installed): FANGEAR LIBRARY. Lists the fan tees, polos
+-- and scarves the club's crowd wears (FangearLibrary in crowd_items.lua, built
+-- by mods/crowd-fangear/fangear.py) with an ON/OFF switch each. Switched-off
+-- designs are written to var_0_fg_file, one texture per line, which
+-- crowd_item_config.lua (crowd-team-kits) reads at every match load.
+
+local var_0_fg_file = "rl26_revamp_fangear.txt"
+local var_0_fg_kinds = {
+	{ item = "tee", title = "FAN TEES" },
+	{ item = "polo", title = "POLOS" },
+	{ item = "scarf", title = "SCARVES" }
+}
+
+function fangearLibraryEntries(club)
+	local ok, entries = pcall(function()
+		local crowdItems = import("intermediatelua.crowd.crowd_items")
+		local icon = crowdItems.FangearClubs and crowdItems.FangearClubs[club.id]
+
+		return icon and crowdItems.FangearLibrary and crowdItems.FangearLibrary[icon]
+	end)
+
+	return ok and entries or {}
+end
+
+local function var_0_fg_readOff()
+	local off = {}
+
+	pcall(function()
+		local file = io.open(var_0_fg_file, "r")
+
+		if file then
+			for line in file:lines() do
+				local texture = line:match("^%s*(%S+)")
+
+				if texture then
+					off[texture] = true
+				end
+			end
+
+			file:close()
+		end
+	end)
+
+	return off
+end
+
+local function var_0_fg_writeOff(off)
+	local names = {}
+
+	for texture in pairs(off) do
+		table.insert(names, texture)
+	end
+
+	table.sort(names)
+
+	return pcall(function()
+		local file = assert(io.open(var_0_fg_file, "w"))
+
+		for _, texture in ipairs(names) do
+			file:write(texture, "\n")
+		end
+
+		file:close()
+	end)
+end
+
+local function var_0_fg_label(entry, off)
+	return string.format("%s  -  %s", entry.name, off[entry.texture] and "OFF" or "ON")
+end
+
+Class("JerseyFangearLibraryList", var_0_ca_list)
+
+function JerseyFangearLibraryList.enter(arg_fg_0, arg_fg_1, arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, arg_fg_6, arg_fg_7, arg_fg_8)
+	local var_fg_0 = arg_fg_7.club
+	local var_fg_1 = {}
+	local var_fg_2 = fangearLibraryEntries(var_fg_0)
+
+	arg_fg_0.off = var_0_fg_readOff()
+
+	for _, kind in ipairs(var_0_fg_kinds) do
+		local rows = {}
+
+		for _, entry in ipairs(var_fg_2) do
+			if entry.item == kind.item then
+				table.insert(rows, {
+					editable = true,
+					label = var_0_fg_label(entry, arg_fg_0.off),
+					displayType = optionmenu_aide.DisplayTypes.LabelOnly,
+					editType = optionmenu_aide.EditTypes.SubMenu,
+					fangearEntry = entry
+				})
+			end
+		end
+
+		if #rows > 0 then
+			table.insert(var_fg_1, {
+				editable = false,
+				label = string.format("%s (%d)", kind.title, #rows),
+				displayType = optionmenu_aide.DisplayTypes.LabelOnly
+			})
+
+			for _, row in ipairs(rows) do
+				table.insert(var_fg_1, row)
+			end
+		end
+	end
+
+	if #var_fg_1 == 0 then
+		table.insert(var_fg_1, {
+			editable = false,
+			label = "NO FANGEAR",
+			displayType = optionmenu_aide.DisplayTypes.LabelOnly
+		})
+	end
+
+	var_0_ca_base.enter(arg_fg_0, arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, var_fg_1, #var_fg_1 > 1 and 2 or nil, var_0_ca_menuConfig(var_fg_0.fullName, "Fangear Library - worn by the crowd"))
+end
+
+function JerseyFangearLibraryList.update(arg_fg_0, arg_fg_1, arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, arg_fg_6, arg_fg_7, arg_fg_8, arg_fg_9, arg_fg_10)
+	local var_fg_0 = assert(arg_fg_8.partyMember)
+	local var_fg_1, var_fg_2, var_fg_3, var_fg_4 = var_0_ca_base.update(arg_fg_0, arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, arg_fg_6, arg_fg_7, var_fg_0:getInput())
+
+	if var_fg_1 then
+		arg_fg_1:changeState(nil, arg_fg_2, arg_fg_3, arg_fg_5, arg_fg_6, arg_fg_8, arg_fg_9, arg_fg_10)
+	elseif var_fg_4 and var_fg_4.fangearEntry then
+		local entry = var_fg_4.fangearEntry
+
+		arg_fg_0.off[entry.texture] = not arg_fg_0.off[entry.texture] or nil
+
+		if var_0_fg_writeOff(arg_fg_0.off) then
+			local var_fg_5 = arg_fg_0.menu.activeItemIndex
+
+			var_fg_4.label = var_0_fg_label(entry, arg_fg_0.off)
+
+			arg_fg_0:refreshMenuItems(arg_fg_2, arg_fg_6)
+
+			arg_fg_0.menu.activeItemIndex = var_fg_5
+		else
+			arg_fg_0.off[entry.texture] = not arg_fg_0.off[entry.texture] or nil
+
+			arg_fg_6:showNotification("alert", "Couldn't save the Fangear Library choice")
+		end
+	end
+end
+
+Class("AcademyClubJerseyFangearLibraryState", AcademyClubJerseyCopyAcademyState)
+
+function AcademyClubJerseyFangearLibraryState.enter(arg_fg_0, arg_fg_1, arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, arg_fg_6, arg_fg_7, arg_fg_8)
+	arg_fg_0.stateMachine = statemachine.StateMachine(type(arg_fg_0))
+
+	arg_fg_0.stateMachine:changeState(JerseyFangearLibraryList(), arg_fg_2, arg_fg_3, arg_fg_4, arg_fg_5, arg_fg_6, arg_fg_7, arg_fg_8)
+end
+
 Class("AcademyClubJerseyState")
 
 function AcademyClubJerseyState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
@@ -608,7 +761,8 @@ function AcademyClubJerseyState.enter(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_
 			CopyLicensed = academy_club_jerseystate_copylicensed_state.AcademyClubJerseyCopyLicensedState,
 			CopyAcademy = AcademyClubJerseyCopyAcademyState,
 			CopyToClub = AcademyClubJerseyCopyToClubState,
-			KitLibrary = AcademyClubJerseyKitLibraryState
+			KitLibrary = AcademyClubJerseyKitLibraryState,
+			FangearLibrary = AcademyClubJerseyFangearLibraryState
 		},
 		inCommunity = arg_1_7.inCommunity
 	}

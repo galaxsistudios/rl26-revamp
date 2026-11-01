@@ -151,6 +151,7 @@ def _steps():
     headgear = mod("headgear-patterns", "install.py")
     crowd = mod("crowd-team-kits", "bake_crowd_jerseys.py")
     flags = mod("crowd-flags", "build_flags.py")
+    fangear = mod("crowd-fangear", "fangear.py")
     return [
         ("snapshot", "snapshot the game install (dev checkouts only: hard links need the game's drive)", dev,
          lambda o: [[PY, tool("snapshot.py"), "take", "--label", "pre_revamp"]]),
@@ -190,9 +191,10 @@ def _steps():
                      os.path.join(stock_dir("licenseddata"), "defaultdata", "defaultdata_clubs")]]),
         ("data", "leagues/NPCs, clubs/players, Noesis UI and fonts", always,
          lambda o: bundle("gamedata")(o) + bundle("licenseddata")(o) + bundle("xamls")(o) + bundle("fonts")(o)),
-        ("crowd", "crowd jerseys, flags and kit lists", always,
+        ("crowd", "crowd jerseys, flags, fangear and kit lists", always,
          lambda o: [[PY, crowd, "bake", "--confirm"], [PY, flags, "model", "--confirm"],
-                    [PY, flags, "teams", "--confirm"], [PY, crowd, "register", "--confirm"],
+                    [PY, flags, "variants", "--confirm"], [PY, fangear, "install", "--confirm"],
+                    [PY, crowd, "register", "--confirm"],
                     [PY, flags, "bank", "--confirm"], [PY, mod("crowd-team-kits", "generate.py")]]),
         # before scripts: `lua` writes the club -> board table from the installed textures
         ("led-boards", "home-team LED sponsor boards", always,

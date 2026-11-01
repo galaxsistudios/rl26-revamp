@@ -492,6 +492,320 @@ if SPRINKLE_TINTED_POLOS then
 	end
 end
 
+-- crowd-fangear: each club's fan tees, polos and scarves (FangearLibrary, generated
+-- into crowd_items.lua by mods/crowd-fangear/fangear.py) join its jersey, polo
+-- and scarf lists. Designs switched off in the Fangear Library are listed in
+-- FANGEAR_FILE (one texture per line) and left out. Every list is rebuilt from
+-- the pre-fangear one (kept across loads, like the tops weights below), so
+-- settings and toggles take effect at the next match and reruns never stack.
+-- When a club has more designs than slots, a different selection shows each match.
+--
+-- Settings > Graphics > Crowd Variance (crowd-fangear, crowd_variance in
+-- rl26_revamp.ini) sizes it; every distinct texture a list names is loaded for
+-- the match, so more variance means more texture memory:
+--   low       jersey lists cut to 8 entries (the stock size), no fan tees,
+--             at most 3 fangear polos and scarves per club
+--   standard  fan tees take up to 6 of the 16 jersey entries; polos and
+--             scarves keep the stock item twice, then fangear up to 16
+--   high      jerseys keep all 16; fan tees are their own top item
+--             (FANTEE_ITEMS, FANTEE_SHARE of fans' tops) with 16 more
+local FANGEAR_STOCK_COPIES = 2
+local FANGEAR_FILE = "rl26_revamp_fangear.txt"
+local CROWD_VARIANCE_FILE = "rl26_revamp.ini"
+local CROWD_VARIANCE = {
+	low = { jerseys = 8, teeSlots = 0, gear = 3, fanTeeItem = false },
+	standard = { jerseys = COLS_CAPACITY, teeSlots = 6, gear = COLS_CAPACITY, fanTeeItem = false },
+	high = { jerseys = COLS_CAPACITY, teeSlots = 0, gear = COLS_CAPACITY, fanTeeItem = true }
+}
+local FANTEE_ITEMS = {
+	m_crowd_clothing_fantee = "m_crowd_clothing_tshirt",
+	f_crowd_clothing_fantee = "f_crowd_clothing_tshirt"
+}
+-- share of the tops pick that goes to the fan tee item, by the item it copies
+local FANTEE_SHARE = {
+	m_crowd_clothing_tshirt = 0.15,
+	f_crowd_clothing_tshirt = 0.2
+}
+
+local crowdVariance = "standard"
+
+pcall(function()
+	local file = io.open(CROWD_VARIANCE_FILE, "r")
+
+	if file then
+		for line in file:lines() do
+			local key, value = line:match("^%s*([%w_]+)%s*=%s*([%w_]+)")
+
+			if key and key:lower() == "crowd_variance" and CROWD_VARIANCE[value:lower()] then
+				crowdVariance = value:lower()
+			end
+		end
+
+		file:close()
+	end
+end)
+
+local variance = CROWD_VARIANCE[crowdVariance]
+
+local crowdItemsModule = import("intermediatelua.crowd.crowd_items")
+local fangearClubs = crowdItemsModule.FangearClubs or {}
+local fangearLibrary = crowdItemsModule.FangearLibrary or {}
+local fangearOff = {}
+local fangearOffCount = 0
+
+pcall(function()
+	local file = io.open(FANGEAR_FILE, "r")
+
+	if file then
+		for line in file:lines() do
+			local texture = line:match("^%s*(%S+)")
+
+			if texture and not fangearOff[texture] then
+				fangearOff[texture] = true
+				fangearOffCount = fangearOffCount + 1
+			end
+		end
+
+		file:close()
+	end
+end)
+
+local fangearTargets = {
+	tee = jerseyVariants,
+	polo = poloVariants,
+	scarf = items.m_crowd_scarf01.variants
+}
+local fangearOriginals = rawget(_G, "crowdFangearOriginals") or setmetatable({}, { __mode = "k" })
+
+rawset(_G, "crowdFangearOriginals", fangearOriginals)
+
+local fangearSeed = (os.time() + math.floor(os.clock() * 1000)) % 2147483647
+
+local function fangearShuffle(list)
+	for index = #list, 2, -1 do
+		fangearSeed = (fangearSeed * 48271) % 2147483647
+
+		local other = fangearSeed % index + 1
+
+		list[index], list[other] = list[other], list[index]
+	end
+
+	return list
+end
+
+-- club id -> item -> its enabled designs, shuffled
+local fangearGear = {}
+
+for clubId, icon in pairs(fangearClubs) do
+	local gear = { tee = {}, polo = {}, scarf = {} }
+
+	for _, row in ipairs(fangearLibrary[icon] or {}) do
+		if gear[row.item] and not fangearOff[row.texture] then
+			table.insert(gear[row.item], row.texture)
+		end
+	end
+
+	for _, designs in pairs(gear) do
+		fangearShuffle(designs)
+	end
+
+	fangearGear[clubId] = gear
+end
+
+local fangearCounts = { tee = 0, polo = 0, scarf = 0 }
+local fanTeeLists = {}
+
+for item, variants in pairs(fangearTargets) do
+	local saved = fangearOriginals[variants]
+
+	if not saved then
+		saved = {}
+		fangearOriginals[variants] = saved
+	end
+
+	-- the pre-fangear list of every club tag, and of fangear clubs without one
+	for key, value in pairs(variants) do
+		if type(key) == "string" and key:find("^teamID%d+$") and saved[key] == nil then
+			saved[key] = value
+		end
+	end
+
+	for clubId in pairs(fangearGear) do
+		if saved["teamID" .. clubId] == nil then
+			saved["teamID" .. clubId] = false
+		end
+	end
+
+	for tag, original in pairs(saved) do
+		local clubId = tonumber(tag:sub(7))
+		local designs = fangearGear[clubId] and fangearGear[clubId][item] or {}
+		local stock = original and original.cols or {}
+		local cols = {}
+		local limit = item == "tee" and variance.teeSlots or variance.gear
+
+		if item == "tee" then
+			-- a club with no jerseys of its own wears fan tees only
+			if #stock == 0 and limit > 0 then
+				limit = COLS_CAPACITY
+			end
+
+			local keep = math.min(#stock, variance.jerseys, COLS_CAPACITY - math.min(#designs, limit))
+
+			for index = 1, keep do
+				table.insert(cols, stock[index])
+			end
+
+			if variance.fanTeeItem then
+				fanTeeLists[tag] = #designs > 0 and designs or stock
+
+				if #designs > 0 then
+					fangearCounts.tee = fangearCounts.tee + 1
+				end
+			end
+		else
+			for _, texture in ipairs(stock) do
+				for _ = 1, FANGEAR_STOCK_COPIES do
+					table.insert(cols, texture)
+				end
+			end
+		end
+
+		local added = 0
+
+		while #cols < COLS_CAPACITY and added < math.min(#designs, limit) do
+			added = added + 1
+
+			table.insert(cols, designs[added])
+		end
+
+		if added > 0 then
+			fangearCounts[item] = fangearCounts[item] + 1
+		end
+
+		if added == 0 and (item ~= "tee" or #cols == #stock) then
+			variants[tag] = original or nil
+		elseif #cols > 0 then
+			variants[tag] = {
+				cols = cols
+			}
+		else
+			variants[tag] = nil
+		end
+	end
+end
+
+-- high: fan tees as their own top item (t-shirt mesh), one per sex; fans of a
+-- club without fan tees wear its jerseys through it
+for fanTee, copyOf in pairs(FANTEE_ITEMS) do
+	items[fanTee] = nil
+
+	if variance.fanTeeItem and items[copyOf] then
+		local tshirt = items[copyOf]
+		local fanTeeVariants = {
+			base = tshirt.variants.base
+		}
+
+		for tag, cols in pairs(fanTeeLists) do
+			local list = {}
+
+			for index = 1, math.min(#cols, COLS_CAPACITY) do
+				list[index] = cols[index]
+			end
+
+			if #list > 0 then
+				fanTeeVariants[tag] = {
+					cols = list
+				}
+			end
+		end
+
+		items[fanTee] = {
+			model_path = tshirt.model_path,
+			noExport = true,
+			compatibilities = tshirt.compatibilities,
+			variants = fanTeeVariants
+		}
+	end
+end
+
+-- Extra top items (the Souths guy, high variance's fan tees) take a share of an
+-- archetype's tops pick. Each load rebuilds the tops from the shipped weights
+-- (kept across loads: this module reruns every load but crowd_archetypes stays
+-- imported), so a setting change or a different ground never stacks. Keyed by
+-- the tops table: the Grand Final archetypes are shallow clones that share it.
+local TOPS_BIAS_TOTAL = 255 -- tops weights are a running byte total (rugbyleague1.exe 0xbb1ef9)
+local stockTops = rawget(_G, "crowdTeamKitsTopBiases") or {}
+local extraTops = {}
+
+rawset(_G, "crowdTeamKitsTopBiases", stockTops)
+
+local function addExtraTop(archetype, item, bias)
+	local tops = archetype and archetype.clothing_tops
+
+	if tops and bias > 0 then
+		local extras = extraTops[tops] or {}
+
+		extraTops[tops] = extras
+
+		for _, extra in ipairs(extras) do
+			if extra.item == item then
+				return
+			end
+		end
+
+		table.insert(extras, { item = item, bias = bias })
+	end
+end
+
+local function applyExtraTops()
+	local list = { archetypes.active.default_male, archetypes.active.default_female }
+
+	if archetypes.grand_final then
+		table.insert(list, archetypes.grand_final.default_male_gf)
+		table.insert(list, archetypes.grand_final.default_female_gf)
+	end
+
+	local done = {}
+
+	for _, archetype in ipairs(list) do
+		local tops = archetype and archetype.clothing_tops
+
+		if tops and not done[tops] then
+			done[tops] = true
+			stockTops[tops] = stockTops[tops] or { items = { unpack(tops.items) }, biases = { unpack(tops.biases) } }
+
+			local stock = stockTops[tops]
+			local extras = extraTops[tops] or {}
+			local newItems, newBiases = { unpack(stock.items) }, { unpack(stock.biases) }
+
+			if #extras > 0 then
+				local total, reserved, used = 0, 0, 0
+
+				for _, weight in ipairs(stock.biases) do
+					total = total + weight
+				end
+
+				for _, extra in ipairs(extras) do
+					reserved = reserved + extra.bias
+				end
+
+				-- shipped weights rescaled to fill the byte total around the extras
+				for index = 1, #stock.items do
+					newBiases[index] = index < #stock.items and math.floor(stock.biases[index] * (TOPS_BIAS_TOTAL - reserved) / total + 0.5) or TOPS_BIAS_TOTAL - reserved - used
+					used = used + newBiases[index]
+				end
+
+				for _, extra in ipairs(extras) do
+					table.insert(newItems, extra.item)
+					table.insert(newBiases, extra.bias)
+				end
+			end
+
+			tops.items, tops.biases = newItems, newBiases
+		end
+	end
+end
+
 -- Random Souths guy: whoever is playing, 1-5 fans somewhere in the crowd wear
 -- a South Sydney jersey (any season or kit, picked per match).
 --
@@ -520,6 +834,8 @@ local function log(fmt, ...)
 end
 
 rawset(_G, "crowdTeamKitsLog", log)
+
+log("crowd-fangear: crowd variance %s, %d clubs with fan tees, %d with polos, %d with scarves, %d designs switched off", crowdVariance, fangearCounts.tee, fangearCounts.polo, fangearCounts.scarf, fangearOffCount)
 
 local seed = (os.time() + math.floor(os.clock() * 1000)) % 2147483647
 
@@ -585,46 +901,30 @@ if #southsJerseys > 0 then
 		}
 	}
 
-	-- the shipped tops weights, kept across match loads (this module reruns
-	-- every load but crowd_archetypes stays imported)
-	local originals = rawget(_G, "crowdTeamKitsTopBiases") or {}
-
-	rawset(_G, "crowdTeamKitsTopBiases", originals)
-
 	for _, archetype in ipairs({ archetypes.active.default_male, archetypes.grand_final and archetypes.grand_final.default_male_gf }) do
-		local tops = archetype and archetype.clothing_tops
-
-		if tops then
-			originals[archetype] = originals[archetype] or { items = { unpack(tops.items) }, biases = { unpack(tops.biases) } }
-
-			local original = originals[archetype]
-			local total = 0
-
-			for _, weight in ipairs(original.biases) do
-				total = total + weight
-			end
-
-			-- shipped weights rescaled to fill the byte total around the Souths item
-			local newItems, newBiases, used = {}, {}, 0
-
-			for index, item in ipairs(original.items) do
-				local weight = index < #original.items and math.floor(original.biases[index] * (BIAS_TOTAL - bias) / total + 0.5) or BIAS_TOTAL - bias - used
-
-				used = used + weight
-
-				table.insert(newItems, item)
-				table.insert(newBiases, weight)
-			end
-
-			table.insert(newItems, SOUTHS_ITEM)
-			table.insert(newBiases, bias)
-
-			tops.items, tops.biases = newItems, newBiases
-		end
+		addExtraTop(archetype, SOUTHS_ITEM, bias)
 	end
 
 	log("%s: %d nodes, Souths guy bias %d/%d x %d/%d slots -> %.1f expected at a full ground (%s)", tostring(nodeFile), nodes, bias, BIAS_TOTAL, slots, COLS_CAPACITY, maleFans * bias / BIAS_TOTAL * slots / COLS_CAPACITY, table.concat(cols, " ", 1, slots))
 end
+
+-- high variance: the fan tee items take FANTEE_SHARE of the fans whose tops
+-- include the t-shirt they copy
+if variance.fanTeeItem then
+	for _, archetype in ipairs({ archetypes.active.default_male, archetypes.active.default_female, archetypes.grand_final and archetypes.grand_final.default_male_gf, archetypes.grand_final and archetypes.grand_final.default_female_gf }) do
+		local tops = archetype and archetype.clothing_tops and (stockTops[archetype.clothing_tops] or archetype.clothing_tops)
+
+		for fanTee, copyOf in pairs(FANTEE_ITEMS) do
+			for _, item in ipairs(tops and tops.items or {}) do
+				if item == copyOf and items[fanTee] then
+					addExtraTop(archetype, fanTee, math.floor(BIAS_TOTAL * FANTEE_SHARE[copyOf] + 0.5))
+				end
+			end
+		end
+	end
+end
+
+applyExtraTops()
 
 -- per-match hooks from other crowd mods (crowd-flags mixes both teams' flags);
 -- crowd_rugby.lua publishes the playing teams just before the crowd loads

@@ -67,6 +67,32 @@ local function var_0_2(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg
 		end
 	end
 
+	-- crowd-fangear (when installed): FANGEAR LIBRARY - the fan tees, polos and
+	-- scarves this club's crowd wears, each switchable on and off
+	if arg_1_3.stateFactoryMap.FangearLibrary and not arg_1_3.inCommunity then
+		local var_1_fgOk, var_1_fgCount = pcall(function()
+			local var_1_fgItems = import("intermediatelua.crowd.crowd_items")
+			local var_1_fgIcon = var_1_fgItems.FangearClubs and var_1_fgItems.FangearClubs[arg_1_4.id]
+
+			return var_1_fgIcon and var_1_fgItems.FangearLibrary and #(var_1_fgItems.FangearLibrary[var_1_fgIcon] or {}) or 0
+		end)
+
+		var_1_fgCount = var_1_fgOk and var_1_fgCount or 0
+
+		if var_1_fgCount > 0 then
+			table.insert(var_1_0, {
+				displayType = optionmenu_aide.DisplayTypes.Separator
+			})
+			table.insert(var_1_0, {
+				editable = true,
+				label = string.format("FANGEAR LIBRARY (%d)", var_1_fgCount),
+				editType = optionmenu_aide.EditTypes.SubMenu,
+				displayType = optionmenu_aide.DisplayTypes.Value,
+				stateFactory = arg_1_3.stateFactoryMap.FangearLibrary
+			})
+		end
+	end
+
 	if arg_1_4.uniformCanCreateCount > 0 and (var_1_2 or arg_1_5) then
 		table.insert(var_1_0, {
 			displayType = optionmenu_aide.DisplayTypes.Separator
