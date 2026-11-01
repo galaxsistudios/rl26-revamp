@@ -1,0 +1,437 @@
+{
+ "title": "Wests Tigers Alternate 2026",
+ "notes": "Orange alternate with black raglan sleeves, blue Zurich panels and tiger stripes on the lower body, from the user's product shots (resources/missing-jerseys/2026/tigers-alternate). Painted by code from the wrapped photos (kit_photo.flat); sponsors are the stock 2026 home logos, placed where the photo has them. LEFT OFF: Chris O'Brien Lifehouse on the back (the logo isn't in the game and mylifehouse.org.au blocks downloads) - add logos/chris_obrien_lifehouse.png to put it on. Shorts and socks: stock home.",
+ "install": {
+  "club": 131,
+  "name": "ALTERNATE 2026",
+  "texture": "tigers_alternate_2026",
+  "templates": {
+   "uniformTop": 424,
+   "uniformBottom": 422,
+   "uniformSocks": 422
+  },
+  "guid": 64028
+ },
+ "canvas": {
+  "top": [
+   4096,
+   2048
+  ],
+  "shorts": [
+   2048,
+   2048
+  ],
+  "socks": [
+   1024,
+   1024
+  ]
+ },
+ "colours": {
+  "main": [
+   222,
+   104,
+   44
+  ],
+  "black": [
+   25,
+   22,
+   24
+  ],
+  "tan": [
+   228,
+   160,
+   100
+  ],
+  "blue": [
+   10,
+   100,
+   166
+  ],
+  "white": [
+   230,
+   224,
+   224
+  ]
+ },
+ "sponsors": [
+  {
+   "name": "NRL",
+   "rule": "nrl",
+   "at": [
+    1440,
+    590
+   ],
+   "shield_height": 110
+  },
+  {
+   "name": "Wests Tigers crest",
+   "rule": "crest",
+   "source": {
+    "python": "crest"
+   },
+   "align_shield_centre": false,
+   "place": [
+    {
+     "at": [
+      1850,
+      620
+     ],
+     "height": 170
+    }
+   ]
+  },
+  {
+   "name": "PAMA",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     1535,
+     690,
+     1750,
+     740
+    ],
+    "dark": true,
+    "channel": 0,
+    "lo": 60,
+    "hi": 200
+   },
+   "colour": "white",
+   "place": [
+    {
+     "at": [
+      1640,
+      630
+     ],
+     "width": 216
+    }
+   ]
+  },
+  {
+   "name": "Pepper Money",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     1310,
+     890,
+     2010,
+     1220
+    ],
+    "raw": true,
+    "shape": "card"
+   },
+   "place": [
+    {
+     "at": [
+      1640,
+      955
+     ],
+     "width": 590
+    }
+   ]
+  },
+  {
+   "name": "Canterbury (right)",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     1280,
+     332,
+     1400,
+     400
+    ],
+    "lo": 80
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Canterbury (left)",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     1880,
+     332,
+     2000,
+     400
+    ],
+    "lo": 80
+   },
+   "colour": "white"
+  },
+  {
+   "name": "Product tag",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     1220,
+     1632,
+     1380,
+     1732
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Zurich (right sleeve)",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     2619,
+     459,
+     2894,
+     679
+    ],
+    "raw": true
+   }
+  },
+  {
+   "name": "Zurich (left sleeve)",
+   "source": {
+    "stock": "m_top_tigers_nrl_home_26_col_1",
+    "box": [
+     3484,
+     460,
+     3761,
+     680
+    ],
+    "raw": true
+   }
+  }
+ ],
+ "photos": {
+  "top": {
+   "front": {
+    "source": "photos/src_front.png",
+    "file": "photos/front.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.068,
+      1.53,
+      417.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.463,
+      241.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.323,
+      127.0,
+      412.0
+     ],
+     [
+      -0.235,
+      1.262,
+      262.0,
+      478.0
+     ],
+     [
+      -0.1675,
+      1.305,
+      271.0,
+      481.0
+     ],
+     [
+      -0.15,
+      1.1,
+      266.9,
+      737.5
+     ],
+     [
+      -0.162,
+      0.963,
+      275.0,
+      931.0
+     ],
+     [
+      -0.05,
+      1.472,
+      456.4,
+      133.6
+     ],
+     [
+      -0.085,
+      1.505,
+      420.6,
+      88.9
+     ],
+     [
+      0.068,
+      1.53,
+      596.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.463,
+      766.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.323,
+      871.0,
+      432.0
+     ],
+     [
+      0.235,
+      1.262,
+      784.0,
+      482.0
+     ],
+     [
+      0.1675,
+      1.305,
+      724.0,
+      488.0
+     ],
+     [
+      0.15,
+      1.1,
+      718.8,
+      737.1
+     ],
+     [
+      0.162,
+      0.963,
+      705.0,
+      925.0
+     ],
+     [
+      0.05,
+      1.472,
+      556.6,
+      133.6
+     ],
+     [
+      0.085,
+      1.505,
+      592.4,
+      88.9
+     ],
+     [
+      0,
+      0.931,
+      506.5,
+      954.0
+     ],
+     [
+      0,
+      1.462,
+      506.5,
+      133.6
+     ]
+    ]
+   },
+   "back": {
+    "source": "photos/src_back.png",
+    "file": "photos/back.png",
+    "white_is_background": false,
+    "points": [
+     [
+      -0.078,
+      1.525,
+      430.0,
+      51.4
+     ],
+     [
+      -0.2,
+      1.472,
+      289.0,
+      135.9
+     ],
+     [
+      -0.293,
+      1.329,
+      118.0,
+      411.0
+     ],
+     [
+      -0.227,
+      1.265,
+      261.0,
+      464.0
+     ],
+     [
+      -0.173,
+      1.307,
+      292.0,
+      470.0
+     ],
+     [
+      -0.143,
+      1.1,
+      283.8,
+      732.2
+     ],
+     [
+      -0.161,
+      0.972,
+      290.0,
+      930.0
+     ],
+     [
+      0.078,
+      1.525,
+      580.0,
+      51.4
+     ],
+     [
+      0.2,
+      1.472,
+      709.0,
+      135.9
+     ],
+     [
+      0.293,
+      1.329,
+      880.0,
+      412.0
+     ],
+     [
+      0.227,
+      1.265,
+      714.0,
+      431.0
+     ],
+     [
+      0.173,
+      1.307,
+      707.0,
+      469.0
+     ],
+     [
+      0.143,
+      1.1,
+      714.0,
+      737.5
+     ],
+     [
+      0.161,
+      0.972,
+      706.0,
+      940.0
+     ],
+     [
+      0,
+      0.937,
+      505.0,
+      953.0
+     ],
+     [
+      0,
+      1.547,
+      505.0,
+      46.0
+     ]
+    ]
+   }
+  }
+ },
+ "models": {
+  "top": "top_round01_short_Male"
+ }
+}

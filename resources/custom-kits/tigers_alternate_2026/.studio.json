@@ -1,0 +1,30 @@
+{
+ "layers": {
+  "shorts/Design/Shorts (stock 2026 home)": "af2f1311263cca8981f0c1542dd879951ceaf27a",
+  "shorts/Guides/UV outlines (never exported)": "0769cbb2010f2f18e6004d6fd13c8ced82415651",
+  "socks/Design/Socks (stock 2026 home)": "ec350df02028482be559f05a852e29df90ae4354",
+  "socks/Guides/UV outlines (never exported)": "65ca41cde657cfb69f8d1f6e833a21155602646e",
+  "top/Design/Black": "abdefe64bc081d71beabb00340f1ffbf85a49c6f",
+  "top/Design/Blue": "d653d3ec72c6fd5ff79043dd60d9895ea754c8f4",
+  "top/Design/Main": "a09475a93b4ad7ba56069f107e949bdcd5c43e81",
+  "top/Design/Shoulders and sleeves (black)": "78b369fcfb5dd0c002795628bd95f86e807ce2c9",
+  "top/Design/Tan": "5b0d74c6766d3f2e2edabe71c95150a0c96442ff",
+  "top/Design/Upper body (orange)": "082c6ca73fd9343a13e26dd68dc53c36eb9f6404",
+  "top/Design/White": "b206809d632a3592e817949861d7397e2e9b10fc",
+  "top/Guides/UV outlines (never exported)": "66c871f702d7a0132933383deff817ddd189b826",
+  "top/Sponsors/Canterbury (left)": "d653d3ec72c6fd5ff79043dd60d9895ea754c8f4",
+  "top/Sponsors/Canterbury (right)": "d653d3ec72c6fd5ff79043dd60d9895ea754c8f4",
+  "top/Sponsors/NRL": "1252ad2476fc9954db74e6116ed28fd08061e4db",
+  "top/Sponsors/NRL patch": "5af6c941802efa95bc1df463121f582e1e219d97",
+  "top/Sponsors/PAMA": "3b9ce1ecbc5029df1c3fecfcaa976fe94de59153",
+  "top/Sponsors/Pepper Money": "b0010ce9fb52d237db93e2ef7c58e2c0ca3fae8b",
+  "top/Sponsors/Product tag": "9ca58d4f93ee2c0034f866ce104a14175116fe22",
+  "top/Sponsors/Wests Tigers crest": "a8606109d11b5bc4026f78f84ef8663e22bd5096",
+  "top/Sponsors/Zurich (left sleeve)": "b189f8dbc28ab62836f52fe4a824275c2e02f9fa",
+  "top/Sponsors/Zurich (right sleeve)": "b75a02deaf444d19edb5116a32fc9689b2766c0c"
+ },
+ "psd_edited": false,
+ "psd_sha1": "c9267a5686357aa21aa666eecf5539a6898d616c",
+ "source": "code",
+ "version": 1
+}
