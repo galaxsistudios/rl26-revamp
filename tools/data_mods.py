@@ -110,6 +110,8 @@ DATA_BUNDLES = {
 
 # league override keys applied by _apply_whole_record_patches
 LEAGUE_WHOLE_RECORD_KEYS = ("clubs", "name", "shortName", "sortIndex")
+# club override keys applied by _apply_whole_record_patches (they resize records)
+CLUB_WHOLE_RECORD_KEYS = ("uniforms", "rosterList", "lineupTables")
 
 IDENTITY_KEYS = {"id", "firstname", "surname", "fullName", "shortName", "nickname", "hudName", "name", "shortName"}
 
@@ -256,6 +258,48 @@ def _patch_visual(data, anchors, record_id, visual, bundle_path, verbose):
     return applied
 
 
+def _all_player_ids():
+    """Every player id (bigant_db's exact reader: parse_players' anchor search
+    misses ~70 records)."""
+    import bigant_db
+    return set(bigant_db.load(open(pp.DEFAULT_PATH, "rb").read()).by_id())
+
+
+def _set_squad(db, rec, override, player_ids, label, verbose):
+    """A club's "rosterList": [player ids] (replaces the roster table,
+    player1..player64, any length up to 64) and "lineupTables": {table name:
+    {field: value}} (replaces those lineup tables whole; NRL lineup slots are
+    (position tag << 32) | player id, as bigant_db reads them)."""
+    names = [t.name for t in db.tables]
+    applied = 0
+    if "rosterList" in override:
+        roster = override["rosterList"]
+        idx = names.index("roster")
+        table = db.tables[idx]
+        slots = [k for (_typ, name, _cat), k in zip(table.fields, table.keys) if name.startswith("player")]
+        if len(roster) > len(slots) or len(set(roster)) != len(roster):
+            raise ValueError(f"{label}: rosterList has {len(roster)} players ({len(set(roster))} distinct), "
+                             f"a roster holds {len(slots)}")
+        unknown = [p for p in roster if p not in player_ids]
+        if unknown:
+            raise ValueError(f"{label}: rosterList players not in defaultdata_players: {unknown}")
+        vals = dict(rec["tables"][idx] or {})
+        for i, key in enumerate(slots):
+            vals[key] = roster[i] if i < len(roster) else None
+        rec["tables"][idx] = vals
+        applied += 1
+        if verbose:
+            print(f"    {label} roster: {len(roster)} players")
+    squad = set(override.get("rosterList", []))
+    for tname, tvals in override.get("lineupTables", {}).items():
+        for key, val in tvals.items():
+            if squad and isinstance(val, int) and (val & 0xFFFFFFFF) not in squad:
+                raise ValueError(f"{label}: lineup {tname}.{key} = player {val & 0xFFFFFFFF}, not in rosterList")
+        rec["tables"][names.index(tname)] = dict(tvals)
+        applied += 1
+    return applied
+
+
 def _apply_whole_record_patches(bundle_path, data, pristine, patches, verbose):
     """Overrides that can resize a record, applied through bigant_db's exact
     reader/writer after every in-place patch:
@@ -273,15 +317,21 @@ def _apply_whole_record_patches(bundle_path, data, pristine, patches, verbose):
     if bundle_path == "defaultdata/defaultdata_clubs":
         stock = {r["tables"][0]["id"]: r["blob"] for r in bigant_db.load(pristine).records}
         fill = kit_blob.field_defaults(stock.values())
+        player_ids = None
         for record_id, override, fname in patches:
             rec = by_id[record_id]
             label = f"[{bundle_path}] id={record_id}"
-            try:
-                rec["blob"] = kit_blob.apply_spec(rec["blob"], override["uniforms"], stock.__getitem__, fill,
-                                                  label, verbose)
-            except (KeyError, ValueError) as e:
-                raise ValueError(f"{bundle_path}: id {record_id} uniforms (override {fname!r}): {e}") from None
-            applied += 1
+            if "uniforms" in override:
+                try:
+                    rec["blob"] = kit_blob.apply_spec(rec["blob"], override["uniforms"], stock.__getitem__, fill,
+                                                      label, verbose)
+                except (KeyError, ValueError) as e:
+                    raise ValueError(f"{bundle_path}: id {record_id} uniforms (override {fname!r}): {e}") from None
+                applied += 1
+            if "rosterList" in override or "lineupTables" in override:
+                if player_ids is None:
+                    player_ids = _all_player_ids()
+                applied += _set_squad(db, rec, override, player_ids, f"{label} ({fname})", verbose)
     elif bundle_path == "defaultdata/defaultdata_leagues":
         table = db.tables[0]
         slots = [key for (_typ, name, _cat), key in zip(table.fields, table.keys) if name == "clubs"]
@@ -446,7 +496,7 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
                 if verbose:
                     print(f"    [{bundle_path}] id={record_id} jersey.{field_name}: {cur_val} -> {new_val}")
 
-        if (bundle_path == "defaultdata/defaultdata_clubs" and "uniforms" in override) or \
+        if (bundle_path == "defaultdata/defaultdata_clubs" and any(k in override for k in CLUB_WHOLE_RECORD_KEYS)) or \
                 (bundle_path == "defaultdata/defaultdata_leagues" and
                  any(k in override for k in LEAGUE_WHOLE_RECORD_KEYS)):
             whole_record.append((record_id, override, fname))
@@ -478,7 +528,10 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
             applied += _patch_visual(data, anchors, record_id, override["visual"], bundle_path, verbose)
 
         for key, new_val in override.items():
-            if key in IDENTITY_KEYS or key in ("roster", "lineup", "stadium", "alternativeNumberingSystem", "jersey", "uniforms", "visual"):
+            if key in IDENTITY_KEYS or key in ("roster", "lineup", "stadium", "alternativeNumberingSystem", "jersey", "visual") \
+                    or key.startswith("_"):
+                continue
+            if bundle_path == "defaultdata/defaultdata_clubs" and key in CLUB_WHOLE_RECORD_KEYS:
                 continue
             if bundle_path == "defaultdata/defaultdata_leagues" and key in LEAGUE_WHOLE_RECORD_KEYS:
                 continue
@@ -528,6 +581,46 @@ def apply_overrides(bundle_path, pristine_bytes, override_files, verbose=True):
     return bytes(data)
 
 
+def _append_clubs(data, files, verbose):
+    """New clubs: {"new": true, "cloneOf": <club id>, "clubList": {field:
+    value, null removes it}, "rosterList": [...], "lineupTables": {...},
+    "uniforms": <kit_blob spec>}. The club starts as a copy of cloneOf (every
+    table and its kit list), as the record carries far more than a JSON would
+    want to spell out. The clubList id must be new, and should be the next
+    free id: like players, ids far past the record count may abort the game."""
+    import copy
+    import bigant_db
+    import kit_blob
+    label_base = "[defaultdata/defaultdata_clubs]"
+    db = bigant_db.load(data)
+    by_id = db.by_id()
+    stock = {cid: rec["blob"] for cid, rec in by_id.items()}
+    fill = kit_blob.field_defaults(stock.values())
+    player_ids = _all_player_ids()
+    for fpath in sorted(files):
+        spec = json.load(open(fpath))
+        fname = os.path.basename(fpath)
+        rec = copy.deepcopy(by_id[spec["cloneOf"]])
+        main = rec["tables"][0]
+        for key, val in spec.get("clubList", {}).items():
+            if val is None:
+                main.pop(key, None)
+            else:
+                main[key] = val
+        cid = main["id"]
+        if cid in by_id:
+            raise ValueError(f"{label_base}: new club {fname} uses id {cid}, which exists")
+        label = f"{label_base} new id={cid}"
+        if "uniforms" in spec:
+            rec["blob"] = kit_blob.apply_spec(rec["blob"], spec["uniforms"], stock.__getitem__, fill, label, verbose)
+        _set_squad(db, rec, spec, player_ids, f"{label} ({fname})", verbose)
+        db.records.append(rec)
+        by_id[cid] = rec
+        if verbose:
+            print(f"  added club {cid} {main.get('fullName')!r} (copy of {spec['cloneOf']})")
+    return bigant_db.dump(db)
+
+
 def _append_records(bundle_path, data, files, verbose):
     """Append whole records to a database via bigant_db (exact schema
     reader/writer). Each file is {"new": true, "<table name>": {field:
@@ -537,9 +630,11 @@ def _append_records(bundle_path, data, files, verbose):
     (referees/coaches), which share the visual-before-tables record form
     (defaultdata_npcs added 2026-10-27 for team-coaches' default coaches)."""
     import bigant_db
+    if bundle_path == "defaultdata/defaultdata_clubs":
+        return _append_clubs(data, files, verbose)
     if bundle_path not in ("defaultdata/defaultdata_players", "defaultdata/defaultdata_npcs"):
-        raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players and "
-                         f"defaultdata_npcs")
+        raise ValueError(f"{bundle_path}: adding new records is only supported for defaultdata_players, "
+                         f"defaultdata_npcs and defaultdata_clubs")
     db = bigant_db.load(data)
     ids = set(db.by_id())
     for fpath in sorted(files):

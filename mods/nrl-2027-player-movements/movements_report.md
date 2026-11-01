@@ -1,0 +1,561 @@
+# NRL 2027 player movements
+
+Source: `resources\player-movements\zerotackle_2026-11-01.json` (Zero Tackle). 159 club records written.
+
+## Movements applied
+
+- Mitch Barnett: New Zealand Warriors, 2029 -> Brisbane Broncos
+- Shawn Blore: Melbourne Storm, 2028 -> Brisbane Broncos
+- Wilson De Courcey: Newcastle Knights, 2028 -> Brisbane Broncos
+- Dane Gagai: Newcastle Knights, 2027 -> Brisbane Broncos
+- Jonah Pezet: Parramatta Eels, 2029 -> Brisbane Broncos
+- Grant Anderson: Brisbane Broncos -> New Zealand Warriors
+- Jesse Arthars: Brisbane Broncos -> Catalans Dragons
+- Joshua Coric: Brisbane Broncos -> Hull FC
+- Payne Haas: Brisbane Broncos -> South Sydney Rabbitohs
+- Jaiyden Hunt: Brisbane Broncos -> Canberra Raiders
+- Corey Jensen: Brisbane Broncos -> retired
+- Adam Reynolds: Brisbane Broncos -> retired
+- Gehamat Shibasaki: Brisbane Broncos -> Perth Bears
+- Benjamin Te Kura: Brisbane Broncos -> free
+- Lipoi Hopoi: Canterbury-Bankstown Bulldogs, 2028 -> Canberra Raiders
+- Jaiyden Hunt: Brisbane Broncos, 2028 -> Canberra Raiders
+- Kain Anderson: Canberra Raiders -> Dolphins
+- Jayden Brailey: Canberra Raiders -> Wests Tigers
+- Corey Horsburgh: Canberra Raiders -> Perth Bears
+- Josh Papalii: Canberra Raiders -> retired
+- Morgan Smithies: Canberra Raiders -> Perth Bears
+- Tom Starling: Canberra Raiders -> St. Helens
+- Jaxson Allen: Sydney Roosters, 2028 -> Canterbury-Bankstown Bulldogs
+- Freddy Lussick: Penrith Panthers, 2028 -> Canterbury-Bankstown Bulldogs
+- Jesse McLean: Penrith Panthers, 2028 -> Canterbury-Bankstown Bulldogs
+- Jeral Skelton: Wests Tigers, 2027 -> Canterbury-Bankstown Bulldogs
+- Connor Votano: Newcastle Knights, 2028 -> Canterbury-Bankstown Bulldogs
+- Fletcher Baker: Canterbury-Bankstown Bulldogs -> free
+- Josh Curran: Canterbury-Bankstown Bulldogs -> Perth Bears
+- Lipoi Hopoi: Canterbury-Bankstown Bulldogs -> Canberra Raiders
+- Kurt Mann: Canterbury-Bankstown Bulldogs -> Wests Tigers
+- Marcelo Montoya: Canterbury-Bankstown Bulldogs -> retired
+- Sean O'Sullivan: Canterbury-Bankstown Bulldogs -> St. Helens
+- Jope Rauqe: Canterbury-Bankstown Bulldogs -> Perth Bears
+- Jonathan Sua: Canterbury-Bankstown Bulldogs -> Perth Bears
+- Daniel Suluka-Fifita: Canterbury-Bankstown Bulldogs -> St. Helens
+- Bronson Xerri: Canterbury-Bankstown Bulldogs -> Melbourne Storm
+- Leo Jaques: 2029 -> Cronulla-Sutherland Sharks
+- Owen Trout: Leigh Leopards, 2028 -> Cronulla-Sutherland Sharks
+- Mawene Hiroti: Cronulla-Sutherland Sharks -> Gold Coast Titans
+- Sione Katoa: Cronulla-Sutherland Sharks -> North Queensland Cowboys
+- Cameron McInnes: Cronulla-Sutherland Sharks -> York Knights
+- Niwhai Puru: Cronulla-Sutherland Sharks -> Perth Bears
+- Jesse Ramien: Cronulla-Sutherland Sharks -> North Queensland Cowboys
+- Siosifa Talakai: Cronulla-Sutherland Sharks -> Perth Bears
+- Chris Vea'ila: Cronulla-Sutherland Sharks -> Perth Bears
+- Kain Anderson: Canberra Raiders, 2028 -> Dolphins
+- George Williams: Warrington Wolves, 2028 -> Dolphins
+- Jake Averillo: Dolphins -> Wests Tigers
+- Jamayne Isaako: Dolphins -> Melbourne Storm
+- Oryn Keeley: Dolphins -> Melbourne Storm
+- Kodi Nikorima: Dolphins -> St George Illawarra Dragons
+- Daniel Saifiti: Dolphins -> retired
+- Ray Stone: Dolphins -> retired
+- Luke Hanson: New Zealand Warriors, 2028 -> Gold Coast Titans
+- Mawene Hiroti: Cronulla Sharks, 2028 -> Gold Coast Titans
+- Jaimin Jolliffe: Gold Coast Titans -> Huddersfield Giants
+- Phillip Sami: Gold Coast Titans -> St George Illawarra Dragons
+- Kayliss Fatialofa: New Zealand Warriors, 2029 -> Manly-Warringah Sea Eagles
+- Toni Mataele: Parramatta Eels, 2028 -> Manly-Warringah Sea Eagles
+- Davvy Moale: Melbourne Storm, 2029 -> Manly-Warringah Sea Eagles
+- Starford To'a: Wests Tigers, 2028 -> Manly-Warringah Sea Eagles
+- Nathan Brown: Manly-Warringah Sea Eagles -> Catalans Dragons
+- Reuben Garrick: Manly-Warringah Sea Eagles -> Sydney Roosters
+- Nicholas Lenaz: Manly-Warringah Sea Eagles -> Townsville Blackhawks
+- Blake Wilson: Manly-Warringah Sea Eagles -> Perth Bears
+- Jamayne Isaako: Dolphins, 2028 -> Melbourne Storm
+- Adam Pompey: New Zealand Warriors, 2028 -> Melbourne Storm
+- Kelma Tuilagi: Parramatta Eels, 2027 -> Melbourne Storm
+- Bronson Xerri: Canterbury-Bankstown Bulldogs, 2029 -> Melbourne Storm
+- Shawn Blore: Melbourne Storm -> Brisbane Broncos
+- Joe Chan: Melbourne Storm -> North Queensland Cowboys
+- Tui Kamikamica: Melbourne Storm -> retired
+- Nick Meaney: Melbourne Storm -> Perth Bears
+- Davvy Moale: Melbourne Storm -> Manly-Warringah Sea Eagles
+- Marion Seve: Melbourne Storm -> retired
+- Lazarus Vaalepu: Melbourne Storm -> free
+- Will Warbrick: Melbourne Storm -> New Zealand Warriors
+- Tyran Wishart: Melbourne Storm -> Perth Bears
+- Grant Anderson: Brisbane Broncos, 2029 -> New Zealand Warriors
+- Sam McIntyre: North Queensland Cowboys, 2028 -> New Zealand Warriors
+- Will Warbrick: Melbourne Storm, 2029 -> New Zealand Warriors
+- Mitch Barnett: New Zealand Warriors -> Brisbane Broncos
+- Kayliss Fatialofa: New Zealand Warriors -> Manly-Warringah Sea Eagles
+- Morgan Gannon: New Zealand Warriors -> Leeds Rhinos
+- Luke Hanson: New Zealand Warriors -> Gold Coast Titans
+- Luke Laulilii: New Zealand Warriors -> Perth Bears
+- Luke Metcalf: New Zealand Warriors -> St George Illawarra Dragons
+- Marata Niukore: New Zealand Warriors -> Newcastle Knights
+- Adam Pompey: New Zealand Warriors -> Melbourne Storm
+- Roger Tuivasa-Sheck: New Zealand Warriors -> Wakefield Trinity
+- Marata Niukore: New Zealand Warriors, 2029 -> Newcastle Knights
+- Wilson De Courcey: Newcastle Knights -> Brisbane Broncos
+- Tyson Frizell: Newcastle Knights -> Wests Tigers
+- Dane Gagai: Newcastle Knights -> Brisbane Broncos
+- Tyson Gamble: Newcastle Knights -> Catalans Dragons
+- Brodie Jones: Newcastle Knights -> retired
+- Connor Votano: Newcastle Knights -> Canterbury-Bankstown Bulldogs
+- Joe Chan: Melbourne Storm, 2028 -> North Queensland Cowboys
+- Sione Katoa: Cronulla Sharks, 2028 -> North Queensland Cowboys
+- Jesse Ramien: Cronulla Sharks, 2028 -> North Queensland Cowboys
+- Mason Barber: North Queensland Cowboys -> Perth Bears
+- John Bateman: North Queensland Cowboys -> Bradford Bulls
+- Scott Drinkwater: North Queensland Cowboys -> St George Illawarra Dragons
+- Harrison Edwards: North Queensland Cowboys -> Parramatta Eels
+- Wiremu Greig: North Queensland Cowboys -> Townsville Blackhawks
+- Zac Herdegen: North Queensland Cowboys -> Perth Bears
+- Matthew Lodge: North Queensland Cowboys -> free
+- Sam McIntyre: North Queensland Cowboys -> New Zealand Warriors
+- Murray Taulagi: North Queensland Cowboys -> free
+- Viliami Vailea: North Queensland Cowboys -> free
+- Spencer Leniu: Sydney Roosters, 2030 -> Parramatta Eels
+- Jarome Luai: Wests Tigers, 2027 -> Parramatta Eels
+- Jaydn Su'A: St George Illawarra Dragons, 2029 -> Parramatta Eels
+- Toni Mataele: Parramatta Eels -> Manly-Warringah Sea Eagles
+- Ryan Matterson: Parramatta Eels -> retired
+- Richard Penisini: Parramatta Eels -> Brisbane Broncos
+- Jonah Pezet: Parramatta Eels -> Brisbane Broncos
+- Sean Russell: Parramatta Eels -> Perth Bears
+- Kelma Tuilagi: Parramatta Eels -> Melbourne Storm
+- Dylan Walker: Parramatta Eels -> Leeds Rhinos
+- Liam Le Blanc: South Sydney Rabbitohs, 2027 -> Penrith Panthers
+- Jack Cole: Penrith Panthers -> Perth Bears
+- Toby Crosby: Penrith Panthers -> Warrington Wolves
+- Liam Henry: Penrith Panthers -> Perth Bears
+- Freddy Lussick: Penrith Panthers -> Canterbury-Bankstown Bulldogs
+- Jesse McLean: Penrith Panthers -> Canterbury-Bankstown Bulldogs
+- Scott Sorensen: Penrith Panthers -> Perth Bears
+- Mason Barber: North Queensland Cowboys, 2029 -> Perth Bears
+- Emarly Bitungane: London Broncos, 2028 -> Perth Bears
+- Jack Cole: Penrith Panthers, 2029 -> Perth Bears
+- Josh Curran: Canterbury-Bankstown Bulldogs, 2029 -> Perth Bears
+- Iszac Fa'asuamaleaui: Catalans Dragons, 2028 -> Perth Bears
+- Mavrik Geyer: Wests Tigers, 2028 -> Perth Bears
+- Liam Henry: Penrith Panthers, 2030 -> Perth Bears
+- Corey Horsburgh: Canberra Raiders, 2029 -> Perth Bears
+- Kit Laulilii: Wests Tigers, 2028 -> Perth Bears
+- Luke Laulilii: New Zealand Warriors, 2028 -> Perth Bears
+- James McDonnell: Leeds Rhinos, 2028 -> Perth Bears
+- Nick Meaney: Melbourne Storm, 2029 -> Perth Bears
+- Harry Newman: Leeds Rhinos, 2028 -> Perth Bears
+- Mikolaj Oledzki: Leeds Rhinos, 2029 -> Perth Bears
+- Niwhai Puru: Cronulla Sharks, 2028 -> Perth Bears
+- Jope Rauqe: Canterbury-Bankstown Bulldogs, 2028 -> Perth Bears
+- Sean Russell: Parramatta Eels, 2030 -> Perth Bears
+- Toby Sexton: Catalans Dragons, 2028 -> Perth Bears
+- Gehamat Shibasaki: Brisbane Broncos, 2028 -> Perth Bears
+- Luke Smith: London Broncos, 2028 -> Perth Bears
+- Morgan Smithies: Canberra Raiders, 2031 -> Perth Bears
+- Tyson Smoothy: Wakefield Trinity, 2029 -> Perth Bears
+- Scott Sorensen: Penrith Panthers, 2028 -> Perth Bears
+- Jonathan Sua: Canterbury-Bankstown Bulldogs, 2029 -> Perth Bears
+- Siosifa Talakai: Cronulla Sharks, 2029 -> Perth Bears
+- Chris Vea'ila: Cronulla Sharks, 2028 -> Perth Bears
+- Blake Wilson: Manly Sea Eagles, 2027 -> Perth Bears
+- Tyran Wishart: Melbourne Storm, 2031 -> Perth Bears
+- Payne Haas: Brisbane Broncos, 2029 -> South Sydney Rabbitohs
+- Jai Arrow: South Sydney Rabbitohs -> retired
+- Adam Elliott: South Sydney Rabbitohs -> retired
+- Moala Graham-Taufa: South Sydney Rabbitohs -> Hull KR
+- Keaon Koloamatangi: South Sydney Rabbitohs -> St George Illawarra Dragons
+- Liam Le Blanc: South Sydney Rabbitohs -> Penrith Panthers
+- Scott Drinkwater: North Queensland Cowboys, 2029 -> St George Illawarra Dragons
+- Keaon Koloamatangi: South Sydney Rabbitohs, 2031 -> St George Illawarra Dragons
+- Luke Metcalf: New Zealand Warriors, 2029 -> St George Illawarra Dragons
+- Kodi Nikorima: Dolphins, 2028 -> St George Illawarra Dragons
+- Phillip Sami: Gold Coast Titans, 2029 -> St George Illawarra Dragons
+- Connor Watson: Sydney Roosters, 2027 -> St George Illawarra Dragons
+- Damien Cook: St George Illawarra Dragons -> Castleford Tigers
+- Mathew Feagai: St George Illawarra Dragons -> Castleford Tigers
+- Emre Guler: St George Illawarra Dragons -> Wakefield Trinity
+- Blake Lawrie: St George Illawarra Dragons -> York Knights
+- Nathan Lawson: St George Illawarra Dragons -> free
+- Luciano Leilua: St George Illawarra Dragons -> Catalans Dragons
+- Hame Sele: St George Illawarra Dragons -> Catalans Dragons
+- Tyrell Sloan: St George Illawarra Dragons -> Castleford Tigers
+- Jaydn Su'A: St George Illawarra Dragons -> Parramatta Eels
+- Christian Tuipulotu: St George Illawarra Dragons -> St. Helens
+- Reuben Garrick: Manly Sea Eagles, 2029 -> Sydney Roosters
+- Jaxson Allen: Sydney Roosters -> Canterbury-Bankstown Bulldogs
+- Daly Cherry-Evans: Sydney Roosters -> Hull FC
+- Angus Crichton: Sydney Roosters -> free
+- Spencer Leniu: Sydney Roosters -> Parramatta Eels
+- Mark Nawaqanitawase: Sydney Roosters -> free
+- Junior Pauga: Sydney Roosters -> Hull FC
+- Daniel Tupou: Sydney Roosters -> retired
+- Junior Tupou: Sydney Roosters -> Wests Tigers
+- Connor Watson: Sydney Roosters -> St George Illawarra Dragons
+- Jake Averillo: Dolphins, 2030 -> Wests Tigers
+- Jayden Brailey: Canberra Raiders, 2028 -> Wests Tigers
+- Tyson Frizell: Newcastle Knights, 2027 -> Wests Tigers
+- Kurt Mann: Canterbury-Bankstown Bulldogs, 2027 -> Wests Tigers
+- Mavrik Geyer: Wests Tigers -> Perth Bears
+- Kit Laulilii: Wests Tigers -> Perth Bears
+- Luke Laulilii: Wests Tigers -> Perth Bears
+- Jarome Luai: Wests Tigers -> Parramatta Eels
+- Jeral Skelton: Wests Tigers -> Canterbury-Bankstown Bulldogs
+- Starford To'a: Wests Tigers -> Manly-Warringah Sea Eagles
+
+## Retired (free agents, off every roster): 13
+
+- Adam Elliott
+- Adam Reynolds
+- Brodie Jones
+- Corey Jensen
+- Daniel Saifiti
+- Daniel Tupou
+- Jai Arrow
+- Josh Papali'i
+- Marcelo Montoya
+- Marion Seve
+- Ray Stone
+- Ryan Matterson
+- Tui Kamikamica
+
+## Not in the game's database (skipped)
+
+- Te Hurinui Twidle: loss from Parramatta Eels (Perth Bears)
+- Te Hurinui Twidle: gain for Perth Bears from Parramatta Eels, 2029
+- Jasais Ah Kee: loss from St George Illawarra Dragons (Perth Bears)
+- Asher Chapman: loss from St George Illawarra Dragons (Perth Bears)
+
+## Duplicates removed: 110
+
+- Nicole Barnett: off Warrington Wolves Women (stays at Leigh Leopards Women)
+- Albany Coates: off Warrington Wolves Women (stays at Leigh Leopards Women)
+- Millie Bell: off Warrington Wolves Women (stays at Leigh Leopards Women)
+- Olivia Hill: off Warrington Wolves Women (stays at Leigh Leopards Women)
+- Isabelle Malyon: off Warrington Wolves Women (stays at Leigh Leopards Women)
+- Brandon Wakeham: off Manly-Warringah Sea Eagles NSW Cup (stays at Manly-Warringah Sea Eagles)
+- Jordan Swann: off Manly-Warringah Sea Eagles NSW Cup (stays at Wynnum Manly Seagulls)
+- Max Hayley: off Manly-Warringah Sea Eagles NSW Cup (stays at Tweed Seagulls)
+- Joey Walsh: off Manly-Warringah Sea Eagles NSW Cup (stays at Manly-Warringah Sea Eagles)
+- Caleb Navale: off Manly-Warringah Sea Eagles NSW Cup (stays at Manly-Warringah Sea Eagles)
+- Chris Patolo: off Manly-Warringah Sea Eagles NSW Cup (stays at Huddersfield Giants)
+- Jacob Sykes: off Manly-Warringah Sea Eagles NSW Cup (stays at Brisbane Tigers)
+- Zane Dunford: off Manly-Warringah Sea Eagles NSW Cup (stays at Huddersfield Giants)
+- Hugo Hart: off Manly-Warringah Sea Eagles NSW Cup (stays at Manly-Warringah Sea Eagles)
+- Jensen Taumoepeau: off Canberra Raiders NSW Cup (stays at Gold Coast Titans)
+- Kalani Skipps: off Canberra Raiders NSW Cup (stays at Tweed Seagulls)
+- Malachi Smith: off Canberra Raiders NSW Cup (stays at Canberra Raiders)
+- Mark Tuialii: off Canberra Raiders NSW Cup (stays at Canberra Raiders)
+- Mitchell Prest: off Canberra Raiders NSW Cup (stays at North Queensland Cowboys)
+- Jordan Uta: off Canberra Raiders NSW Cup (stays at Canberra Raiders)
+- Chevy Stewart: off Canberra Raiders NSW Cup (stays at Canberra Raiders)
+- Myles Martin: off Canberra Raiders NSW Cup (stays at Canberra Raiders)
+- Pasami Saulo: off Canberra Raiders NSW Cup (stays at Newcastle Knights)
+- Adam Cook: off Canberra Raiders NSW Cup (stays at Leigh Leopards)
+- Cooper Toy: off Canterbury-Bankstown Bulldogs NSW Cup (stays at Canterbury-Bankstown Bulldogs)
+- Alekolasimi Jones: off Canterbury-Bankstown Bulldogs NSW Cup (stays at Canterbury-Bankstown Bulldogs)
+- Louis Grossemy: off Canterbury-Bankstown Bulldogs NSW Cup (stays at Toulouse Olympique)
+- Reuben Moyle: off Canterbury-Bankstown Bulldogs NSW Cup (stays at Ipswich Jets)
+- Jed Reardon: off Canterbury-Bankstown Bulldogs NSW Cup (stays at Canterbury-Bankstown Bulldogs)
+- Sosaia Latu: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Jackson Hastings: off Newcastle Knights NSW Cup (stays at St. Helens)
+- Francis Manuleleua: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Matt Arthur: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Logan Aoake: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Lachlan Crouch: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Kyle McCarthy: off Newcastle Knights NSW Cup (stays at Newcastle Knights)
+- Brock Greacen: off Newcastle Knights NSW Cup (stays at Castleford Tigers)
+- Blake Hosking: off Newtown Jets (stays at Cronulla-Sutherland Sharks)
+- Jordin Leiu: off Newtown Jets (stays at Norths Devils)
+- Kyle Pickering: off Newtown Jets (stays at Tweed Seagulls)
+- Felix Faatili: off Newtown Jets (stays at Cronulla-Sutherland Sharks)
+- Riley Jones: off Newtown Jets (stays at Cronulla-Sutherland Sharks)
+- Chase Chapman: off North Sydney Bears (stays at Tweed Seagulls)
+- Trey Browne: off North Sydney Bears (stays at Central Queensland Capras)
+- Preston Riki: off Penrith Panthers NSW Cup (stays at Brisbane Broncos)
+- Asu Kepaoa: off Penrith Panthers NSW Cup (stays at Newcastle Knights)
+- Billy Scott: off Penrith Panthers NSW Cup (stays at Penrith Panthers)
+- David Fale: off Penrith Panthers NSW Cup (stays at St George Illawarra Dragons)
+- Zac Lipowicz: off Penrith Panthers NSW Cup (stays at Wakefield Trinity)
+- Billy Phillips: off Penrith Panthers NSW Cup (stays at Penrith Panthers)
+- Sialetili Faeamani: off Penrith Panthers NSW Cup (stays at Gold Coast Titans)
+- Jack Attard: off Penrith Panthers NSW Cup (stays at Wests Tigers)
+- Nick Murphy: off Penrith Panthers NSW Cup (stays at Penrith Panthers)
+- Apa Twidle: off Parramatta Eels NSW Cup (stays at Parramatta Eels)
+- Brock Parker: off Parramatta Eels NSW Cup (stays at Sunshine Coast Falcons)
+- Josh Lynn: off Parramatta Eels NSW Cup (stays at Sunshine Coast Falcons)
+- Jezaiah Funa: off Parramatta Eels NSW Cup (stays at Parramatta Eels)
+- Araz Nanva: off Parramatta Eels NSW Cup (stays at Parramatta Eels)
+- Teancum Brown: off Parramatta Eels NSW Cup (stays at Parramatta Eels)
+- Matthew Hunter: off Parramatta Eels NSW Cup (stays at Newcastle Knights)
+- Reece Alderton: off Parramatta Eels NSW Cup (stays at Ipswich Jets)
+- William Lewis: off Parramatta Eels NSW Cup (stays at Sunshine Coast Falcons)
+- Brandon Webster-Mansfield: off South Sydney Rabbitohs NSW Cup (stays at London Broncos)
+- Bear Williams: off South Sydney Rabbitohs NSW Cup (stays at Workington Town)
+- Henry O'Kane: off South Sydney Rabbitohs NSW Cup (stays at Toulouse Olympique)
+- Kaylen Miller: off South Sydney Rabbitohs NSW Cup (stays at Tweed Seagulls)
+- Matthew Humphries: off South Sydney Rabbitohs NSW Cup (stays at South Sydney Rabbitohs)
+- Tim Johannssen: off South Sydney Rabbitohs NSW Cup (stays at South Sydney Rabbitohs)
+- Vasili Tsikrikas: off South Sydney Rabbitohs NSW Cup (stays at St George Illawarra Dragons NSW Cup)
+- Connor Muhleisen: off St George Illawarra Dragons NSW Cup (stays at St George Illawarra Dragons)
+- Jacob Webster: off St George Illawarra Dragons NSW Cup (stays at St George Illawarra Dragons)
+- Jonah Glover: off St George Illawarra Dragons NSW Cup (stays at South Sydney Rabbitohs)
+- Cody Ramsey: off St George Illawarra Dragons NSW Cup (stays at Sydney Roosters)
+- Jett Liu: off St George Illawarra Dragons NSW Cup (stays at Gold Coast Titans)
+- Kade Reed: off St George Illawarra Dragons NSW Cup (stays at St George Illawarra Dragons)
+- Hayden Barton: off Sydney Roosters NSW Cup (stays at Sydney Roosters)
+- Aston Warwick: off Sydney Roosters NSW Cup (stays at Sydney Roosters)
+- Harry Durbin: off New Zealand Warriors NSW Cup (stays at Brisbane Tigers)
+- Jett Cleary: off New Zealand Warriors NSW Cup (stays at New Zealand Warriors)
+- Makaia Tafua: off New Zealand Warriors NSW Cup (stays at New Zealand Warriors)
+- Setu Tu: off New Zealand Warriors NSW Cup (stays at St George Illawarra Dragons)
+- Kalani Going: off New Zealand Warriors NSW Cup (stays at Penrith Panthers)
+- Jared Haywood: off Western Suburbs Magpies (stays at Wests Tigers)
+- Jayden Tanner: off Western Suburbs Magpies (stays at Townsville Blackhawks)
+- Lachlan Broederlow: off Western Suburbs Magpies (stays at Wests Tigers)
+- Tuarae Rawhiti: off Western Suburbs Magpies (stays at Workington Town)
+- Vaka Aho: off Western Suburbs Magpies (stays at Wests Tigers)
+- Faaletino Tavana: off Western Suburbs Magpies (stays at Wests Tigers)
+- Josese Lanyon: off Western Suburbs Magpies (stays at Wests Tigers)
+- Caleb Aekins: off Featherstone Rovers 2025 (stays at Bradford Bulls)
+- Derrell Olpherts: off Featherstone Rovers 2025 (stays at Batley Bulldogs)
+- Jayden Hatton: off Featherstone Rovers 2025 (stays at Hunslet RLFC)
+- Ben Reynolds: off Featherstone Rovers 2025 (stays at Batley Bulldogs)
+- Gadwin Springer: off Featherstone Rovers 2025 (stays at Doncaster Dons)
+- Will Jubb: off Featherstone Rovers 2025 (stays at Goole Vikings)
+- Jimmy Beckett: off Featherstone Rovers 2025 (stays at Castleford Tigers)
+- Brad Day: off Featherstone Rovers 2025 (stays at Oldham RLFC)
+- Danny Addy: off Featherstone Rovers 2025 (stays at Dewsbury Rams)
+- Connor Jones: off Featherstone Rovers 2025 (stays at Doncaster Dons)
+- King Vuniyayawa: off Featherstone Rovers 2025 (stays at York Knights)
+- King Vuniyayawa: off Newcastle Thunder (stays at York Knights)
+- Clay Webb: off Featherstone Rovers 2025 (stays at Brisbane Tigers)
+- Robson Stevens: off Featherstone Rovers 2025 (stays at Batley Bulldogs)
+- Jordan Williams: off Featherstone Rovers 2025 (stays at Wakefield Trinity)
+- Connor Wynne: off Featherstone Rovers 2025 (stays at Bradford Bulls)
+- Bailey O'Connor: off Featherstone Rovers 2025 (stays at Dewsbury Rams)
+- Ryan Hampshire: off Featherstone Rovers 2025 (stays at Hull KR)
+- James Glover: off Featherstone Rovers 2025 (stays at Doncaster Dons)
+- Brad Ward: off Newcastle Thunder (stays at York Knights)
+- Andy Djeukessi: off Newcastle Thunder (stays at York Knights)
+
+## Short squads topped up (to 26): 113
+
+- Manly-Warringah Sea Eagles NSW Cup: + Lachlan Croker
+- Manly-Warringah Sea Eagles NSW Cup: + Josh Aloiai
+- Manly-Warringah Sea Eagles NSW Cup: + Dean Matterson
+- Manly-Warringah Sea Eagles NSW Cup: + Raymond Tuaimalo Vaega
+- Manly-Warringah Sea Eagles NSW Cup: + Michael Chee-Kam
+- Manly-Warringah Sea Eagles NSW Cup: + Benjamin Te Kura
+- Manly-Warringah Sea Eagles NSW Cup: + Israel Leota
+- Manly-Warringah Sea Eagles NSW Cup: + Martin Taupau
+- Manly-Warringah Sea Eagles NSW Cup: + Bailey Trew
+- Canberra Raiders NSW Cup: + Corey Harawira-Naera
+- Canberra Raiders NSW Cup: + Drew Hutchison
+- Canberra Raiders NSW Cup: + Kieran Foran
+- Canberra Raiders NSW Cup: + Carter Gordon
+- Canberra Raiders NSW Cup: + Harley Smith-Shields
+- Canberra Raiders NSW Cup: + Ryder Williams
+- Canberra Raiders NSW Cup: + Sam Stephenson
+- Canberra Raiders NSW Cup: + Ryan Papenhuyzen
+- Canberra Raiders NSW Cup: + Eliesa Katoa
+- Canberra Raiders NSW Cup: + Nelson Asofa-Solomona
+- Canberra Raiders NSW Cup: + Christian Welch
+- Canberra Raiders NSW Cup: + Taj Annan
+- Canberra Raiders NSW Cup: + Tyrone Thompson
+- Canterbury-Bankstown Bulldogs NSW Cup: + Sio Kali
+- Newcastle Knights NSW Cup: + Siteni Taukamo
+- Newcastle Knights NSW Cup: + Murray Taulagi
+- Newcastle Knights NSW Cup: + Viliami Vailea
+- Newcastle Knights NSW Cup: + Jordan McLean
+- Newcastle Knights NSW Cup: + Zac Lomax
+- Newcastle Knights NSW Cup: + Shaun Lane
+- Newcastle Knights NSW Cup: + Bryce Cartwright
+- Newcastle Knights NSW Cup: + Joey Lussick
+- Newcastle Knights NSW Cup: + Haze Dunster
+- Newcastle Knights NSW Cup: + Josh Schuster
+- Penrith Panthers NSW Cup: + Matt Eisenhuth
+- Penrith Panthers NSW Cup: + Austin Dias
+- Penrith Panthers NSW Cup: + Ben Lovett
+- Penrith Panthers NSW Cup: + Gerome Burns
+- Penrith Panthers NSW Cup: + Fletcher Myers
+- Penrith Panthers NSW Cup: + Raymond Faitala-Mariner
+- Penrith Panthers NSW Cup: + Tom Eisenhuth
+- Penrith Panthers NSW Cup: + Corey Allan
+- Penrith Panthers NSW Cup: + Corey Ackers
+- Penrith Panthers NSW Cup: + Ben Murdoch-Masila
+- Penrith Panthers NSW Cup: + Nathan Lawson
+- Parramatta Eels NSW Cup: + Dan Keir
+- Parramatta Eels NSW Cup: + Mark Nawaqanitawase
+- Parramatta Eels NSW Cup: + Angus Crichton
+- Parramatta Eels NSW Cup: + Chad Townsend
+- Parramatta Eels NSW Cup: + Mark Nicholls
+- South Sydney Rabbitohs NSW Cup: + Ammaron Gudgeon
+- South Sydney Rabbitohs NSW Cup: + Declan Casey
+- South Sydney Rabbitohs NSW Cup: + Kenneath Bromwich
+- South Sydney Rabbitohs NSW Cup: + Robert Jennings
+- South Sydney Rabbitohs NSW Cup: + Justin Olam
+- South Sydney Rabbitohs NSW Cup: + Justin Matamua
+- South Sydney Rabbitohs NSW Cup: + Brandon Tumeth
+- South Sydney Rabbitohs NSW Cup: + Brent Naden
+- South Sydney Rabbitohs NSW Cup: + Rowan Pearce
+- St George Illawarra Dragons NSW Cup: + Zac Cini
+- St George Illawarra Dragons NSW Cup: + Sam Darley
+- St George Illawarra Dragons NSW Cup: + Jacob Hall
+- St George Illawarra Dragons NSW Cup: + Jack Murchie
+- St George Illawarra Dragons NSW Cup: + Tom Deakin
+- St George Illawarra Dragons NSW Cup: + Leroy Cudjoe
+- St George Illawarra Dragons NSW Cup: + Harvey Livett
+- St George Illawarra Dragons NSW Cup: + Jordan Rapana
+- Sydney Roosters NSW Cup: + Makahesi Makatoa
+- Sydney Roosters NSW Cup: + Kyle Feldt
+- Sydney Roosters NSW Cup: + Konrad Hurrell
+- Sydney Roosters NSW Cup: + Alec Tuitavake
+- New Zealand Warriors NSW Cup: + Morgan Harper
+- New Zealand Warriors NSW Cup: + Loan Castano
+- New Zealand Warriors NSW Cup: + Matt Frawley
+- New Zealand Warriors NSW Cup: + Theo Fages
+- New Zealand Warriors NSW Cup: + Brad Martin
+- New Zealand Warriors NSW Cup: + Valentin Fernandez
+- New Zealand Warriors NSW Cup: + Jared Waerea-Hargreaves
+- New Zealand Warriors NSW Cup: + Seth Nikotemo
+- New Zealand Warriors NSW Cup: + Luke Keary
+- New Zealand Warriors NSW Cup: + Josh Griffin
+- New Zealand Warriors NSW Cup: + Lachlan Fitzgibbon
+- New Zealand Warriors NSW Cup: + Michael Mcilorum
+- Featherstone Rovers 2025: + Oliver Holmes
+- Featherstone Rovers 2025: + Agnatius Paasi
+- Featherstone Rovers 2025: + Jack Darbyshire
+- Featherstone Rovers 2025: + Stefan Ratchford
+- Featherstone Rovers 2025: + Paul SÃ©guier
+- Featherstone Rovers 2025: + Reimis Smith
+- Featherstone Rovers 2025: + Tariq Sims
+- Featherstone Rovers 2025: + Sam Tomkins
+- Featherstone Rovers 2025: + Elliott Whitehead
+- Featherstone Rovers 2025: + Fouad Yaha
+- Featherstone Rovers 2025: + Zac Bardsley-Rowe
+- Featherstone Rovers 2025: + Ciaran Nolan
+- Featherstone Rovers 2025: + Nolan Tupaea
+- Featherstone Rovers 2025: + Ryan Brierley
+- Featherstone Rovers 2025: + Tim Lafai
+- Featherstone Rovers 2025: + Ben Hellewell
+- Featherstone Rovers 2025: + Chris Hill
+- Featherstone Rovers 2025: + Cain Staveley-Carr
+- Halifax Panthers: + James Saltonstall
+- Halifax Panthers: + Louis Jouffret
+- Halifax Panthers: + Joe Hird
+- Oldham RLFC: + Logan Astley
+- Oldham RLFC: + Jordan Turner
+- Sheffield Eagles: + Kris Welham
+- Newcastle Thunder: + Will Bate
+- Newcastle Thunder: + Ollie Bibby
+- Newcastle Thunder: + Leo Bradley
+- Newcastle Thunder: + Seth Clapham
+- Newcastle Thunder: + Lloyd Hall
+- Newcastle Thunder: + Matty Handy
+- Newcastle Thunder: + Michael Hansen
+
+## Squad sizes
+
+- Warrington Wolves Women: 44
+- Manly-Warringah Sea Eagles NSW Cup: 26
+- Canberra Raiders NSW Cup: 26
+- Canterbury-Bankstown Bulldogs NSW Cup: 26
+- Newcastle Knights NSW Cup: 26
+- Newtown Jets: 28
+- North Sydney Bears: 36
+- Penrith Panthers NSW Cup: 26
+- Parramatta Eels NSW Cup: 26
+- South Sydney Rabbitohs NSW Cup: 26
+- St George Illawarra Dragons NSW Cup: 26
+- Sydney Roosters NSW Cup: 26
+- New Zealand Warriors NSW Cup: 26
+- Western Suburbs Magpies: 27
+- Featherstone Rovers 2025: 26
+- Brisbane Broncos: 33
+- Canterbury-Bankstown Bulldogs: 35
+- North Queensland Cowboys: 31
+- St George Illawarra Dragons: 31
+- Parramatta Eels: 31
+- Newcastle Knights: 33
+- Penrith Panthers: 27
+- South Sydney Rabbitohs: 39
+- Canberra Raiders: 33
+- Sydney Roosters: 29
+- Manly-Warringah Sea Eagles: 37
+- Cronulla-Sutherland Sharks: 29
+- Melbourne Storm: 29
+- Wests Tigers: 37
+- Gold Coast Titans: 32
+- New Zealand Warriors: 31
+- Dolphins: 28
+- Castleford Tigers: 35
+- Huddersfield Giants: 31
+- Hull FC: 37
+- Hull KR: 34
+- Leeds Rhinos: 37
+- St. Helens: 40
+- Wakefield Trinity: 30
+- Warrington Wolves: 36
+- Wigan Warriors: 38
+- Leigh Leopards: 27
+- Catalans Dragons: 31
+- Bradford Bulls: 33
+- Toulouse Olympique: 31
+- York Knights: 34
+- Brisbane Tigers: 44
+- Burleigh Bears: 32
+- Central Queensland Capras: 44
+- Ipswich Jets: 42
+- Mackay Cutters: 33
+- Northern Pride: 39
+- Norths Devils: 35
+- Papua New Guinea Hunters: 36
+- Redcliffe Dolphins: 32
+- Souths Logan Magpies: 34
+- Sunshine Coast Falcons: 37
+- Townsville Blackhawks: 38
+- Tweed Seagulls: 42
+- Western Clydesdales: 47
+- Wynnum Manly Seagulls: 33
+- Salford RLFC: 36
+- Halifax Panthers: 26
+- Oldham RLFC: 26
+- Barrow Raiders: 28
+- Widnes Vikings: 28
+- Doncaster Dons: 28
+- London Broncos: 27
+- Batley Bulldogs: 28
+- Sheffield Eagles: 26
+- Hunslet RLFC: 32
+- Midlands Hurricanes: 30
+- Whitehaven RLFC: 28
+- North Wales Crusaders: 32
+- Swinton Lions: 32
+- Dewsbury Rams: 32
+- Rochdale Hornets: 31
+- Workington Town: 28
+- Goole Vikings: 39
+- Keighley Cougars: 34
+- Newcastle Thunder: 26
+- Brisbane Broncos Women: 28
+- Canberra Raiders Women: 25
+- Canterbury-Bankstown Bulldogs Women: 27
+- Cronulla Sharks Women: 27
+- Gold Coast Titans Women: 24
+- Newcastle Knights Women: 27
+- New Zealand Warriors Women: 26
+- North Queensland Cowboys Women: 29
+- Parramatta Eels Women: 27
+- St George Dragons Women: 30
+- Sydney Roosters Women: 26
+- Wests Tigers Women: 27
+- Barrow Raiders Women: 26
+- Featherstone Rovers Women: 31
+- Huddersfield Giants Women: 35
+- Leeds Rhinos Women: 28
+- Leigh Leopards Women: 41
+- St. Helens Saints Women: 30
+- Wigan Warriors Women: 25
+- York Valkyrie Women: 27
+- Perth Bears: 29

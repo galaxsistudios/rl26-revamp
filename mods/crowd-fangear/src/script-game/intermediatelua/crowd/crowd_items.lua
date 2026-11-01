@@ -3968,6 +3968,7 @@ FangearClubs = {
 	[217] = "rep_france_2", -- France Les Chanticleers
 	[218] = "rep_nz_w", -- New Zealand Kiwi Ferns
 	[219] = "rep_png_w", -- Papua New Guinea Orchids
+	[220] = "nrl_bears", -- Perth Bears
 }
 -- icon -> the gear its fans can wear: item (tee, polo, scarf), library label, crowd texture
 FangearLibrary = {
@@ -4292,6 +4293,20 @@ FangearLibrary = {
 		{ item = "scarf", name = "Bar Scarf", texture = "crowd_fan_scarf_maori_bars_col" },
 		{ item = "scarf", name = "Bar Scarf (Inverted)", texture = "crowd_fan_scarf_maori_bars_inverted_col" },
 		{ item = "scarf", name = "Logo Scarf", texture = "crowd_fan_scarf_maori_logo_col" },
+	},
+	nrl_bears = {
+		{ item = "tee", name = "Badge Tee (White)", texture = "crowd_fan_tee_nrl_bears_badge_white_col" },
+		{ item = "tee", name = "Logo Tee (Primary)", texture = "crowd_fan_tee_nrl_bears_logo_primary_col" },
+		{ item = "tee", name = "Logo Tee (Secondary)", texture = "crowd_fan_tee_nrl_bears_logo_secondary_col" },
+		{ item = "tee", name = "Logo Tee (White)", texture = "crowd_fan_tee_nrl_bears_logo_white_col" },
+		{ item = "tee", name = "Plain Tee (Primary)", texture = "crowd_fan_tee_nrl_bears_plain_primary_col" },
+		{ item = "tee", name = "Plain Tee (Secondary)", texture = "crowd_fan_tee_nrl_bears_plain_secondary_col" },
+		{ item = "polo", name = "Polo (Primary)", texture = "crowd_fan_polo_nrl_bears_primary_col" },
+		{ item = "polo", name = "Polo (Secondary)", texture = "crowd_fan_polo_nrl_bears_secondary_col" },
+		{ item = "polo", name = "Polo (White)", texture = "crowd_fan_polo_nrl_bears_white_col" },
+		{ item = "scarf", name = "Bar Scarf", texture = "crowd_fan_scarf_nrl_bears_bars_col" },
+		{ item = "scarf", name = "Bar Scarf (Inverted)", texture = "crowd_fan_scarf_nrl_bears_bars_inverted_col" },
+		{ item = "scarf", name = "Logo Scarf", texture = "crowd_fan_scarf_nrl_bears_logo_col" },
 	},
 	nrl_broncos = {
 		{ item = "tee", name = "Badge Tee (White)", texture = "crowd_fan_tee_nrl_broncos_badge_white_col" },

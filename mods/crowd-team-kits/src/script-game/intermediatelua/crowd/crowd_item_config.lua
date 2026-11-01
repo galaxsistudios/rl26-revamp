@@ -258,6 +258,7 @@ local clubKits = {
 	[217] = { family = 206, kits = {  } }, -- France Les Chanticleers
 	[218] = { family = 218, kits = {  } }, -- New Zealand Kiwi Ferns
 	[219] = { family = 219, kits = {  } }, -- Papua New Guinea Orchids
+	[220] = { family = 220, kits = { "m_top_bears_nsw_home_25_col", "m_top_bears_nsw_away_25_col" } }, -- Perth Bears
 }
 -- crowd node count per stadium node file (lowercased path), for the Souths guy odds
 local stadiumNodes = {

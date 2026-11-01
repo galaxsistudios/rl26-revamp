@@ -62,7 +62,7 @@ LOG = os.path.join(BUILD, "install_revamp.log")
 STATE = os.path.join(BUILD, "install_revamp_state.json")
 DECOMPILED = os.path.join(REPO, "decompiled")
 # M3MP bundles rebuilt from stock, by entries.py name (their index moves with updates)
-BUNDLES = ["gamedata", "licenseddata", "scripts", "fonts", "xamls"]
+BUNDLES = ["gamedata", "licenseddata", "careerdata", "scripts", "fonts", "xamls"]
 
 
 def idx(name):
@@ -189,8 +189,9 @@ def _steps():
         ("kit-slots", "club kit slots for the kits that were built", always,
          lambda o: [[PY, kits, "generate", "--clubs",
                      os.path.join(stock_dir("licenseddata"), "defaultdata", "defaultdata_clubs")]]),
-        ("data", "leagues/NPCs, clubs/players, Noesis UI and fonts", always,
-         lambda o: bundle("gamedata")(o) + bundle("licenseddata")(o) + bundle("xamls")(o) + bundle("fonts")(o)),
+        ("data", "leagues/NPCs, clubs/players, career data, Noesis UI and fonts", always,
+         lambda o: bundle("gamedata")(o) + bundle("licenseddata")(o) + bundle("careerdata")(o) + bundle("xamls")(o)
+         + bundle("fonts")(o)),
         ("crowd", "crowd jerseys, flags, fangear and kit lists", always,
          lambda o: [[PY, crowd, "bake", "--confirm"], [PY, flags, "model", "--confirm"],
                     [PY, flags, "variants", "--confirm"], [PY, fangear, "install", "--confirm"],
