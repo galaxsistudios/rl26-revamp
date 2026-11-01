@@ -17,15 +17,17 @@ Three tweaks to the in-match tactics (D-pad) HUD:
    carried into the next defensive set. `TacticsHud.update` now puts a human side's defence graphs
    back to `BasicDefence` / `BasicPlayTheBallDefence` the moment that side is the attacking side.
    It also resets when the opposition starts a new set without this side touching the ball (try + kick-off, six-again, dropout): any drop in the tackle count while defending. Checked against the last update's values, so a change during a cutscene is still caught. Each reset logs `RESET side=N (reason)`. The last-tackle warning now ignores the play-the-ball position once the game clears it to (0,0). The "tactic on" flag is also tracked per side now (stock shared one flag between both teams).
-3. **Defence tactic label.** A small pill just above the player plate shows the defence tactic,
-   with a D-pad whose lit arm is the button for it (Up = Compress, Down = Drop Wingers,
-   Left/Right = Slide Left/Right), or "STANDARD" with no arm lit on the default defence. It only
-   shows for human-controlled sides, and only while that side is defending: `TacticsHud.update`
-   (which only visits local gamers' sides) sets `DefenceTacticVisible`, and the XAML fades the pill
-   in and out over 0.25 s. It shows whether or not the tactics menu is open. "Live play" =
-   general play (`getGeneralGameplayActive()`) or a play-the-ball under way, so it's hidden at
-   tries, conversions, penalties, kick-off setup, scrums and breaks. Same 350 width as the tactics
-   window.
+3. **Tactic label (attack and defence).** A pill just above the player plate shows
+   "DEFENCE: <tactic>" while a human-controlled side defends and "ATTACK: <play>" while it has the
+   ball (live play either way: general play or a play-the-ball under way), or ": STANDARD" when
+   nothing is called. The text is centred in the label. A D-pad sits at its left: on defence the
+   lit arm is the button for the tactic (Up = Compress, Down = Drop Wingers, Left/Right = Slide
+   Left/Right); on attack Up is lit (it opens the attack menu). There's no getter for the selected
+   attack play (`getSelectedPlay` isn't in retail), so `TacticsHud` remembers the play confirmed
+   from the menu (`setAttackTactic`) and clears it when the side loses the ball. Whether the game
+   keeps using a called play for the rest of the set isn't known; the label shows it until the
+   turnover. `TacticsHud.update` sets `TacticLabelVisible` / `TacticLabelAttack`; the XAML fades the
+   pill in and out over 0.25 s. Same 400 width as the tactics window.
 4. **Last-tackle warning.** On the opposition's last tackle (`tackleCount >= maxTackleCount - 1`,
    the same count the scoreboard uses), with the ruck more than `LastTackleWarnDistance` (20 m) from
    the line being defended, the label turns red and flashes: "LAST TACKLE: PRESS DOWN TO SEND

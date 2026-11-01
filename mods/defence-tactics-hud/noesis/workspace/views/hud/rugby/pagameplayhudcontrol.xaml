@@ -320,7 +320,7 @@
                                 <Style TargetType="Border">
                                     <Setter Property="Opacity" Value="0" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding DefenceTacticVisible}" Value="True">
+                                        <DataTrigger Binding="{Binding TacticLabelVisible}" Value="True">
                                             <DataTrigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
@@ -377,6 +377,9 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="Compress">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
@@ -388,6 +391,9 @@
                                                     <Style.Triggers>
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="DropWings">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DefenceTacticAlert}" Value="True">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
@@ -404,6 +410,9 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="SlideLeft">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
@@ -416,16 +425,21 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="SlideRight">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
                                         </Rectangle>
                                     </Grid>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding DefenceTacticText, Converter={StaticResource UppercaseConverter}}"
+                                    <!-- Attack play while attacking, defence tactic while defending; centred in the label -->
+                                    <TextBlock Grid.ColumnSpan="2"
+                                               Text="{Binding TacticLabelText, Converter={StaticResource UppercaseConverter}}"
                                                Foreground="{StaticResource RLWhite}"
                                                FontSize="16"
-                                               Margin="8,0,0,0"
+                                               HorizontalAlignment="Center"
+                                               TextAlignment="Center"
                                                VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource HUD_Bold}">
@@ -437,10 +451,10 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <Viewbox Grid.Column="1"
+                                    <Viewbox Grid.ColumnSpan="2"
                                              StretchDirection="DownOnly"
-                                             HorizontalAlignment="Left"
-                                             Margin="8,0,0,0"
+                                             HorizontalAlignment="Center"
+                                             Margin="28,0"
                                              Visibility="{Binding DefenceTacticAlert, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
                                         <TextBlock Text="LAST TACKLE: PRESS DOWN TO SEND WINGERS BACK"
                                                    Style="{StaticResource HUD_Bold}"
@@ -576,7 +590,7 @@
                                 <Style TargetType="Border">
                                     <Setter Property="Opacity" Value="0" />
                                     <Style.Triggers>
-                                        <DataTrigger Binding="{Binding DefenceTacticVisible}" Value="True">
+                                        <DataTrigger Binding="{Binding TacticLabelVisible}" Value="True">
                                             <DataTrigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard>
@@ -633,6 +647,9 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="Compress">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
@@ -644,6 +661,9 @@
                                                     <Style.Triggers>
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="DropWings">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding DefenceTacticAlert}" Value="True">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
@@ -660,6 +680,9 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="SlideLeft">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
@@ -672,16 +695,21 @@
                                                     <DataTrigger Binding="{Binding DefenceTacticKey}" Value="SlideRight">
                                                         <Setter Property="Fill" Value="{StaticResource RLWhite}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding TacticLabelAttack}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource RLWhite30}" />
+                                                    </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Rectangle.Style>
                                         </Rectangle>
                                     </Grid>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{Binding DefenceTacticText, Converter={StaticResource UppercaseConverter}}"
+                                    <!-- Attack play while attacking, defence tactic while defending; centred in the label -->
+                                    <TextBlock Grid.ColumnSpan="2"
+                                               Text="{Binding TacticLabelText, Converter={StaticResource UppercaseConverter}}"
                                                Foreground="{StaticResource RLWhite}"
                                                FontSize="16"
-                                               Margin="8,0,0,0"
+                                               HorizontalAlignment="Center"
+                                               TextAlignment="Center"
                                                VerticalAlignment="Center">
                                         <TextBlock.Style>
                                             <Style TargetType="TextBlock" BasedOn="{StaticResource HUD_Bold}">
@@ -693,10 +721,10 @@
                                             </Style>
                                         </TextBlock.Style>
                                     </TextBlock>
-                                    <Viewbox Grid.Column="1"
+                                    <Viewbox Grid.ColumnSpan="2"
                                              StretchDirection="DownOnly"
-                                             HorizontalAlignment="Left"
-                                             Margin="8,0,0,0"
+                                             HorizontalAlignment="Center"
+                                             Margin="28,0"
                                              Visibility="{Binding DefenceTacticAlert, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
                                         <TextBlock Text="LAST TACKLE: PRESS DOWN TO SEND WINGERS BACK"
                                                    Style="{StaticResource HUD_Bold}"

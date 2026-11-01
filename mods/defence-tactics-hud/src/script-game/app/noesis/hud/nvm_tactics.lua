@@ -66,6 +66,12 @@ ns.Class("NVMTactics", var_0_0, function(arg_3_0)
 	arg_3_0.DefenceTacticVisible = false
 	-- Last-tackle warning (red, flashing): set by TacticsHud.update.
 	arg_3_0.DefenceTacticAlert = false
+	-- Tactic label (attack or defence, whichever this side is doing): set by TacticsHud.update.
+	arg_3_0.AttackTacticKey = ""
+	arg_3_0.AttackTacticText = DefaultDefenceTacticText
+	arg_3_0.TacticLabelVisible = false
+	arg_3_0.TacticLabelAttack = false
+	arg_3_0.TacticLabelText = "Defence: " .. DefaultDefenceTacticText
 	-- Plate look: Team (set by TacticsHud), subtitle, intro/outro keys.
 	arg_3_0.Subtitle = ""
 	arg_3_0.RevealKey = 0
@@ -85,7 +91,12 @@ end).Bindings = {
 		DefenceTacticKey = ns.String,
 		DefenceTacticText = ns.String,
 		DefenceTacticVisible = ns.Bool,
-		DefenceTacticAlert = ns.Bool
+		DefenceTacticAlert = ns.Bool,
+		AttackTacticKey = ns.String,
+		AttackTacticText = ns.String,
+		TacticLabelVisible = ns.Bool,
+		TacticLabelAttack = ns.Bool,
+		TacticLabelText = ns.String
 	}
 }
 
@@ -100,6 +111,8 @@ function NVMTactics.setDefenceTactic(arg_16_0, arg_16_1, arg_16_2)
 		arg_16_0.DefenceTacticText = DefaultDefenceTacticText
 	end
 
+	arg_16_0:refreshTacticLabel()
+
 	if DefenceTacticDebugLog then
 		pcall(function()
 			local var_16_0 = io.open("defence_tactics_debug.txt", "a")
@@ -110,6 +123,47 @@ function NVMTactics.setDefenceTactic(arg_16_0, arg_16_1, arg_16_2)
 				var_16_0:close()
 			end
 		end)
+	end
+end
+
+-- defence-tactics-hud: the attack play last called from the tactics menu (nil = none). The game
+-- has no getter for the selected play, so TacticsHud remembers it and clears it on a turnover.
+function NVMTactics.setAttackTactic(arg_17_0, arg_17_1)
+	if arg_17_1 then
+		arg_17_0.AttackTacticKey = arg_17_1
+		arg_17_0.AttackTacticText = var_0_label(arg_17_1)
+	else
+		arg_17_0.AttackTacticKey = ""
+		arg_17_0.AttackTacticText = DefaultDefenceTacticText
+	end
+
+	arg_17_0:refreshTacticLabel()
+end
+
+-- defence-tactics-hud: label shown/hidden and attack-or-defence, from TacticsHud.update
+function NVMTactics.setTacticLabel(arg_18_0, arg_18_1, arg_18_2)
+	if arg_18_0.TacticLabelVisible ~= arg_18_1 then
+		arg_18_0.TacticLabelVisible = arg_18_1
+	end
+
+	if arg_18_0.TacticLabelAttack ~= arg_18_2 then
+		arg_18_0.TacticLabelAttack = arg_18_2
+
+		arg_18_0:refreshTacticLabel()
+	end
+end
+
+function NVMTactics.refreshTacticLabel(arg_19_0)
+	local var_19_0
+
+	if arg_19_0.TacticLabelAttack then
+		var_19_0 = "Attack: " .. arg_19_0.AttackTacticText
+	else
+		var_19_0 = "Defence: " .. arg_19_0.DefenceTacticText
+	end
+
+	if arg_19_0.TacticLabelText ~= var_19_0 then
+		arg_19_0.TacticLabelText = var_19_0
 	end
 end
 

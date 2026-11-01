@@ -228,6 +228,8 @@ local function var_0_15(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13
 	local var_13_3 = var_0_9[arg_13_1:getSelectedIndex()].offenceType
 
 	var_13_1:setSelectedPlay(var_13_3)
+	-- defence-tactics-hud: remember the called play for the tactic label
+	arg_13_1:setAttackTactic(var_0_9[arg_13_1:getSelectedIndex()].key)
 	arg_13_1:closeMenu()
 	arg_13_5:add(eventoccurred_request.EventOccurredRequest("TacticsHudClosed", {
 		side = var_13_0
@@ -416,6 +418,14 @@ function TacticsHud.update(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg
 		if var_16_3.tacticsHud.DefenceTacticVisible ~= var_16_8 then
 			var_16_3.tacticsHud.DefenceTacticVisible = var_16_8
 		end
+
+		-- The label shows this side's attack play while it has the ball and its defence tactic
+		-- while it defends (live play either way). A called attack play ends on a turnover.
+		if var_16_2 ~= var_16_0 and var_16_3.tacticsHud.AttackTacticKey ~= "" then
+			var_16_3.tacticsHud:setAttackTactic(nil)
+		end
+
+		var_16_3.tacticsHud:setTacticLabel(var_16_9 and true or false, var_16_2 == var_16_0)
 
 		-- Red, flashing "last tackle" prompt unless the wingers are already back.
 		local var_16_17 = var_16_8 and var_16_11 and not (var_16_3.defenseTacticEnabled and var_16_3.tacticsHud.DefenceTacticKey == "DropWings")
