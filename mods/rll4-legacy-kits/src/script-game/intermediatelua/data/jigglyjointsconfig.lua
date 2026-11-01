@@ -590,6 +590,8 @@ do
 		{ 60345, "seaeagles_rll4_home_2022", { "White" } }, -- HOME 2022, club 128
 		{ 60346, "sharks_rll4_away_2022", {  } }, -- AWAY 2022, club 129
 		{ 60347, "sharks_rll4_home_2022", {  } }, -- HOME 2022, club 129
+		{ 60348, "storm_rll4_away_2022", { "White" } }, -- AWAY 2022, club 130
+		{ 60349, "storm_rll4_home_2022", {  } }, -- HOME 2022, club 130
 		{ 60354, "broncos_rll4_away_2024", { "White" } }, -- AWAY 2024, club 118
 		{ 60355, "broncos_rll4_home_2023", { "Orange", "White" } }, -- HOME 2023, club 118
 		{ 60357, "bulldogs_rll4_anzac_2023", { "White" } }, -- ANZAC 2023, club 119
@@ -633,6 +635,10 @@ do
 		{ 60403, "seaeagles_rll4_nines_2020", { "White" } }, -- NINES 2020, club 128
 		{ 60406, "sharks_rll4_home_2023", { "White" } }, -- HOME 2023, club 129
 		{ 60408, "sharks_rll4_nines_2020", {  } }, -- NINES 2020, club 129
+		{ 60409, "storm_rll4_away_2023", { "White" } }, -- AWAY 2023, club 130
+		{ 60410, "storm_rll4_home_2023", {  } }, -- HOME 2023, club 130
+		{ 60412, "storm_rll4_nines_2020", {  } }, -- NINES 2020, club 130
+		{ 60413, "storm_rll4_wil_2023", {  } }, -- WOMEN IN LEAGUE 2023, club 130
 		{ 60427, "rabbitohs_rll4_special_2023", { "Red", "Green", "White" } }, -- SPECIAL 2023, club 125
 		{ 64008, "broncos_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 118
 		{ 64009, "bulldogs_indigenous_2026", { "Blue" }, { top = 145, bottom = 143, socks = 143 } }, -- INDIGENOUS 2026, club 119
@@ -646,6 +652,8 @@ do
 		{ 64018, "raiders_indigenous_2026", { "Green", "White" }, { top = 125, bottom = 123, socks = 123 } }, -- INDIGENOUS 2026, club 126
 		{ 64019, "roosters_indigenous_2026", { "Red" }, { top = 105, bottom = 382, socks = 382, number = 384, numberScale = 0.85 } }, -- INDIGENOUS 2026, club 127
 		{ 64020, "seaeagles_indigenous_2026", { "White" }, { top = 105, bottom = 104, socks = 104 } }, -- INDIGENOUS 2026, club 128
+		{ 64021, "storm_anzac_2026", {  }, { top = 386, bottom = 240, socks = 243, number = 245 } }, -- ANZAC 2026, club 130
+		{ 64022, "storm_indigenous_2026", {  }, { top = 245, bottom = 240, socks = 243 } }, -- INDIGENOUS 2026, club 130
 		{ 64026, "raiders_alternate_2026", { "White" }, { top = 125, bottom = 123, socks = 123 } }, -- ALTERNATE 2026, club 126
 		{ 64027, "rabbitohs_alternate_2026", { "Orange", "Red", "White" }, { top = 345, bottom = 343, socks = 342 } }, -- ALTERNATE 2026, club 125
 		{ 64029, "panthers_alternate_2026", {  }, { top = 334, bottom = 334, socks = 334 } }, -- ALTERNATE 2026, club 124
@@ -1019,6 +1027,12 @@ KitLibrary = {
 		{ name = "INDIGENOUS 2017", copyOf = "HOME", set = { uniformTop = 60239, uniformBottom = 60239, uniformSocks = 60239 } },
 		{ name = "NINES 2017", copyOf = "HOME", set = { uniformTop = 60240, uniformBottom = 60240, uniformSocks = 60240 } },
 		{ name = "WOMEN IN LEAGUE 2017", copyOf = "HOME", set = { uniformTop = 60241, uniformBottom = 60241, uniformSocks = 60241 } },
+		{ name = "AWAY 2022", copyOf = "AWAY", set = { uniformTop = 60348, uniformBottom = 60348, uniformSocks = 60348 } },
+		{ name = "HOME 2022", copyOf = "HOME", set = { uniformTop = 60349, uniformBottom = 60349, uniformSocks = 60349 } },
+		{ name = "AWAY 2023", copyOf = "AWAY", set = { uniformTop = 60409, uniformBottom = 60409, uniformSocks = 60409 } },
+		{ name = "HOME 2023", copyOf = "HOME", set = { uniformTop = 60410, uniformBottom = 60410, uniformSocks = 60410 } },
+		{ name = "NINES 2020", copyOf = "HOME", set = { uniformTop = 60412, uniformBottom = 60412, uniformSocks = 60412 } },
+		{ name = "WOMEN IN LEAGUE 2023", copyOf = "HOME", set = { uniformTop = 60413, uniformBottom = 60413, uniformSocks = 60413 } },
 	},
 	[131] = {
 		{ name = "HOME 2024", copyOf = "AWAY", set = { uniformTop = 60046, uniformBottom = 60046, uniformSocks = 60046, numberColour1_r = 230, numberColour1_g = 230, numberColour1_b = 230 } },
